@@ -1,0 +1,651 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{09ed2eb8-a2f2-4001-8a92-88fb361709f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader">
+      <UniqueIdentifier>{d7f24bbd-081a-4210-811f-21c946777cc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\Object3d">
+      <UniqueIdentifier>{f62798c6-8783-48ac-be17-fe2377478ecb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\Sprite">
+      <UniqueIdentifier>{ae8040b9-f52c-42fc-84d3-5e698849411b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\Grayscale">
+      <UniqueIdentifier>{199393d8-3b85-4dd1-bd73-032f83314bd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{feec44c0-5ba6-4e64-9ba3-5db0d0ca8d0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\RGBShift">
+      <UniqueIdentifier>{869937fb-cbe3-4a2d-85c9-d01611d182d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{f70ce07e-5b4e-449c-be5f-6f9f6b2555bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\BaseSystem">
+      <UniqueIdentifier>{e2e33861-0b3d-4c4e-b915-da6dcd8205a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\BaseSystem\Logger">
+      <UniqueIdentifier>{577e0e85-e621-4f3b-8b03-ebce0f82d82e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\BaseSystem\WinApp">
+      <UniqueIdentifier>{55694ab5-6cb1-493d-a885-e5f5fe1c6730}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\BaseSystem\DirectXCommon">
+      <UniqueIdentifier>{f8409849-6e81-4254-a523-bbead3e9cc50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\OffScreenRenderer">
+      <UniqueIdentifier>{8bc77280-60cd-44b8-a2d8-74b652d035e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\OffScreenRenderer\PostEffect">
+      <UniqueIdentifier>{77687888-8282-4d7e-a865-a15d5e44dcb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\FrameTimer">
+      <UniqueIdentifier>{14c40776-6e78-4284-ad43-f871e8df3d70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\OffScreenRenderer\PostEffect\RGBShift">
+      <UniqueIdentifier>{885eaab5-9d5a-401f-8888-009a7dfcd2f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\OffScreenRenderer\PostEffect\Grayscale">
+      <UniqueIdentifier>{3125642e-04cb-43ce-b12c-0ea65eb247f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\CameraController">
+      <UniqueIdentifier>{11539be1-ba92-4684-a353-704c408862bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\MyMath">
+      <UniqueIdentifier>{12403412-1bc7-4927-b755-240bd79f6595}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Objects">
+      <UniqueIdentifier>{316e2ec9-0aa7-48bb-a20e-e61bc9a224ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Objects\Sprite">
+      <UniqueIdentifier>{9141dc29-9f62-4285-946d-27e7a0216f67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Objects\Light">
+      <UniqueIdentifier>{c2dc26ba-dff9-43de-aea3-1931dd817a02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Objects\GameObject">
+      <UniqueIdentifier>{9f9fc7be-4b1e-4259-bf4f-a9d06975c986}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers">
+      <UniqueIdentifier>{b898e7b0-d129-4a3f-97e8-547ae1c915ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers\Texture">
+      <UniqueIdentifier>{91b372ab-9def-413b-a148-db52ddf9180a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers\Audio">
+      <UniqueIdentifier>{53428ebc-a771-4461-b61a-3dddde1c10d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers\Scene">
+      <UniqueIdentifier>{8d0d45b1-3c22-4d10-8e12-bae714348094}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers\Input">
+      <UniqueIdentifier>{401ed695-a780-4ebb-b1e6-d559c1109305}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers\ImGui">
+      <UniqueIdentifier>{24adf0e5-c0e5-49bc-b239-16c89b7788b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers\Model">
+      <UniqueIdentifier>{511b34ed-608c-4f53-8cb6-30253fa7f735}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\OffScreenRenderer\PostEffect\LineGlitch">
+      <UniqueIdentifier>{3eaee6b7-caf3-42c8-9cbf-1d0e22e1ee2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\LineGltich">
+      <UniqueIdentifier>{85922a04-6b52-45b6-b95e-4004cd236d0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\CameraController\NormalCamera">
+      <UniqueIdentifier>{6ce3d0c7-4696-4b7d-b5bc-13737a7c9ec2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\CameraController\DebugCamera">
+      <UniqueIdentifier>{6964cef4-8ab4-4ebe-b789-d9243f89409c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Objects\Line">
+      <UniqueIdentifier>{7ca08f7c-5231-4306-b47d-d6614df04b96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\Line">
+      <UniqueIdentifier>{7726a6b7-190f-46a9-ad84-074b36587371}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers\ObjectID">
+      <UniqueIdentifier>{6220611e-c1f5-4d43-b5cd-24614a62f6a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\DepthFog">
+      <UniqueIdentifier>{ead93783-89f3-4008-b074-5f04488acf13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\OffScreenRenderer\PostEffect\DepthFog">
+      <UniqueIdentifier>{1bb97fac-4c39-4849-9c2e-a3b167d2d7f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\OffScreenRenderer\PostEffect\DepthOfField">
+      <UniqueIdentifier>{a34a6cea-e34a-497d-99f5-411c1eb2cf44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\DepthOfField">
+      <UniqueIdentifier>{c8c0ed53-5763-4b61-99b7-2aa6c4221cce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\OffScreenRenderer\OffscreenTriangle">
+      <UniqueIdentifier>{df4cce09-6829-41da-8568-e0962325cd7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\FullscreenTriangle">
+      <UniqueIdentifier>{3285d2d3-9ac9-4b09-b4bc-885fd4913733}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\Vignette">
+      <UniqueIdentifier>{49708c73-3b1a-4356-9623-7e6d5243fcd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\OffScreenRenderer\PostEffect\Vignette">
+      <UniqueIdentifier>{37751160-5f38-46cc-ab72-c6d49befc1e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Objects\GameObject\Model">
+      <UniqueIdentifier>{d4820dc4-dcc1-4be1-849f-f0208786ebdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Objects\GameObject\Model\Mesh">
+      <UniqueIdentifier>{91900867-8a51-438c-b7de-20725fb5688e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Objects\GameObject\Model\Materials">
+      <UniqueIdentifier>{40928629-0c0b-4947-84cd-dd0afdcc9eb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Objects\GameObject\Transform">
+      <UniqueIdentifier>{9d8aa58d-61fe-4f78-807a-dc0514c208b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers\Transition">
+      <UniqueIdentifier>{670c0d40-ee1d-4544-95e2-e629903cd820}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers\Transition\TransitionEffect">
+      <UniqueIdentifier>{54b03d41-2b34-4715-aa3f-d60070531c94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers\Transition\TransitionEffect\Fade">
+      <UniqueIdentifier>{a000645f-c9f8-4748-9d16-15cacd102c37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers\Transition\TransitionEffect\Slide">
+      <UniqueIdentifier>{d1435d44-23bc-485c-b36f-37d4ef080def}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\BaseSystem\DirectXCommon\PSOFactory">
+      <UniqueIdentifier>{e4ebb2ec-6440-411d-a771-08b37296965c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\MyMath\Random">
+      <UniqueIdentifier>{5f6878ac-ebc5-4a09-929f-37da07a49d41}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Game.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Engine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\BaseSystem\Logger\Dump.cpp">
+      <Filter>Engine\BaseSystem\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\BaseSystem\Logger\Logger.cpp">
+      <Filter>Engine\BaseSystem\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\BaseSystem\WinApp\WinApp.cpp">
+      <Filter>Engine\BaseSystem\WinApp</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\BaseSystem\DirectXCommon\DescriptorHeapManager.cpp">
+      <Filter>Engine\BaseSystem\DirectXCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\OffscreenRenderer.cpp">
+      <Filter>Engine\OffScreenRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\FrameTimer\FrameTimer.cpp">
+      <Filter>Engine\FrameTimer</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Grayscale\GrayscalePostEffect.cpp">
+      <Filter>Engine\OffScreenRenderer\PostEffect\Grayscale</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\MyMath\MyFunction.cpp">
+      <Filter>Engine\MyMath</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\MyMath\MyMath.cpp">
+      <Filter>Engine\MyMath</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Sprite\Sprite.cpp">
+      <Filter>Engine\Objects\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Sprite\Transform2D.cpp">
+      <Filter>Engine\Objects\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Light\Light.cpp">
+      <Filter>Engine\Objects\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\GameObject\GameObject.cpp">
+      <Filter>Engine\Objects\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\Texture\Texture.cpp">
+      <Filter>Engine\Managers\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\Texture\TextureManager.cpp">
+      <Filter>Engine\Managers\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\Audio\Audio.cpp">
+      <Filter>Engine\Managers\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\Audio\AudioManager.cpp">
+      <Filter>Engine\Managers\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\Scene\DemoScene.cpp">
+      <Filter>Engine\Managers\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\Scene\SceneManager.cpp">
+      <Filter>Engine\Managers\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\BaseSystem\DirectXCommon\DirectXCommon.cpp">
+      <Filter>Engine\BaseSystem\DirectXCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\Model\ModelManager.cpp">
+      <Filter>Engine\Managers\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\CameraController\Camera.cpp">
+      <Filter>Engine\CameraController\NormalCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Line\GridLine.cpp">
+      <Filter>Engine\Objects\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\ImGui\ImGuiManager.cpp">
+      <Filter>Engine\Managers\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\ImGui\MyImGui.cpp">
+      <Filter>Engine\Managers\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\ObjectID\ObjectIDManager.cpp">
+      <Filter>Engine\Managers\ObjectID</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\DepthFog\DepthFogPostEffect.cpp">
+      <Filter>Engine\OffScreenRenderer\PostEffect\DepthFog</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\PostProcessChain.cpp">
+      <Filter>Engine\OffScreenRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\OffscreenTriangle\OffscreenTriangle.cpp">
+      <Filter>Engine\OffScreenRenderer\OffscreenTriangle</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\DepthOfField\DepthOfFieldPostEffect.cpp">
+      <Filter>Engine\OffScreenRenderer\PostEffect\DepthOfField</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\LineGlitch\LineGlitchPostEffect.cpp">
+      <Filter>Engine\OffScreenRenderer\PostEffect\LineGlitch</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\RGBShift\RGBShiftPostEffect.cpp">
+      <Filter>Engine\OffScreenRenderer\PostEffect\RGBShift</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Vignette\VignettePostEffect.cpp">
+      <Filter>Engine\OffScreenRenderer\PostEffect\Vignette</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\GameObject\Material.cpp">
+      <Filter>Engine\Objects\GameObject\Model\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\GameObject\MaterialGroup.cpp">
+      <Filter>Engine\Objects\GameObject\Model\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\GameObject\Mesh.cpp">
+      <Filter>Engine\Objects\GameObject\Model\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\GameObject\Model.cpp">
+      <Filter>Engine\Objects\GameObject\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\GameObject\Transform3D.cpp">
+      <Filter>Engine\Objects\GameObject\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\Transition\TransitionManager.cpp">
+      <Filter>Engine\Managers\Transition</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\Transition\TransitionEffect\FadeEffect.cpp">
+      <Filter>Engine\Managers\Transition\TransitionEffect\Fade</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\Transition\TransitionEffect\SlideEffect.cpp">
+      <Filter>Engine\Managers\Transition\TransitionEffect\Slide</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\Input\InputManager.cpp">
+      <Filter>Engine\Managers\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\MyMath\TimedCall.cpp">
+      <Filter>Engine\MyMath</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Line\LineRenderer.cpp">
+      <Filter>Engine\Objects\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\BaseSystem\DirectXCommon\PSOFactory\RootSignatureBuilder.cpp">
+      <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\BaseSystem\DirectXCommon\PSOFactory\PSODescriptor.cpp">
+      <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\BaseSystem\DirectXCommon\PSOFactory\PSOFactory.cpp">
+      <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\MyMath\Random\Random.cpp">
+      <Filter>Engine\MyMath\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\CameraController\DebugCamera.cpp">
+      <Filter>Engine\CameraController\DebugCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\CameraController\CameraController.cpp">
+      <Filter>Engine\CameraController</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
+      <Filter>リソース ファイル\Shader\Grayscale</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\Object3d\Object3d.PS.hlsl">
+      <Filter>リソース ファイル\Shader\Object3d</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\Object3d\Object3d.VS.hlsl">
+      <Filter>リソース ファイル\Shader\Object3d</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\Sprite\Sprite.PS.hlsl">
+      <Filter>リソース ファイル\Shader\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\Sprite\Sprite.VS.hlsl">
+      <Filter>リソース ファイル\Shader\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\LineGlitch\LineGlitch.PS.hlsl">
+      <Filter>リソース ファイル\Shader\LineGltich</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\RGBShift\RGBShift.PS.hlsl">
+      <Filter>リソース ファイル\Shader\RGBShift</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\Line\Line.VS.hlsl">
+      <Filter>リソース ファイル\Shader\Line</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\Line\Line.PS.hlsl">
+      <Filter>リソース ファイル\Shader\Line</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
+      <Filter>リソース ファイル\Shader\DepthFog</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\DepthOfField\DepthOfField.PS.hlsl">
+      <Filter>リソース ファイル\Shader\DepthOfField</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\OffscreenTriangle\FullscreenTriangle.PS.hlsl">
+      <Filter>リソース ファイル\Shader\FullscreenTriangle</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\OffscreenTriangle\FullscreenTriangle.VS.hlsl">
+      <Filter>リソース ファイル\Shader\FullscreenTriangle</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\Vignette\Vignette.PS.hlsl">
+      <Filter>リソース ファイル\Shader\Vignette</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Game.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Engine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\BaseSystem\Logger\Dump.h">
+      <Filter>Engine\BaseSystem\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\BaseSystem\Logger\Logger.h">
+      <Filter>Engine\BaseSystem\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\BaseSystem\WinApp\WinApp.h">
+      <Filter>Engine\BaseSystem\WinApp</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\BaseSystem\GraphicsConfig.h">
+      <Filter>Engine\BaseSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\BaseSystem\DirectXCommon\DescriptorHeapManager.h">
+      <Filter>Engine\BaseSystem\DirectXCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\OffscreenRenderer.h">
+      <Filter>Engine\OffScreenRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\PostEffect.h">
+      <Filter>Engine\OffScreenRenderer\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\FrameTimer\FrameTimer.h">
+      <Filter>Engine\FrameTimer</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Grayscale\GrayscalePostEffect.h">
+      <Filter>Engine\OffScreenRenderer\PostEffect\Grayscale</Filter>
+    </ClInclude>
+    <ClInclude Include="LeakChecker.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\MyMath\MyFunction.h">
+      <Filter>Engine\MyMath</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\MyMath\MyMath.h">
+      <Filter>Engine\MyMath</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Sprite\Sprite.h">
+      <Filter>Engine\Objects\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Sprite\Transform2D.h">
+      <Filter>Engine\Objects\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Light\Light.h">
+      <Filter>Engine\Objects\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\GameObject\GameObject.h">
+      <Filter>Engine\Objects\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\Texture\Texture.h">
+      <Filter>Engine\Managers\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\Texture\TextureManager.h">
+      <Filter>Engine\Managers\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\Audio\Audio.h">
+      <Filter>Engine\Managers\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\Audio\AudioManager.h">
+      <Filter>Engine\Managers\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\Scene\BaseScene.h">
+      <Filter>Engine\Managers\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\Scene\DemoScene.h">
+      <Filter>Engine\Managers\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\Scene\SceneManager.h">
+      <Filter>Engine\Managers\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\BaseSystem\DirectXCommon\DirectXCommon.h">
+      <Filter>Engine\BaseSystem\DirectXCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\Model\ModelManager.h">
+      <Filter>Engine\Managers\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CameraController\BaseCamera.h">
+      <Filter>Engine\CameraController</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CameraController\Camera.h">
+      <Filter>Engine\CameraController\NormalCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Line\GridLine.h">
+      <Filter>Engine\Objects\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\ImGui\ImGuiManager.h">
+      <Filter>Engine\Managers\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\ImGui\MyImGui.h">
+      <Filter>Engine\Managers\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\ObjectID\ObjectIDManager.h">
+      <Filter>Engine\Managers\ObjectID</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\DepthFog\DepthFogPostEffect.h">
+      <Filter>Engine\OffScreenRenderer\PostEffect\DepthFog</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostProcessChain.h">
+      <Filter>Engine\OffScreenRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\OffscreenTriangle\OffscreenTriangle.h">
+      <Filter>Engine\OffScreenRenderer\OffscreenTriangle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\DepthOfField\DepthOfFieldPostEffect.h">
+      <Filter>Engine\OffScreenRenderer\PostEffect\DepthOfField</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\LineGlitch\LineGlitchPostEffect.h">
+      <Filter>Engine\OffScreenRenderer\PostEffect\LineGlitch</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\RGBShift\RGBShiftPostEffect.h">
+      <Filter>Engine\OffScreenRenderer\PostEffect\RGBShift</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Vignette\VignettePostEffect.h">
+      <Filter>Engine\OffScreenRenderer\PostEffect\Vignette</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\GameObject\Material.h">
+      <Filter>Engine\Objects\GameObject\Model\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\GameObject\MaterialGroup.h">
+      <Filter>Engine\Objects\GameObject\Model\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\GameObject\Mesh.h">
+      <Filter>Engine\Objects\GameObject\Model\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\GameObject\Model.h">
+      <Filter>Engine\Objects\GameObject\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\GameObject\Transform3D.h">
+      <Filter>Engine\Objects\GameObject\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\Transition\SceneTransitionHelper.h">
+      <Filter>Engine\Managers\Transition</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\Transition\TransitionManager.h">
+      <Filter>Engine\Managers\Transition</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\Transition\TransitionEffect\BaseTransitionEffect.h">
+      <Filter>Engine\Managers\Transition\TransitionEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\Transition\TransitionEffect\FadeEffect.h">
+      <Filter>Engine\Managers\Transition\TransitionEffect\Fade</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\Transition\TransitionEffect\SlideEffect.h">
+      <Filter>Engine\Managers\Transition\TransitionEffect\Slide</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\Input\InputManager.h">
+      <Filter>Engine\Managers\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\MyMath\TimedCall.h">
+      <Filter>Engine\MyMath</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Line\LineRenderer.h">
+      <Filter>Engine\Objects\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\BaseSystem\DirectXCommon\PSOFactory\RootSignatureBuilder.h">
+      <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\BaseSystem\DirectXCommon\PSOFactory\PSODescriptor.h">
+      <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\BaseSystem\DirectXCommon\PSOFactory\PSOFactory.h">
+      <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\MyMath\Random\Random.h">
+      <Filter>Engine\MyMath\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CameraController\DebugCamera.h">
+      <Filter>Engine\CameraController\DebugCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CameraController\CameraController.h">
+      <Filter>Engine\CameraController</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imgui_impl_dx12.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imgui_impl_win32.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imstb_rectpack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imstb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imstb_truetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\Shader\Grayscale\Grayscale.hlsli">
+      <Filter>リソース ファイル\Shader\Grayscale</Filter>
+    </None>
+    <None Include="resources\Shader\Object3d\Object3d.hlsli">
+      <Filter>リソース ファイル\Shader\Object3d</Filter>
+    </None>
+    <None Include="resources\Shader\Sprite\Sprite.hlsli">
+      <Filter>リソース ファイル\Shader\Sprite</Filter>
+    </None>
+    <None Include="resources\Shader\LineGlitch\LineGlitch.hlsli">
+      <Filter>リソース ファイル\Shader\LineGltich</Filter>
+    </None>
+    <None Include="resources\Shader\RGBShift\RGBShift.hlsli">
+      <Filter>リソース ファイル\Shader\RGBShift</Filter>
+    </None>
+    <None Include="resources\Shader\Line\Line.hlsli">
+      <Filter>リソース ファイル\Shader\Line</Filter>
+    </None>
+    <None Include="resources\Shader\DepthFog\DepthFog.hlsli">
+      <Filter>リソース ファイル\Shader\DepthFog</Filter>
+    </None>
+    <None Include="resources\Shader\DepthOfField\DepthOfField.hlsli">
+      <Filter>リソース ファイル\Shader\DepthOfField</Filter>
+    </None>
+    <None Include="resources\Shader\OffscreenTriangle\FullscreenTriangle.hlsli">
+      <Filter>リソース ファイル\Shader\FullscreenTriangle</Filter>
+    </None>
+    <None Include="resources\Shader\Vignette\Vignette.hlsli">
+      <Filter>リソース ファイル\Shader\Vignette</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="externals\imgui\LICENSE.txt">
+      <Filter>imgui</Filter>
+    </Text>
+  </ItemGroup>
+</Project>
