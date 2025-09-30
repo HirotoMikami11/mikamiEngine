@@ -18,7 +18,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Engine* engine = Engine::GetInstance();
 
 	// エンジンの初期化
-	engine->Initialize(L"LE2A_15_ミカミ_ヒロト_GE301_01");
+	engine->Initialize(L"LE2A_15_ミカミ_ヒロト_GE3_01_02");
 
 	//ゲーム
 	Game* game = new Game;
