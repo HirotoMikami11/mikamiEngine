@@ -227,7 +227,7 @@ void DemoScene::DrawBackBuffer() {
 }
 
 void DemoScene::ImGui() {
-#ifdef _DEBUG
+//#ifdef _DEBUG
 
 	// 球体のImGui
 	ImGui::Text("Sphere");
@@ -259,7 +259,7 @@ void DemoScene::ImGui() {
 	directionalLight_.ImGui("DirectionalLight");
 
 
-#endif
+//#endif
 }
 
 void DemoScene::Finalize() {

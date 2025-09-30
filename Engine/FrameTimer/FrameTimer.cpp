@@ -45,7 +45,7 @@ void FrameTimer::BeginFrame() {
 
 void FrameTimer::ImGui()
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
 
 	//FPS関連の情報を描画
 	ImGui::Text("Frame Timer Info");
@@ -59,14 +59,14 @@ void FrameTimer::ImGui()
 	//ImGui::Text("Total Time: %.2f s", totalTime_);
 
 	ImGui::Separator();	//線
-#endif
+//#endif
 }
 
 
 //FPSの状態を色と文字で表示
 void FrameTimer::DrawFPSStats()
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
 
 	// FPS品質表示
 	ImVec4 color;
@@ -89,5 +89,5 @@ void FrameTimer::DrawFPSStats()
 	}
 	ImGui::TextColored(color, "Status: %s", status);
 
-#endif
+//#endif
 }

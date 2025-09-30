@@ -171,7 +171,7 @@ void LineGlitchPostEffect::SetNoiseInterval(float interval) {
 }
 
 void LineGlitchPostEffect::ImGui() {
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	if (ImGui::TreeNode(name_.c_str())) {
 		// エフェクトの状態表示
 		ImGui::Text("Effect Status: %s", isEnabled_ ? "ENABLED" : "DISABLED");
@@ -220,5 +220,5 @@ void LineGlitchPostEffect::ImGui() {
 
 		ImGui::TreePop();
 	}
-#endif
+//#endif
 }

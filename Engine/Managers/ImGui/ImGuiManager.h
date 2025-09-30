@@ -6,7 +6,7 @@
 #include "BaseSystem/WinApp/WinApp.h"
 #include "BaseSystem/DirectXCommon/DirectXCommon.h"
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 
 // ImGui関連のインクルード
 #include "../externals/imgui/imgui.h"
@@ -16,7 +16,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 //imguiの便利関数をまとめたクラス
 #include "Managers/ImGui/MyImGui.h"
 
-#endif
+//#endif
 
 // 前方宣言
 class WinApp;
