@@ -395,20 +395,11 @@
     <FxCompile Include="resources\Shader\DepthOfField\DepthOfField.PS.hlsl">
       <Filter>リソース ファイル\Shader\DepthOfField</Filter>
     </FxCompile>
-    <FxCompile Include="resources\Shader\OffscreenTriangle\FullscreenTriangle.PS.hlsl">
-      <Filter>リソース ファイル\Shader\FullscreenTriangle</Filter>
-    </FxCompile>
-    <FxCompile Include="resources\Shader\OffscreenTriangle\FullscreenTriangle.VS.hlsl">
-      <Filter>リソース ファイル\Shader\FullscreenTriangle</Filter>
-    </FxCompile>
     <FxCompile Include="resources\Shader\Vignette\Vignette.PS.hlsl">
       <Filter>リソース ファイル\Shader\Vignette</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="resource.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Game.h">
       <Filter>Game</Filter>
     </ClInclude>
@@ -635,9 +626,6 @@
     </None>
     <None Include="resources\Shader\DepthOfField\DepthOfField.hlsli">
       <Filter>リソース ファイル\Shader\DepthOfField</Filter>
-    </None>
-    <None Include="resources\Shader\OffscreenTriangle\FullscreenTriangle.hlsli">
-      <Filter>リソース ファイル\Shader\FullscreenTriangle</Filter>
     </None>
     <None Include="resources\Shader\Vignette\Vignette.hlsli">
       <Filter>リソース ファイル\Shader\Vignette</Filter>
