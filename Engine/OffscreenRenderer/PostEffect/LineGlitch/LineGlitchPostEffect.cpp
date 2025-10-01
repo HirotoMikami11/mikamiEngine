@@ -114,7 +114,7 @@ void LineGlitchPostEffect::CreateParameterBuffer() {
 Microsoft::WRL::ComPtr<IDxcBlob> LineGlitchPostEffect::CompileShader(
 	const std::wstring& filePath, const wchar_t* profile) {
 
-	// DirectXCommonのCompileShader関数を使用
+	//DirectXCommonのCompileShader関数を使用
 	return DirectXCommon::CompileShader(
 		filePath,
 		profile,

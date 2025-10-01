@@ -1,5 +1,5 @@
 #include "OffscreenTriangle.h"
-#include "BaseSystem/Logger/Logger.h"
+#include "Logger.h"
 #include <cassert>
 
 void OffscreenTriangle::Initialize(DirectXCommon* dxCommon) {

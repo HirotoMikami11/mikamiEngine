@@ -2,10 +2,10 @@
 #include <string>
 #include <map>
 #include <memory>
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
-#include "Objects/GameObject/Model.h"
+#include "DirectXCommon.h"
+#include "Model.h"
 #include "Managers/Texture/TextureManager.h"
-#include "BaseSystem/Logger/Logger.h"
+#include "Logger.h"
 
 /// <summary>
 /// モデルリソースを管理する

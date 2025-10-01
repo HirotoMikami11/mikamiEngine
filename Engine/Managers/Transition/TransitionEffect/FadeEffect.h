@@ -1,5 +1,5 @@
 #pragma once
-#include "MyMath/MyFunction.h"
+#include "MyFunction.h"
 #include "BaseTransitionEffect.h"
 #include <memory>
 
@@ -15,7 +15,7 @@ public:
 	FadeEffect();
 	~FadeEffect() override;
 
-	void Initialize(DirectXCommon* directXCommon) override;
+	void Initialize(DirectXCommon*directXCommon) override;
 	void Update(float deltaTime) override;
 	void Draw() override;
 	void Start(State state, float duration) override;

@@ -6,7 +6,7 @@ ImGuiManager* ImGuiManager::GetInstance() {
 	return &instance;
 }
 
-void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* directXCommon) {
+void ImGuiManager::Initialize(WinApp* winApp,DirectXCommon*directXCommon) {
 
 //#ifdef _DEBUG
 
@@ -67,7 +67,7 @@ void ImGuiManager::End() {
 
 void ImGuiManager::Draw(ID3D12GraphicsCommandList* commandList) {
 //#ifdef _DEBUG
-	//実際の directXCommon-> GetCommandList()のImGuiの描画コマンドを積む
+	//実際のDirectXCommon-> GetCommandList()のImGuiの描画コマンドを積む
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
 //#endif
 }

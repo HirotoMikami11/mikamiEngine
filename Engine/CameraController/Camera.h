@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseCamera.h"
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
+#include "DirectXCommon.h"
 
 /// <summary>
 /// 通常カメラ(定点から指定方向を見るカメラ)

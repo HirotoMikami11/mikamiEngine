@@ -3,8 +3,8 @@
 #include <d3d12.h>
 #include <wrl.h>
 
-#include "BaseSystem/WinApp/WinApp.h"
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
+#include "WinApp.h"
+#include "DirectXCommon.h"
 
 //#ifdef _DEBUG
 
@@ -39,7 +39,7 @@ public:
 	/// </summary>
 	/// <param name="winApp">ウィンドウアプリケーション</param>
 	/// <param name="directXCommon">DirectX基盤</param>
-	void Initialize(WinApp* winApp, DirectXCommon* directXCommon);
+	void Initialize(WinApp* winApp,DirectXCommon*directXCommon);
 
 	/// <summary>
 	/// 終了処理

@@ -4,9 +4,9 @@
 #include <d3d12.h>
 #include <wrl.h>
 
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
-#include "OffscreenRenderer/PostEffect/PostEffect.h"
-#include "OffscreenRenderer/OffscreenTriangle/OffscreenTriangle.h"
+#include "DirectXCommon.h"
+#include "PostEffect/PostEffect.h"
+#include "OffscreenTriangle/OffscreenTriangle.h"
 
 /// <summary>
 /// ポストプロセスエフェクトチェーン管理クラス

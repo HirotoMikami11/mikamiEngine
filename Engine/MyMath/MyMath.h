@@ -14,7 +14,7 @@
 #include <algorithm>
 
 ///ウィンドウサイズ
-#include"BaseSystem/GraphicsConfig.h"
+#include"GraphicsConfig.h"
 
 ///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//
 

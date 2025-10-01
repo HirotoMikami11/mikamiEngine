@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseTransitionEffect.h"
 #include <memory>
-#include "MyMath/MyFunction.h"
+#include "MyFunction.h"
 
 /// <summary>
 /// スライドトランジションエフェクト
@@ -18,7 +18,7 @@ public:
 	SlideEffect(Direction direction = Direction::Left);
 	~SlideEffect() override;
 
-	void Initialize(DirectXCommon* directXCommon) override;
+	void Initialize(DirectXCommon*directXCommon) override;
 	void Update(float deltaTime) override;
 	void Draw() override;
 	void Start(State state, float duration) override;

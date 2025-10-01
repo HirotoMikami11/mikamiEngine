@@ -3,9 +3,9 @@
 #include <string>
 #include <cassert>
 
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
-#include "BaseSystem/Logger/Logger.h"
-#include "MyMath/MyFunction.h" // CreateBufferResource用
+#include "DirectXCommon.h"
+#include "Logger.h"
+#include "MyFunction.h" // CreateBufferResource用
 
 class DirectXCommon; // 前方宣言
 
@@ -26,7 +26,7 @@ public:
 	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <param name="srvIndex">SRVヒープでのインデックス</param>
 	/// <returns>読み込み成功かどうか</returns>
-	bool LoadTexture(const std::string& filePath, DirectXCommon* dxCommon, uint32_t srvIndex);
+	bool LoadTexture(const std::string& filePath,DirectXCommon* dxCommon, uint32_t srvIndex);
 
 	/// <summary>
 	/// テクスチャを読み込む（ハンドル指定版）
@@ -35,7 +35,7 @@ public:
 	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <param name="descriptorHandle">既に割り当て済みのディスクリプタハンドル</param>
 	/// <returns>読み込み成功かどうか</returns>
-	bool LoadTextureWithHandle(const std::string& filePath, DirectXCommon* dxCommon,
+	bool LoadTextureWithHandle(const std::string& filePath,DirectXCommon* dxCommon,
 		const DescriptorHeapManager::DescriptorHandle& descriptorHandle);
 
 	/// <summary>

@@ -433,7 +433,7 @@
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Grayscale\GrayscalePostEffect.h">
       <Filter>Engine\OffScreenRenderer\PostEffect\Grayscale</Filter>
     </ClInclude>
-    <ClInclude Include="LeakChecker.h">
+    <ClInclude Include="Engine\BaseSystem\Logger\LeakChecker.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\MyMath\MyFunction.h">

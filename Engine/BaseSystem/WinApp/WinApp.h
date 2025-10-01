@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
-#include "BaseSystem/GraphicsConfig.h"
-#include "MyMath/MyFunction.h"
+#include "GraphicsConfig.h"
+#include "MyFunction.h"
 
 class WinApp
 {

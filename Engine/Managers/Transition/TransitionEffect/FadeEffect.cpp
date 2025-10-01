@@ -1,9 +1,9 @@
 #define NOMINMAX
 #include "Engine.h"
-#include "CameraController/CameraController.h"
+#include "CameraController.h"
 #include <algorithm>
 #include "FadeEffect.h"
-#include "Objects/Sprite/Sprite.h"
+#include "Sprite.h"
 
 FadeEffect::FadeEffect()
 	: directXCommon_(nullptr)
@@ -17,7 +17,7 @@ FadeEffect::FadeEffect()
 
 FadeEffect::~FadeEffect() = default;
 
-void FadeEffect::Initialize(DirectXCommon* directXCommon) {
+void FadeEffect::Initialize(DirectXCommon*directXCommon) {
 	directXCommon_ = directXCommon;
 
 	// 画面サイズ取得

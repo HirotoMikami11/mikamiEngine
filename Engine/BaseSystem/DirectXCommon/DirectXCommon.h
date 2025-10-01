@@ -18,15 +18,15 @@
 
 #include <wrl.h>						// Microsoft::WRL::ComPtrを使用するためのインクルード
 
-#include"BaseSystem/WinApp/WinApp.h"
-#include"BaseSystem/Logger/Logger.h"
-#include"BaseSystem/GraphicsConfig.h"	//ウィンドウサイズなど
-#include"BaseSystem/DirectXCommon/DescriptorHeapManager.h"		//ディスクリプタヒープ管理
+#include"WinApp.h"
+#include"Logger.h"
+#include"GraphicsConfig.h"				//ウィンドウサイズなど
+#include"DescriptorHeapManager.h"		//ディスクリプタヒープ管理
 
 ///PSO作成しやすいように作ったやつら
-#include "BaseSystem/DirectXCommon/PSOFactory/PSOFactory.h"
-#include "BaseSystem/DirectXCommon/PSOFactory/PSODescriptor.h"
-#include "BaseSystem/DirectXCommon/PSOFactory/RootSignatureBuilder.h"
+#include"PSOFactory.h"
+#include"PSODescriptor.h"
+#include"RootSignatureBuilder.h"
 
 /// <summary>
 /// DirectX
@@ -179,11 +179,11 @@ private:
 
 
 
-//#ifdef _DEBUG
-	///デバッグレイヤー
+	//#ifdef _DEBUG
+		///デバッグレイヤー
 	Microsoft::WRL::ComPtr<ID3D12Debug1> debugController;
-//#endif
-	//DXGIFactory
+	//#endif
+		//DXGIFactory
 	HRESULT hr;
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory;
 	Microsoft::WRL::ComPtr<IDXGIAdapter4> useAdapter;

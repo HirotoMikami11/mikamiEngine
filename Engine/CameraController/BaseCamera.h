@@ -1,5 +1,5 @@
 #pragma once
-#include "MyMath/MyFunction.h"
+#include "MyFunction.h"
 #include <string>
 
 /// <summary>

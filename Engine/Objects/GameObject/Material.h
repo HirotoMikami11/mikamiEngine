@@ -5,9 +5,9 @@
 #include <vector>
 #include <string>
 
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
-#include "MyMath/MyFunction.h"
-#include "BaseSystem/Logger/Logger.h"
+#include "DirectXCommon.h"
+#include "MyFunction.h"
+#include "Logger.h"
 #include <cassert>
 
 /// <summary>

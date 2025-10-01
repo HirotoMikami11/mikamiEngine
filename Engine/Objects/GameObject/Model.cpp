@@ -1,6 +1,6 @@
 #define NOMINMAX
 #include "Model.h"
-#include "Objects/GameObject/MaterialGroup.h"
+#include "MaterialGroup.h"
 #include <fstream>
 #include <sstream>
 
@@ -92,7 +92,7 @@ void Model::Initialize(DirectXCommon* dxCommon, const MeshType meshType, const s
 	}
 }
 
-bool Model::LoadFromOBJ(const std::string& directoryPath, const std::string& filename, DirectXCommon* dxCommon) {
+bool Model::LoadFromOBJ(const std::string& directoryPath, const std::string& filename,DirectXCommon* dxCommon) {
 	// 既に読み込み済みの場合はスキップ
 	if (IsValid() && filePath_ == directoryPath + "/" + filename) {
 		return true;
@@ -165,7 +165,7 @@ bool Model::LoadFromOBJ(const std::string& directoryPath, const std::string& fil
 	return true;
 }
 
-bool Model::LoadFromPrimitive(MeshType meshType, DirectXCommon* dxCommon) {
+bool Model::LoadFromPrimitive(MeshType meshType,DirectXCommon* dxCommon) {
 	directXCommon_ = dxCommon;
 
 	// プリミティブメッシュを作成

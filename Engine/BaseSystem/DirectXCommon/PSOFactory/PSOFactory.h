@@ -7,7 +7,7 @@
 
 #include "PSODescriptor.h"
 #include "RootSignatureBuilder.h"
-#include "BaseSystem/Logger/Logger.h"
+#include "Logger.h"
 
 /// <summary>
 /// PipelineStateObjectを生成するクラス

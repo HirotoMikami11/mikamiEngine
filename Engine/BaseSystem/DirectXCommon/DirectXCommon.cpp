@@ -337,7 +337,7 @@ void DirectXCommon::MakeDSV()
 	device->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvHandle);
 }
 
-Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateDepthStencilTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height)
+Microsoft::WRL::ComPtr<ID3D12Resource>DirectXCommon::CreateDepthStencilTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height)
 {
 	//生成するResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
@@ -493,7 +493,7 @@ void DirectXCommon::MakeLinePSO() {
 	Logger::Log(Logger::GetStream(), "Complete create Line PSO using PSOFactory!!\n");
 }
 
-Microsoft::WRL::ComPtr<IDxcBlob> DirectXCommon::CompileShader(
+Microsoft::WRL::ComPtr<IDxcBlob>DirectXCommon::CompileShader(
 	const std::wstring& filePath,
 	const wchar_t* profile,
 	Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils,

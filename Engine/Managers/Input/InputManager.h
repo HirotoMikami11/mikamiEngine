@@ -9,8 +9,8 @@
 #include <cmath>
 #pragma comment(lib, "xinput.lib")
 
-#include "BaseSystem/WinApp/WinApp.h"
-#include "BaseSystem/Logger/Logger.h"
+#include "WinApp.h"
+#include "Logger.h"
 
 
 /// <summary>

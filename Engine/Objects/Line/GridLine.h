@@ -3,10 +3,10 @@
 #include <d3d12.h>
 #include <wrl.h>
 
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
-#include "Objects/GameObject/Transform3D.h"
-#include "Objects/Line/LineRenderer.h"  
-#include "MyMath/MyFunction.h"
+#include "DirectXCommon.h"
+#include "Transform3D.h"
+#include "LineRenderer.h"  
+#include "MyFunction.h"
 
 /// <summary>
 /// グリッド平面の種類

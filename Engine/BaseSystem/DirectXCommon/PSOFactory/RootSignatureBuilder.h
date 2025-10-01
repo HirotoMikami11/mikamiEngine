@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 #include <cassert>
-#include "BaseSystem/Logger/Logger.h"
+#include "Logger.h"
 
 /// <summary>
 /// RootSignatureを簡単に構築するためのクラス

@@ -1,7 +1,7 @@
 #include "PSOFactory.h"
 #include <format>
 #include <cassert>
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
+#include "DirectXCommon.h"
 
 void PSOFactory::Initialize(ID3D12Device* device,
 	IDxcUtils* dxcUtils,
@@ -59,14 +59,14 @@ Microsoft::WRL::ComPtr<ID3D12PipelineState> PSOFactory::CreatePSO(
 	}
 
 	// シェーダーをコンパイル
-	auto vertexShaderBlob = DirectXCommon::CompileShader(
+	auto vertexShaderBlob =DirectXCommon::CompileShader(
 		descriptor.GetVertexShader().filePath,
 		descriptor.GetVertexShader().target.c_str(),
 		dxcUtils_,
 		dxcCompiler_,
 		includeHandler_);
 
-	auto pixelShaderBlob = DirectXCommon::CompileShader(
+	auto pixelShaderBlob =DirectXCommon::CompileShader(
 		descriptor.GetPixelShader().filePath,
 		descriptor.GetPixelShader().target.c_str(),
 		dxcUtils_,

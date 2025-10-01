@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <functional>
-#include "MyMath/MyMath.h"
+#include "MyMath.h"
 
 namespace myImGui {
 

@@ -1,8 +1,8 @@
 #include <Windows.h>
 
 #include "LeakChecker.h"	//リークチェッカー
-#include "Engine/Engine.h"	//エンジン
-#include "Game/Game.h"		//ゲーム
+#include "Engine.h"	//エンジン
+#include "Game.h"		//ゲーム
 
 ///*-----------------------------------------------------------------------*///
 //																			//

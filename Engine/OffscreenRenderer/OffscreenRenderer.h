@@ -5,20 +5,20 @@
 #include <wrl.h>
 #include <string>
 
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
-#include "BaseSystem/Logger/Logger.h"
-#include "MyMath/MyFunction.h"
+#include "DirectXCommon.h"
+#include "Logger.h"
+#include "MyFunction.h"
 
-#include "OffscreenRenderer/OffscreenTriangle/OffscreenTriangle.h"				// OffscreenTriangleクラスを使用
-#include "OffscreenRenderer/PostProcessChain.h"	// ポストプロセスチェーン
+#include "OffscreenTriangle/OffscreenTriangle.h"				// OffscreenTriangleクラスを使用
+#include "PostProcessChain.h"	// ポストプロセスチェーン
 
-#include "OffscreenRenderer/PostEffect/RGBShift/RGBShiftPostEffect.h"	// RGBシフトエフェクト
-#include "OffscreenRenderer/PostEffect/LineGlitch/LineGlitchPostEffect.h"	// ラインズラシ
-#include "OffscreenRenderer/PostEffect/Grayscale/GrayscalePostEffect.h"	// グレースケールエフェクト
-#include "OffscreenRenderer/PostEffect/Vignette/VignettePostEffect.h"	// ビネットエフェクト
+#include "PostEffect/RGBShift/RGBShiftPostEffect.h"	// RGBシフトエフェクト
+#include "PostEffect/LineGlitch/LineGlitchPostEffect.h"	// ラインズラシ
+#include "PostEffect/Grayscale/GrayscalePostEffect.h"	// グレースケールエフェクト
+#include "PostEffect/Vignette/VignettePostEffect.h"	// ビネットエフェクト
 
-#include "OffscreenRenderer/PostEffect/DepthOfField/DepthOfFieldPostEffect.h"	// 深度ぼかしエフェクト
-#include "OffscreenRenderer/PostEffect/DepthFog/DepthFogPostEffect.h"	// 深度フォグエフェクト
+#include "PostEffect/DepthOfField/DepthOfFieldPostEffect.h"	// 深度ぼかしエフェクト
+#include "PostEffect/DepthFog/DepthFogPostEffect.h"	// 深度フォグエフェクト
 
 
 /// <summary>
@@ -181,7 +181,7 @@ private:
 	void InitializeOffscreenTriangle();
 
 private:
-	// DirectXCommonへの参照
+	//DirectXCommonへの参照
 	DirectXCommon* dxCommon_ = nullptr;
 
 	// レンダーターゲットのサイズ

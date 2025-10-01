@@ -2,9 +2,9 @@
 
 #include <vector>
 #include <string>
-#include "Objects/GameObject/Material.h"
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
-#include "BaseSystem/Logger/Logger.h"
+#include "Material.h"
+#include "DirectXCommon.h"
+#include "Logger.h"
 
 /// <summary>
 /// 複数のマテリアルをグループとして管理するクラス（Model用）

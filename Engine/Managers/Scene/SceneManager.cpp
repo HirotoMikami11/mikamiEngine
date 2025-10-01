@@ -1,7 +1,7 @@
 #include "SceneManager.h"
 #include <cassert>
 #include "Managers/ImGui/ImGuiManager.h"
-#include "BaseSystem/Logger/Logger.h"
+#include "Logger.h"
 #include "Managers/ObjectID/ObjectIDManager.h"
 
 SceneManager* SceneManager::GetInstance() {

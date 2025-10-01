@@ -1,8 +1,8 @@
 #pragma once
-#include "OffscreenRenderer/PostEffect/PostEffect.h"
-#include "Objects/Sprite/Sprite.h"
-#include "MyMath/MyFunction.h"
-#include "BaseSystem/Logger/Logger.h"
+#include "PostEffect/PostEffect.h"
+#include "Sprite.h"
+#include "MyFunction.h"
+#include "Logger.h"
 
 /// <summary>
 /// ビネットポストエフェクト（OffscreenTriangle使用版）

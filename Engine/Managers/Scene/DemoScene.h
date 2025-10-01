@@ -2,14 +2,14 @@
 #include <memory>
 #include <array>
 
-#include "Objects/Sprite/Sprite.h"
-#include "Objects/Light/Light.h"
-#include "Objects/GameObject/GameObject.h"
-#include "CameraController/CameraController.h"
-#include "Objects/Line/GridLine.h"
+#include "Sprite.h"
+#include "Light.h"
+#include "GameObject.h"
+#include "CameraController.h"
+#include "GridLine.h"
 
 #include "Engine.h"
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
+#include "DirectXCommon.h"
 #include "Managers/Scene/BaseScene.h"
 
 

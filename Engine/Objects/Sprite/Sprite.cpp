@@ -1,4 +1,4 @@
-#include "Objects/Sprite/Sprite.h"
+#include "Sprite.h"
 #include <cassert>
 #include <cstring>
 #include "Managers/ImGui/ImGuiManager.h" 

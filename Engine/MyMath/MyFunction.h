@@ -1,5 +1,5 @@
 #pragma once
-#include "MyMath/MyMath.h"
+#include "MyMath.h"
 ///DirectX12
 #include<d3d12.h>
 #pragma comment(lib,"d3d12.lib")

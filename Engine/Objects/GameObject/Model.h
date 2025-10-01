@@ -4,12 +4,12 @@
 #include <map>
 #include <set>
 
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
-#include "MyMath/MyFunction.h"
-#include "BaseSystem/Logger/Logger.h"
-#include "Objects/GameObject/Mesh.h"
-#include "Objects/GameObject/Material.h"
-#include "Objects/GameObject/MaterialGroup.h"
+#include "DirectXCommon.h"
+#include "MyFunction.h"
+#include "Logger.h"
+#include "Mesh.h"
+#include "Material.h"
+#include "MaterialGroup.h"
 
 //マテリアルの情報をtextureManagerの送るため
 #include "Managers/Texture/TextureManager.h"
@@ -40,7 +40,7 @@ public:
 	/// <param name="filename">ファイル名</param>
 	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <returns>読み込み成功かどうか</returns>
-	bool LoadFromOBJ(const std::string& directoryPath, const std::string& filename, DirectXCommon* dxCommon);
+	bool LoadFromOBJ(const std::string& directoryPath, const std::string& filename,DirectXCommon* dxCommon);
 
 	/// <summary>
 	/// プリミティブメッシュから読み込み
@@ -48,7 +48,7 @@ public:
 	/// <param name="meshType">メッシュタイプ</param>
 	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <returns>読み込み成功かどうか</returns>
-	bool LoadFromPrimitive(MeshType meshType, DirectXCommon* dxCommon);
+	bool LoadFromPrimitive(MeshType meshType,DirectXCommon* dxCommon);
 
 	/// <summary>
 	/// モデルをアンロード
@@ -150,7 +150,7 @@ public:
 	const std::vector<std::string>& GetObjectNames() const { return objectNames_; }
 
 private:
-	// DirectXCommon参照
+	//DirectXCommon参照
 	DirectXCommon* directXCommon_ = nullptr;
 
 	// マテリアルグループ（モデルのマテリアルを全て管理）

@@ -1,7 +1,7 @@
 #pragma once
 #include <random>
 #include <mutex>
-#include "MyMath/MyMath.h"
+#include "MyMath.h"
 
 /// <summary>
 /// 乱数生成クラス（シングルトン）

@@ -1,4 +1,4 @@
-#include "BaseSystem/DirectXCommon/DescriptorHeapManager.h"
+#include"DescriptorHeapManager.h"
 
 void DescriptorHeapManager::Initialize(Microsoft::WRL::ComPtr<ID3D12Device> device) {
 	device_ = device;
@@ -172,7 +172,7 @@ void DescriptorHeapManager::ReleaseSRV(uint32_t index) {
 		Logger::Log(Logger::GetStream(), std::format("Invalid SRV index for release: {}\n", index));
 		return;
 	}
-	
+
 	// 既に解放されている場合は警告を出力
 	if (!srvUsedFlags_[index]) {
 		Logger::Log(Logger::GetStream(), std::format("Warning: SRV index {} is already released\n", index));
@@ -306,7 +306,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeapManager::GetGPUHandle(HeapType type, u
 	assert(type == HeapType::SRV); // GPUハンドルはSRVのみなので違ったらアサ―ト
 
 	assert(IsValidIndex(type, index));
-	
+
 	D3D12_GPU_DESCRIPTOR_HANDLE handle = srvHeap_->GetGPUDescriptorHandleForHeapStart();
 	//先頭からインデックス分だけポインタを進める
 	handle.ptr += (srvDescriptorSize_ * index);
@@ -407,7 +407,7 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DescriptorHeapManager::CreateDescri
 }
 
 std::optional<uint32_t> DescriptorHeapManager::FindAvailableIndex(const std::vector<bool>& usedFlags) const {
-	
+
 	// 空いているインデックスを先頭から走査する
 	for (size_t i = 0; i < usedFlags.size(); ++i) {
 		if (!usedFlags[i]) {

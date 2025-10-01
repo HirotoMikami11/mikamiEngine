@@ -26,7 +26,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	virtual void Initialize(DirectXCommon* directXCommon) = 0;
+	virtual void Initialize(DirectXCommon*directXCommon) = 0;
 
 	/// <summary>
 	/// 更新

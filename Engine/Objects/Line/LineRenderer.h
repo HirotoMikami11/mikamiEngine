@@ -3,8 +3,8 @@
 #include <wrl.h>
 #include <vector>
 #include <memory>
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
-#include "MyMath/MyFunction.h"
+#include "DirectXCommon.h"
+#include "MyFunction.h"
 
 /// <summary>
 /// 線分用の頂点データ構造体
@@ -90,7 +90,7 @@ private:
 	void UpdateMaterialBuffer();
 
 private:
-	// DirectXCommon参照
+	//DirectXCommon参照
 	DirectXCommon* directXCommon_ = nullptr;
 
 	// 線分データ

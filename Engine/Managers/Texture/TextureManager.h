@@ -7,8 +7,8 @@
 #include <cassert>
 #include <algorithm>
 
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
-#include "BaseSystem/Logger/Logger.h"
+#include "DirectXCommon.h"
+#include "Logger.h"
 #include "Managers/Texture/Texture.h"
 
 class DirectXCommon;
@@ -103,7 +103,7 @@ private:
 	TextureManager(const TextureManager&) = delete;
 	TextureManager& operator=(const TextureManager&) = delete;
 
-	// DirectXCommonへのポインタ
+	//DirectXCommonへのポインタ
 	DirectXCommon* dxCommon_ = nullptr;
 
 	// テクスチャの管理用マップ（tagNameからTextureを見つける）

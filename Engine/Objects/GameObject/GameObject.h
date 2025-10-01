@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 #include <memory>
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
-#include "Objects/GameObject/Transform3D.h"
-#include "Objects/Light/Light.h"
+#include "DirectXCommon.h"
+#include "Transform3D.h"
+#include "Light.h"
 #include "Managers/Texture/TextureManager.h"
 #include "Managers/Model/ModelManager.h"
 #include "Managers/ObjectID/ObjectIDManager.h"

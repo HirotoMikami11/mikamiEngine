@@ -3,10 +3,10 @@
 #include<string>
 
 ///BaseSystem
-#include "BaseSystem/Logger/Logger.h"
-#include "BaseSystem/WinApp/WinApp.h"
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
-#include "BaseSystem/Logger/Dump.h"
+#include "Logger.h"
+#include "WinApp.h"
+#include "DirectXCommon.h"
+#include "Dump.h"
 
 ///Managers
 #include "Managers/Audio/AudioManager.h"
@@ -14,14 +14,14 @@
 #include "Managers/Model/ModelManager.h"
 #include "Managers/Input/inputManager.h"
 #include "Managers/ImGui/ImGuiManager.h" 
-#include "FrameTimer/FrameTimer.h"
-#include "OffscreenRenderer/OffscreenRenderer.h"
+#include "FrameTimer.h"
+#include "OffscreenRenderer.h"
 
 ///Objects
-#include "CameraController/CameraController.h"
-#include "Objects/GameObject/GameObject.h"
-#include "Objects/Sprite/Sprite.h"
-#include "Objects/Light/Light.h"
+#include "CameraController.h"
+#include "GameObject.h"
+#include "Sprite.h"
+#include "Light.h"
 
 class Engine {
 public:

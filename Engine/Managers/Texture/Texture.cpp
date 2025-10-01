@@ -1,6 +1,6 @@
 #include "Texture.h"
 
-bool Texture::LoadTexture(const std::string& filePath, DirectXCommon* dxCommon, uint32_t srvIndex) {
+bool Texture::LoadTexture(const std::string& filePath,DirectXCommon* dxCommon, uint32_t srvIndex) {
 	// 既に読み込み済みの場合はスキップ
 	if (IsValid() && filePath_ == filePath) {
 		return true;
@@ -58,7 +58,7 @@ bool Texture::LoadTexture(const std::string& filePath, DirectXCommon* dxCommon, 
 	return true;
 }
 
-bool Texture::LoadTextureWithHandle(const std::string& filePath, DirectXCommon* dxCommon,
+bool Texture::LoadTextureWithHandle(const std::string& filePath,DirectXCommon* dxCommon,
 	const DescriptorHeapManager::DescriptorHandle& descriptorHandle) {
 	// 既に読み込み済みの場合はスキップ
 	if (IsValid() && filePath_ == filePath) {

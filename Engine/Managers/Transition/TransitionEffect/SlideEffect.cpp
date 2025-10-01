@@ -2,9 +2,9 @@
 #include "SlideEffect.h"
 #include <algorithm>
 
-#include "Objects/Sprite/Sprite.h"
+#include "Sprite.h"
 #include "Engine.h"
-#include "CameraController/CameraController.h"
+#include "CameraController.h"
 
 
 SlideEffect::SlideEffect(Direction direction)

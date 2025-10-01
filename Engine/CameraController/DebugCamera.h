@@ -5,7 +5,7 @@
 #include <algorithm>
 
 #include "BaseCamera.h"
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
+#include "DirectXCommon.h"
 #include "Managers/Input/inputManager.h"
 
 /// <summary>

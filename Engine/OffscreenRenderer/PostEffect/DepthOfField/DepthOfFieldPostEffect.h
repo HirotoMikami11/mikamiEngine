@@ -1,7 +1,7 @@
 #pragma once
-#include "OffscreenRenderer/PostEffect/PostEffect.h"
-#include "MyMath/MyFunction.h"
-#include "BaseSystem/Logger/Logger.h"
+#include "PostEffect/PostEffect.h"
+#include "MyFunction.h"
+#include "Logger.h"
 
 /// <summary>
 /// 深度被写界深度ポストエフェクト（OffscreenTriangle使用版）

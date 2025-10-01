@@ -1,4 +1,4 @@
-#include "BaseSystem/Logger/Logger.h"
+#include "Logger.h"
 #include <Windows.h>
 #include <strsafe.h>
 

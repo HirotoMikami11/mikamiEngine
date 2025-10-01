@@ -2,8 +2,8 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include <string>
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
-#include "OffscreenRenderer/OffscreenTriangle/OffscreenTriangle.h"
+#include "DirectXCommon.h"
+#include "OffscreenTriangle/OffscreenTriangle.h"
 
 /// <summary>
 /// ポストエフェクトの基底クラス

@@ -3,9 +3,9 @@
 #include <wrl.h>
 #include <cassert>
 
-#include "BaseSystem/DirectXCommon/DirectXCommon.h"
-#include "MyMath/MyFunction.h"
-#include "BaseSystem/Logger/Logger.h"
+#include "DirectXCommon.h"
+#include "MyFunction.h"
+#include "Logger.h"
 
 class Transform3D final
 {

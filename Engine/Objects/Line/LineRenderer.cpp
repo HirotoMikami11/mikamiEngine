@@ -1,6 +1,6 @@
 #include "LineRenderer.h"
 #include "Managers/ImGui/ImGuiManager.h"
-#include "BaseSystem/Logger/Logger.h"
+#include "Logger.h"
 #include <algorithm>
 
 void LineRenderer::Initialize(DirectXCommon* dxCommon) {
