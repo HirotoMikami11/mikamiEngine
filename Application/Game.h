@@ -1,13 +1,12 @@
 #pragma once
-#include <memory>
-
-#include "Managers/Scene/SceneManager.h"
-#include "Managers/Transition/TransitionManager.h"
 /// 				Scene							///
+#include "Managers/Scene/SceneManager.h"
 //最初から用意されているシーン
 #include "Managers/Scene/DemoScene.h"
+#include "DebugScene.h"
 
 /// 				Transitions							///
+#include "Managers/Transition/TransitionManager.h"
 #include "Managers/Transition/SceneTransitionHelper.h"
 #include "Managers/Transition/TransitionEffect/SlideEffect.h"
 

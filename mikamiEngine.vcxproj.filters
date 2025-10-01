@@ -28,9 +28,6 @@
     <Filter Include="リソース ファイル\Shader\Grayscale">
       <UniqueIdentifier>{199393d8-3b85-4dd1-bd73-032f83314bd8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game">
-      <UniqueIdentifier>{feec44c0-5ba6-4e64-9ba3-5db0d0ca8d0f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="リソース ファイル\Shader\RGBShift">
       <UniqueIdentifier>{869937fb-cbe3-4a2d-85c9-d01611d182d2}</UniqueIdentifier>
     </Filter>
@@ -178,13 +175,19 @@
     <Filter Include="Engine\MyMath\Random">
       <UniqueIdentifier>{5f6878ac-ebc5-4a09-929f-37da07a49d41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Application">
+      <UniqueIdentifier>{feec44c0-5ba6-4e64-9ba3-5db0d0ca8d0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Scene">
+      <UniqueIdentifier>{1a98cd13-8ade-4ea0-bbc6-aef34b53af74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Game.cpp">
-      <Filter>Game</Filter>
+    <ClCompile Include="Application\Game.cpp">
+      <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Engine.cpp">
       <Filter>Engine</Filter>
@@ -360,6 +363,9 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Scene\DebugScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -400,8 +406,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game\Game.h">
-      <Filter>Game</Filter>
+    <ClInclude Include="Application\Game.h">
+      <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Engine.h">
       <Filter>Engine</Filter>
@@ -600,6 +606,9 @@
     </ClInclude>
     <ClInclude Include="externals\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\DebugScene.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

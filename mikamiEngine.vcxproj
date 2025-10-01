@@ -114,7 +114,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Engine;$(ProjectDir)Game;$(ProjectDir)Engine\BaseSystem;$(ProjectDir)Engine\BaseSystem\DirectXCommon;$(ProjectDir)Engine\BaseSystem\Logger;$(ProjectDir)Engine\BaseSystem\WinApp;$(ProjectDir)Engine\BaseSystem\DirectXCommon\PSOFactory;$(ProjectDir)Engine\CameraController;$(ProjectDir)Engine\FrameTimer;$(ProjectDir)Engine\Managers;$(ProjectDir)Engine\MyMath;$(ProjectDir)Engine\Objects\GameObject;$(ProjectDir)Engine\Objects\Light;$(ProjectDir)Engine\Objects\Line;$(ProjectDir)Engine\Objects\Sprite;$(ProjectDir)Engine\OffscreenRenderer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Engine;$(ProjectDir)Application;$(ProjectDir)Engine\BaseSystem;$(ProjectDir)Engine\BaseSystem\DirectXCommon;$(ProjectDir)Engine\BaseSystem\Logger;$(ProjectDir)Engine\BaseSystem\WinApp;$(ProjectDir)Engine\BaseSystem\DirectXCommon\PSOFactory;$(ProjectDir)Engine\CameraController;$(ProjectDir)Engine\FrameTimer;$(ProjectDir)Engine\Managers;$(ProjectDir)Engine\MyMath;$(ProjectDir)Engine\Objects\GameObject;$(ProjectDir)Engine\Objects\Light;$(ProjectDir)Engine\Objects\Line;$(ProjectDir)Engine\Objects\Sprite;$(ProjectDir)Engine\OffscreenRenderer;$(ProjectDir)Application\Scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
@@ -127,6 +127,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application\Scene\DebugScene.cpp" />
     <ClCompile Include="Engine\BaseSystem\DirectXCommon\DescriptorHeapManager.cpp" />
     <ClCompile Include="Engine\BaseSystem\DirectXCommon\DirectXCommon.cpp" />
     <ClCompile Include="Engine\BaseSystem\DirectXCommon\PSOFactory\PSODescriptor.cpp" />
@@ -185,7 +186,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Game\Game.cpp" />
+    <ClCompile Include="Application\Game.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -254,6 +255,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application\Scene\DebugScene.h" />
     <ClInclude Include="Engine\BaseSystem\DirectXCommon\DescriptorHeapManager.h" />
     <ClInclude Include="Engine\BaseSystem\DirectXCommon\DirectXCommon.h" />
     <ClInclude Include="Engine\BaseSystem\DirectXCommon\PSOFactory\PSODescriptor.h" />
@@ -319,7 +321,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
-    <ClInclude Include="Game\Game.h" />
+    <ClInclude Include="Application\Game.h" />
     <ClInclude Include="Engine\BaseSystem\Logger\LeakChecker.h" />
   </ItemGroup>
   <ItemGroup>

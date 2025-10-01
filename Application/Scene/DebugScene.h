@@ -1,25 +1,23 @@
 #pragma once
 #include <memory>
-#include <array>
 
-#include "Sprite.h"
-#include "Light.h"
 #include "GameObject.h"
-#include "CameraController.h"
+#include "Light.h"
 #include "GridLine.h"
+#include "CameraController.h"
+
 #include "Engine.h"
 #include "DirectXCommon.h"
 #include "Managers/Scene/BaseScene.h"
 
-
 /// <summary>
-/// 絶対動くシーン(作り変えたりしない)
-/// デバッグ用に使用するシーンはDebugSceneなのでこのシーンは基本的に動かさない
+/// デバッグ用シーン
+/// このシーンで様々な機能を試す
 /// </summary>
-class DemoScene : public BaseScene {
+class DebugScene : public BaseScene {
 public:
-	DemoScene();
-	~DemoScene() override;
+	DebugScene();
+	~DebugScene() override;
 
 	/// <summary>
 	/// リソース読み込み（1回のみ実行）
@@ -58,13 +56,7 @@ private:
 	void UpdateGameObjects();
 
 	// ゲームオブジェクト
-	std::unique_ptr<Sphere> sphere_;
 	std::unique_ptr<Plane> plane_;
-
-	std::unique_ptr<Model3D> modelMultiMesh_;
-	std::unique_ptr<Model3D> modelMultiMaterial_;
-
-	std::unique_ptr<Sprite> sprite_;
 	std::unique_ptr<GridLine> gridLine_;
 
 	// ライティング
@@ -73,13 +65,11 @@ private:
 	// カメラ
 	CameraController* cameraController_;
 	Matrix4x4 viewProjectionMatrix;
-	Matrix4x4 viewProjectionMatrixSprite;
 
 	// システム参照
 	DirectXCommon* directXCommon_;
 	OffscreenRenderer* offscreenRenderer_;
 
 	// リソース管理
-	ModelManager* modelManager_;
 	TextureManager* textureManager_;
 };

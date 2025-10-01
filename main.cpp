@@ -1,8 +1,8 @@
 #include <Windows.h>
 
 #include "LeakChecker.h"	//リークチェッカー
-#include "Engine.h"	//エンジン
-#include "Game.h"		//ゲーム
+#include "Engine.h"			//エンジン
+#include "Game.h"			//ゲーム
 
 ///*-----------------------------------------------------------------------*///
 //																			//
@@ -18,7 +18,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Engine* engine = Engine::GetInstance();
 
 	// エンジンの初期化
-	engine->Initialize(L"LE2A_15_ミカミ_ヒロト_GE3_01_02");
+	engine->Initialize(L"LE2A_15_ミカミ_ヒロト_GE3_01_03");
 
 	//ゲーム
 	Game* game = new Game;

@@ -28,7 +28,7 @@ void DemoScene::LoadResources() {
 	// モデルを事前読み込み
 	//modelManager_->LoadModel("resources/Model/Plane", "plane.obj", "model_Plane");
 
-	////バニー
+	//バニー
 	//modelManager_->LoadModel("resources/Model/Bunny", "bunny.obj", "model_Bunny");
 	////ティーポット
 	//modelManager_->LoadModel("resources/Model/Teapot", "teapot.obj", "model_Teapot");

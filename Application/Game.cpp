@@ -1,7 +1,6 @@
 #include "Game.h"
 
 
-
 Game::Game() :
 	textureManager_(nullptr),
 	modelManager_(nullptr),
@@ -36,9 +35,8 @@ void Game::InitializeScenes() {
 	auto demoScene = std::make_unique<DemoScene>();
 	sceneManager_->RegisterScene("DemoScene", std::move(demoScene));
 
-	 //将来的に追加するシーン
-	 //auto debugScene = std::make_unique<DebugScene>();
-	 //sceneManager_->RegisterScene("DebugScene", std::move(debugScene));
+	 auto debugScene = std::make_unique<DebugScene>();
+	 sceneManager_->RegisterScene("DebugScene", std::move(debugScene));
 
 	// (初期化時に一度だけ)既に登録されているシーンのリソースを読み込み
 	sceneManager_->LoadAllSceneResources();
