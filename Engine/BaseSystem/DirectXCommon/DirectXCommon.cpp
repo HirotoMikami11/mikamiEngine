@@ -131,7 +131,7 @@ void DirectXCommon::MakeDebugLayer()
 {
 
 
-//#ifdef _DEBUG
+#ifdef USEIMGUI
 	///DirectX12初期化前に行う必要があるため、ウィンドウを作った後すぐの位置
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
 		//デバッグレイヤーを有効化する
@@ -140,7 +140,7 @@ void DirectXCommon::MakeDebugLayer()
 		debugController->SetEnableGPUBasedValidation(TRUE);
 	}
 
-//#endif
+#endif
 
 }
 
@@ -218,7 +218,7 @@ D3D_FEATURE_LEVEL_12_2,D3D_FEATURE_LEVEL_12_1,D3D_FEATURE_LEVEL_12_0
 
 	///	DirectX12のエラー・警告が出た時止まるようにする
 
-//#ifdef _DEBUG	//デバッグ時
+#ifdef USEIMGUI	//デバッグ時
 	Microsoft::WRL::ComPtr <ID3D12InfoQueue> infoQueue = nullptr;
 	if (SUCCEEDED(device->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
 		// ヤバイエラー時に止まる
@@ -246,7 +246,7 @@ D3D_FEATURE_LEVEL_12_2,D3D_FEATURE_LEVEL_12_1,D3D_FEATURE_LEVEL_12_0
 		infoQueue->PushStorageFilter(&filter);
 
 	}
-//#endif
+#endif
 }
 
 ///*-----------------------------------------------------------------------*///

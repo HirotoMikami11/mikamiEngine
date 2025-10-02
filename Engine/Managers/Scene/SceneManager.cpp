@@ -170,7 +170,7 @@ void SceneManager::ProcessSceneChange() {
 }
 
 void SceneManager::ImGui() {
-//#ifdef _DEBUG
+#ifdef USEIMGUI
 	ImGui::Begin("Scene");
 
 	// シーン管理UI
@@ -182,11 +182,11 @@ void SceneManager::ImGui() {
 	DrawCurrentSceneUI();
 
 	ImGui::End();
-//#endif
+#endif
 }
 
 void SceneManager::DrawScenesUI() {
-//#ifdef _DEBUG
+#ifdef USEIMGUI
 	ImGui::Text("Scene Management");
 
 	ImGui::Spacing();
@@ -246,11 +246,11 @@ void SceneManager::DrawScenesUI() {
 		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Next Scene: %s", nextSceneName_.c_str());
 		ImGui::Text("(Will change next frame)");
 	}
-//#endif
+#endif
 }
 
 void SceneManager::DrawCurrentSceneUI() {
-//#ifdef _DEBUG
+#ifdef USEIMGUI
 	if (ImGui::CollapsingHeader("Current Scene Debug")) {
 		if (currentScene_) {
 			ImGui::TextColored(ImVec4(0, 1, 0, 1), "Scene: %s", currentSceneName_.c_str());
@@ -262,5 +262,5 @@ void SceneManager::DrawCurrentSceneUI() {
 			ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1), "No active scene");
 		}
 	}
-//#endif
+#endif
 }

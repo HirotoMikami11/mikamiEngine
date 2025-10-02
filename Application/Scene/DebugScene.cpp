@@ -132,7 +132,7 @@ void DebugScene::DrawBackBuffer() {
 }
 
 void DebugScene::ImGui() {
-//#ifdef _DEBUG
+#ifdef USEIMGUI
 
 	ImGui::Text("Debug Scene");
 	ImGui::Separator();
@@ -150,7 +150,7 @@ void DebugScene::ImGui() {
 	ImGui::Text("Lighting");
 	directionalLight_.ImGui("DirectionalLight");
 
-//#endif
+#endif
 }
 
 void DebugScene::Finalize() {

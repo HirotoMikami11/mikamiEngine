@@ -179,10 +179,10 @@ private:
 
 
 
-	//#ifdef _DEBUG
+	#ifdef USEIMGUI
 		///デバッグレイヤー
 	Microsoft::WRL::ComPtr<ID3D12Debug1> debugController;
-	//#endif
+	#endif
 		//DXGIFactory
 	HRESULT hr;
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory;

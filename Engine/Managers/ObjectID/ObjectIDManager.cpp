@@ -43,7 +43,7 @@ void ObjectIDManager::ResetAllCounters() {
 }
 
 void ObjectIDManager::ImGui() {
-//#ifdef _DEBUG
+#ifdef USEIMGUI
 	if (ImGui::TreeNode("Object ID Manager")) {
 		ImGui::Text("Object Type Counters:");
 		ImGui::Separator();
@@ -59,7 +59,7 @@ void ObjectIDManager::ImGui() {
 
 		ImGui::TreePop();
 	}
-//#endif
+#endif
 }
 
 void ObjectIDManager::RegisterType(const std::string& typeName) {
