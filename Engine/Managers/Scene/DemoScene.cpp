@@ -227,7 +227,8 @@ void DemoScene::DrawBackBuffer() {
 }
 
 void DemoScene::ImGui() {
-#ifdef USEIMGUI
+
+#ifdef USEIMGUI	//debug,development時にのみ有効なマクロ
 
 	// 球体のImGui
 	ImGui::Text("Sphere");
