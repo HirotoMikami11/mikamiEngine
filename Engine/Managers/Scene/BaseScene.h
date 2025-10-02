@@ -68,6 +68,6 @@ protected:
 	std::string sceneName_;
 
 private:
-	bool resourcesLoaded_ = false;  // リソース読み込み済みフラグ（保持される）
-	bool initialized_ = false;      // オブジェクト初期化済みフラグ（切り替え時リセット）
+	bool resourcesLoaded_ = false;	// リソース読み込み済みフラグ（保持される）
+	bool initialized_ = false;		// オブジェクト初期化済みフラグ（切り替え時リセット）
 };

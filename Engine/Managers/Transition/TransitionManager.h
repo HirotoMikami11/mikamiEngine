@@ -15,11 +15,11 @@ public:
 	/// トランジション状態
 	/// </summary>
 	enum class TransitionState {
-		None,           // 非アクティブ
-		EnterEffect,    // エフェクト開始中
-		Transition,     // 遷移処理
-		ExitEffect,     // エフェクト終了中
-		Completed       // 完了
+		None,			// 非アクティブ
+		EnterEffect,	// エフェクト開始中
+		Transition,		// 遷移処理
+		ExitEffect,		// エフェクト終了中
+		Completed		// 完了
 	};
 
 	// トランジション完了時のコールバック
