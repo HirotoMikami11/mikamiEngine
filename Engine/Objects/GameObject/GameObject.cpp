@@ -55,41 +55,24 @@ void GameObject::Update(const Matrix4x4& viewProjectionMatrix) {
 		sharedModel_->UpdateMaterials();
 	}
 }
-
 void GameObject::Draw(const Light& directionalLight) {
-	// 非表示、アクティブでない場合、または共有モデルがない場合は描画しない
 	if (!isVisible_ || !isActive_ || !sharedModel_ || !sharedModel_->IsValid()) {
 		return;
 	}
 
 	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
-	// 一時的にパーティクル専用のPSOを設定
+
+	// パーティクル専用のPSOを設定
 	commandList->SetGraphicsRootSignature(directXCommon_->GetParticleRootSignature());
 	commandList->SetPipelineState(directXCommon_->GetParticlePipelineState());
 
-	// ライトを設定
-	commandList->SetGraphicsRootConstantBufferView(3, directionalLight.GetResource()->GetGPUVirtualAddress());
-
-	// トランスフォームを設定（全メッシュ共通）
-	//commandList->SetGraphicsRootConstantBufferView(1, transform_.GetResource()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(0, transform_.GetSRV().gpuHandle);
-
-	// 全メッシュを描画（マルチマテリアル対応）
+	// 全メッシュを描画
 	const auto& meshes = sharedModel_->GetMeshes();
 	for (size_t i = 0; i < meshes.size(); ++i) {
 		const Mesh& mesh = meshes[i];
-
-		// このメッシュが使用するマテリアルインデックスを取得
 		size_t materialIndex = sharedModel_->GetMeshMaterialIndex(i);
 
-		// 範囲チェック（安全のため）
-		size_t maxMaterialIndex = hasIndividualMaterials_ ?
-			individualMaterials_.GetMaterialCount() : sharedModel_->GetMaterialCount();
-		if (materialIndex >= maxMaterialIndex) {
-			materialIndex = 0; // フォールバック
-		}
-
-		// マテリアルを設定（個別マテリアルがあれば優先使用）
+		// ★修正: パラメータ0にMaterial CBVを設定
 		if (hasIndividualMaterials_) {
 			commandList->SetGraphicsRootConstantBufferView(0,
 				individualMaterials_.GetMaterial(materialIndex).GetResource()->GetGPUVirtualAddress());
@@ -98,19 +81,23 @@ void GameObject::Draw(const Light& directionalLight) {
 				sharedModel_->GetMaterial(materialIndex).GetResource()->GetGPUVirtualAddress());
 		}
 
-		// テクスチャの設定
+		// ★修正: パラメータ1にTransform SRV Tableを設定
+		commandList->SetGraphicsRootDescriptorTable(1, transform_.GetSRV().gpuHandle);
+
+		// ★修正: パラメータ2にTexture SRV Tableを設定
 		if (!textureName_.empty()) {
-			// カスタムテクスチャが設定されている場合
 			commandList->SetGraphicsRootDescriptorTable(2, textureManager_->GetTextureHandle(textureName_));
 		} else if (sharedModel_->HasTexture(materialIndex)) {
-			// モデル付属のテクスチャがある場合
 			commandList->SetGraphicsRootDescriptorTable(2,
 				textureManager_->GetTextureHandle(sharedModel_->GetTextureTagName(materialIndex)));
 		}
 
+		// ★修正: パラメータ3にLight CBVを設定
+		commandList->SetGraphicsRootConstantBufferView(3, directionalLight.GetResource()->GetGPUVirtualAddress());
+
 		// メッシュをバインドして描画
 		const_cast<Mesh&>(mesh).Bind(commandList);
-		const_cast<Mesh&>(mesh).Draw(commandList,10);
+		const_cast<Mesh&>(mesh).Draw(commandList, 10);
 	}
 }
 

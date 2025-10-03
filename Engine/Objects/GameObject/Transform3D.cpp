@@ -11,23 +11,27 @@ void Transform3D::Initialize(DirectXCommon* dxCommon)
 
 	// デフォルト設定で初期化
 	SetDefaultTransform();
+	MakeStructuredBufferSRV(dxCommon);
 }
-
 void Transform3D::UpdateMatrix(const Matrix4x4& viewProjectionMatrix)
 {
 	for (size_t index = 0; index < kNumInstance; ++index)
 	{
+		// ★修正: 配列として正しくアクセス
+		transformData_[index].World = MakeAffineMatrix(
+			transform_[index].scale, 
+			transform_[index].rotate, 
+			transform_[index].translate);
 
-		// トランスフォームデータを更新（ローカル→ワールド変換行列）
-		transformData_->World = MakeAffineMatrix(transform_[index].scale, transform_[index].rotate, transform_[index].translate);
-
-		// 親があれば親のワールド行列を掛ける
 		if (parent_) {
-			transformData_->World = Matrix4x4Multiply(transformData_->World, parent_->GetWorldMatrix());
+			transformData_[index].World = Matrix4x4Multiply(
+				transformData_[index].World, 
+				parent_->GetWorldMatrix());
 		}
 
-		// ビュープロジェクション行列を掛け算してWVP行列を計算
-		transformData_->WVP = Matrix4x4Multiply(transformData_->World, viewProjectionMatrix);
+		transformData_[index].WVP = Matrix4x4Multiply(
+			transformData_[index].World, 
+			viewProjectionMatrix);
 	}
 }
 
@@ -64,7 +68,7 @@ void Transform3D::SetDefaultTransform() {
 		transformData_->WVP = MakeIdentity4x4();
 		transform_[index].scale = { 1.0f, 1.0f, 1.0f };
 		transform_[index].rotate = { 0.0f, 0.0f, 0.0f };
-		transform_[index].translate = { index * 0.1f, 0.0f, 0.0f };
+		transform_[index].translate = { index * 0.1f, index * -0.1f, index * 0.1f };
 
 	}
 
