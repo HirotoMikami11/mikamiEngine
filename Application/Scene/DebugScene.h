@@ -58,6 +58,8 @@ private:
 	// ゲームオブジェクト
 	std::unique_ptr<Plane> plane_;
 	std::unique_ptr<GridLine> gridLine_;
+	// フェンス
+	std::unique_ptr<Model3D> fence_;
 
 	// ライティング
 	Light directionalLight_;
@@ -71,5 +73,6 @@ private:
 	OffscreenRenderer* offscreenRenderer_;
 
 	// リソース管理
+	ModelManager* modelManager_;
 	TextureManager* textureManager_;
 };
