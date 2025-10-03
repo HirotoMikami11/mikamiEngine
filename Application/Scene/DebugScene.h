@@ -59,7 +59,7 @@ private:
 	std::unique_ptr<Plane> plane_;
 	std::unique_ptr<GridLine> gridLine_;
 	// フェンス
-	std::unique_ptr<Model3D> fence_;
+	//std::unique_ptr<Model3D> fence_;
 
 	// ライティング
 	Light directionalLight_;

@@ -67,29 +67,29 @@ void DebugScene::InitializeGameObjects() {
 	///*-----------------------------------------------------------------------*///
 	///									平面									///
 	///*-----------------------------------------------------------------------*///
-	Vector3Transform transformPlane{
-		{1.0f, 1.0f, 1.0f},
-		{0.0f, 0.0f, 0.0f},
-		{0.0f, 0.0f, 0.0f}
-	};
+	//Vector3Transform transformPlane{
+	//	{1.0f, 1.0f, 1.0f},
+	//	{0.0f, 0.0f, 0.0f},
+	//	{0.0f, 0.0f, 0.0f}
+	//};
 
 	plane_ = std::make_unique<Plane>();
 	plane_->Initialize(directXCommon_, "plane", "uvChecker");
-	plane_->SetTransform(transformPlane);
+	//plane_->SetTransform(transformPlane);
 	///*-----------------------------------------------------------------------*///
 	///								フェンス									///
 	///*-----------------------------------------------------------------------*///
 
-	// フェンス（180度回転）
-	Vector3Transform transformFence{
-		{1.0f, 1.0f, 1.0f},						// スケール
-		{0.0f, std::numbers::pi_v<float>, 0.0f},	// Y軸回転180度
-		{0.0f, 0.0f, 0.0f}						// 位置（原点）
-	};
+	//// フェンス（180度回転）
+	//Vector3Transform transformFence{
+	//	{1.0f, 1.0f, 1.0f},						// スケール
+	//	{0.0f, std::numbers::pi_v<float>, 0.0f},	// Y軸回転180度
+	//	{0.0f, 0.0f, 0.0f}						// 位置（原点）
+	//};
 
-	fence_ = std::make_unique<Model3D>();
-	fence_->Initialize(directXCommon_, "model_Fence");
-	fence_->SetTransform(transformFence);
+	//fence_ = std::make_unique<Model3D>();
+	//fence_->Initialize(directXCommon_, "model_Fence");
+	//fence_->SetTransform(transformFence);
 
 	///*-----------------------------------------------------------------------*///
 	///								グリッド線									///
@@ -128,8 +128,8 @@ void DebugScene::UpdateGameObjects() {
 
 	// 平面の更新
 	plane_->Update(viewProjectionMatrix);
-	// フェンスの更新
-	fence_->Update(viewProjectionMatrix);
+	//// フェンスの更新
+	//fence_->Update(viewProjectionMatrix);
 
 	// グリッド線更新
 	gridLine_->Update(viewProjectionMatrix);
@@ -142,8 +142,8 @@ void DebugScene::DrawOffscreen() {
 	// 3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	// 平面の描画
 	plane_->Draw(directionalLight_);
-	// フェンスの描画
-	fence_->Draw(directionalLight_);
+	//// フェンスの描画
+	//fence_->Draw(directionalLight_);
 }
 
 void DebugScene::DrawBackBuffer() {
@@ -165,10 +165,10 @@ void DebugScene::ImGui() {
 	ImGui::Text("Grid Line");
 	gridLine_->ImGui();
 
-	ImGui::Spacing();
-	// フェンスのImGui
-	ImGui::Text("Fence (180° Rotated)");
-	fence_->ImGui();
+	//ImGui::Spacing();
+	//// フェンスのImGui
+	//ImGui::Text("Fence (180° Rotated)");
+	//fence_->ImGui();
 
 	ImGui::Spacing();
 	// ライトのImGui

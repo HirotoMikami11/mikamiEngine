@@ -518,8 +518,8 @@ void DirectXCommon::MakeParticlePSO()
 		assert(false);
 	}
 
-	rootSignature = psoInfo.rootSignature;
-	graphicsPipelineState = psoInfo.pipelineState;
+	particleRootSignature = psoInfo.rootSignature;
+	particlePipelineState = psoInfo.pipelineState;
 
 	Logger::Log(Logger::GetStream(), "Complete create 3D PSO using PSOFactory!!\n");
 

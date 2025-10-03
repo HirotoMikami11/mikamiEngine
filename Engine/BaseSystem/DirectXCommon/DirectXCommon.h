@@ -83,6 +83,8 @@ public:
 	ID3D12PipelineState* GetSpritePipelineState() const { return spritePipelineState.Get(); }
 	ID3D12RootSignature* GetLineRootSignature() const { return lineRootSignature.Get(); }
 	ID3D12PipelineState* GetLinePipelineState() const { return linePipelineState.Get(); }
+	ID3D12RootSignature* GetParticleRootSignature() const { return particleRootSignature.Get(); }
+	ID3D12PipelineState* GetParticlePipelineState() const { return particlePipelineState.Get(); }
 
 	///参照で返すゲッター？
 	const Microsoft::WRL::ComPtr<ID3D12Device>& GetDeviceComPtr() const { return device; }
@@ -238,6 +240,9 @@ private:
 	//線分用PSO
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> lineRootSignature;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> linePipelineState;
+	//パーティクル用PSO
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> particleRootSignature;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> particlePipelineState;
 
 
 	//ビューポート
