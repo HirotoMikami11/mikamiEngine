@@ -404,6 +404,8 @@
     <FxCompile Include="resources\Shader\Vignette\Vignette.PS.hlsl">
       <Filter>リソース ファイル\Shader\Vignette</Filter>
     </FxCompile>
+    <FxCompile Include="resources\Shader\Particle\Particle.PS.hlsl" />
+    <FxCompile Include="resources\Shader\Particle\Particle.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Game.h">
@@ -639,6 +641,7 @@
     <None Include="resources\Shader\Vignette\Vignette.hlsli">
       <Filter>リソース ファイル\Shader\Vignette</Filter>
     </None>
+    <None Include="resources\Shader\Particle\Particle.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

@@ -173,6 +173,12 @@ private:
 	void MakeLinePSO();
 
 	/// <summary>
+	/// パーティクル描画用のPSOを作成する
+	/// </summary>
+	void MakeParticlePSO();
+
+
+	/// <summary>
 	/// ViewportとScissor
 	/// </summary>
 	void MakeViewport();
@@ -202,6 +208,8 @@ private:
 	//rtv
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};//rtvの設定
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+
+
 
 	//dsv
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource;

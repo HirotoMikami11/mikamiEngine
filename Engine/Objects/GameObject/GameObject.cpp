@@ -68,7 +68,8 @@ void GameObject::Draw(const Light& directionalLight) {
 	commandList->SetGraphicsRootConstantBufferView(3, directionalLight.GetResource()->GetGPUVirtualAddress());
 
 	// トランスフォームを設定（全メッシュ共通）
-	commandList->SetGraphicsRootConstantBufferView(1, transform_.GetResource()->GetGPUVirtualAddress());
+	//commandList->SetGraphicsRootConstantBufferView(1, transform_.GetResource()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(0, transform_.GetSRV().gpuHandle);
 
 	// 全メッシュを描画（マルチマテリアル対応）
 	const auto& meshes = sharedModel_->GetMeshes();
@@ -106,7 +107,7 @@ void GameObject::Draw(const Light& directionalLight) {
 
 		// メッシュをバインドして描画
 		const_cast<Mesh&>(mesh).Bind(commandList);
-		const_cast<Mesh&>(mesh).Draw(commandList);
+		const_cast<Mesh&>(mesh).Draw(commandList,10);
 	}
 }
 

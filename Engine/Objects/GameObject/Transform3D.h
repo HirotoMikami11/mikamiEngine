@@ -30,25 +30,31 @@ public:
 	/// デフォルトの値を設定する
 	/// </summary>
 	void SetDefaultTransform();
-
+	
+	/// <summary>
+	/// ストラクチャードバッファー用のSRVを作成する
+	/// </summary>
+	void MakeStructuredBufferSRV(DirectXCommon* dxCommon);
+	
 	//Getter
-	const Vector3Transform& GetTransform() const { return transform_; }
+	const Vector3Transform& GetTransform() const { return transform_[0]; }
 
-	Vector3 GetPosition() const { return transform_.translate; }
-	Vector3 GetRotation() const { return transform_.rotate; }
-	Vector3 GetScale() const { return transform_.scale; }
+	Vector3 GetPosition() const { return transform_[0].translate; }
+	Vector3 GetRotation() const { return transform_[0].rotate; }
+	Vector3 GetScale() const { return transform_[0].scale; }
 
 	Matrix4x4 GetWorldMatrix() const { return transformData_->World; };
 	Matrix4x4 GetWVPMatrix() const { return transformData_->WVP; };
 	ID3D12Resource* GetResource() const { return transformResource_.Get(); }
+	DescriptorHeapManager::DescriptorHandle GetSRV() const { return srvHandle; }
 	///トランスフォームデータの直接取得（ImGui用）
 	TransformationMatrix* GetTransformDataPtr() const { return transformData_; }
 
 	//Setter
-	void SetTransform(const Vector3Transform& newTransform) { transform_ = newTransform; }
-	void SetScale(const Vector3& scale) { transform_.scale = scale; }
-	void SetRotation(const Vector3& rotate) { transform_.rotate = rotate; }
-	void SetPosition(const Vector3& translate) { transform_.translate = translate; }
+	void SetTransform(const Vector3Transform& newTransform) { transform_[0] = newTransform; }
+	void SetScale(const Vector3& scale) { transform_[0].scale = scale; }
+	void SetRotation(const Vector3& rotate) { transform_[0].rotate = rotate; }
+	void SetPosition(const Vector3& translate) { transform_[0].translate = translate; }
 
 	/// <summary>
 	/// 親オブジェクトを設定
@@ -68,17 +74,20 @@ public:
 	void AddScale(const Vector3& Scale);
 
 private:
+
+	//一旦生成する量を決めておく
+	const uint32_t kNumInstance = 10;
+
 	// GPU用トランスフォームリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformResource_;
 	// トランスフォームデータへのポインタ（Map済み）
-	TransformationMatrix* transformData_ = nullptr;
+	TransformationMatrix* transformData_;
+	
+	//instanceingするような場合のSRV設定
+	DescriptorHeapManager::DescriptorHandle srvHandle;
 
 	// CPU側のトランスフォーム値
-	Vector3Transform transform_{
-		.scale{1.0f, 1.0f, 1.0f},
-		.rotate{0.0f, 0.0f, 0.0f},
-		.translate{0.0f, 0.0f, 0.0f}
-	};
+	Vector3Transform transform_[10];
 
 	// 親となるTransform3Dへのポインタ
 	const Transform3D* parent_ = nullptr;
