@@ -11,8 +11,10 @@ void Transform3D::Initialize(DirectXCommon* dxCommon)
 
 	// デフォルト設定で初期化
 	SetDefaultTransform();
+	// SRVの作成
 	MakeStructuredBufferSRV(dxCommon);
 }
+
 void Transform3D::UpdateMatrix(const Matrix4x4& viewProjectionMatrix)
 {
 	for (size_t index = 0; index < kNumInstance; ++index)
