@@ -18,6 +18,7 @@ mono_crash.*
 
 # Build results
 generated/
+[Ll]ogs/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
