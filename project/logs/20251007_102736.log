@@ -1,0 +1,28 @@
+Hello,DirectX!
+Use Adapater:NVIDIA GeForce RTX 3060 Laptop GPU
+FeatureLevel : 12.2
+Complete create D3D12Device!!
+Complete create commandQueue!!
+Complete create commandAllocator!!
+Complete create commandList!!
+Complete create swapChain!!
+Created RTV DescriptorHeap: 5 descriptors
+Created DSV DescriptorHeap: 2 descriptors
+Created SRV DescriptorHeap: 128 descriptors
+DescriptorHeapManager initialized successfully!
+RTV Heap Size: 5, DSV Heap Size: 2, SRV Heap Size: 128
+Complete create RTV!!
+Complete create fence!!
+Complete: DXC compiler initialization.
+PSOFactory: Initialized successfully
+DirectXCommon: PSOFactory initialized
+RootSignatureBuilder: Added CBV (b0) at parameter index 0
+RootSignatureBuilder: Added CBV (b0) at parameter index 1
+RootSignatureBuilder: Added SRV Table (t0, count:1) at parameter index 2
+RootSignatureBuilder: Added CBV (b1) at parameter index 3
+RootSignatureBuilder: Added Static Sampler (s0)
+RootSignatureBuilder: Successfully created RootSignature with 4 parameters
+Begin CompileShader, path:resources/Shader/Object3d/Object3d.VS.hlsl,profile:vs_6_0
+Compile Succesed,path:resources/Shader/Object3d/Object3d.VS.hlsl,profile:vs_6_0
+Begin CompileShader, path:resources/Shader/Object3d/Object3d.PS.hlsl,profile:ps_6_0
+Compile Succesed,path:resources/Shader/Object3d/Object3d.PS.hlsl,profile:ps_6_0

@@ -1,0 +1,271 @@
+Hello,DirectX!
+Use Adapater:NVIDIA GeForce RTX 3060 Laptop GPU
+FeatureLevel : 12.2
+Complete create D3D12Device!!
+Complete create commandQueue!!
+Complete create commandAllocator!!
+Complete create commandList!!
+Complete create swapChain!!
+Created RTV DescriptorHeap: 5 descriptors
+Created DSV DescriptorHeap: 2 descriptors
+Created SRV DescriptorHeap: 128 descriptors
+DescriptorHeapManager initialized successfully!
+RTV Heap Size: 5, DSV Heap Size: 2, SRV Heap Size: 128
+Complete create RTV!!
+Complete create fence!!
+Complete: DXC compiler initialization.
+PSOFactory: Initialized successfully
+DirectXCommon: PSOFactory initialized
+RootSignatureBuilder: Added CBV (b0) at parameter index 0
+RootSignatureBuilder: Added CBV (b0) at parameter index 1
+RootSignatureBuilder: Added SRV Table (t0, count:1) at parameter index 2
+RootSignatureBuilder: Added CBV (b1) at parameter index 3
+RootSignatureBuilder: Added Static Sampler (s0)
+RootSignatureBuilder: Successfully created RootSignature with 4 parameters
+Begin CompileShader, path:resources/Shader/Object3d/Object3d.VS.hlsl,profile:vs_6_0
+Compile Succesed,path:resources/Shader/Object3d/Object3d.VS.hlsl,profile:vs_6_0
+Begin CompileShader, path:resources/Shader/Object3d/Object3d.PS.hlsl,profile:ps_6_0
+Compile Succesed,path:resources/Shader/Object3d/Object3d.PS.hlsl,profile:ps_6_0
+PSOFactory: Successfully created PipelineState
+Complete create 3D PSO using PSOFactory!!
+RootSignatureBuilder: Added CBV (b0) at parameter index 0
+RootSignatureBuilder: Added CBV (b0) at parameter index 1
+RootSignatureBuilder: Added SRV Table (t0, count:1) at parameter index 2
+RootSignatureBuilder: Added CBV (b1) at parameter index 3
+RootSignatureBuilder: Added Static Sampler (s0)
+RootSignatureBuilder: Successfully created RootSignature with 4 parameters
+Begin CompileShader, path:resources/Shader/Sprite/Sprite.VS.hlsl,profile:vs_6_0
+Compile Succesed,path:resources/Shader/Sprite/Sprite.VS.hlsl,profile:vs_6_0
+Begin CompileShader, path:resources/Shader/Sprite/Sprite.PS.hlsl,profile:ps_6_0
+Compile Succesed,path:resources/Shader/Sprite/Sprite.PS.hlsl,profile:ps_6_0
+PSOFactory: Successfully created PipelineState
+Complete create Sprite PSO using PSOFactory!!
+RootSignatureBuilder: Added CBV (b0) at parameter index 0
+RootSignatureBuilder: Successfully created RootSignature with 1 parameters
+Begin CompileShader, path:resources/Shader/Line/Line.VS.hlsl,profile:vs_6_0
+Compile Succesed,path:resources/Shader/Line/Line.VS.hlsl,profile:vs_6_0
+Begin CompileShader, path:resources/Shader/Line/Line.PS.hlsl,profile:ps_6_0
+Compile Succesed,path:resources/Shader/Line/Line.PS.hlsl,profile:ps_6_0
+PSOFactory: Successfully created PipelineState
+Complete create Line PSO using PSOFactory!!
+RootSignatureBuilder: Added CBV (b0) at parameter index 0
+RootSignatureBuilder: Added SRV Table (t0, count:1) at parameter index 1
+RootSignatureBuilder: Added SRV Table (t0, count:1) at parameter index 2
+RootSignatureBuilder: Added CBV (b1) at parameter index 3
+RootSignatureBuilder: Added Static Sampler (s0)
+RootSignatureBuilder: Successfully created RootSignature with 4 parameters
+Begin CompileShader, path:resources/Shader/Particle/Particle.VS.hlsl,profile:vs_6_0
+Compile Succesed,path:resources/Shader/Particle/Particle.VS.hlsl,profile:vs_6_0
+Begin CompileShader, path:resources/Shader/Particle/Particle.PS.hlsl,profile:ps_6_0
+Compile Succesed,path:resources/Shader/Particle/Particle.PS.hlsl,profile:ps_6_0
+PSOFactory: Successfully created PipelineState
+Complete create 3D PSO using PSOFactory!!
+Complete InputManager initialized !!
+Complete TextureManager initialized !!
+Complete MFCOM initialized !!
+Complete MF initialized !!
+Complete AudioManager initialized !!
+ModelManager initialized !!
+Complete create offscreen render target texture (PIXEL_SHADER_RESOURCE initial state)!!
+Complete create offscreen depth stencil texture (Typeless format)!!
+Allocated RTV at index: 2
+Complete create offscreen RTV (Index: 2)!!
+Allocated DSV at index: 1
+Complete create offscreen DSV (Index: 1)!!
+Allocated SRV at index: 1
+Complete create offscreen SRV (Index: 1)!!
+Allocated SRV at index: 2
+Complete create offscreen depth SRV (Index: 2)!!
+RootSignatureBuilder: Added SRV Table (t0, count:1) at parameter index 0
+RootSignatureBuilder: Added Static Sampler (s0)
+RootSignatureBuilder: Successfully created RootSignature with 1 parameters
+Begin CompileShader, path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Compile Succesed,path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Begin CompileShader, path:resources/Shader/FullscreenTriangle/FullscreenTriangle.PS.hlsl,profile:ps_6_0
+Compile Succesed,path:resources/Shader/FullscreenTriangle/FullscreenTriangle.PS.hlsl,profile:ps_6_0
+PSOFactory: Successfully created PipelineState
+Complete create offscreen PipelineState (PSOFactory version)!!
+Created fullscreen triangle vertex buffer.
+OffscreenTriangle initialized successfully!
+Complete initialize offscreen triangle (replacing sprite)!!
+Created intermediate buffers for PostProcessChain.
+Allocated SRV at index: 3
+Allocated SRV at index: 4
+Created intermediate SRVs for PostProcessChain.
+Allocated RTV at index: 3
+Allocated RTV at index: 4
+Created intermediate RTVs for PostProcessChain.
+Created fullscreen triangle vertex buffer.
+OffscreenTriangle initialized successfully!
+PostProcessChain initialized with OffscreenTriangle!
+RootSignatureBuilder: Added CBV (b0) at parameter index 0
+RootSignatureBuilder: Added SRV Table (t0, count:1) at parameter index 1
+RootSignatureBuilder: Added SRV Table (t1, count:1) at parameter index 2
+RootSignatureBuilder: Added Static Sampler (s0)
+RootSignatureBuilder: Successfully created RootSignature with 3 parameters
+Begin CompileShader, path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Compile Succesed,path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Begin CompileShader, path:resources/Shader/DepthFog/DepthFog.PS.hlsl,profile:ps_6_0
+Compile Succesed,path:resources/Shader/DepthFog/DepthFog.PS.hlsl,profile:ps_6_0
+PSOFactory: Successfully created PipelineState
+Complete create DepthFog PSO (PSOFactory version)!!
+DepthFogParameters size: 32 bytes
+Aligned buffer size: 256 bytes
+Complete create DepthFog parameter buffer (OffscreenTriangle version)!!
+DepthFogPostEffect initialized successfully (OffscreenTriangle version)!
+RootSignatureBuilder: Added CBV (b0) at parameter index 0
+RootSignatureBuilder: Added SRV Table (t0, count:1) at parameter index 1
+RootSignatureBuilder: Added SRV Table (t1, count:1) at parameter index 2
+RootSignatureBuilder: Added Static Sampler (s0)
+RootSignatureBuilder: Successfully created RootSignature with 3 parameters
+Begin CompileShader, path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Compile Succesed,path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Begin CompileShader, path:resources/Shader/DepthOfField/DepthOfField.PS.hlsl,profile:ps_6_0
+Compile Succesed,path:resources/Shader/DepthOfField/DepthOfField.PS.hlsl,profile:ps_6_0
+PSOFactory: Successfully created PipelineState
+Complete create DepthOfField PSO (PSOFactory version)!!
+DepthOfFieldParameters size: 32 bytes
+Aligned buffer size: 256 bytes
+Complete create DepthOfField parameter buffer (OffscreenTriangle version)!!
+DepthOfFieldPostEffect initialized successfully (OffscreenTriangle version)!
+RootSignatureBuilder: Added CBV (b0) at parameter index 0
+RootSignatureBuilder: Added SRV Table (t0, count:1) at parameter index 1
+RootSignatureBuilder: Added Static Sampler (s0)
+RootSignatureBuilder: Successfully created RootSignature with 2 parameters
+Begin CompileShader, path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Compile Succesed,path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Begin CompileShader, path:resources/Shader/RGBShift/RGBShift.PS.hlsl,profile:ps_6_0
+Compile Succesed,path:resources/Shader/RGBShift/RGBShift.PS.hlsl,profile:ps_6_0
+PSOFactory: Successfully created PipelineState
+Complete create RGB Shift PSO (PSOFactory version)!!
+RGBShiftParameters size: 16 bytes
+Aligned buffer size: 256 bytes
+Complete create RGB Shift parameter buffer (OffscreenTriangle version)!!
+RGBShiftPostEffect initialized successfully (OffscreenTriangle version)!
+RootSignatureBuilder: Added CBV (b0) at parameter index 0
+RootSignatureBuilder: Added SRV Table (t0, count:1) at parameter index 1
+RootSignatureBuilder: Added Static Sampler (s0)
+RootSignatureBuilder: Successfully created RootSignature with 2 parameters
+Begin CompileShader, path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Compile Succesed,path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Begin CompileShader, path:resources/Shader/LineGlitch/LineGlitch.PS.hlsl,profile:ps_6_0
+Compile Succesed,path:resources/Shader/LineGlitch/LineGlitch.PS.hlsl,profile:ps_6_0
+PSOFactory: Successfully created PipelineState
+Complete create LineGlitch PSO (PSOFactory version)!!
+LineGlitchParameters size: 16 bytes
+Aligned buffer size: 256 bytes
+Complete create LineGlitch parameter buffer (OffscreenTriangle version)!!
+LineGlitchPostEffect initialized successfully (OffscreenTriangle version)!
+RootSignatureBuilder: Added CBV (b0) at parameter index 0
+RootSignatureBuilder: Added SRV Table (t0, count:1) at parameter index 1
+RootSignatureBuilder: Added Static Sampler (s0)
+RootSignatureBuilder: Successfully created RootSignature with 2 parameters
+Begin CompileShader, path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Compile Succesed,path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Begin CompileShader, path:resources/Shader/Grayscale/Grayscale.PS.hlsl,profile:ps_6_0
+Compile Succesed,path:resources/Shader/Grayscale/Grayscale.PS.hlsl,profile:ps_6_0
+PSOFactory: Successfully created PipelineState
+Complete create Grayscale PSO (PSOFactory version)!!
+GrayscaleParameters size: 32 bytes
+Aligned buffer size: 256 bytes
+Complete create Grayscale parameter buffer (OffscreenTriangle version)!!
+GrayscalePostEffect initialized successfully (OffscreenTriangle version)!
+RootSignatureBuilder: Added CBV (b0) at parameter index 0
+RootSignatureBuilder: Added SRV Table (t0, count:1) at parameter index 1
+RootSignatureBuilder: Added Static Sampler (s0)
+RootSignatureBuilder: Successfully created RootSignature with 2 parameters
+Begin CompileShader, path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Compile Succesed,path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Begin CompileShader, path:resources/Shader/Vignette/Vignette.PS.hlsl,profile:ps_6_0
+Compile Succesed,path:resources/Shader/Vignette/Vignette.PS.hlsl,profile:ps_6_0
+PSOFactory: Successfully created PipelineState
+Complete create Vignette PSO (PSOFactory version)!!
+VignetteParameters size: 32 bytes
+Aligned buffer size: 256 bytes
+Complete create Vignette parameter buffer (OffscreenTriangle version)!!
+VignettePostEffect initialized successfully (OffscreenTriangle version)!
+RootSignatureBuilder: Added CBV (b0) at parameter index 0
+RootSignatureBuilder: Added SRV Table (t0, count:1) at parameter index 1
+RootSignatureBuilder: Added Static Sampler (s0)
+RootSignatureBuilder: Successfully created RootSignature with 2 parameters
+Begin CompileShader, path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Compile Succesed,path:resources/Shader/FullscreenTriangle/FullscreenTriangle.VS.hlsl,profile:vs_6_0
+Begin CompileShader, path:resources/Shader/Vignette/Vignette.PS.hlsl,profile:ps_6_0
+Compile Succesed,path:resources/Shader/Vignette/Vignette.PS.hlsl,profile:ps_6_0
+PSOFactory: Successfully created PipelineState
+Complete create Vignette PSO (PSOFactory version)!!
+VignetteParameters size: 32 bytes
+Aligned buffer size: 256 bytes
+Complete create Vignette parameter buffer (OffscreenTriangle version)!!
+VignettePostEffect initialized successfully (OffscreenTriangle version)!
+Complete OffscreenRenderer initialized (PostProcess Chain with OffscreenTriangle)!!
+Allocated SRV at index: 5
+Complete Texture loaded with handle : resources/Texture/uvChecker.png (SRV Index: 5)
+Texture 'resources/Texture/uvChecker.png' loaded successfully with tag 'uvChecker' (SRV Index: 5)
+Allocated SRV at index: 6
+Complete Texture loaded with handle : resources/Texture/monsterBall.png (SRV Index: 6)
+Texture 'resources/Texture/monsterBall.png' loaded successfully with tag 'monsterBall' (SRV Index: 6)
+Allocated SRV at index: 7
+Complete Texture loaded with handle : resources/Texture/white2x2.png (SRV Index: 7)
+Texture 'resources/Texture/white2x2.png' loaded successfully with tag 'white' (SRV Index: 7)
+Model loaded from primitive: Sphere
+Primitive model 'Sphere' loaded successfully with tag 'sphere'
+Model loaded from primitive: Triangle
+Primitive model 'Triangle' loaded successfully with tag 'triangle'
+Model loaded from primitive: Plane
+Primitive model 'Plane' loaded successfully with tag 'plane'
+SceneManager initialized
+ObjectIDManager: Registered type 'Sprite'
+Transition effect 'fade' registered
+TransitionManager initialized
+Transition effect 'slide_left' registered
+Transition effect 'slide_right' registered
+Loading resources for newly registered scene: DemoScene
+TitleScene: Loading resources...
+Loaded 1 materials from multiMesh.mtl
+  Material: Material.001 -> texture: resources/Model/MultiMesh/uvChecker.png
+Material assigned: Material.001 -> index 0
+Loaded 2 objects from multiMesh.obj with 1 materials
+  Object 0: Plane (6 vertices, material: Material.001)
+  Object 1: Cube (36 vertices, material: Material.001)
+Texture with tag 'uvChecker' already exists. Skipping load.
+Loaded texture: resources/Model/MultiMesh/uvChecker.png as uvChecker
+Model loaded from OBJ: multiMesh.obj (2 meshes, 1 materials)
+Model 'multiMesh.obj' loaded successfully with tag 'model_MultiMesh'
+Loaded 2 materials from multiMaterial.mtl
+  Material: Material -> texture: resources/Model/MultiMaterial/monsterBall.png
+  Material: Material.001 -> texture: resources/Model/MultiMaterial/uvChecker.png
+Material assigned: Material.001 -> index 0
+Material assigned: Material -> index 1
+Loaded 2 objects from multiMaterial.obj with 2 materials
+  Object 0: Plane (6 vertices, material: Material.001)
+  Object 1: Cube (36 vertices, material: Material)
+Texture with tag 'monsterBall' already exists. Skipping load.
+Loaded texture: resources/Model/MultiMaterial/monsterBall.png as monsterBall
+Texture with tag 'uvChecker' already exists. Skipping load.
+Loaded texture: resources/Model/MultiMaterial/uvChecker.png as uvChecker
+Model loaded from OBJ: multiMaterial.obj (2 meshes, 2 materials)
+Model 'multiMaterial.obj' loaded successfully with tag 'model_MultiMaterial'
+TitleScene: Resources loaded successfully
+Resources loaded for newly registered scene: DemoScene
+Loading resources for newly registered scene: DebugScene
+DebugScene: Loading resources...
+Loaded 1 materials from fence.mtl
+  Material: Material.001 -> texture: resources/Model/fence/fence.png
+Material assigned: Material.001 -> index 0
+Loaded 2 objects from fence.obj with 1 materials
+  Object 0: Plane (6 vertices, material: Material.001)
+  Object 1: Plane2 (6 vertices, material: Material.001)
+Allocated SRV at index: 8
+Complete Texture loaded with handle : resources/Model/fence/fence.png (SRV Index: 8)
+Texture 'resources/Model/fence/fence.png' loaded successfully with tag 'fence' (SRV Index: 8)
+Loaded texture: resources/Model/fence/fence.png as fence
+Model loaded from OBJ: fence.obj (2 meshes, 1 materials)
+Model 'fence.obj' loaded successfully with tag 'model_Fence'
+DebugScene: Resources loaded successfully
+Resources loaded for newly registered scene: DebugScene
+ObjectIDManager: All counters have been reset
+Initializing objects for scene: DebugScene
+ObjectIDManager: Registered type 'Plane'
+LineRenderer: Initialized with max lines !!
+Objects initialized for scene: DebugScene
