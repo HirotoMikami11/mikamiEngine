@@ -166,9 +166,8 @@ private:
 	float rotationSensitivity_ = 0.005f;			// 回転の感度
 	float movementSensitivity_ = 0.01f;				// マウス移動の感度
 	float zoomSensitivity_ = 0.05f;					// ズームの感度
-	float keyboardSpeed_ = 2.0f;					// キーボード移動速度
-	float mousePanSpeed_ = 0.01f;					// マウスパン移動速度
-
+	float keyboardSpeed_ = 0.5f;					// キーボード移動速度
+float mousePanSpeed_ = 0.01f;
 	// 制限
 	float minDistance_ = 0.1f;						// 最小距離
 	float maxDistance_ = 100.0f;					// 最大距離

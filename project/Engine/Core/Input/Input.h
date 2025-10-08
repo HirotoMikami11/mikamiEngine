@@ -315,4 +315,15 @@ private:
 	/// <returns></returns>
 	void DrawJoystickVisualizer(float lx, float ly);
 
+	/// <summary>
+	/// DirectInputキーコードを文字列に変換(imguiでのみ使用)
+	/// </summary>
+	/// <param name="keyCode">キーコード</param>
+	/// <returns>キー名の文字列</returns>
+	const char* GetKeyName(uint8_t keyCode) const;
+	
+	void ImGuiKeyboard();
+	void ImGuiMouse();
+	void ImGuiGamePad();
+
 };

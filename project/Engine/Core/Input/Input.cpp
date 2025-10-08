@@ -455,14 +455,357 @@ void Input::SetGamePadVibration(float leftMotor, float rightMotor, int controlle
 void Input::StopGamePadVibration(int controllerIndex) {
 	SetGamePadVibration(0.0f, 0.0f, controllerIndex);
 }
+// Input.cppの既存ImGui()関数を以下に置き換え
 
 void Input::ImGui()
 {
 #ifdef USEIMGUI
 	if (ImGui::CollapsingHeader("Input")) {
+		// キーボード表示
+		ImGuiKeyboard();
+
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		// マウス表示
+		ImGuiMouse();
+
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		// ゲームパッド表示
+		ImGuiGamePad();
+	}
+#endif
+}
+
+const char* Input::GetKeyName(uint8_t keyCode) const {
+	// DirectInputキーコードから文字列への変換
+
+	switch (keyCode) {
+		// アルファベット
+	case DIK_A: return "A";
+	case DIK_B: return "B";
+	case DIK_C: return "C";
+	case DIK_D: return "D";
+	case DIK_E: return "E";
+	case DIK_F: return "F";
+	case DIK_G: return "G";
+	case DIK_H: return "H";
+	case DIK_I: return "I";
+	case DIK_J: return "J";
+	case DIK_K: return "K";
+	case DIK_L: return "L";
+	case DIK_M: return "M";
+	case DIK_N: return "N";
+	case DIK_O: return "O";
+	case DIK_P: return "P";
+	case DIK_Q: return "Q";
+	case DIK_R: return "R";
+	case DIK_S: return "S";
+	case DIK_T: return "T";
+	case DIK_U: return "U";
+	case DIK_V: return "V";
+	case DIK_W: return "W";
+	case DIK_X: return "X";
+	case DIK_Y: return "Y";
+	case DIK_Z: return "Z";
+
+		// 数字
+	case DIK_0: return "0";
+	case DIK_1: return "1";
+	case DIK_2: return "2";
+	case DIK_3: return "3";
+	case DIK_4: return "4";
+	case DIK_5: return "5";
+	case DIK_6: return "6";
+	case DIK_7: return "7";
+	case DIK_8: return "8";
+	case DIK_9: return "9";
+
+		// ファンクションキー
+	case DIK_F1: return "F1";
+	case DIK_F2: return "F2";
+	case DIK_F3: return "F3";
+	case DIK_F4: return "F4";
+	case DIK_F5: return "F5";
+	case DIK_F6: return "F6";
+	case DIK_F7: return "F7";
+	case DIK_F8: return "F8";
+	case DIK_F9: return "F9";
+	case DIK_F10: return "F10";
+	case DIK_F11: return "F11";
+	case DIK_F12: return "F12";
+
+		// 矢印キー
+	case DIK_UP: return "UP";
+	case DIK_DOWN: return "DOWN";
+	case DIK_LEFT: return "LEFT";
+	case DIK_RIGHT: return "RIGHT";
+
+		// 特殊キー
+	case DIK_ESCAPE: return "ESC";
+	case DIK_RETURN: return "ENTER";
+	case DIK_SPACE: return "SPACE";
+	case DIK_BACK: return "BACKSPACE";
+	case DIK_TAB: return "TAB";
+	case DIK_LSHIFT: return "LSHIFT";
+	case DIK_RSHIFT: return "RSHIFT";
+	case DIK_LCONTROL: return "LCTRL";
+	case DIK_RCONTROL: return "RCTRL";
+	case DIK_LALT: return "LALT";
+	case DIK_RALT: return "RALT";
+	case DIK_LWIN: return "LWIN";
+	case DIK_RWIN: return "RWIN";
+
+		// その他
+	case DIK_CAPSLOCK: return "CAPSLOCK";
+	case DIK_NUMLOCK: return "NUMLOCK";
+	case DIK_SCROLL: return "SCROLL";
+	case DIK_INSERT: return "INSERT";
+	case DIK_DELETE: return "DELETE";
+	case DIK_HOME: return "HOME";
+	case DIK_END: return "END";
+	case DIK_PRIOR: return "PAGEUP";
+	case DIK_NEXT: return "PAGEDOWN";
+
+		// テンキー
+	case DIK_NUMPAD0: return "NUM0";
+	case DIK_NUMPAD1: return "NUM1";
+	case DIK_NUMPAD2: return "NUM2";
+	case DIK_NUMPAD3: return "NUM3";
+	case DIK_NUMPAD4: return "NUM4";
+	case DIK_NUMPAD5: return "NUM5";
+	case DIK_NUMPAD6: return "NUM6";
+	case DIK_NUMPAD7: return "NUM7";
+	case DIK_NUMPAD8: return "NUM8";
+	case DIK_NUMPAD9: return "NUM9";
+	case DIK_MULTIPLY: return "NUM*";
+	case DIK_ADD: return "NUM+";
+	case DIK_SUBTRACT: return "NUM-";
+	case DIK_DECIMAL: return "NUM.";
+	case DIK_DIVIDE: return "NUM/";
+	case DIK_NUMPADENTER: return "NUMENTER";
+
+		// 記号
+	case DIK_MINUS: return "-";
+	case DIK_EQUALS: return "=";
+	case DIK_LBRACKET: return "[";
+	case DIK_RBRACKET: return "]";
+	case DIK_SEMICOLON: return ";";
+	case DIK_APOSTROPHE: return "'";
+	case DIK_GRAVE: return "`";
+	case DIK_BACKSLASH: return "\\";
+	case DIK_COMMA: return ",";
+	case DIK_PERIOD: return ".";
+	case DIK_SLASH: return "/";
+
+	default:
+		// 不明なキーコードは16進数で表示
+		static char buffer[16];
+		sprintf_s(buffer, "0x%02X", keyCode);
+		return buffer;
+	}
+}
+
+void Input::ImGuiKeyboard()
+{
+#ifdef USEIMGUI
+	if (ImGui::TreeNode("Keyboard")) {
+
+		//今押されているキー
+		ImGui::Text("Currently Pressed Keys:");
+		ImGui::Indent();
+		bool foundPressed = false;
+		int count = 0;
+		for (int i = 0; i < 256; ++i) {
+			// 0x94を除外
+			if (i == 0x94) continue;
+
+			if (IsKeyDown(static_cast<uint8_t>(i))) {
+				if (count > 0 && count % 6 == 0) {
+					// 6個ごとに改行
+					ImGui::Text("");
+				}
+				if (count % 6 != 0) {
+					ImGui::SameLine();
+				}
+				ImGui::TextColored(ImVec4(0, 1, 0, 1), "%s", GetKeyName(static_cast<uint8_t>(i)));
+				foundPressed = true;
+				count++;
+			}
+		}
+		if (!foundPressed) {
+			ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1), "None");
+		}
+		ImGui::Unindent();
+
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		//最後にトリガーされたキー
+		static char lastTriggerKey[64] = "None";
+
+		// トリガーをチェック
+		for (int i = 0; i < 256; ++i) {
+			// 0x94を除外
+			if (i == 0x94) continue;
+
+			if (IsKeyTrigger(i)) {
+				sprintf_s(lastTriggerKey, "%s", GetKeyName(static_cast<uint8_t>(i)));
+			}
+		}
+
+		ImGui::Text("Last Trigger:");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(1, 1, 0, 1), "%s", lastTriggerKey);
+
+		ImGui::Spacing();
+
+		//最後に書き換えたキー
+		static char lastReleaseKey[64] = "None";
+
+		// リリースをチェック
+		for (int i = 0; i < 256; ++i) {
+			// 0x94を除外
+			if (i == 0x94) continue;
+
+			if (IsKeyRelease(i)) {
+				sprintf_s(lastReleaseKey, "%s", GetKeyName(static_cast<uint8_t>(i)));
+			}
+		}
+
+		ImGui::Text("Last Release:");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(1, 0.5f, 0, 1), "%s", lastReleaseKey);
+
+		ImGui::TreePop();
+	}
+#endif
+}
+
+void Input::ImGuiMouse()
+{
+#ifdef USEIMGUI
+	if (ImGui::TreeNode("Mouse")) {
+		// マウスボタンの状態
+		ImGui::Text("Mouse Buttons:");
+		ImGui::SameLine();
+		if (IsMouseButtonDown(0)) {
+			ImGui::TextColored(ImVec4(0, 1, 0, 1), "LEFT");
+		} else {
+			ImGui::Text("LEFT");
+		}
+		ImGui::SameLine();
+		if (IsMouseButtonDown(1)) {
+			ImGui::TextColored(ImVec4(0, 1, 0, 1), "RIGHT");
+		} else {
+			ImGui::Text("RIGHT");
+		}
+		ImGui::SameLine();
+		if (IsMouseButtonDown(2)) {
+			ImGui::TextColored(ImVec4(0, 1, 0, 1), "MIDDLE");
+		} else {
+			ImGui::Text("MIDDLE");
+		}
+
+		// 拡張マウスボタン
+		bool anyExtendedButton = false;
+		for (int i = 3; i < 8; ++i) {
+			if (IsMouseButtonDown(i)) {
+				anyExtendedButton = true;
+				break;
+			}
+		}
+
+		if (anyExtendedButton) {
+			ImGui::Text("Extended Buttons:");
+			for (int i = 3; i < 8; ++i) {
+				ImGui::SameLine();
+				if (IsMouseButtonDown(i)) {
+					ImGui::TextColored(ImVec4(0, 1, 0, 1), "X%d", i - 2);
+				}
+			}
+		}
+
+		ImGui::Separator();
+
+		// マウス座標
+		Vector2 mousePos = GetMousePosition();
+		Vector2 preMousePos = GetPreMousePosition();
+		ImGui::Text("Position: (%.0f, %.0f)", mousePos.x, mousePos.y);
+		ImGui::Text("Previous: (%.0f, %.0f)", preMousePos.x, preMousePos.y);
+
+		// マウス移動量
+		ImGui::Separator();
+		ImGui::Text("Movement (Delta):");
+		int moveX = GetMouseMoveX();
+		int moveY = GetMouseMoveY();
+		ImGui::Text("X: %d", moveX);
+		ImGui::SameLine();
+
+		ImGui::Text("Y: %d", moveY);
+		ImGui::SameLine();
 
 
-		/// ゲームパッドが接続されているか確認
+		// マウスホイール
+		ImGui::Separator();
+		int wheelDelta = GetMouseWheel();
+		ImGui::Text("Wheel Delta: %d", wheelDelta);
+		if (IsMoveMouseWheel()) {
+			if (wheelDelta > 0) {
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(0, 1, 1, 1), "[UP]");
+			} else if (wheelDelta < 0) {
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1, 1, 0, 1), "[DOWN]");
+			}
+		}
+
+		// トリガー/リリースイベント
+		ImGui::Separator();
+		ImGui::Text("Button Events:");
+
+		// トリガーイベント
+		if (IsMouseButtonTrigger(0)) {
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0, 1, 0, 1), "L-TRIGGER");
+		}
+		if (IsMouseButtonTrigger(1)) {
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0, 1, 0, 1), "R-TRIGGER");
+		}
+		if (IsMouseButtonTrigger(2)) {
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0, 1, 0, 1), "M-TRIGGER");
+		}
+
+		// リリースイベント
+		if (IsMouseButtonRelease(0)) {
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1, 0.5f, 0, 1), "L-RELEASE");
+		}
+		if (IsMouseButtonRelease(1)) {
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1, 0.5f, 0, 1), "R-RELEASE");
+		}
+		if (IsMouseButtonRelease(2)) {
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1, 0.5f, 0, 1), "M-RELEASE");
+		}
+
+
+		ImGui::TreePop();
+	}
+#endif
+}
+
+void Input::ImGuiGamePad()
+{
+#ifdef USEIMGUI
+	if (ImGui::TreeNode("GamePad")) {
+		// ゲームパッドが接続されているか確認
 		bool anyConnected = false;
 		for (int i = 0; i < MAX_CONTROLLERS; ++i) {
 			if (IsGamePadConnected(i)) {
@@ -470,9 +813,11 @@ void Input::ImGui()
 				break;
 			}
 		}
+
 		// ゲームパッドが接続されていなかったら早期リターンする
 		if (!anyConnected) {
-			ImGui::Text("not GamePad Connect");
+			ImGui::Text("Not GamePad Connected");
+			ImGui::TreePop();
 			return;
 		}
 
@@ -687,16 +1032,17 @@ void Input::ImGui()
 			}
 
 			// 複数のコントローラーがある場合の区切り
-			if (controllerIndex < MAX_CONTROLLERS - 1) {
+			if (controllerIndex < MAX_CONTROLLERS - 1 && IsGamePadConnected(controllerIndex + 1)) {
 				ImGui::Separator();
 				ImGui::Text("");
 			}
 #pragma endregion
 		}
+
+		ImGui::TreePop();
 	}
 #endif
 }
-
 float Input::ApplyDeadZone(SHORT value, SHORT deadZone) const {
 	// デッドゾーン処理
 	if (std::abs(value) < deadZone) {
