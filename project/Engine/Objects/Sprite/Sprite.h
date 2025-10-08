@@ -7,6 +7,7 @@
 
 #include "DirectXCommon.h"
 #include "MyFunction.h"
+#include "Structures.h"
 #include "Transform2D.h"  // Transform2D
 
 #include "Managers/Texture/TextureManager.h"

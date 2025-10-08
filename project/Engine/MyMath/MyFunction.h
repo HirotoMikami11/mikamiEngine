@@ -2,11 +2,7 @@
 #include "MyMath.h"
 ///DirectX12
 #include<d3d12.h>
-#pragma comment(lib,"d3d12.lib")
-#include<cassert>
 #include<wrl.h>
-#include <numbers>
-#include<algorithm>
 
 /// <summary>
 /// 球体

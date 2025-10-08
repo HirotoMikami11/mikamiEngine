@@ -1,6 +1,6 @@
 #pragma once
 #include <Windows.h>
-#include<chrono>						//時間を扱うライブラリ
+
 ///DirectX12
 #include<d3d12.h>
 #pragma comment(lib,"d3d12.lib")

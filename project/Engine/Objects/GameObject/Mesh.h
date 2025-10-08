@@ -7,6 +7,7 @@
 #include "DirectXCommon.h"
 #include "MyFunction.h"
 #include "Logger.h"
+#include "Structures.h"
 
 #include <cassert>
 #include <fstream>

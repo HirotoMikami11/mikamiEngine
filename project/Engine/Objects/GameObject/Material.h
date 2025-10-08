@@ -7,8 +7,10 @@
 
 #include "DirectXCommon.h"
 #include "MyFunction.h"
+#include "Structures.h"
 #include "Logger.h"
 #include <cassert>
+
 
 /// <summary>
 /// ライティングモードの定義

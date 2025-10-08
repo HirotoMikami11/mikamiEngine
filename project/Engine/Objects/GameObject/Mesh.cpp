@@ -1,5 +1,5 @@
 #include "Mesh.h"
-
+#include<numbers>
 void Mesh::Initialize(DirectXCommon* dxCommon, MeshType meshType)
 {
 	directXCommon_ = dxCommon;

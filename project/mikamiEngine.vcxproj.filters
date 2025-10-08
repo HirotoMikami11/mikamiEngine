@@ -610,6 +610,9 @@
     <ClInclude Include="Engine\Core\Logger\LeakChecker.h">
       <Filter>Engine\BaseSystem\Logger</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Core\Structures.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli">

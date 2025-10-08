@@ -1,6 +1,10 @@
 #include "DirectXCommon.h"
 #include<cassert>						//アサ―トを扱う
 
+///DirectX12
+
+
+
 void DirectXCommon::Initialize(WinApp* winApp) {
 	///*-----------------------------------------------------------------------*///
 	//																			//

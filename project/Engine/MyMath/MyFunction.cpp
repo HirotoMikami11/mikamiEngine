@@ -1,5 +1,9 @@
+#define NOMINMAX
 #include "MyFunction.h"
-
+#include<cassert>
+#include <numbers>
+#include<algorithm>
+#pragma comment(lib,"d3d12.lib")
 /*-----------------------------------------------------------------------*/
 //
 //								計算関数

@@ -2,6 +2,8 @@
 #include <Windows.h>
 #include "GraphicsConfig.h"
 #include "MyFunction.h"
+//ファイルに書いたり読んだりするライブラリ
+#include<fstream>
 
 class WinApp
 {

@@ -1,20 +1,11 @@
 #pragma once
 #define _USE_MATH_DEFINES
-#define NOMINMAX
-#include<math.h>
-#include <cmath>
 #include<assert.h>
 #include <vector>
 
-//ファイルに書いたり読んだりするライブラリ
-#include<fstream>
-#include<sstream>
-#include<numbers>
-
-#include <algorithm>
-
 ///ウィンドウサイズ
 #include"GraphicsConfig.h"
+
 
 ///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//
 
@@ -328,32 +319,6 @@ struct Vector4 final {
 };
 
 
-/// <summary>
-/// 頂点データ
-/// </summary>
-struct VertexData final {
-	Vector4 position;//座標
-	Vector2 texcoord;//UV座標系(テクスチャ座標系)
-	Vector3 normal;	//法線
-};
-
-
-
-/// <summary>
-/// mtlファイルを読んで使えるようにする
-/// </summary>
-struct MaterialDataModel {
-	std::string textureFilePath;	//テクスチャファイルのパス
-};
-
-
-struct ModelData {
-	std::vector<VertexData> vertices;
-	MaterialDataModel material;
-	std::string materialName = "";    // マテリアル名
-	size_t materialIndex = 0;         // マテリアルインデックス
-};
-
 
 ///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//
 
@@ -418,18 +383,6 @@ Matrix3x3 Matrix3x3Transpose(Matrix3x3 matrix);
 /// </summary>
 struct Matrix4x4 final {
 	float m[4][4];
-};
-
-
-/// <summary>
-/// マテリアル
-/// </summary>
-struct  MaterialData final {
-	Vector4 color;						//色
-	int32_t enableLighting;				//ライティングするか
-	int32_t useLambertianReflectance;	//ランバート反射させるか
-	float padding[2];					//隙間埋める
-	Matrix4x4 uvTransform;
 };
 
 

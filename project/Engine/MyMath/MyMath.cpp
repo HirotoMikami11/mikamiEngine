@@ -1,4 +1,10 @@
+#define NOMINMAX
 #include "MyMath.h"
+#include <cmath>
+#include<numbers>
+#include <algorithm>
+
+
 
 ///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//
 
