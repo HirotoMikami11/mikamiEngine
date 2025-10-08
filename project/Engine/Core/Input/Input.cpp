@@ -1,14 +1,22 @@
 #define NOMINMAX
-#include "InputManager.h"
+#pragma comment(lib, "dinput8.lib")
+#pragma comment(lib, "dxguid.lib")
+
+#pragma comment(lib, "xinput.lib")
+#include <cmath>
+
+#include "Input.h"
 #include "Managers/ImGui/ImGuiManager.h"
 #include <cassert>
 
-InputManager* InputManager::GetInstance() {
-	static InputManager instance;
+
+
+Input* Input::GetInstance() {
+	static Input instance;
 	return &instance;
 }
 
-void InputManager::Initialize(WinApp* winApp) {
+void Input::Initialize(WinApp* winApp) {
 	// DirectInputの初期化
 	HRESULT result = DirectInput8Create(
 		winApp->GetInstance(),
@@ -63,17 +71,17 @@ void InputManager::Initialize(WinApp* winApp) {
 		gamePadConnected[i] = false;
 	}
 
-	Logger::Log(Logger::GetStream(), "Complete InputManager initialized !!\n");
+	Logger::Log(Logger::GetStream(), "Complete Input initialized !!\n");
 }
 
-void InputManager::Finalize() {
+void Input::Finalize() {
 	// 全てのコントローラーの振動を停止
 	for (int i = 0; i < MAX_CONTROLLERS; ++i) {
 		StopGamePadVibration(i);
 	}
 }
 
-void InputManager::Update() {
+void Input::Update() {
 	// 前回のキー入力状態を保存
 	memcpy(preKey, key, sizeof(key));
 
@@ -134,19 +142,19 @@ void InputManager::Update() {
 //																			//
 ///*-----------------------------------------------------------------------*///
 
-bool InputManager::IsKeyDown(uint8_t keyCode) const {
+bool Input::IsKeyDown(uint8_t keyCode) const {
 	return (key[keyCode] & 0x80) != 0;
 }
 
-bool InputManager::IsKeyUp(uint8_t keyCode) const {
+bool Input::IsKeyUp(uint8_t keyCode) const {
 	return (key[keyCode] & 0x80) == 0;
 }
 
-bool InputManager::IsKeyTrigger(uint8_t keyCode) const {
+bool Input::IsKeyTrigger(uint8_t keyCode) const {
 	return (key[keyCode] & 0x80) != 0 && (preKey[keyCode] & 0x80) == 0;
 }
 
-bool InputManager::IsKeyRelease(uint8_t keyCode) const {
+bool Input::IsKeyRelease(uint8_t keyCode) const {
 	return (key[keyCode] & 0x80) == 0 && (preKey[keyCode] & 0x80) != 0;
 }
 
@@ -156,7 +164,7 @@ bool InputManager::IsKeyRelease(uint8_t keyCode) const {
 //																			//
 ///*-----------------------------------------------------------------------*///
 
-bool InputManager::IsMouseButtonDown(int buttonNumber) const {
+bool Input::IsMouseButtonDown(int buttonNumber) const {
 	// ボタン番号の範囲チェック（0〜7）
 	if (buttonNumber < 0 || buttonNumber >= 8) {
 		return false;
@@ -164,7 +172,7 @@ bool InputManager::IsMouseButtonDown(int buttonNumber) const {
 	return (mouse.rgbButtons[buttonNumber] & 0x80) != 0;
 }
 
-bool InputManager::IsMouseButtonUp(int buttonNumber) const {
+bool Input::IsMouseButtonUp(int buttonNumber) const {
 	// ボタン番号の範囲チェック（0〜7）
 	if (buttonNumber < 0 || buttonNumber >= 8) {
 		return true;  // 範囲外なら押されていないとみなす
@@ -172,7 +180,7 @@ bool InputManager::IsMouseButtonUp(int buttonNumber) const {
 	return (mouse.rgbButtons[buttonNumber] & 0x80) == 0;
 }
 
-bool InputManager::IsMouseButtonTrigger(int buttonNumber) const {
+bool Input::IsMouseButtonTrigger(int buttonNumber) const {
 	// ボタン番号の範囲チェック（0〜7）
 	if (buttonNumber < 0 || buttonNumber >= 8) {
 		return false;
@@ -181,7 +189,7 @@ bool InputManager::IsMouseButtonTrigger(int buttonNumber) const {
 		(preMouse.rgbButtons[buttonNumber] & 0x80) == 0;
 }
 
-bool InputManager::IsMouseButtonRelease(int buttonNumber) const {
+bool Input::IsMouseButtonRelease(int buttonNumber) const {
 	// ボタン番号の範囲チェック（0〜7）
 	if (buttonNumber < 0 || buttonNumber >= 8) {
 		return false;
@@ -190,7 +198,7 @@ bool InputManager::IsMouseButtonRelease(int buttonNumber) const {
 		(preMouse.rgbButtons[buttonNumber] & 0x80) != 0;
 }
 
-bool InputManager::IsMoveMouseWheel() const {
+bool Input::IsMoveMouseWheel() const {
 	//前フレームの情報が今の座標と違う場合にtrue
 	if (preMouse.lZ != mouse.lZ) {
 		return true;
@@ -204,14 +212,14 @@ bool InputManager::IsMoveMouseWheel() const {
 //																			//
 ///*-----------------------------------------------------------------------*///
 
-bool InputManager::IsGamePadConnected(int controllerIndex) const {
+bool Input::IsGamePadConnected(int controllerIndex) const {
 	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
 		return false;
 	}
 	return gamePadConnected[controllerIndex];
 }
 
-bool InputManager::IsGamePadButtonDown(GamePadButton button, int controllerIndex) const {
+bool Input::IsGamePadButtonDown(GamePadButton button, int controllerIndex) const {
 	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
 		return false;
 	}
@@ -221,7 +229,7 @@ bool InputManager::IsGamePadButtonDown(GamePadButton button, int controllerIndex
 	return (gamePadState[controllerIndex].Gamepad.wButtons & static_cast<WORD>(button)) != 0;
 }
 
-bool InputManager::IsGamePadButtonUp(GamePadButton button, int controllerIndex) const {
+bool Input::IsGamePadButtonUp(GamePadButton button, int controllerIndex) const {
 	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
 		return true;
 	}
@@ -231,7 +239,7 @@ bool InputManager::IsGamePadButtonUp(GamePadButton button, int controllerIndex) 
 	return (gamePadState[controllerIndex].Gamepad.wButtons & static_cast<WORD>(button)) == 0;
 }
 
-bool InputManager::IsGamePadButtonTrigger(GamePadButton button, int controllerIndex) const {
+bool Input::IsGamePadButtonTrigger(GamePadButton button, int controllerIndex) const {
 	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
 		return false;
 	}
@@ -245,7 +253,7 @@ bool InputManager::IsGamePadButtonTrigger(GamePadButton button, int controllerIn
 	return currentPressed && !prevPressed;
 }
 
-bool InputManager::IsGamePadButtonRelease(GamePadButton button, int controllerIndex) const {
+bool Input::IsGamePadButtonRelease(GamePadButton button, int controllerIndex) const {
 	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
 		return false;
 	}
@@ -259,7 +267,7 @@ bool InputManager::IsGamePadButtonRelease(GamePadButton button, int controllerIn
 	return !currentPressed && prevPressed;
 }
 
-float InputManager::GetAnalogStick(AnalogStick stick, int controllerIndex) const {
+float Input::GetAnalogStick(AnalogStick stick, int controllerIndex) const {
 	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
 		return 0.0f;
 	}
@@ -283,7 +291,7 @@ float InputManager::GetAnalogStick(AnalogStick stick, int controllerIndex) const
 	}
 }
 
-float InputManager::GetLeftTrigger(int controllerIndex) const {
+float Input::GetLeftTrigger(int controllerIndex) const {
 	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
 		return 0.0f;
 	}
@@ -302,7 +310,7 @@ float InputManager::GetLeftTrigger(int controllerIndex) const {
 	return static_cast<float>(triggerValue) / 255.0f;
 }
 
-float InputManager::GetRightTrigger(int controllerIndex) const {
+float Input::GetRightTrigger(int controllerIndex) const {
 	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
 		return 0.0f;
 	}
@@ -325,15 +333,15 @@ float InputManager::GetRightTrigger(int controllerIndex) const {
 static const float TRIGGER_BUTTON_THRESHOLD = 0.5f;
 
 
-bool InputManager::IsLeftTriggerDown(int controllerIndex) const {
+bool Input::IsLeftTriggerDown(int controllerIndex) const {
 	return GetLeftTrigger(controllerIndex) >= TRIGGER_BUTTON_THRESHOLD;
 }
 
-bool InputManager::IsRightTriggerDown(int controllerIndex) const {
+bool Input::IsRightTriggerDown(int controllerIndex) const {
 	return GetRightTrigger(controllerIndex) >= TRIGGER_BUTTON_THRESHOLD;
 }
 
-bool InputManager::IsLeftTriggerTrigger(int controllerIndex) const {
+bool Input::IsLeftTriggerTrigger(int controllerIndex) const {
 	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
 		return false;
 	}
@@ -356,7 +364,7 @@ bool InputManager::IsLeftTriggerTrigger(int controllerIndex) const {
 	return currentPressed && !prevPressed;
 }
 
-bool InputManager::IsRightTriggerTrigger(int controllerIndex) const {
+bool Input::IsRightTriggerTrigger(int controllerIndex) const {
 	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
 		return false;
 	}
@@ -379,7 +387,7 @@ bool InputManager::IsRightTriggerTrigger(int controllerIndex) const {
 	return currentPressed && !prevPressed;
 }
 
-bool InputManager::IsLeftTriggerRelease(int controllerIndex) const {
+bool Input::IsLeftTriggerRelease(int controllerIndex) const {
 	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
 		return false;
 	}
@@ -402,7 +410,7 @@ bool InputManager::IsLeftTriggerRelease(int controllerIndex) const {
 	return !currentPressed && prevPressed;
 }
 
-bool InputManager::IsRightTriggerRelease(int controllerIndex) const {
+bool Input::IsRightTriggerRelease(int controllerIndex) const {
 	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
 		return false;
 	}
@@ -425,7 +433,7 @@ bool InputManager::IsRightTriggerRelease(int controllerIndex) const {
 	return !currentPressed && prevPressed;
 }
 
-void InputManager::SetGamePadVibration(float leftMotor, float rightMotor, int controllerIndex) {
+void Input::SetGamePadVibration(float leftMotor, float rightMotor, int controllerIndex) {
 	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
 		return;
 	}
@@ -444,14 +452,14 @@ void InputManager::SetGamePadVibration(float leftMotor, float rightMotor, int co
 	XInputSetState(controllerIndex, &vibration);
 }
 
-void InputManager::StopGamePadVibration(int controllerIndex) {
+void Input::StopGamePadVibration(int controllerIndex) {
 	SetGamePadVibration(0.0f, 0.0f, controllerIndex);
 }
 
-void InputManager::ImGui()
+void Input::ImGui()
 {
 #ifdef USEIMGUI
-	if (ImGui::CollapsingHeader("InputManager")) {
+	if (ImGui::CollapsingHeader("Input")) {
 
 
 		/// ゲームパッドが接続されているか確認
@@ -689,7 +697,7 @@ void InputManager::ImGui()
 #endif
 }
 
-float InputManager::ApplyDeadZone(SHORT value, SHORT deadZone) const {
+float Input::ApplyDeadZone(SHORT value, SHORT deadZone) const {
 	// デッドゾーン処理
 	if (std::abs(value) < deadZone) {
 		return 0.0f;
@@ -709,7 +717,7 @@ float InputManager::ApplyDeadZone(SHORT value, SHORT deadZone) const {
 
 
 
-void InputManager::DrawJoystickVisualizer(float lx, float ly) {
+void Input::DrawJoystickVisualizer(float lx, float ly) {
 #ifdef USEIMGUI
 	// 円の半径
 	const float radius = 50.0f;

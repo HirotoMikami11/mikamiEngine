@@ -20,7 +20,7 @@ DebugCamera::DebugCamera()
 DebugCamera::~DebugCamera() = default;
 
 void DebugCamera::Initialize(const Vector3& position, const Vector3& rotation) {
-	input_ = InputManager::GetInstance();
+	input_ = Input::GetInstance();
 	// 初期値を保存
 	initialPosition_ = position;
 	initialRotation_ = rotation;

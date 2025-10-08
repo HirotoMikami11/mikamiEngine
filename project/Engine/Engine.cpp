@@ -31,7 +31,7 @@ void Engine::InitializeBase(const std::wstring& title) {
 
 void Engine::InitializeManagers() {
 	// 入力マネージャー初期化
-	inputManager_ = InputManager::GetInstance();
+	inputManager_ = Input::GetInstance();
 	inputManager_->Initialize(winApp_.get());
 
 	// テクスチャマネージャー初期化

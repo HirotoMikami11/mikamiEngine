@@ -192,16 +192,16 @@
     <ClCompile Include="Engine\Engine.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\BaseSystem\Logger\Dump.cpp">
+    <ClCompile Include="Engine\Core\Logger\Dump.cpp">
       <Filter>Engine\BaseSystem\Logger</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\BaseSystem\Logger\Logger.cpp">
+    <ClCompile Include="Engine\Core\Logger\Logger.cpp">
       <Filter>Engine\BaseSystem\Logger</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\BaseSystem\WinApp\WinApp.cpp">
+    <ClCompile Include="Engine\Core\WinApp\WinApp.cpp">
       <Filter>Engine\BaseSystem\WinApp</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\BaseSystem\DirectXCommon\DescriptorHeapManager.cpp">
+    <ClCompile Include="Engine\Core\DirectXCommon\DescriptorHeapManager.cpp">
       <Filter>Engine\BaseSystem\DirectXCommon</Filter>
     </ClCompile>
     <ClCompile Include="Engine\OffscreenRenderer\OffscreenRenderer.cpp">
@@ -249,7 +249,7 @@
     <ClCompile Include="Engine\Managers\Scene\SceneManager.cpp">
       <Filter>Engine\Managers\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\BaseSystem\DirectXCommon\DirectXCommon.cpp">
+    <ClCompile Include="Engine\Core\DirectXCommon\DirectXCommon.cpp">
       <Filter>Engine\BaseSystem\DirectXCommon</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Managers\Model\ModelManager.cpp">
@@ -315,7 +315,7 @@
     <ClCompile Include="Engine\Managers\Transition\TransitionEffect\SlideEffect.cpp">
       <Filter>Engine\Managers\Transition\TransitionEffect\Slide</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Managers\Input\InputManager.cpp">
+    <ClCompile Include="Engine\Core\Input\Input.cpp">
       <Filter>Engine\Managers\Input</Filter>
     </ClCompile>
     <ClCompile Include="Engine\MyMath\TimedCall.cpp">
@@ -324,13 +324,13 @@
     <ClCompile Include="Engine\Objects\Line\LineRenderer.cpp">
       <Filter>Engine\Objects\Line</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\BaseSystem\DirectXCommon\PSOFactory\RootSignatureBuilder.cpp">
+    <ClCompile Include="Engine\Core\DirectXCommon\PSOFactory\RootSignatureBuilder.cpp">
       <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\BaseSystem\DirectXCommon\PSOFactory\PSODescriptor.cpp">
+    <ClCompile Include="Engine\Core\DirectXCommon\PSOFactory\PSODescriptor.cpp">
       <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\BaseSystem\DirectXCommon\PSOFactory\PSOFactory.cpp">
+    <ClCompile Include="Engine\Core\DirectXCommon\PSOFactory\PSOFactory.cpp">
       <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
     </ClCompile>
     <ClCompile Include="Engine\MyMath\Random\Random.cpp">
@@ -412,19 +412,19 @@
     <ClInclude Include="Engine\Engine.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\BaseSystem\Logger\Dump.h">
+    <ClInclude Include="Engine\Core\Logger\Dump.h">
       <Filter>Engine\BaseSystem\Logger</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\BaseSystem\Logger\Logger.h">
+    <ClInclude Include="Engine\Core\Logger\Logger.h">
       <Filter>Engine\BaseSystem\Logger</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\BaseSystem\WinApp\WinApp.h">
+    <ClInclude Include="Engine\Core\WinApp\WinApp.h">
       <Filter>Engine\BaseSystem\WinApp</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\BaseSystem\GraphicsConfig.h">
+    <ClInclude Include="Engine\Core\GraphicsConfig.h">
       <Filter>Engine\BaseSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\BaseSystem\DirectXCommon\DescriptorHeapManager.h">
+    <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager.h">
       <Filter>Engine\BaseSystem\DirectXCommon</Filter>
     </ClInclude>
     <ClInclude Include="Engine\OffscreenRenderer\OffscreenRenderer.h">
@@ -439,7 +439,7 @@
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Grayscale\GrayscalePostEffect.h">
       <Filter>Engine\OffScreenRenderer\PostEffect\Grayscale</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\BaseSystem\Logger\LeakChecker.h">
+    <ClInclude Include="Engine\Core\Logger\LeakChecker.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\MyMath\MyFunction.h">
@@ -481,7 +481,7 @@
     <ClInclude Include="Engine\Managers\Scene\SceneManager.h">
       <Filter>Engine\Managers\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\BaseSystem\DirectXCommon\DirectXCommon.h">
+    <ClInclude Include="Engine\Core\DirectXCommon\DirectXCommon.h">
       <Filter>Engine\BaseSystem\DirectXCommon</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Managers\Model\ModelManager.h">
@@ -556,7 +556,7 @@
     <ClInclude Include="Engine\Managers\Transition\TransitionEffect\SlideEffect.h">
       <Filter>Engine\Managers\Transition\TransitionEffect\Slide</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\Input\InputManager.h">
+    <ClInclude Include="Engine\Core\Input\Input.h">
       <Filter>Engine\Managers\Input</Filter>
     </ClInclude>
     <ClInclude Include="Engine\MyMath\TimedCall.h">
@@ -565,13 +565,13 @@
     <ClInclude Include="Engine\Objects\Line\LineRenderer.h">
       <Filter>Engine\Objects\Line</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\BaseSystem\DirectXCommon\PSOFactory\RootSignatureBuilder.h">
+    <ClInclude Include="Engine\Core\DirectXCommon\PSOFactory\RootSignatureBuilder.h">
       <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\BaseSystem\DirectXCommon\PSOFactory\PSODescriptor.h">
+    <ClInclude Include="Engine\Core\DirectXCommon\PSOFactory\PSODescriptor.h">
       <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\BaseSystem\DirectXCommon\PSOFactory\PSOFactory.h">
+    <ClInclude Include="Engine\Core\DirectXCommon\PSOFactory\PSOFactory.h">
       <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
     </ClInclude>
     <ClInclude Include="Engine\MyMath\Random\Random.h">

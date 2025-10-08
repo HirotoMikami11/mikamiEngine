@@ -6,7 +6,7 @@
 
 #include "BaseCamera.h"
 #include "DirectXCommon.h"
-#include "Managers/Input/inputManager.h"
+#include "Input.h"
 
 /// <summary>
 /// 球面座標系を表す構造体
@@ -179,6 +179,6 @@ private:
 	Vector3 initialPosition_;
 	Vector3 initialRotation_;
 
-	InputManager* input_;
+	Input* input_;
 
 };

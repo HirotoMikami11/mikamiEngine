@@ -79,7 +79,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Engine;$(ProjectDir)Application;$(ProjectDir)Engine\BaseSystem;$(ProjectDir)Engine\BaseSystem\DirectXCommon;$(ProjectDir)Engine\BaseSystem\Logger;$(ProjectDir)Engine\BaseSystem\WinApp;$(ProjectDir)Engine\BaseSystem\DirectXCommon\PSOFactory;$(ProjectDir)Engine\CameraController;$(ProjectDir)Engine\FrameTimer;$(ProjectDir)Engine\Managers;$(ProjectDir)Engine\MyMath;$(ProjectDir)Engine\Objects\GameObject;$(ProjectDir)Engine\Objects\Light;$(ProjectDir)Engine\Objects\Line;$(ProjectDir)Engine\Objects\Sprite;$(ProjectDir)Engine\OffscreenRenderer;$(ProjectDir)Application\Scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Engine;$(ProjectDir)Application;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\DirectXCommon;$(ProjectDir)Engine\Core\DirectXCommon\PSOFactory;$(ProjectDir)Engine\Core\Logger;$(ProjectDir)Engine\Core\WinApp;$(ProjectDir)Engine\Core\Input;$(ProjectDir)Engine\CameraController;$(ProjectDir)Engine\FrameTimer;$(ProjectDir)Engine\Managers;$(ProjectDir)Engine\MyMath;$(ProjectDir)Engine\Objects\GameObject;$(ProjectDir)Engine\Objects\Light;$(ProjectDir)Engine\Objects\Line;$(ProjectDir)Engine\Objects\Sprite;$(ProjectDir)Engine\OffscreenRenderer;$(ProjectDir)Application\Scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -105,7 +105,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Engine;$(ProjectDir)Application;$(ProjectDir)Engine\BaseSystem;$(ProjectDir)Engine\BaseSystem\DirectXCommon;$(ProjectDir)Engine\BaseSystem\Logger;$(ProjectDir)Engine\BaseSystem\WinApp;$(ProjectDir)Engine\BaseSystem\DirectXCommon\PSOFactory;$(ProjectDir)Engine\CameraController;$(ProjectDir)Engine\FrameTimer;$(ProjectDir)Engine\Managers;$(ProjectDir)Engine\MyMath;$(ProjectDir)Engine\Objects\GameObject;$(ProjectDir)Engine\Objects\Light;$(ProjectDir)Engine\Objects\Line;$(ProjectDir)Engine\Objects\Sprite;$(ProjectDir)Engine\OffscreenRenderer;$(ProjectDir)Application\Scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Engine;$(ProjectDir)Application;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\DirectXCommon;$(ProjectDir)Engine\Core\DirectXCommon\PSOFactory;$(ProjectDir)Engine\Core\Logger;$(ProjectDir)Engine\Core\WinApp;$(ProjectDir)Engine\Core\Input;$(ProjectDir)Engine\CameraController;$(ProjectDir)Engine\FrameTimer;$(ProjectDir)Engine\Managers;$(ProjectDir)Engine\MyMath;$(ProjectDir)Engine\Objects\GameObject;$(ProjectDir)Engine\Objects\Light;$(ProjectDir)Engine\Objects\Line;$(ProjectDir)Engine\Objects\Sprite;$(ProjectDir)Engine\OffscreenRenderer;$(ProjectDir)Application\Scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -126,7 +126,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Engine;$(ProjectDir)Application;$(ProjectDir)Engine\BaseSystem;$(ProjectDir)Engine\BaseSystem\DirectXCommon;$(ProjectDir)Engine\BaseSystem\Logger;$(ProjectDir)Engine\BaseSystem\WinApp;$(ProjectDir)Engine\BaseSystem\DirectXCommon\PSOFactory;$(ProjectDir)Engine\CameraController;$(ProjectDir)Engine\FrameTimer;$(ProjectDir)Engine\Managers;$(ProjectDir)Engine\MyMath;$(ProjectDir)Engine\Objects\GameObject;$(ProjectDir)Engine\Objects\Light;$(ProjectDir)Engine\Objects\Line;$(ProjectDir)Engine\Objects\Sprite;$(ProjectDir)Engine\OffscreenRenderer;$(ProjectDir)Application\Scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Engine;$(ProjectDir)Application;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\DirectXCommon;$(ProjectDir)Engine\Core\DirectXCommon\PSOFactory;$(ProjectDir)Engine\Core\Logger;$(ProjectDir)Engine\Core\WinApp;$(ProjectDir)Engine\Core\Input;$(ProjectDir)Engine\CameraController;$(ProjectDir)Engine\FrameTimer;$(ProjectDir)Engine\Managers;$(ProjectDir)Engine\MyMath;$(ProjectDir)Engine\Objects\GameObject;$(ProjectDir)Engine\Objects\Light;$(ProjectDir)Engine\Objects\Line;$(ProjectDir)Engine\Objects\Sprite;$(ProjectDir)Engine\OffscreenRenderer;$(ProjectDir)Application\Scene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
@@ -140,14 +140,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application\Scene\DebugScene.cpp" />
-    <ClCompile Include="Engine\BaseSystem\DirectXCommon\DescriptorHeapManager.cpp" />
-    <ClCompile Include="Engine\BaseSystem\DirectXCommon\DirectXCommon.cpp" />
-    <ClCompile Include="Engine\BaseSystem\DirectXCommon\PSOFactory\PSODescriptor.cpp" />
-    <ClCompile Include="Engine\BaseSystem\DirectXCommon\PSOFactory\PSOFactory.cpp" />
-    <ClCompile Include="Engine\BaseSystem\DirectXCommon\PSOFactory\RootSignatureBuilder.cpp" />
-    <ClCompile Include="Engine\BaseSystem\Logger\Dump.cpp" />
-    <ClCompile Include="Engine\BaseSystem\Logger\Logger.cpp" />
-    <ClCompile Include="Engine\BaseSystem\WinApp\WinApp.cpp" />
+    <ClCompile Include="Engine\Core\DirectXCommon\DescriptorHeapManager.cpp" />
+    <ClCompile Include="Engine\Core\DirectXCommon\DirectXCommon.cpp" />
+    <ClCompile Include="Engine\Core\DirectXCommon\PSOFactory\PSODescriptor.cpp" />
+    <ClCompile Include="Engine\Core\DirectXCommon\PSOFactory\PSOFactory.cpp" />
+    <ClCompile Include="Engine\Core\DirectXCommon\PSOFactory\RootSignatureBuilder.cpp" />
+    <ClCompile Include="Engine\Core\Logger\Dump.cpp" />
+    <ClCompile Include="Engine\Core\Logger\Logger.cpp" />
+    <ClCompile Include="Engine\Core\WinApp\WinApp.cpp" />
     <ClCompile Include="Engine\CameraController\Camera.cpp" />
     <ClCompile Include="Engine\CameraController\CameraController.cpp" />
     <ClCompile Include="Engine\CameraController\DebugCamera.cpp" />
@@ -157,7 +157,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Managers\Audio\AudioManager.cpp" />
     <ClCompile Include="Engine\Managers\ImGui\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Managers\ImGui\MyImGui.cpp" />
-    <ClCompile Include="Engine\Managers\Input\InputManager.cpp" />
+    <ClCompile Include="Engine\Core\Input\Input.cpp" />
     <ClCompile Include="Engine\Managers\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\Managers\ObjectID\ObjectIDManager.cpp" />
     <ClCompile Include="Engine\Managers\Scene\DemoScene.cpp" />
@@ -268,15 +268,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Scene\DebugScene.h" />
-    <ClInclude Include="Engine\BaseSystem\DirectXCommon\DescriptorHeapManager.h" />
-    <ClInclude Include="Engine\BaseSystem\DirectXCommon\DirectXCommon.h" />
-    <ClInclude Include="Engine\BaseSystem\DirectXCommon\PSOFactory\PSODescriptor.h" />
-    <ClInclude Include="Engine\BaseSystem\DirectXCommon\PSOFactory\PSOFactory.h" />
-    <ClInclude Include="Engine\BaseSystem\DirectXCommon\PSOFactory\RootSignatureBuilder.h" />
-    <ClInclude Include="Engine\BaseSystem\GraphicsConfig.h" />
-    <ClInclude Include="Engine\BaseSystem\Logger\Dump.h" />
-    <ClInclude Include="Engine\BaseSystem\Logger\Logger.h" />
-    <ClInclude Include="Engine\BaseSystem\WinApp\WinApp.h" />
+    <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager.h" />
+    <ClInclude Include="Engine\Core\DirectXCommon\DirectXCommon.h" />
+    <ClInclude Include="Engine\Core\DirectXCommon\PSOFactory\PSODescriptor.h" />
+    <ClInclude Include="Engine\Core\DirectXCommon\PSOFactory\PSOFactory.h" />
+    <ClInclude Include="Engine\Core\DirectXCommon\PSOFactory\RootSignatureBuilder.h" />
+    <ClInclude Include="Engine\Core\GraphicsConfig.h" />
+    <ClInclude Include="Engine\Core\Logger\Dump.h" />
+    <ClInclude Include="Engine\Core\Logger\Logger.h" />
+    <ClInclude Include="Engine\Core\WinApp\WinApp.h" />
     <ClInclude Include="Engine\CameraController\BaseCamera.h" />
     <ClInclude Include="Engine\CameraController\Camera.h" />
     <ClInclude Include="Engine\CameraController\CameraController.h" />
@@ -287,7 +287,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Managers\Audio\AudioManager.h" />
     <ClInclude Include="Engine\Managers\ImGui\ImGuiManager.h" />
     <ClInclude Include="Engine\Managers\ImGui\MyImGui.h" />
-    <ClInclude Include="Engine\Managers\Input\InputManager.h" />
+    <ClInclude Include="Engine\Core\Input\Input.h" />
     <ClInclude Include="Engine\Managers\Model\ModelManager.h" />
     <ClInclude Include="Engine\Managers\ObjectID\ObjectIDManager.h" />
     <ClInclude Include="Engine\Managers\Scene\BaseScene.h" />
@@ -334,7 +334,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="Application\Game.h" />
-    <ClInclude Include="Engine\BaseSystem\Logger\LeakChecker.h" />
+    <ClInclude Include="Engine\Core\Logger\LeakChecker.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

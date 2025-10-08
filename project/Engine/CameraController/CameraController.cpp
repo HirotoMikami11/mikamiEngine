@@ -1,6 +1,6 @@
 #include "CameraController.h"
 #include "Managers/ImGui/ImGuiManager.h"
-#include "Managers/Input/inputManager.h"
+#include "Input.h"
 #include <algorithm>
 #include <vector>
 
@@ -89,8 +89,8 @@ void CameraController::Update() {
 void CameraController::HandleDebugInput() {
 #ifdef USEIMGUI
 	// Shift + TAB でデバッグカメラの切り替え
-	if (InputManager::GetInstance()->IsKeyTrigger(DIK_TAB) &&
-		InputManager::GetInstance()->IsKeyDown(DIK_LSHIFT)) {
+	if (Input::GetInstance()->IsKeyTrigger(DIK_TAB) &&
+		Input::GetInstance()->IsKeyDown(DIK_LSHIFT)) {
 		ToggleDebugCamera();
 	}
 #endif

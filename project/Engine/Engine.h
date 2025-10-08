@@ -12,7 +12,7 @@
 #include "Managers/Audio/AudioManager.h"
 #include "Managers/Texture/TextureManager.h"
 #include "Managers/Model/ModelManager.h"
-#include "Managers/Input/inputManager.h"
+#include "Input.h"
 #include "Managers/ImGui/ImGuiManager.h" 
 #include "FrameTimer.h"
 #include "OffscreenRenderer.h"
@@ -109,7 +109,7 @@ private:
 	std::unique_ptr<OffscreenRenderer> offscreenRenderer_;
 
 	// マネージャー
-	InputManager* inputManager_;
+	Input* inputManager_;
 	TextureManager* textureManager_;
 	AudioManager* audioManager_;
 	ImGuiManager* imguiManager_;

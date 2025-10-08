@@ -1,13 +1,9 @@
 #pragma once
-#define DIRECTINPUT_VERSION 0x0800//DirectInputのバーション指定
-#include <dinput.h>	//キーボードマウス
-#include <wrl.h>
-#pragma comment(lib, "dinput8.lib")
-#pragma comment(lib, "dxguid.lib")
 
-#include <Xinput.h>	//ゲームパッド
-#include <cmath>
-#pragma comment(lib, "xinput.lib")
+#define DIRECTINPUT_VERSION 0x0800			//DirectInputのバーション指定
+#include <dinput.h>							//キーボードマウス
+#include <Xinput.h>							//ゲームパッド
+#include <wrl.h>
 
 #include "WinApp.h"
 #include "Logger.h"
@@ -16,8 +12,12 @@
 /// <summary>
 /// 入力管理クラス（キーボード、マウス）
 /// </summary>
-class InputManager {
+class Input {
 public:
+	//namespaceの省略(エイリアステンプレート)
+	template<typename T> using Comptr = Microsoft::WRL::ComPtr<T>;
+
+
 	// ゲームパッドのボタン定義
 	enum class GamePadButton {
 		//十字キー
@@ -51,7 +51,7 @@ public:
 	};
 
 	// シングルトンパターン
-	static InputManager* GetInstance();
+	static Input* GetInstance();
 
 	/// <summary>
 	/// 初期化処理
@@ -273,10 +273,10 @@ public:
 private:
 
 	// シングルトン用
-	InputManager() = default;
-	~InputManager() = default;
-	InputManager(const InputManager&) = delete;
-	InputManager& operator=(const InputManager&) = delete;
+	Input() = default;
+	~Input() = default;
+	Input(const Input&) = delete;
+	Input& operator=(const Input&) = delete;
 
 
 
@@ -292,8 +292,8 @@ private:
 	// マウス関連
 	DIMOUSESTATE2 mouse = {};
 	DIMOUSESTATE2 preMouse = {};
-	Vector2 mousePosition = {};  // マウスの座標（スクリーンの座標）
-	Vector2 preMousePosition = {};  // 前のマウスの座標（スクリーンの座標）
+	Vector2 mousePosition = {};			// マウスの座標（スクリーンの座標）
+	Vector2 preMousePosition = {};		// 前のマウスの座標（スクリーンの座標）
 
 	// ゲームパッド関連（最大4つのコントローラー）
 	static const int MAX_CONTROLLERS = 2;
