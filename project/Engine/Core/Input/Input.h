@@ -295,13 +295,13 @@ private:
 	Vector2 mousePosition = {};			// マウスの座標（スクリーンの座標）
 	Vector2 preMousePosition = {};		// 前のマウスの座標（スクリーンの座標）
 
-	// ゲームパッド関連（最大4つのコントローラー）
+	// ゲームパッド関連（最大2つのコントローラー）
 	static const int MAX_CONTROLLERS = 2;
 	XINPUT_STATE gamePadState[MAX_CONTROLLERS] = {};
 	XINPUT_STATE preGamePadState[MAX_CONTROLLERS] = {};
 	bool gamePadConnected[MAX_CONTROLLERS] = {};
-	// トリガーボタンがボタンとして押される値（0.0f～1.0fの範囲で）cppに移動
-	//static const float TRIGGER_BUTTON_THRESHOLD = 0.5f;
+	// トリガーボタンがボタンとして押される値（0.0f～1.0fの範囲で）
+	const float TRIGGER_BUTTON_THRESHOLD = 0.5f;
 
 
 	// スティックのデッドゾーン処理

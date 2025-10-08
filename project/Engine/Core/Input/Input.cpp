@@ -330,7 +330,7 @@ float Input::GetRightTrigger(int controllerIndex) const {
 }
 
 
-static const float TRIGGER_BUTTON_THRESHOLD = 0.5f;
+
 
 
 bool Input::IsLeftTriggerDown(int controllerIndex) const {
