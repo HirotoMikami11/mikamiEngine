@@ -10,12 +10,12 @@
 #include"../externals/DirectXTex/d3dx12.h"
 ///DXC
 #include <dxcapi.h>
-
+#include <chrono>
 #include <wrl.h>
 #include"WinApp.h"
 #include"DescriptorHeapManager.h"		//ディスクリプタヒープ管理
 #include"PSOFactory.h"					//PSO作成
-
+#include"FrameTimer.h"					//フレームタイマー
 /// <summary>
 /// DirectX
 /// </summary>
@@ -167,13 +167,21 @@ private:
 	/// </summary>
 	void MakeViewport();
 
+	/// <summary>
+	/// FPS固定処理の初期化
+	 /// </summary>
+	void InitializeFixFPS();
 
+	/// <summary>
+	/// FPS固定処理の更新
+	/// </summary>
+	void UpdateFixFPS();
 
-	#ifdef USEIMGUI
-		///デバッグレイヤー
+#ifdef USEIMGUI
+	///デバッグレイヤー
 	ComPtr<ID3D12Debug1> debugController;
-	#endif
-		//DXGIFactory
+#endif
+	//DXGIFactory
 	HRESULT hr;
 	ComPtr<IDXGIFactory7> dxgiFactory;
 	ComPtr<IDXGIAdapter4> useAdapter;
@@ -231,5 +239,20 @@ private:
 
 	//ディスクリプタヒープの管理をする
 	std::unique_ptr<DescriptorHeapManager> descriptorManager_;
+
+	// FPS固定関連
+	std::chrono::steady_clock::time_point reference_;
+
+	// 1/60秒ぴったりの時間(マイクロ秒)
+	static constexpr std::chrono::microseconds kMinTime{
+		static_cast<uint64_t>(1000000.0f / 60.0f)
+	};
+
+	// 1/60秒よりわずかに短い時間(マイクロ秒) - モニター倍数対策
+	static constexpr std::chrono::microseconds kMinCheckTime{
+		static_cast<uint64_t>(1000000.0f / 65.0f)
+	};
+
+
 };
 

@@ -55,8 +55,14 @@ void FrameTimer::ImGui()
 	ImGui::SameLine();
 	DrawFPSStats();
 
-	//ImGui::Text("Delta Time: %.6f s", deltaTime_);
-	//ImGui::Text("Total Time: %.2f s", totalTime_);
+	// デルタタイムの確認
+	float dt = GetDeltaTime();
+	ImGui::Text("Delta Time: %.6f s (%.2f ms)", dt, dt * 1000.0f);
+
+	// 60FPSなら約0.0166秒のはず
+	if (dt > 0.0165f && dt < 0.0167f) {
+		ImGui::TextColored(ImVec4(0, 1, 0, 1), "Delta Time: Stable");
+	}
 
 	ImGui::Separator();	//線
 #endif

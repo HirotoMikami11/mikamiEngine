@@ -7,6 +7,8 @@
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #endif
 
+#pragma comment(lib, "winmm.lib")
+
 WinApp::WinApp() {
 
 
@@ -17,14 +19,20 @@ WinApp::~WinApp() {
 }
 
 void WinApp::Initialize(const std::wstring& title) {
+
+
 	//COMの初期化
 	CoInitializeEx(0, COINIT_MULTITHREADED);
+
+	// システムタイマーの分解能を上げる
+	//sleepの精度が上がる
+	timeBeginPeriod(1);
+
 
 	///
 	/// ウィンドウクラスを登録する
 	///
 
-	
 	//ウィンドウプロシージャ
 	wc.lpfnWndProc = WindowProc;
 
@@ -37,9 +45,6 @@ void WinApp::Initialize(const std::wstring& title) {
 
 	//ウィンドウクラスを登録する
 	RegisterClass(&wc);
-
-
-
 
 	//　ウィンドウサイズを表す構造体にクライアント領域を入れる
 	RECT wrc = { 0,0,GraphicsConfig::kClientWidth,GraphicsConfig::kClientHeight };
@@ -67,6 +72,9 @@ void WinApp::Initialize(const std::wstring& title) {
 }
 
 void WinApp::Finalize() {
+	// システムタイマーの分解能を戻す
+	timeEndPeriod(1);
+
 	CloseWindow(hwnd);
 }
 
