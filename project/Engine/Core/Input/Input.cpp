@@ -19,7 +19,7 @@ Input* Input::GetInstance() {
 void Input::Initialize(WinApp* winApp) {
 	// DirectInputの初期化
 	HRESULT result = DirectInput8Create(
-		winApp->GetInstance(),
+		winApp->GetHInstance(),
 		DIRECTINPUT_VERSION,
 		IID_IDirectInput8,
 		(void**)&directInput,
