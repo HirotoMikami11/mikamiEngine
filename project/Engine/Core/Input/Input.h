@@ -14,8 +14,8 @@
 /// </summary>
 class Input {
 public:
-	//namespaceの省略(エイリアステンプレート)
-	template<typename T> using Comptr = Microsoft::WRL::ComPtr<T>;
+	//クラス内でのみ,namespace省略(エイリアステンプレート)
+	template<typename T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 
 	// ゲームパッドのボタン定義
@@ -281,9 +281,9 @@ private:
 
 
 	// DirectInput関連
-	Microsoft::WRL::ComPtr<IDirectInput8> directInput;
-	Microsoft::WRL::ComPtr<IDirectInputDevice8> devKeyboard;
-	Microsoft::WRL::ComPtr<IDirectInputDevice8> devMouse;
+	ComPtr<IDirectInput8> directInput;
+	ComPtr<IDirectInputDevice8> devKeyboard;
+	ComPtr<IDirectInputDevice8> devMouse;
 
 	// キーボード関連
 	BYTE key[256] = {};
