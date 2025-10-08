@@ -278,7 +278,7 @@ private:
 	Input(const Input&) = delete;
 	Input& operator=(const Input&) = delete;
 
-
+	WinApp* winApp_ = nullptr;
 
 	// DirectInput関連
 	ComPtr<IDirectInput8> directInput;

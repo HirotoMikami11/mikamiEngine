@@ -17,9 +17,13 @@ Input* Input::GetInstance() {
 }
 
 void Input::Initialize(WinApp* winApp) {
+	//WindwoAppのポインタを保存
+	winApp_ = winApp;
+
+
 	// DirectInputの初期化
 	HRESULT result = DirectInput8Create(
-		winApp->GetHInstance(),
+		winApp_->GetHInstance(),
 		DIRECTINPUT_VERSION,
 		IID_IDirectInput8,
 		(void**)&directInput,
@@ -36,7 +40,7 @@ void Input::Initialize(WinApp* winApp) {
 
 	///排他制御レベルのセット
 	result = devKeyboard->SetCooperativeLevel(
-		winApp->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+		winApp_->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(result));//作成できなかったら停止
 
 	/// マウスデバイスの生成
@@ -49,7 +53,7 @@ void Input::Initialize(WinApp* winApp) {
 
 	///排他制御レベルのセット
 	result = devMouse->SetCooperativeLevel(
-		winApp->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+		winApp_->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 	assert(SUCCEEDED(result));//作成できなかったら停止
 
 	// キーボードの初期化
