@@ -606,19 +606,19 @@ void DrawSphere(const SphereMath& sphere, const Matrix4x4& viewProjectionMatrix,
 			float lon = lonIndex * kLonEvery;						//現在の経度（φ）
 			//world座標系でのa,b,cを求める
 			Vector3 a = {
-			cos(lat) * cos(lon),
-			sin(lat),
-			cos(lat) * sin(lon)
+			cosf(lat) * cosf(lon),
+			sinf(lat),
+			cosf(lat) * sinf(lon)
 			};
 			Vector3 b = {
-			cos(lat + kLatEvery) * cos(lon),
-			sin(lat + kLatEvery),
-			cos(lat + kLatEvery) * sin(lon)
+			cosf(lat + kLatEvery) * cosf(lon),
+			sinf(lat + kLatEvery),
+			cosf(lat + kLatEvery) * sinf(lon)
 			};
 			Vector3 c = {
-			cos(lat) * cos(lon + kLonEvery),
-			sin(lat),
-			cos(lat) * sin(lon + kLonEvery)
+			cosf(lat) * cosf(lon + kLonEvery),
+			sinf(lat),
+			cosf(lat) * sinf(lon + kLonEvery)
 			};
 
 			//球体の中心座標と半径を加味して、a,b,cをワールド座標に変換

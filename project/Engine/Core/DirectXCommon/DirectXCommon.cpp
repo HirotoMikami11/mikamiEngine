@@ -1,11 +1,21 @@
 #include "DirectXCommon.h"
-#include<cassert>						//アサ―トを扱う
+#include<cassert>
 
 ///DirectX12
+#pragma comment(lib,"d3d12.lib")
+#pragma comment(lib,"dxgi.lib")
+#pragma comment(lib,"dxguid.lib")
+#pragma comment(lib,"dxcompiler.lib")
 
+#include"Logger.h"
+#include"GraphicsConfig.h"				//ウィンドウサイズなど
 
 
 void DirectXCommon::Initialize(WinApp* winApp) {
+
+	//NULL検出
+	assert(winApp);
+
 	///*-----------------------------------------------------------------------*///
 	//																			//
 	///									DebugLayer							   ///
@@ -182,7 +192,7 @@ void DirectXCommon::MakeDXGIFactory()
 			//採用したアダプタの情報をログに出力。wstringの方なので注意
 
 			///コンバートストリングしてstr変化
-			Logger::Log(Logger::GetStream(), Logger::ConvertString(std::format(L"Use Adapater:{}\n", adapterDesc.Description)));
+			Logger::Log(std::format(L"Use Adapater:{}\n", adapterDesc.Description));
 			break;
 		}
 		useAdapter = nullptr;//ソフトウェアアダプタの場合は見なかったことにする
@@ -223,7 +233,7 @@ D3D_FEATURE_LEVEL_12_2,D3D_FEATURE_LEVEL_12_1,D3D_FEATURE_LEVEL_12_0
 	///	DirectX12のエラー・警告が出た時止まるようにする
 
 #ifdef USEIMGUI	//デバッグ時
-	Microsoft::WRL::ComPtr <ID3D12InfoQueue> infoQueue = nullptr;
+	ComPtr <ID3D12InfoQueue> infoQueue = nullptr;
 	if (SUCCEEDED(device->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
 		// ヤバイエラー時に止まる
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
@@ -341,7 +351,7 @@ void DirectXCommon::MakeDSV()
 	device->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvHandle);
 }
 
-Microsoft::WRL::ComPtr<ID3D12Resource>DirectXCommon::CreateDepthStencilTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height)
+DirectXCommon::ComPtr<ID3D12Resource>DirectXCommon::CreateDepthStencilTextureResource(ComPtr<ID3D12Device> device, int32_t width, int32_t height)
 {
 	//生成するResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
@@ -366,7 +376,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource>DirectXCommon::CreateDepthStencilTextureRe
 
 
 	//Resuorceの生成
-	Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
+	ComPtr<ID3D12Resource> resource = nullptr;
 	HRESULT hr = device->CreateCommittedResource(
 		&heapProperties,							//Heapの設定
 		D3D12_HEAP_FLAG_NONE,						//Heapの特殊な設定なしにする
@@ -497,14 +507,14 @@ void DirectXCommon::MakeLinePSO() {
 	Logger::Log(Logger::GetStream(), "Complete create Line PSO using PSOFactory!!\n");
 }
 
-Microsoft::WRL::ComPtr<IDxcBlob>DirectXCommon::CompileShader(
+DirectXCommon::ComPtr<IDxcBlob>DirectXCommon::CompileShader(
 	const std::wstring& filePath,
 	const wchar_t* profile,
-	Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils,
-	Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler,
-	Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler) {
+	ComPtr<IDxcUtils> dxcUtils,
+	ComPtr<IDxcCompiler3> dxcCompiler,
+	ComPtr<IDxcIncludeHandler> includeHandler) {
 	//「これからシェーダーをコンパイルする」とログに出す
-	Logger::Log(Logger::ConvertString(std::format(L"Begin CompileShader, path:{},profile:{}\n", filePath, profile)));
+	Logger::Log(std::format(L"Begin CompileShader, path:{},profile:{}\n", filePath, profile));
 
 	///hlslファイルを読み込む
 	IDxcBlobEncoding* shaderSource = nullptr;
@@ -554,7 +564,7 @@ Microsoft::WRL::ComPtr<IDxcBlob>DirectXCommon::CompileShader(
 	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
 	assert(SUCCEEDED(hr));
 	//成功したログを出す
-	Logger::Log(Logger::ConvertString(std::format(L"Compile Succesed,path:{},profile:{}\n", filePath, profile)));
+	Logger::Log(std::format(L"Compile Succesed,path:{},profile:{}\n", filePath, profile));
 	//もう使わないリソースを開放
 	shaderSource->Release();
 	shaderResult->Release();
@@ -619,7 +629,7 @@ void DirectXCommon::PreDraw()
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	//	描画用のDesctiptorHeapの設定
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = { descriptorManager_->GetSRVHeapComPtr() };
+	ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = { descriptorManager_->GetSRVHeapComPtr() };
 	commandList->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());
 	///*-----------------------------------------------------------------------*///
 	//																			//
@@ -660,7 +670,7 @@ void DirectXCommon::EndFrame() {
 	assert(SUCCEEDED(hr));
 
 	// コマンドをキックする
-	Microsoft::WRL::ComPtr<ID3D12CommandList> commandLists[] = { commandList.Get() };
+	ComPtr<ID3D12CommandList> commandLists[] = { commandList.Get() };
 	commandQueue->ExecuteCommandLists(1, commandLists->GetAddressOf());
 
 	// GPUとOSに画面の交換を行うように通知

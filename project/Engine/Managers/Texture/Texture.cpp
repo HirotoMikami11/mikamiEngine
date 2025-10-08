@@ -1,5 +1,8 @@
 #include "Texture.h"
 
+#include "Logger.h"
+#include "StringUtility.h"
+
 bool Texture::LoadTexture(const std::string& filePath,DirectXCommon* dxCommon, uint32_t srvIndex) {
 	// 既に読み込み済みの場合はスキップ
 	if (IsValid() && filePath_ == filePath) {
@@ -139,7 +142,7 @@ void Texture::Unload(DirectXCommon* dxCommon) {
 DirectX::ScratchImage Texture::LoadTextureFile(const std::string& filePath) {
 	// テクスチャファイルを読んでプログラムで扱えるようにする
 	DirectX::ScratchImage image{};
-	std::wstring filePathW = Logger::ConvertString(filePath);
+	std::wstring filePathW = StringUtility::ConvertString(filePath);
 	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
 
 	if (FAILED(hr)) {

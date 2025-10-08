@@ -22,7 +22,7 @@ void Engine::InitializeBase(const std::wstring& title) {
 	winApp_->Initialize(title);
 
 	// ログ初期化
-	Logger::Initalize();
+	Logger::Initialize();
 
 	// DirectX初期化
 	directXCommon_ = std::make_unique<DirectXCommon>();

@@ -17,6 +17,7 @@ Input* Input::GetInstance() {
 }
 
 void Input::Initialize(WinApp* winApp) {
+	assert(winApp);
 	//WindwoAppのポインタを保存
 	winApp_ = winApp;
 

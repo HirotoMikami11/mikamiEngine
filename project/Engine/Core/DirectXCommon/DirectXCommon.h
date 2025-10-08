@@ -3,30 +3,18 @@
 
 ///DirectX12
 #include<d3d12.h>
-#pragma comment(lib,"d3d12.lib")
 #include<dxgi1_6.h>
-#pragma comment(lib,"dxgi.lib")
 #include <dxgidebug.h>
-#pragma comment(lib,"dxguid.lib")
-
 ///DirectXTex
 #include"../externals/DirectXTex/DirectXTex.h"
 #include"../externals/DirectXTex/d3dx12.h"
 ///DXC
 #include <dxcapi.h>
-#pragma comment(lib,"dxcompiler.lib")
 
-#include <wrl.h>						// Microsoft::WRL::ComPtrを使用するためのインクルード
-
+#include <wrl.h>
 #include"WinApp.h"
-#include"Logger.h"
-#include"GraphicsConfig.h"				//ウィンドウサイズなど
 #include"DescriptorHeapManager.h"		//ディスクリプタヒープ管理
-
-///PSO作成しやすいように作ったやつら
-#include"PSOFactory.h"
-#include"PSODescriptor.h"
-#include"RootSignatureBuilder.h"
+#include"PSOFactory.h"					//PSO作成
 
 /// <summary>
 /// DirectX
@@ -34,6 +22,8 @@
 class DirectXCommon
 {
 public:
+	//クラス内でのみ,namespace省略(エイリアステンプレート)
+	template<typename T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	void Initialize(WinApp* winApp);
 	void Finalize();
@@ -60,12 +50,12 @@ public:
 	/// <summary>
 	/// シェーダーをコンパイルする関数
 	/// </summary>
-	static Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
+	static ComPtr<IDxcBlob> CompileShader(
 		const std::wstring& filePath,
 		const wchar_t* profile,
-		Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils,
-		Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler,
-		Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler);
+		ComPtr<IDxcUtils> dxcUtils,
+		ComPtr<IDxcCompiler3> dxcCompiler,
+		ComPtr<IDxcIncludeHandler> includeHandler);
 
 
 	//*-----------------------------------------------------------------------*//
@@ -85,8 +75,8 @@ public:
 	ID3D12PipelineState* GetLinePipelineState() const { return linePipelineState.Get(); }
 
 	///参照で返すゲッター？
-	const Microsoft::WRL::ComPtr<ID3D12Device>& GetDeviceComPtr() const { return device; }
-	const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& GetCommandListComPtr() const { return commandList; }
+	const ComPtr<ID3D12Device>& GetDeviceComPtr() const { return device; }
+	const ComPtr<ID3D12GraphicsCommandList>& GetCommandListComPtr() const { return commandList; }
 
 	// DXC関連のゲッター
 	IDxcUtils* GetDxcUtils() const { return dxcUtils.Get(); }
@@ -140,7 +130,7 @@ private:
 	/// DSVを作成する
 	/// </summary>
 	void MakeDSV();
-	Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height);
+	ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(ComPtr<ID3D12Device> device, int32_t width, int32_t height);
 
 	/// <summary>
 	/// フェンスとイベントを作成する
@@ -181,55 +171,55 @@ private:
 
 	#ifdef USEIMGUI
 		///デバッグレイヤー
-	Microsoft::WRL::ComPtr<ID3D12Debug1> debugController;
+	ComPtr<ID3D12Debug1> debugController;
 	#endif
 		//DXGIFactory
 	HRESULT hr;
-	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory;
-	Microsoft::WRL::ComPtr<IDXGIAdapter4> useAdapter;
-	Microsoft::WRL::ComPtr<ID3D12Device> device;
+	ComPtr<IDXGIFactory7> dxgiFactory;
+	ComPtr<IDXGIAdapter4> useAdapter;
+	ComPtr<ID3D12Device> device;
 
 	//initailzeCommand
-	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
-	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator;
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;
+	ComPtr<ID3D12CommandQueue> commandQueue;
+	ComPtr<ID3D12CommandAllocator> commandAllocator;
+	ComPtr<ID3D12GraphicsCommandList> commandList;
 
-	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain;
+	ComPtr<IDXGISwapChain4> swapChain;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 	// スワップチェーンのバッファ
-	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResources[2];
+	ComPtr<ID3D12Resource> swapChainResources[2];
 
 	//rtv
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};//rtvの設定
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
 
 	//dsv
-	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
+	ComPtr<ID3D12Resource> depthStencilResource;
+	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
 
 	//Fence
-	Microsoft::WRL::ComPtr<ID3D12Fence> fence;
+	ComPtr<ID3D12Fence> fence;
 	uint64_t fenceValue;
 	HANDLE fenceEvent;
 
 	//DXC
-	Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils;
-	Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler;
-	Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler;
+	ComPtr<IDxcUtils> dxcUtils;
+	ComPtr<IDxcCompiler3> dxcCompiler;
+	ComPtr<IDxcIncludeHandler> includeHandler;
 
 	// PSOFactory
 	std::unique_ptr<PSOFactory> psoFactory_;
 	//3D用PSO
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState;
+	ComPtr<ID3D12RootSignature> rootSignature;
+	ComPtr<ID3D12PipelineState> graphicsPipelineState;
 
 	//スプライト用PSO
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> spriteRootSignature;
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> spritePipelineState;
+	ComPtr<ID3D12RootSignature> spriteRootSignature;
+	ComPtr<ID3D12PipelineState> spritePipelineState;
 
 	//線分用PSO
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> lineRootSignature;
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> linePipelineState;
+	ComPtr<ID3D12RootSignature> lineRootSignature;
+	ComPtr<ID3D12PipelineState> linePipelineState;
 
 
 	//ビューポート
@@ -241,6 +231,5 @@ private:
 
 	//ディスクリプタヒープの管理をする
 	std::unique_ptr<DescriptorHeapManager> descriptorManager_;
-
 };
 

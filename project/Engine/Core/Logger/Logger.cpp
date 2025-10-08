@@ -1,18 +1,13 @@
 #include "Logger.h"
+#include "StringUtility.h"
 #include <Windows.h>
 #include <strsafe.h>
 
-///*-----------------------------------------------------------------------*///
-//																			//
-///									ログ関連の関数							   ///
-//																			//
-///*-----------------------------------------------------------------------*///
-
 //変数の定義
 std::ofstream Logger::logFileStream_;
-bool Logger::isEnabled_ = true;  // デフォルトで有効
+bool Logger::isEnabled_ = true;
 
-void Logger::Initalize()
+void Logger::Initialize()
 {
 	// ログが無効の場合は何もしない
 	if (!isEnabled_) {
@@ -46,7 +41,6 @@ void Logger::Initalize()
 	Logger::Log("Hello,DirectX!\n");
 }
 
-/// プログラム終了時にファイルを閉じる関数
 void Logger::Finalize()
 {
 	if (logFileStream_.is_open()) {
@@ -55,9 +49,8 @@ void Logger::Finalize()
 	}
 }
 
-/// 出力ウィンドウとログファイルに文字を出す関数
+// std::string版
 void Logger::Log(const std::string& message) {
-	// ログが無効の場合は何もしない
 	if (!isEnabled_) {
 		return;
 	}
@@ -65,16 +58,27 @@ void Logger::Log(const std::string& message) {
 	// 出力ウィンドウに出力
 	OutputDebugStringA(message.c_str());
 
-	// ログファイルに出力（ファイルが開いている場合のみ）
+	// ログファイルに出力
 	if (logFileStream_.is_open()) {
 		logFileStream_ << message;
-		logFileStream_.flush(); // 即座にファイルに書き込む
+		logFileStream_.flush();
 	}
 }
 
-/// カスタムストリームと出力ウィンドウに文字を出す関数（Logger::GetStream()を使う場合との互換性用）
+// std::wstring版（内部で変換）
+void Logger::Log(const std::wstring& message) {
+	if (!isEnabled_) {
+		return;
+	}
+
+	// StringUtilityを使ってwstring -> stringに変換
+	std::string converted = StringUtility::ConvertString(message);
+
+	// string版のLogを呼び出す
+	Log(converted);
+}
+
 void Logger::Log(std::ostream& os, const std::string& message) {
-	// ログが無効の場合は何もしない
 	if (!isEnabled_) {
 		return;
 	}
@@ -82,40 +86,9 @@ void Logger::Log(std::ostream& os, const std::string& message) {
 	// カスタムストリームに出力
 	os << message;
 	if (&os == &logFileStream_) {
-		// ログファイルストリームの場合は即座にフラッシュ
 		os.flush();
 	}
 
 	// 出力ウィンドウにも出力
 	OutputDebugStringA(message.c_str());
-}
-
-
-
-/// string -> wstringに変換する関数
-std::wstring Logger::ConvertString(const std::string& str) {
-	if (str.empty()) {
-		return std::wstring();
-	}
-	auto sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), NULL, 0);
-	if (sizeNeeded == 0) {
-		return std::wstring();
-	}
-	std::wstring result(sizeNeeded, 0);
-	MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), &result[0], sizeNeeded);
-	return result;
-}
-
-/// wstring -> stringに変換する関数
-std::string Logger::ConvertString(const std::wstring& str) {
-	if (str.empty()) {
-		return std::string();
-	}
-	auto sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.size()), NULL, 0, NULL, NULL);
-	if (sizeNeeded == 0) {
-		return std::string();
-	}
-	std::string result(sizeNeeded, 0);
-	WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.size()), result.data(), sizeNeeded, NULL, NULL);
-	return result;
 }
