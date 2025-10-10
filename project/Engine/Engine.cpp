@@ -105,6 +105,8 @@ void Engine::Update() {
 		ClosedWindow_ = true; //ウィンドウを閉じる
 	}
 
+	// FPS開始
+	frameTimer_->BeginFrame();
 
 	// 入力更新
 	inputManager_->Update();
@@ -153,8 +155,7 @@ void Engine::EndDrawBackBuffer() {
 
 	// 描画そのもののEndFrame
 	directXCommon_->EndFrame();
-	// FPS開始
-	frameTimer_->BeginFrame();
+
 
 }
 

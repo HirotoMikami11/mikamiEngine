@@ -411,7 +411,7 @@ void DirectXCommon::MakeFenceEvent()
 
 	//FenceのSignal(GPUに指定の位置で指定の値を書き込んでもらう命令)を待つためのEvent(メッセージ)を作成する
 	//fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	assert(fenceEvent != nullptr);	 //作成が上手くできなかったら起動できない
+	//assert(fenceEvent != nullptr);	 //作成が上手くできなかったら起動できない
 
 }
 
