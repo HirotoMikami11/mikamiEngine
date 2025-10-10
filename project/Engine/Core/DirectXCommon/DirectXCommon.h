@@ -248,13 +248,5 @@ private:
 	static constexpr std::chrono::microseconds kMinTime{
 		static_cast<uint64_t>(1000000.0f / 60.0f)
 	};
-
-	// 1/60秒よりわずかに短い時間(マイクロ秒) - モニター倍数対策
-
-	static constexpr std::chrono::microseconds kMinCheckTime{
-		static_cast<uint64_t>(1000000.0f / 65.0f)
-	};
-
-
 };
 

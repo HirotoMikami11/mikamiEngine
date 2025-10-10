@@ -605,7 +605,6 @@ void DirectXCommon::InitializeFixFPS()
 	// 初期化時の時間を記録
 	reference_ = std::chrono::steady_clock::now();
 }
-
 void DirectXCommon::UpdateFixFPS() {
 	// 現在時間を取得する
 	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
@@ -614,17 +613,35 @@ void DirectXCommon::UpdateFixFPS() {
 	std::chrono::microseconds elapsed =
 		std::chrono::duration_cast<std::chrono::microseconds>(now - reference_);
 
-	// 1/60秒 (よりわずかに短い時間) 経っていない場合
-	if (elapsed < kMinCheckTime) {
-		// 1/60秒経過するまで微小なスリープを繰り返す
+	// 目標フレーム時間に達していない場合のみ待機
+	if (elapsed < kMinTime) {
+		// 残り待機時間を計算
+		auto remainingTime = kMinTime - elapsed;
+
+		// スリープで大まかに待つ（最後の1ms手前まで）
+		if (remainingTime > std::chrono::microseconds(1000)) {
+			std::this_thread::sleep_for(remainingTime - std::chrono::microseconds(1000));
+		}
+
+		// 残りはスピンウェイトで正確に待つ
 		while (std::chrono::steady_clock::now() - reference_ < kMinTime) {
-			// 1マイクロ秒スリープ
-			std::this_thread::sleep_for(std::chrono::microseconds(1));
+			// CPUを明け渡す（スピンロックよりCPU負荷が低い）
+			std::this_thread::yield();
 		}
 	}
 
-	// 現在の時間を記録する
-	reference_ = std::chrono::steady_clock::now();
+	// 次フレームの基準時刻を正確に設定（累積誤差を防ぐ）
+	// reference_ + kMinTime で、理想的な次フレーム開始時刻を設定
+	reference_ += kMinTime;
+
+	// ただし、実時間から大きくずれている場合はリセット
+	now = std::chrono::steady_clock::now();
+	auto drift = std::chrono::duration_cast<std::chrono::milliseconds>(now - reference_);
+
+	// 100ms以上ずれていたらリセット（ウィンドウ移動など）
+	if (std::abs(drift.count()) > 100) {
+		reference_ = now;
+	}
 }
 void DirectXCommon::PreDraw()
 {
