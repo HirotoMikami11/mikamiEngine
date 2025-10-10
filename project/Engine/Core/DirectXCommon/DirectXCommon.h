@@ -245,6 +245,7 @@ private:
 	std::chrono::steady_clock::time_point reference_;
 
 	// 1/60秒ぴったりの時間(マイクロ秒)
+	//この値を変えることでフレームレートを変化させられる
 	static constexpr std::chrono::microseconds kMinTime{
 		static_cast<uint64_t>(1000000.0f / 60.0f)
 	};
