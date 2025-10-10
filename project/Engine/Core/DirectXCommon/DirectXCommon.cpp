@@ -139,7 +139,7 @@ void DirectXCommon::Finalize() {
 	if (descriptorManager_) {
 		descriptorManager_->Finalize();
 	}
-	CloseHandle(fenceEvent);
+	//CloseHandle(fenceEvent);
 
 }
 
@@ -150,9 +150,11 @@ void DirectXCommon::Finalize() {
 ///*-----------------------------------------------------------------------*///
 void DirectXCommon::MakeDebugLayer()
 {
-
-
 #ifdef USEIMGUI
+	if (!useDebugLayer_) {
+		return;
+	}
+
 	///DirectX12初期化前に行う必要があるため、ウィンドウを作った後すぐの位置
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
 		//デバッグレイヤーを有効化する
@@ -162,7 +164,6 @@ void DirectXCommon::MakeDebugLayer()
 	}
 
 #endif
-
 }
 
 ///*-----------------------------------------------------------------------*///
@@ -409,7 +410,7 @@ void DirectXCommon::MakeFenceEvent()
 	Logger::Log(Logger::GetStream(), "Complete create fence!!\n");//フェンス生成完了のログを出す
 
 	//FenceのSignal(GPUに指定の位置で指定の値を書き込んでもらう命令)を待つためのEvent(メッセージ)を作成する
-	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	//fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent != nullptr);	 //作成が上手くできなかったら起動できない
 
 }
@@ -715,8 +716,10 @@ void DirectXCommon::EndFrame() {
 
 	// Fenceの値が指定したSignal値にたどり着いているか確認する
 	if (fence->GetCompletedValue() < fenceValue) {
+		HANDLE fenceEvent = CreateEvent(nullptr, false, false, nullptr);
 		fence->SetEventOnCompletion(fenceValue, fenceEvent);
 		WaitForSingleObject(fenceEvent, INFINITE);
+		CloseHandle(fenceEvent);
 	}
 
 	// FPS固定

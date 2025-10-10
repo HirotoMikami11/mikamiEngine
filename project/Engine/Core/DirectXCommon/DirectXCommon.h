@@ -180,6 +180,7 @@ private:
 #ifdef USEIMGUI
 	///デバッグレイヤー
 	ComPtr<ID3D12Debug1> debugController;
+	bool useDebugLayer_ = true;
 #endif
 	//DXGIFactory
 	HRESULT hr;
@@ -208,7 +209,7 @@ private:
 	//Fence
 	ComPtr<ID3D12Fence> fence;
 	uint64_t fenceValue;
-	HANDLE fenceEvent;
+
 
 	//DXC
 	ComPtr<IDxcUtils> dxcUtils;
