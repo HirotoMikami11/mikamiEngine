@@ -2,7 +2,7 @@
 #include <random>
 #include <mutex>
 #include "MyMath.h"
-
+using namespace MyMath;
 /// <summary>
 /// 乱数生成クラス（シングルトン）
 /// </summary>

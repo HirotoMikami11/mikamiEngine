@@ -3,7 +3,7 @@
 #include <vector>
 #include <functional>
 #include "MyMath.h"
-
+using namespace MyMath;
 namespace myImGui {
 
 	/// <summary>

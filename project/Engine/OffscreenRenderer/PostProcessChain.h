@@ -142,7 +142,7 @@ private:
 	DescriptorHeapManager::DescriptorHandle intermediateSRVHandles_[2];
 	DescriptorHeapManager::DescriptorHandle intermediateRTVHandles_[2];
 
-	// エフェクト描画用OffscreenTriangle（Sprite置き換え）
+	// エフェクト描画用OffscreenTriangle
 	std::unique_ptr<OffscreenTriangle> offscreenTriangle_;
 
 	// 初期化フラグ

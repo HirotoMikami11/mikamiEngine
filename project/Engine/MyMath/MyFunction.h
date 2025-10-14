@@ -4,6 +4,8 @@
 #include<d3d12.h>
 #include<wrl.h>
 
+using namespace MyMath;
+
 /// <summary>
 /// 球体
 /// </summary>

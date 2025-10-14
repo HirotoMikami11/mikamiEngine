@@ -5,7 +5,7 @@
 #include <algorithm>
 
 
-
+namespace MyMath {
 ///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//
 
 ///																		///
@@ -1127,3 +1127,4 @@ Vector3 TransformDirection(const Vector3& v, const Matrix4x4& m)
 	return result;
 }
 
+}

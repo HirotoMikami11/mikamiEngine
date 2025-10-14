@@ -12,6 +12,7 @@
 
 #include "Managers/Texture/TextureManager.h"
 #include "Managers/ObjectID/ObjectIDManager.h"
+using namespace MyMath;
 
 /// <summary>
 /// スプライト専用のマテリアル構造体

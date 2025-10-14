@@ -10,7 +10,7 @@
 #include "Structures.h"
 #include "Logger.h"
 #include <cassert>
-
+using namespace MyMath;
 
 /// <summary>
 /// ライティングモードの定義
