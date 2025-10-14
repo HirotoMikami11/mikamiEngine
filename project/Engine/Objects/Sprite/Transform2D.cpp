@@ -1,4 +1,5 @@
 #include "Transform2D.h"
+#include "Managers/ImGui/ImGuiManager.h" 
 
 void Transform2D::Initialize(DirectXCommon* dxCommon)
 {
@@ -44,19 +45,15 @@ void Transform2D::SetDefaultTransform()
 	transformData_->WVP = MakeIdentity4x4();
 }
 
-void Transform2D::AddPosition(const Vector2& position)
+void Transform2D::ImGui()
 {
-	transform_.translate.x += position.x;
-	transform_.translate.y += position.y;
-}
+	// 2D座標用（XYのみ）
+	ImGui::DragFloat2("Position", &transform_.translate.x, 1.0f);
 
-void Transform2D::AddRotation(float rotation)
-{
-	transform_.rotateZ += rotation;
-}
+	// Z軸回転のみ
+	ImGui::SliderAngle("Rotation", &transform_.rotateZ);
 
-void Transform2D::AddScale(const Vector2& scale)
-{
-	transform_.scale.x += scale.x;
-	transform_.scale.y += scale.y;
+	// 2Dサイズ用（XYのみ）- スケールとして管理
+	ImGui::DragFloat2("Size", &transform_.scale.x, 1.0f, 0.1f, 1000.0f);
+
 }

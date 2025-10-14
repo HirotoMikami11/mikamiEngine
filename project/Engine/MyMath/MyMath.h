@@ -202,15 +202,6 @@ namespace MyMath {
 		float z;
 	};
 
-	/// <summary>
-	/// トランスフォーム
-	/// </summary>
-	struct Vector3Transform final {
-		Vector3 scale;
-		Vector3 rotate;
-		Vector3 translate;
-	};
-
 	//加算
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
 	//減算
@@ -385,16 +376,13 @@ namespace MyMath {
 		float m[4][4];
 	};
 
-
-
 	/// <summary>
-	/// 座標変換行列
+	/// トランスフォーム
 	/// </summary>
-	struct TransformationMatrix
-	{
-		Matrix4x4 WVP;
-		Matrix4x4 World;
-
+	struct Vector3Transform final {
+		Vector3 scale;
+		Vector3 rotate;
+		Vector3 translate;
 	};
 
 	//4x4行列の加算

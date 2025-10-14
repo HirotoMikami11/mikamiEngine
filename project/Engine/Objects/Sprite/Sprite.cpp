@@ -81,10 +81,6 @@ void Sprite::Initialize(DirectXCommon* dxCommon, const Vector2& center, const Ve
 
 void Sprite::Update(const Matrix4x4& viewProjectionMatrix)
 {
-	// アクティブでない場合は更新を止める
-	if (!isActive_) {
-		return;
-	}
 
 	// Transform2Dクラスを使用して行列更新
 	transform_.UpdateMatrix(viewProjectionMatrix);
@@ -92,10 +88,6 @@ void Sprite::Update(const Matrix4x4& viewProjectionMatrix)
 
 void Sprite::Draw()
 {
-	// 非表示、アクティブでない場合は描画しない
-	if (!isVisible_ || !isActive_) {
-		return;
-	}
 
 	// 通常のUI用スプライト描画処理
 	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
@@ -122,57 +114,24 @@ void Sprite::Draw()
 
 	// 描画
 	commandList->DrawIndexedInstanced(static_cast<UINT>(indices_.size()), 1, 0, 0, 0);
-
-	// 3Dの描画設定に戻す
-	commandList->SetGraphicsRootSignature(directXCommon_->GetRootSignature());
-	commandList->SetPipelineState(directXCommon_->GetPipelineState());
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void Sprite::ImGui()
 {
 #ifdef USEIMGUI
 	if (ImGui::TreeNode(name_.c_str())) {
-		// 表示・アクティブ状態
-		ImGui::Checkbox("Visible", &isVisible_);
-		ImGui::Checkbox("Active", &isActive_);
 
 		// Transform（Transform2Dクラスを使用、2D用UIに最適化）
 		if (ImGui::CollapsingHeader("Transform")) {
-			imguiPosition_ = transform_.GetPosition();
-			imguiRotation_ = transform_.GetRotation();
-			imguiScale_ = transform_.GetScale();
 
-			// 2D座標用（XYのみ）
-			if (ImGui::DragFloat2("Position", &imguiPosition_.x, 1.0f)) {
-				transform_.SetPosition(imguiPosition_);
-			}
-
-			// Z軸回転のみ
-			if (ImGui::SliderAngle("Rotation", &imguiRotation_)) {
-				transform_.SetRotation(imguiRotation_);
-			}
-
-			// 2Dサイズ用（XYのみ）- スケールとして管理
-			if (ImGui::DragFloat2("Size", &imguiScale_.x, 1.0f, 0.1f, 1000.0f)) {
-				transform_.SetScale(imguiScale_);
-			}
+			//トランスフォームのimgui
+			transform_.ImGui();
 
 			// アンカーポイント設定
 			imguiAnchor_ = anchor_;
 			if (ImGui::DragFloat2("Anchor", &imguiAnchor_.x, 0.01f, 0.0f, 1.0f)) {
 				SetAnchor(imguiAnchor_);
 			}
-
-			// 3D互換表示用（参考情報として表示）
-			ImGui::Separator();
-			ImGui::Text("3D Compatibility Info:");
-			Vector3 pos3D = transform_.GetPosition3D();
-			Vector3 rot3D = transform_.GetRotation3D();
-			Vector3 scale3D = transform_.GetScale3D();
-			ImGui::Text("Position3D: (%.2f, %.2f, %.2f)", pos3D.x, pos3D.y, pos3D.z);
-			ImGui::Text("Rotation3D: (%.2f, %.2f, %.2f)", rot3D.x, rot3D.y, rot3D.z);
-			ImGui::Text("Scale3D: (%.2f, %.2f, %.2f)", scale3D.x, scale3D.y, scale3D.z);
 		}
 
 		// Color & UVTransform（SpriteMaterial構造体）
@@ -249,10 +208,7 @@ void Sprite::SetSize(const Vector2& size)
 	transform_.SetScale(size);
 }
 
-void Sprite::AddSize(const Vector2& deltaSize)
-{
-	transform_.AddScale(deltaSize);
-}
+
 
 void Sprite::SetColor(const Vector4& color)
 {

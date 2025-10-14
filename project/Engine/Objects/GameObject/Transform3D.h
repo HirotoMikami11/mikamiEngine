@@ -11,6 +11,7 @@ class Transform3D final
 {
 
 public:
+
 	Transform3D() = default;
 	~Transform3D() = default;
 

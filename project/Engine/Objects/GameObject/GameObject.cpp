@@ -63,6 +63,10 @@ void GameObject::Draw(const Light& directionalLight) {
 	}
 
 	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
+	// 3Dの描画設定
+	commandList->SetGraphicsRootSignature(directXCommon_->GetRootSignature());
+	commandList->SetPipelineState(directXCommon_->GetPipelineState());
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// ライトを設定
 	commandList->SetGraphicsRootConstantBufferView(3, directionalLight.GetResource()->GetGPUVirtualAddress());

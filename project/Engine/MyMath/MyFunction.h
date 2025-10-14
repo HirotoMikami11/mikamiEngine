@@ -1,5 +1,6 @@
 #pragma once
 #include "MyMath.h"
+
 ///DirectX12
 #include<d3d12.h>
 #include<wrl.h>
@@ -72,8 +73,19 @@ struct AABB {
 
 };
 
+/// <summary>
+/// 座標変換行列
+/// </summary>
+struct TransformationMatrix
+{
+	Matrix4x4 WVP;
+	Matrix4x4 World;
+
+};
+
 
 Microsoft::WRL::ComPtr <ID3D12Resource> CreateBufferResource(Microsoft::WRL::ComPtr<ID3D12Device> device, size_t sizeInBytes);
+
 
 /*-----------------------------------------------------------------------*/
 //

@@ -8,8 +8,6 @@
 #include "Logger.h"
 
 
-class DirectXCommon;
-
 /// <summary>
 /// 2D用のトランスフォーム構造体
 /// </summary>
@@ -19,11 +17,13 @@ struct Vector2Transform {
 	Vector2 translate{ 0.0f, 0.0f };  // X,Y座標
 };
 
+
 /// <summary>
 /// 2Dスプライト専用のTransformクラス
 /// </summary>
 class Transform2D final
 {
+
 public:
 	Transform2D() = default;
 	~Transform2D() = default;
@@ -45,9 +45,14 @@ public:
 	/// </summary>
 	void SetDefaultTransform();
 
+
+	/// <summary>
+	/// ImGui用のデバッグ表示
+	/// </summary>
+	void ImGui();
+
 	// Getter
 	const Vector2Transform& GetTransform() const { return transform_; }
-
 	Vector2 GetPosition() const { return transform_.translate; }
 	float GetRotation() const { return transform_.rotateZ; }
 	Vector2 GetScale() const { return transform_.scale; }
@@ -65,23 +70,6 @@ public:
 	void SetScale(const Vector2& scale) { transform_.scale = scale; }
 	void SetRotation(float rotateZ) { transform_.rotateZ = rotateZ; }
 	void SetPosition(const Vector2& translate) { transform_.translate = translate; }
-	void SetDepth(float depth) { /* 何もしない（互換性のため） */ }
-
-	/// 指定した値で加算
-	void AddPosition(const Vector2& position);
-	void AddRotation(float rotation);
-	void AddScale(const Vector2& scale);
-
-	/// 3Dベクトル互換用の関数
-	Vector3 GetPosition3D() const { return { transform_.translate.x, transform_.translate.y, 0.0f }; }
-	Vector3 GetRotation3D() const { return { 0.0f, 0.0f, transform_.rotateZ }; }
-	Vector3 GetScale3D() const { return { transform_.scale.x, transform_.scale.y, 1.0f }; }
-
-	void SetPosition3D(const Vector3& position) {
-		transform_.translate = { position.x, position.y };
-	}
-	void SetRotation3D(const Vector3& rotation) { transform_.rotateZ = rotation.z; }
-	void SetScale3D(const Vector3& scale) { transform_.scale = { scale.x, scale.y }; }
 
 private:
 	// GPU用トランスフォームリソース
