@@ -59,8 +59,21 @@ bool TextureManager::LoadTexture(const std::string& filename, const std::string&
 	// マップに登録
 	textures_[tagName] = std::move(texture);
 
-	Logger::Log(Logger::GetStream(), std::format("Texture '{}' loaded successfully with tag '{}' (SRV Index: {})\n",filename, tagName, descriptorHandle.index));
+	Logger::Log(Logger::GetStream(), std::format("Texture '{}' loaded successfully with tag '{}' (SRV Index: {})\n", filename, tagName, descriptorHandle.index));
 	return true;
+}
+
+DirectX::TexMetadata TextureManager::GetTextureMetadata(const std::string& tagName) const {
+	auto it = textures_.find(tagName);
+	if (it != textures_.end()) {
+		return it->second->GetMetadata();
+	}
+
+	// テクスチャが見つからない場合は空のメタデータにして返す
+	Logger::Log(Logger::GetStream(),
+		std::format("Texture with tag '{}' not found for metadata retrieval.\n", tagName));
+	assert(it == textures_.end());
+	return DirectX::TexMetadata{};
 }
 
 Texture* TextureManager::GetTexture(const std::string& tagName) {

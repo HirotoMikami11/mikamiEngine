@@ -96,6 +96,8 @@ public:
 	bool GetFlipX() const { return isFlipX_; }
 	bool GetFlipY() const { return isFlipY_; }
 
+	Vector2 GetTextureLeftTop() const { return texLeftTop_; }
+	Vector2 GetTextureSize() const { return texSize_; }
 
 	// Transform関連のSetter
 	void SetTransform(const Vector2Transform& newTransform) { transform_.SetTransform(newTransform); }
@@ -109,7 +111,7 @@ public:
 	void SetTexture(const std::string& textureName) { textureName_ = textureName; }
 	void SetAnchor(const Vector2& anchor);
 	void SetFlipX(const bool& flipX);
-	void SetFlipY(const bool& flipY); 
+	void SetFlipY(const bool& flipY);
 
 
 	// UVTransform関連
@@ -119,6 +121,12 @@ public:
 	Vector2 GetUVTransformScale() const { return uvScale_; }
 	float GetUVTransformRotateZ() const { return uvRotateZ_; }
 	Vector2 GetUVTransformTranslate() const { return uvTranslate_; }
+
+	//テクスチャの切り出し関連
+	void SetTextureRect(const Vector2& texLeftTop, const Vector2& texSize);
+
+
+
 
 private:
 
@@ -137,14 +145,27 @@ private:
 	/// </summary>
 	void UpdateUVTransform();
 
+
+	/// <summary>
+	/// サイズをイメージに合わせる
+	/// 画像の大きさと同じ大きさにscaleを変える
+	/// </summary>
+	void AdjustTextureSize();
+
+	/// <summary>
+	/// texSizeを、メタデータに合わせる
+	/// </summary>
+	/// <returns></returns>
+	void ApplyMetadataToTexSize();
+
 	/// <summary>
 	/// flip関連のimguibuttonを作成する関数
 	/// </summary>
 	/// <param name="isOn"></param>
 	/// <param name="text"></param>
 	/// <param name="size"></param>
-	void ImGuiChangeFlipButtonX(bool& isOn, const char* text, Vector2 size ={120,0});
-	void ImGuiChangeFlipButtonY(bool& isOn, const char* text, Vector2 size ={120,0});
+	void ImGuiChangeFlipButtonX();
+	void ImGuiChangeFlipButtonY();
 
 
 	// 基本情報
@@ -175,6 +196,9 @@ private:
 	bool isFlipX_;//左右反転
 	bool isFlipY_;//上下判定
 
+	// テクスチャ切り出し用のパラメータ
+	Vector2 texLeftTop_{ 0.0f, 0.0f };		// テクスチャ左上座標
+	Vector2 texSize_{ 0.0f, 0.0f };			// テクスチャ切り出しサイズ
 
 	// メッシュデータ
 	std::vector<VertexData> vertices_;

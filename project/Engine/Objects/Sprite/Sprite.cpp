@@ -30,6 +30,9 @@ void Sprite::Initialize(DirectXCommon* dxCommon, const std::string& textureName,
 	// スプライト専用のマテリアルリソースを作成
 	CreateBuffers();
 
+	//テクスチャのサイズに切り取りを合わせる
+	ApplyMetadataToTexSize();
+
 }
 
 void Sprite::Initialize(DirectXCommon* dxCommon, const Vector2& center, const Vector2& size, const Vector2& anchor)
@@ -58,6 +61,10 @@ void Sprite::Initialize(DirectXCommon* dxCommon, const Vector2& center, const Ve
 
 	// スプライト専用のマテリアルリソースを作成
 	CreateBuffers();
+
+	//テクスチャのサイズに切り取りを合わせる
+	ApplyMetadataToTexSize();
+
 }
 
 void Sprite::Update(const Matrix4x4& viewProjectionMatrix)
@@ -115,8 +122,8 @@ void Sprite::ImGui()
 			}
 
 			//上下左右反転
-			ImGuiChangeFlipButtonX(isFlipX_, "FlipX", Vector2{ 255,0 });
-			ImGuiChangeFlipButtonY(isFlipY_, "FlipY", Vector2{ 255,0 });
+			ImGuiChangeFlipButtonX();
+			ImGuiChangeFlipButtonY();
 
 
 		}
@@ -139,6 +146,27 @@ void Sprite::ImGui()
 			if (ImGui::SliderAngle("UVrotate", &uvRotateZ_)) {
 				UpdateUVTransform();
 			}
+
+			// 範囲を切り取るとき
+			ImGui::Text("Crop texture");
+			// テクスチャのメタデータを取得
+			DirectX::TexMetadata metadata = textureManager_->GetTextureMetadata(textureName_);
+			// テクスチャサイズ(ピクセル単位)
+			Vector2 maxTextureSize = { static_cast<float>(metadata.width),static_cast<float>(metadata.height) };
+			if (ImGui::DragFloat("TexLeftTop.x", &texLeftTop_.x, 1.0f, 0, maxTextureSize.x)) {
+				SetTextureRect(texLeftTop_, texSize_);
+			}
+			if (ImGui::DragFloat("TexLeftTop.y", &texLeftTop_.y, 1.0f, 0, maxTextureSize.y)) {
+				SetTextureRect(texLeftTop_, texSize_);
+			}
+
+			if (ImGui::DragFloat("TexSize.x", &texSize_.x, 1.0f, 0, maxTextureSize.x)) {
+				SetTextureRect(texLeftTop_, texSize_);
+			}
+			if (ImGui::DragFloat("TexSize.y", &texSize_.y, 1.0f, 0, maxTextureSize.y)) {
+				SetTextureRect(texLeftTop_, texSize_);
+			}
+
 		}
 
 		// テクスチャ設定
@@ -333,49 +361,117 @@ void Sprite::UpdateUVTransform()
 	materialData_->uvTransform = uvTransformMatrix;
 }
 
-void Sprite::ImGuiChangeFlipButtonX(bool& isOn, const char* text, Vector2 size)
+
+void Sprite::SetTextureRect(const Vector2& texLeftTop, const Vector2& texSize)
 {
-	ImVec2 bottomSize = { size.x,size.y };
+	texLeftTop_ = texLeftTop;
+	texSize_ = texSize;
+
+	// テクスチャが設定されていない場合は何もしない
+	if (textureName_.empty()) {
+		return;
+	}
+
+	// テクスチャのメタデータを取得
+	DirectX::TexMetadata metadata = textureManager_->GetTextureMetadata(textureName_);
+
+	// テクスチャサイズ(ピクセル単位)
+	float textureWidth = static_cast<float>(metadata.width);
+	float textureHeight = static_cast<float>(metadata.height);
+
+	// テクスチャ座標を0.0-1.0の範囲に正規化
+	float left = texLeftTop_.x / textureWidth;
+	float top = texLeftTop_.y / textureHeight;
+	float right = (texLeftTop_.x + texSize_.x) / textureWidth;
+	float bottom = (texLeftTop_.y + texSize_.y) / textureHeight;
+
+	// 頂点のテクスチャ座標を更新
+	// 左下
+	vertices_[0].texcoord = { left, bottom };
+	// 左上
+	vertices_[1].texcoord = { left, top };
+	// 右下
+	vertices_[2].texcoord = { right, bottom };
+	// 右上
+	vertices_[3].texcoord = { right, top };
+
+	// 頂点バッファを更新
+	VertexData* vertexData = nullptr;
+	vertexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+	std::memcpy(vertexData, vertices_.data(), sizeof(VertexData) * vertices_.size());
+	vertexBuffer_->Unmap(0, nullptr);
+
+}
+
+void Sprite::AdjustTextureSize()
+{
+	// テクスチャが設定されていない場合は何もしない
+	if (textureName_.empty()) {
+		return;
+	}
+	//メタデータの大きさに切り取りを合わせる
+	ApplyMetadataToTexSize();
+	//メタデータのサイズにScaleを合わせ、解像度を合わせる
+	transform_.SetScale(texSize_);
+}
+
+void Sprite::ApplyMetadataToTexSize()
+{
+
+	// テクスチャのメタデータを取得
+	DirectX::TexMetadata metadata = textureManager_->GetTextureMetadata(textureName_);
+
+	texSize_ = {
+		static_cast<float>(metadata.width),
+		static_cast<float>(metadata.height)
+	};
+
+
+}
+
+void Sprite::ImGuiChangeFlipButtonX()
+{
+	ImVec2 bottomSize = { 255.0f,0.0f };
 
 	// ON 状態なら緑色にする
-	if (isOn) {
+	if (isFlipX_) {
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 0.2f, 0.6f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.8f, 0.2f, 0.8f));
 	}
 
 	// ボタンを描画
-	if (ImGui::Button(text, bottomSize)) {
+	if (ImGui::Button("isFlipX", bottomSize)) {
 		// 押されたら状態をトグル
-		isOn = !isOn;
-		SetFlipX(isOn);
+		isFlipX_ = !isFlipX_;
+		SetFlipX(isFlipX_);
 	}
 
 	// 色を戻す
-	if (isOn) {
+	if (isFlipX_) {
 		ImGui::PopStyleColor(2);
 	}
 }
 
-void Sprite::ImGuiChangeFlipButtonY(bool& isOn, const char* text, Vector2 size)
+void Sprite::ImGuiChangeFlipButtonY()
 {
 
-	ImVec2 bottomSize = { size.x,size.y };
+	ImVec2 bottomSize = { 255.0f,0.0f };
 
 	// ON 状態なら緑色にする
-	if (isOn) {
+	if (isFlipY_) {
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 0.2f, 0.6f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.8f, 0.2f, 0.8f));
 	}
 
 	// ボタンを描画
-	if (ImGui::Button(text, bottomSize)) {
+	if (ImGui::Button("isFlipY", bottomSize)) {
 		// 押されたら状態をトグル
-		isOn = !isOn;
-		SetFlipY(isOn);
+		isFlipY_ = !isFlipY_;
+		SetFlipY(isFlipY_);
 	}
 
 	// 色を戻す
-	if (isOn) {
+	if (isFlipY_) {
 		ImGui::PopStyleColor(2);
 	}
 }

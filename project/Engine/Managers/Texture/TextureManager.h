@@ -40,6 +40,14 @@ public:
 	/// <returns>読み込み成功かどうか</returns>
 	bool LoadTexture(const std::string& filename, const std::string& tagName);
 
+
+	/// <summary>
+	/// テクスチャのメタデータを取得
+	/// </summary>
+	/// <param name="tagName">識別用のタグ名</param>
+	/// <returns>メタデータ（存在しない場合は空を返す）</returns>
+	DirectX::TexMetadata GetTextureMetadata(const std::string& tagName) const;
+
 	/// <summary>
 	/// テクスチャの取得
 	/// </summary>
