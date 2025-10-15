@@ -49,6 +49,9 @@ void Engine::InitializeManagers() {
 	modelManager_ = ModelManager::GetInstance();
 	modelManager_->Initialize(directXCommon_.get());
 
+	//スプライトの共通部分を初期化
+	SpriteCommon::GetInstance()->Initialize(directXCommon_.get());
+
 	// カメラコントローラー取得
 	cameraController_ = CameraController::GetInstance();
 
@@ -59,6 +62,7 @@ void Engine::InitializeManagers() {
 	// オフスクリーンレンダラー初期化
 	offscreenRenderer_ = std::make_unique<OffscreenRenderer>();
 	offscreenRenderer_->Initialize(directXCommon_.get());
+
 }
 
 void Engine::LoadDefaultResources() {

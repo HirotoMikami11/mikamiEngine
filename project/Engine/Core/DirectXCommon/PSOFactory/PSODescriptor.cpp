@@ -37,6 +37,7 @@ PSODescriptor PSODescriptor::CreateSprite() {
 		.SetBlendMode(BlendMode::AlphaBlend)
 		.SetCullMode(CullMode::None)
 		.EnableDepth(false)
+		.EnableDepthWrite(false)
 		.SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 
 	// スプライト用頂点レイアウト（3Dと同じ）

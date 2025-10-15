@@ -95,11 +95,6 @@ void LineRenderer::Draw(const Matrix4x4& viewProjectionMatrix) {
 	// 一括描画（線分数 * 2頂点）
 	const uint32_t vertexCount = GetLineCount() * kVertexCountPerLine;
 	commandList->DrawInstanced(vertexCount, 1, 0, 0);
-
-	// 3D用のPSOに戻す
-	commandList->SetGraphicsRootSignature(directXCommon_->GetRootSignature());
-	commandList->SetPipelineState(directXCommon_->GetPipelineState());
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void LineRenderer::UpdateVertexBuffer() {

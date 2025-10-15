@@ -76,16 +76,11 @@ void Sprite::Update(const Matrix4x4& viewProjectionMatrix)
 
 void Sprite::Draw()
 {
-
 	// 通常のUI用スプライト描画処理
 	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
 
 	// スプライト専用のPSOを設定
-	commandList->SetGraphicsRootSignature(directXCommon_->GetSpriteRootSignature());
-	commandList->SetPipelineState(directXCommon_->GetSpritePipelineState());
-
-	// プリミティブトポロジを設定
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	spriteCommon_->setCommonSpriteRenderSettings(commandList);
 
 	//マテリアル
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
