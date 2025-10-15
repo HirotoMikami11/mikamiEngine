@@ -47,6 +47,7 @@ void Transform2D::SetDefaultTransform()
 
 void Transform2D::ImGui()
 {
+#ifdef USEIMGUI
 	// 2D座標用（XYのみ）
 	ImGui::DragFloat2("Position", &transform_.translate.x, 1.0f);
 
@@ -55,5 +56,5 @@ void Transform2D::ImGui()
 
 	// 2Dサイズ用（XYのみ）- スケールとして管理
 	ImGui::DragFloat2("Size", &transform_.scale.x, 1.0f, 0.1f, 1000.0f);
-
+#endif
 }
