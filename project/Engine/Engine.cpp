@@ -97,6 +97,8 @@ void Engine::LoadDefaultResources() {
 	modelManager_->LoadPrimitive(MeshType::SPHERE, "sphere");
 	modelManager_->LoadPrimitive(MeshType::TRIANGLE, "triangle");
 	modelManager_->LoadPrimitive(MeshType::PLANE, "plane");
+
+	
 }
 
 void Engine::Update() {

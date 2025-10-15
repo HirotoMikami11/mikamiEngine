@@ -35,7 +35,7 @@ PSODescriptor PSODescriptor::CreateSprite() {
 	desc.SetVertexShader(L"resources/Shader/Sprite/Sprite.VS.hlsl", L"main")
 		.SetPixelShader(L"resources/Shader/Sprite/Sprite.PS.hlsl", L"main")
 		.SetBlendMode(BlendMode::AlphaBlend)
-		.SetCullMode(CullMode::Back)
+		.SetCullMode(CullMode::None)
 		.EnableDepth(false)
 		.SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 

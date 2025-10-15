@@ -33,37 +33,6 @@ namespace myImGui {
 	void ColoredText(const char* text, const Vector4& color);
 
 	/// <summary>
-	/// ファイル操作ボタン群の構造体
-	/// </summary>
-	struct FileOperationButtons {
-		std::function<void()> onSave;
-		std::function<void()> onLoad;
-		std::function<void()> onClear;
-		const char* saveLabel = "Save";
-		const char* loadLabel = "Load";
-		const char* clearLabel = "Clear";
-	};
-
-	/// <summary>
-	/// ファイル操作ボタン群を描画
-	/// </summary>
-	/// <param name="buttons">ボタン設定</param>
-	void DrawFileOperationButtons(const FileOperationButtons& buttons);
-
-	/// <summary>
-	/// 設定チェックボックス群の構造体
-	/// </summary>
-	struct SettingsCheckboxes {
-		std::vector<std::pair<std::string, bool*>> checkboxes;
-	};
-
-	/// <summary>
-	/// 設定チェックボックス群を描画
-	/// </summary>
-	/// <param name="settings">設定</param>
-	void DrawSettingsCheckboxes(const SettingsCheckboxes& settings);
-
-	/// <summary>
 	/// ドラッグ可能な数値入力（範囲制限付き）
 	/// </summary>
 	/// <param name="label">ラベル</param>
@@ -118,4 +87,15 @@ namespace myImGui {
 	/// <param name="content">内容を描画する関数</param>
 	/// <param name="color">フレームの色（オプション）</param>
 	void FramedSection(const char* label, const std::function<void()>& content, const Vector4* color = nullptr);
+
+
+
+	/// <summary>
+	/// bool変更ボタンを作成する関数
+	/// </summary>
+	/// <param name="isOn">オンオフしたいフラグ</param>
+	/// <param name="text">表示するテキスト</param>
+	/// <param name="size">buttonのサイズ</param>
+	void OnOffButton(bool& isOn, const char* text, Vector2 size = Vector2(120, 0));
+
 }

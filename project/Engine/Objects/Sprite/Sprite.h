@@ -81,22 +81,21 @@ public:
 	/// </summary>
 	void ImGui();
 
-	// Transform関連のGetter（2D用）
+	// Transform関連のGetter
 	Vector2 GetPosition() const { return transform_.GetPosition(); }
 	float GetRotation() const { return transform_.GetRotation(); }
 	Vector2 GetScale() const { return transform_.GetScale(); }
 	Transform2D& GetTransform() { return transform_; }
 	const Transform2D& GetTransform() const { return transform_; }
 
-	// サイズ管理
-	Vector2 GetSize() const;
-	void SetSize(const Vector2& size);
-
 	// Sprite固有のGetter
 	Vector4 GetColor() const { return materialData_->color; }
 	const std::string& GetName() const { return name_; }
 	const std::string& GetTextureName() const { return textureName_; }
 	Vector2 GetAnchor() const { return anchor_; }
+	bool GetFlipX() const { return isFlipX_; }
+	bool GetFlipY() const { return isFlipY_; }
+
 
 	// Transform関連のSetter
 	void SetTransform(const Vector2Transform& newTransform) { transform_.SetTransform(newTransform); }
@@ -109,6 +108,9 @@ public:
 	void SetName(const std::string& name) { name_ = name; }
 	void SetTexture(const std::string& textureName) { textureName_ = textureName; }
 	void SetAnchor(const Vector2& anchor);
+	void SetFlipX(const bool& flipX);
+	void SetFlipY(const bool& flipY); 
+
 
 	// UVTransform関連
 	void SetUVTransformScale(const Vector2& uvScale);
@@ -135,7 +137,16 @@ private:
 	/// </summary>
 	void UpdateUVTransform();
 
-private:
+	/// <summary>
+	/// flip関連のimguibuttonを作成する関数
+	/// </summary>
+	/// <param name="isOn"></param>
+	/// <param name="text"></param>
+	/// <param name="size"></param>
+	void ImGuiChangeFlipButtonX(bool& isOn, const char* text, Vector2 size ={120,0});
+	void ImGuiChangeFlipButtonY(bool& isOn, const char* text, Vector2 size ={120,0});
+
+
 	// 基本情報
 	DirectXCommon* directXCommon_ = nullptr;
 	TextureManager* textureManager_ = TextureManager::GetInstance();
@@ -160,6 +171,11 @@ private:
 	Vector2 uvScale_{ 1.0f, 1.0f };
 	float uvRotateZ_ = 0.0f;
 
+	//反転フラグ
+	bool isFlipX_;//左右反転
+	bool isFlipY_;//上下判定
+
+
 	// メッシュデータ
 	std::vector<VertexData> vertices_;
 	std::vector<uint32_t> indices_;
@@ -168,13 +184,5 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
 
-	// ImGui用の内部状態
-	Vector2 imguiPosition_{ 0.0f, 0.0f };
-	float imguiRotation_{ 0.0f };
-	Vector2 imguiScale_{ 1.0f, 1.0f };
-	Vector4 imguiColor_{ 1.0f, 1.0f, 1.0f, 1.0f };
-	Vector2 imguiUvPosition_{ 0.0f, 0.0f };
-	Vector2 imguiUvScale_{ 1.0f, 1.0f };
-	float imguiUvRotateZ_{ 0.0f };
-	Vector2 imguiAnchor_{ 0.5f, 0.5f };
+
 };

@@ -17,7 +17,7 @@ FadeEffect::FadeEffect()
 
 FadeEffect::~FadeEffect() = default;
 
-void FadeEffect::Initialize(DirectXCommon*directXCommon) {
+void FadeEffect::Initialize(DirectXCommon* directXCommon) {
 	directXCommon_ = directXCommon;
 
 	// 画面サイズ取得

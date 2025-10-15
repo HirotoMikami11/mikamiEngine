@@ -46,31 +46,6 @@ namespace myImGui {
 		ImGui::PopStyleColor();
 	}
 
-	void DrawFileOperationButtons(const FileOperationButtons& buttons) {
-		if (buttons.onSave && ImGui::Button(buttons.saveLabel)) {
-			buttons.onSave();
-		}
-		if (buttons.onLoad) {
-			ImGui::SameLine();
-			if (ImGui::Button(buttons.loadLabel)) {
-				buttons.onLoad();
-			}
-		}
-		if (buttons.onClear) {
-			ImGui::SameLine();
-			if (ImGui::Button(buttons.clearLabel)) {
-				buttons.onClear();
-			}
-		}
-	}
-
-
-	void DrawSettingsCheckboxes(const SettingsCheckboxes& settings) {
-		for (const auto& [label, valuePtr] : settings.checkboxes) {
-			ImGui::Checkbox(label.c_str(), valuePtr);
-		}
-	}
-
 	bool DragIntRange(const char* label, int& value, int min, int max, int speed) {
 		return ImGui::DragInt(label, &value, static_cast<float>(speed), min, max);
 	}
@@ -153,5 +128,28 @@ namespace myImGui {
 
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor();
+	}
+
+	void OnOffButton(bool& isOn, const char* text, Vector2 size)
+	{
+
+		ImVec2 bottomSize = { size.x,size.y };
+
+		// ON 状態なら緑色にする
+		if (isOn) {
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 0.2f, 0.6f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.8f, 0.2f, 0.8f));
+		}
+
+		// ボタンを描画
+		if (ImGui::Button(text, bottomSize)) {
+			// 押されたら状態をトグル
+			isOn = !isOn;
+		}
+
+		// 色を戻す
+		if (isOn) {
+			ImGui::PopStyleColor(2);
+		}
 	}
 }

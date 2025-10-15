@@ -30,15 +30,6 @@ void Sprite::Initialize(DirectXCommon* dxCommon, const std::string& textureName,
 	// スプライト専用のマテリアルリソースを作成
 	CreateBuffers();
 
-	// ImGui用の初期値を設定（Transform2Dから取得）
-	imguiPosition_ = transform_.GetPosition();
-	imguiRotation_ = transform_.GetRotation();
-	imguiScale_ = transform_.GetScale();
-	imguiColor_ = materialData_->color;
-	imguiUvPosition_ = uvTranslate_;
-	imguiUvScale_ = uvScale_;
-	imguiUvRotateZ_ = uvRotateZ_;
-	imguiAnchor_ = anchor_;
 }
 
 void Sprite::Initialize(DirectXCommon* dxCommon, const Vector2& center, const Vector2& size, const Vector2& anchor)
@@ -67,16 +58,6 @@ void Sprite::Initialize(DirectXCommon* dxCommon, const Vector2& center, const Ve
 
 	// スプライト専用のマテリアルリソースを作成
 	CreateBuffers();
-
-	// ImGui用の初期値を設定（Transform2Dから取得）
-	imguiPosition_ = transform_.GetPosition();
-	imguiRotation_ = transform_.GetRotation();
-	imguiScale_ = transform_.GetScale();
-	imguiColor_ = materialData_->color;
-	imguiUvPosition_ = uvTranslate_;
-	imguiUvScale_ = uvScale_;
-	imguiUvRotateZ_ = uvRotateZ_;
-	imguiAnchor_ = anchor_;
 }
 
 void Sprite::Update(const Matrix4x4& viewProjectionMatrix)
@@ -128,34 +109,35 @@ void Sprite::ImGui()
 			transform_.ImGui();
 
 			// アンカーポイント設定
-			imguiAnchor_ = anchor_;
+			Vector2 imguiAnchor_ = anchor_;
 			if (ImGui::DragFloat2("Anchor", &imguiAnchor_.x, 0.01f, 0.0f, 1.0f)) {
 				SetAnchor(imguiAnchor_);
 			}
+
+			//上下左右反転
+			ImGuiChangeFlipButtonX(isFlipX_, "FlipX", Vector2{ 255,0 });
+			ImGuiChangeFlipButtonY(isFlipY_, "FlipY", Vector2{ 255,0 });
+
+
 		}
 
 		// Color & UVTransform（SpriteMaterial構造体）
 		if (ImGui::CollapsingHeader("Material")) {
-			imguiColor_ = materialData_->color;
 
-			if (ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&imguiColor_.x))) {
-				SetColor(imguiColor_);
-			}
+			//色の変更
+			ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&materialData_->color.x));
 
 			// UVTransform
 			ImGui::Text("UVTransform");
-			imguiUvPosition_ = uvTranslate_;
-			imguiUvScale_ = uvScale_;
-			imguiUvRotateZ_ = uvRotateZ_;
 
-			if (ImGui::DragFloat2("UVtranslate", &imguiUvPosition_.x, 0.01f, -10.0f, 10.0f)) {
-				SetUVTransformTranslate(imguiUvPosition_);
+			if (ImGui::DragFloat2("UVtranslate", &uvTranslate_.x, 0.01f, -10.0f, 10.0f)) {
+				UpdateUVTransform();
 			}
-			if (ImGui::DragFloat2("UVscale", &imguiUvScale_.x, 0.01f, -10.0f, 10.0f)) {
-				SetUVTransformScale(imguiUvScale_);
+			if (ImGui::DragFloat2("UVscale", &uvScale_.x, 0.01f, -10.0f, 10.0f)) {
+				UpdateUVTransform();
 			}
-			if (ImGui::SliderAngle("UVrotate", &imguiUvRotateZ_)) {
-				SetUVTransformRotateZ(imguiUvRotateZ_);
+			if (ImGui::SliderAngle("UVrotate", &uvRotateZ_)) {
+				UpdateUVTransform();
 			}
 		}
 
@@ -197,19 +179,6 @@ void Sprite::ImGui()
 #endif
 }
 
-// サイズ管理用の新しいメソッド
-Vector2 Sprite::GetSize() const
-{
-	return transform_.GetScale();
-}
-
-void Sprite::SetSize(const Vector2& size)
-{
-	transform_.SetScale(size);
-}
-
-
-
 void Sprite::SetColor(const Vector4& color)
 {
 	if (materialData_) {
@@ -227,6 +196,31 @@ void Sprite::SetAnchor(const Vector2& anchor)
 	VertexData* vertexData = nullptr;
 	vertexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	std::memcpy(vertexData, vertices_.data(), sizeof(VertexData) * vertices_.size());
+}
+
+void Sprite::SetFlipX(const bool& flipX)
+{
+	isFlipX_ = flipX;
+	// メッシュを再生成
+	CreateSpriteMesh();
+
+	// 頂点バッファを更新
+	VertexData* vertexData = nullptr;
+	vertexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+	std::memcpy(vertexData, vertices_.data(), sizeof(VertexData) * vertices_.size());
+}
+
+void Sprite::SetFlipY(const bool& flipY)
+{
+	isFlipY_ = flipY;
+	// メッシュを再生成
+	CreateSpriteMesh();
+
+	// 頂点バッファを更新
+	VertexData* vertexData = nullptr;
+	vertexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+	std::memcpy(vertexData, vertices_.data(), sizeof(VertexData) * vertices_.size());
+
 }
 
 void Sprite::SetUVTransformScale(const Vector2& uvScale)
@@ -255,8 +249,21 @@ void Sprite::CreateSpriteMesh()
 	// アンカーに基づいて頂点座標を計算
 	float left = -anchor_.x;
 	float right = 1.0f - anchor_.x;
-	float top = anchor_.y - 1.0f;  // 画面座標系に合わせて上下反転
-	float bottom = anchor_.y;
+	float top = -anchor_.y;
+	float bottom = 1.0f - anchor_.y;
+
+	//左右反転
+	if (isFlipX_) {
+		left = -left;
+		right = -right;
+	}
+	//上下反転
+	if (isFlipY_) {
+		top = -top;
+		bottom = -bottom;
+	}
+
+
 
 	// 左下
 	vertices_[0].position = { left, bottom, 0.0f, 1.0f };
@@ -325,3 +332,51 @@ void Sprite::UpdateUVTransform()
 
 	materialData_->uvTransform = uvTransformMatrix;
 }
+
+void Sprite::ImGuiChangeFlipButtonX(bool& isOn, const char* text, Vector2 size)
+{
+	ImVec2 bottomSize = { size.x,size.y };
+
+	// ON 状態なら緑色にする
+	if (isOn) {
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 0.2f, 0.6f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.8f, 0.2f, 0.8f));
+	}
+
+	// ボタンを描画
+	if (ImGui::Button(text, bottomSize)) {
+		// 押されたら状態をトグル
+		isOn = !isOn;
+		SetFlipX(isOn);
+	}
+
+	// 色を戻す
+	if (isOn) {
+		ImGui::PopStyleColor(2);
+	}
+}
+
+void Sprite::ImGuiChangeFlipButtonY(bool& isOn, const char* text, Vector2 size)
+{
+
+	ImVec2 bottomSize = { size.x,size.y };
+
+	// ON 状態なら緑色にする
+	if (isOn) {
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 0.2f, 0.6f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.8f, 0.2f, 0.8f));
+	}
+
+	// ボタンを描画
+	if (ImGui::Button(text, bottomSize)) {
+		// 押されたら状態をトグル
+		isOn = !isOn;
+		SetFlipY(isOn);
+	}
+
+	// 色を戻す
+	if (isOn) {
+		ImGui::PopStyleColor(2);
+	}
+}
+

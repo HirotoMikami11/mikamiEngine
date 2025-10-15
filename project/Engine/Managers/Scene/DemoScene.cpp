@@ -37,6 +37,8 @@ void DemoScene::LoadResources() {
 	modelManager_->LoadModel("resources/Model/MultiMesh", "multiMesh.obj", "model_MultiMesh");
 	//マルチマテリアル
 	modelManager_->LoadModel("resources/Model/MultiMaterial", "multiMaterial.obj", "model_MultiMaterial");
+	//
+	modelManager_->LoadModel("resources/Model/Goldfish", "Mesh_Goldfish.obj", "modelfish");
 
 	Logger::Log(Logger::GetStream(), "TitleScene: Resources loaded successfully\n");
 }
