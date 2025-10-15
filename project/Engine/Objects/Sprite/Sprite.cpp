@@ -426,6 +426,7 @@ void Sprite::ApplyMetadataToTexSize()
 
 void Sprite::ImGuiChangeFlipButtonX()
 {
+#ifdef USEIMGUI
 	ImVec2 bottomSize = { 255.0f,0.0f };
 
 	// ON 状態なら緑色にする
@@ -445,11 +446,12 @@ void Sprite::ImGuiChangeFlipButtonX()
 	if (isFlipX_) {
 		ImGui::PopStyleColor(2);
 	}
+#endif
 }
 
 void Sprite::ImGuiChangeFlipButtonY()
 {
-
+#ifdef USEIMGUI
 	ImVec2 bottomSize = { 255.0f,0.0f };
 
 	// ON 状態なら緑色にする
@@ -469,5 +471,6 @@ void Sprite::ImGuiChangeFlipButtonY()
 	if (isFlipY_) {
 		ImGui::PopStyleColor(2);
 	}
+#endif
 }
 
