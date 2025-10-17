@@ -375,6 +375,9 @@
     <ClCompile Include="Engine\Objects\Sprite\SpriteCommon.cpp">
       <Filter>Engine\Objects\Sprite</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Objects\Particle\Particle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -630,6 +633,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Objects\Sprite\SpriteCommon.h">
       <Filter>Engine\Objects\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Particle\Particle.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
