@@ -15,10 +15,6 @@ void Mesh::Initialize(DirectXCommon* dxCommon, MeshType meshType)
 		CreateSphere(16); // デフォルトで16分割
 		break;
 
-	case MeshType::SPRITE:
-		CreateSprite({ 160.0f, 90.0f }, { 320.0f, 180.0f });
-		break;
-
 	case MeshType::PLANE:
 		CreatePlane({ 2.0f, 2.0f }); // デフォルトで2.0f x 2.0f
 		break;
@@ -48,12 +44,11 @@ void Mesh::InitializeFromData(DirectXCommon* dxCommon, const ModelData& modelDat
 std::string Mesh::MeshTypeToString(MeshType type)
 {
 	switch (type) {
-	case MeshType::TRIANGLE:     return "Triangle";
-	case MeshType::SPHERE:       return "Sphere";
-	case MeshType::SPRITE:       return "Sprite";
-	case MeshType::PLANE:        return "Plane";
-	case MeshType::MODEL_OBJ:    return "Model_OBJ";
-	default:                     return "Unknown";
+	case MeshType::TRIANGLE:	return "Triangle";
+	case MeshType::SPHERE:		return "Sphere";
+	case MeshType::PLANE:		return "Plane";
+	case MeshType::MODEL_OBJ:	return "Model_OBJ";
+	default:					return "Unknown";
 	}
 }
 
@@ -146,47 +141,6 @@ void Mesh::CreateSphere(uint32_t subdivision)
 			indices_.push_back(bottomRightIndex);
 		}
 	}
-
-	CreateVertexBuffer();
-	CreateIndexBuffer();
-}
-
-void Mesh::CreateSprite(const Vector2& center, const Vector2& size)
-{
-
-	// スプライト用の4頂点
-	vertices_.resize(4);
-
-	float halfWidth = size.x * 0.5f;
-	float halfHeight = size.y * 0.5f;
-
-	// 左下
-	vertices_[0].position = { center.x - halfWidth, center.y + halfHeight, 0.0f, 1.0f };
-	vertices_[0].texcoord = { 0.0f, 1.0f };
-
-
-	// 左上
-	vertices_[1].position = { center.x - halfWidth, center.y - halfHeight, 0.0f, 1.0f };
-	vertices_[1].texcoord = { 0.0f, 0.0f };
-
-
-	// 右下
-	vertices_[2].position = { center.x + halfWidth, center.y + halfHeight, 0.0f, 1.0f };
-	vertices_[2].texcoord = { 1.0f, 1.0f };
-
-
-	// 右上
-	vertices_[3].position = { center.x + halfWidth, center.y - halfHeight, 0.0f, 1.0f };
-	vertices_[3].texcoord = { 1.0f, 0.0f };
-
-
-	for (int i = 0; i < 4; i++)
-	{
-		vertices_[i].normal = { 0.0f,0.0f,-1.0f };
-	}
-
-	// インデックスデータ（2つの三角形）
-	indices_ = { 0, 1, 2, 1, 3, 2 };
 
 	CreateVertexBuffer();
 	CreateIndexBuffer();

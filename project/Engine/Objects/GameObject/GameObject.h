@@ -63,7 +63,7 @@ public:
 	Model* GetModel() { return sharedModel_; }
 	const Model* GetModel() const { return sharedModel_; }
 
-	// 個別マテリアル操作（NEW: 個別マテリアルシステム）
+	// 個別マテリアル操作（個別マテリアルシステム）
 	Material& GetMaterial(size_t index = 0) {
 		if (hasIndividualMaterials_ && index < individualMaterials_.GetMaterialCount()) {
 			return individualMaterials_.GetMaterial(index);
@@ -227,7 +227,7 @@ class Model3D : public GameObject
 public:
 	void Initialize(DirectXCommon* dxCommon, const std::string& modelTag, const std::string& textureName = "") {
 		GameObject::Initialize(dxCommon, modelTag, textureName);
-		name_ = ObjectIDManager::GetInstance()->GenerateName(std::format("Model ({})", modelTag), "Model3D");
+		name_ = ObjectIDManager::GetInstance()->GenerateNameModel(std::format("{}", modelTag), "Model3D");
 		SetLightingMode(LightingMode::HalfLambert);
 	}
 };

@@ -17,6 +17,17 @@ std::string ObjectIDManager::GenerateName(const std::string& baseName, const std
 	return std::format("{}_{}", baseName, id);
 }
 
+
+std::string ObjectIDManager::GenerateNameModel(const std::string& baseName, const std::string& typeName)
+{
+	// typeNameが空の場合はbaseNameを使用
+	std::string type = typeName.empty() ? baseName : typeName;
+	//次のIDを取得
+	int id = GetNextID(type);
+	//種類と番号を返す
+	return std::format("Model3D_{}({})",id, baseName );
+}
+
 int ObjectIDManager::GetCurrentCount(const std::string& typeName) const {
 	//現在のカウントを数えて返す
 	auto it = counters_.find(typeName);

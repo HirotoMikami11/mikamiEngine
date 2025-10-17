@@ -20,6 +20,14 @@ public:
 	std::string GenerateName(const std::string& baseName, const std::string& typeName = "");
 
 	/// <summary>
+	/// モデル用のフォーマットされた名前を生成（自動でカウンターをインクリメント）
+	/// </summary>
+	/// <param name="baseName">ベース名（例："Triangle", "Sphere"）</param>
+	/// <param name="typeName">オブジェクトタイプ名（内部管理用、通常はbaseNameと同じ）</param>
+	/// <returns>フォーマット済み名前（例："Triangle_1"）</returns>
+	std::string GenerateNameModel(const std::string& baseName, const std::string& typeName = "");
+
+	/// <summary>
 	/// 現在のカウンター値を取得
 	/// </summary>
 	/// <param name="typeName">オブジェクトタイプ名</param>

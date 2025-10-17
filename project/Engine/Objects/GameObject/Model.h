@@ -14,6 +14,7 @@
 //マテリアルの情報をtextureManagerの送るため
 #include "Managers/Texture/TextureManager.h"
 using namespace MyMath;
+
 /// <summary>
 /// モデルクラス（メッシュ、マテリアル、テクスチャを管理）
 /// </summary>
