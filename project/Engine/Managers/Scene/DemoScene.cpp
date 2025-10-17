@@ -141,7 +141,6 @@ void DemoScene::InitializeGameObjects() {
 	modelMultiMaterial_->Initialize(directXCommon_, "model_MultiMaterial");
 	modelMultiMaterial_->SetTransform(transformMultiMaterial);
 
-
 	///*-----------------------------------------------------------------------*///
 	///								グリッド線									///
 	///*-----------------------------------------------------------------------*///
@@ -190,8 +189,6 @@ void DemoScene::UpdateGameObjects() {
 	// 行列更新
 	viewProjectionMatrix = cameraController_->GetViewProjectionMatrix();
 	viewProjectionMatrixSprite = cameraController_->GetViewProjectionMatrixSprite();
-
-
 
 	// 球体の更新
 	sphere_->Update(viewProjectionMatrix);

@@ -369,11 +369,11 @@
     <ClCompile Include="Engine\Utility\StringUtility.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Objects\Sprite\SpriteCommon.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Objects\Object3D\Object3DCommon.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Engine\Objects\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Sprite\SpriteCommon.cpp">
+      <Filter>Engine\Objects\Sprite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -625,11 +625,11 @@
     <ClInclude Include="Engine\Utility\StringUtility.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\Sprite\SpriteCommon.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Objects\Object3D\Object3DCommon.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>Engine\Objects\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Sprite\SpriteCommon.h">
+      <Filter>Engine\Objects\Sprite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

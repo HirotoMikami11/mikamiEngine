@@ -3,14 +3,14 @@
 #include <memory>
 #include "DirectXCommon.h"
 #include "Transform3D.h"
-#include "Object3DCommon.h"		//共通設定部分
+#include "Object3DCommon.h"
 #include "Light.h"
 #include "Managers/Texture/TextureManager.h"
 #include "Managers/Model/ModelManager.h"
 #include "Managers/ObjectID/ObjectIDManager.h"
 
 /// <summary>
-/// ゲームオブジェクト - 共有モデルと個別Transform、個別マテリアルを使用
+/// ゲームオブジェクト - 共有モデル（メッシュ）と個別Transform、個別マテリアル
 /// </summary>
 class Object3D
 {
@@ -43,7 +43,7 @@ public:
 	/// </summary>
 	virtual void ImGui();
 
-	// Transform関連のGetter/Setter
+	// Transform関連
 	Vector3 GetPosition() const { return transform_.GetPosition(); }
 	Vector3 GetRotation() const { return transform_.GetRotation(); }
 	Vector3 GetScale() const { return transform_.GetScale(); }
@@ -55,75 +55,33 @@ public:
 	void SetRotation(const Vector3& rotation) { transform_.SetRotation(rotation); }
 	void SetScale(const Vector3& scale) { transform_.SetScale(scale); }
 
-	// Transform操作
 	void AddPosition(const Vector3& deltaPosition) { transform_.AddPosition(deltaPosition); }
 	void AddRotation(const Vector3& deltaRotation) { transform_.AddRotation(deltaRotation); }
 	void AddScale(const Vector3& deltaScale) { transform_.AddScale(deltaScale); }
 
-	// Model関連のGetter
+	// Model関連
 	Model* GetModel() { return sharedModel_; }
 	const Model* GetModel() const { return sharedModel_; }
+	void SetModel(const std::string& modelTag, const std::string& textureName = "");
 
-	// 個別マテリアル操作（個別マテリアルシステム）
-	Material& GetMaterial(size_t index = 0) {
-		if (hasIndividualMaterials_ && index < individualMaterials_.GetMaterialCount()) {
-			return individualMaterials_.GetMaterial(index);
-		}
-		return sharedModel_ ? sharedModel_->GetMaterial(index) : dummyMaterial_;
-	}
 
-	const Material& GetMaterial(size_t index = 0) const {
-		if (hasIndividualMaterials_ && index < individualMaterials_.GetMaterialCount()) {
-			return individualMaterials_.GetMaterial(index);
-		}
-		return sharedModel_ ? sharedModel_->GetMaterial(index) : dummyMaterial_;
-	}
+	// マテリアル操作
+	Material& GetMaterial(size_t index = 0) { return materials_.GetMaterial(index); }
+	const Material& GetMaterial(size_t index = 0) const { return materials_.GetMaterial(index); }
+	size_t GetMaterialCount() const { return materials_.GetMaterialCount(); }
+	Vector4 GetColor(size_t index = 0) const { return GetMaterial(index).GetColor(); }
+	LightingMode GetLightingMode(size_t index = 0) const { return GetMaterial(index).GetLightingMode(); }
 
-	size_t GetMaterialCount() const {
-		if (hasIndividualMaterials_) {
-			return individualMaterials_.GetMaterialCount();
-		}
-		return sharedModel_ ? sharedModel_->GetMaterialCount() : 0;
-	}
 
-	// メインマテリアル（インデックス0）のショートカット
-	Vector4 GetColor() const {
-		return GetMaterial(0).GetColor();
-	}
-	LightingMode GetLightingMode() const {
-		return GetMaterial(0).GetLightingMode();
-	}
-
-	void SetColor(const Vector4& color) {
-		// 個別マテリアルを作成してから色を設定
-		CreateIndividualMaterials();
-		individualMaterials_.GetMaterial(0).SetColor(color);
-	}
-
-	void SetLightingMode(LightingMode mode) {
-		CreateIndividualMaterials();
-		individualMaterials_.GetMaterial(0).SetLightingMode(mode);
-	}
-
+	void SetColor(const Vector4& color, size_t index = 0) { materials_.GetMaterial(index).SetColor(color); }
+	void SetLightingMode(LightingMode mode, size_t index = 0) { materials_.GetMaterial(index).SetLightingMode(mode); }
 	// 全マテリアルに同じ設定を適用
-	void SetAllMaterialsColor(const Vector4& color, LightingMode mode = LightingMode::HalfLambert) {
-		CreateIndividualMaterials();
-		individualMaterials_.SetAllMaterials(color, mode);
-	}
+	void SetAllMaterialsColor(const Vector4& color, LightingMode mode = LightingMode::HalfLambert) { materials_.SetAllMaterials(color, mode); }
 
-	// UV操作（メインマテリアル用）
-	void SetUVTransformScale(const Vector2& scale) {
-		CreateIndividualMaterials();
-		individualMaterials_.GetMaterial(0).SetUVTransformScale(scale);
-	}
-	void SetUVTransformRotateZ(float rotate) {
-		CreateIndividualMaterials();
-		individualMaterials_.GetMaterial(0).SetUVTransformRotateZ(rotate);
-	}
-	void SetUVTransformTranslate(const Vector2& translate) {
-		CreateIndividualMaterials();
-		individualMaterials_.GetMaterial(0).SetUVTransformTranslate(translate);
-	}
+	// UV操作
+	void SetUVTransformScale(const Vector2& scale, size_t index = 0) { materials_.GetMaterial(index).SetUVTransformScale(scale); }
+	void SetUVTransformRotateZ(float rotate, size_t index = 0) { materials_.GetMaterial(index).SetUVTransformRotateZ(rotate); }
+	void SetUVTransformTranslate(const Vector2& translate, size_t index = 0) { materials_.GetMaterial(index).SetUVTransformTranslate(translate); }
 
 	// オブジェクト状態
 	const std::string& GetName() const { return name_; }
@@ -136,20 +94,13 @@ public:
 	bool HasCustomTexture() const { return !textureName_.empty(); }
 
 protected:
-	// トランスフォーム座標
-	Transform3D transform_;					// 個別のトランスフォーム（位置、回転、スケール）
+	Transform3D transform_;					// 個別のトランスフォーム
+	Model* sharedModel_ = nullptr;			// 共有モデル（メッシュとテクスチャ）Materialは別途用意することで同じモデルでMaterial情報が変わらないようにする。
+	MaterialGroup materials_;				// 個別マテリアル
 
-	// 共有リソースへの参照
-	Model* sharedModel_ = nullptr;			// 共有モデルへのポインタ
-
-	// 個別マテリアルグループ
-	MaterialGroup individualMaterials_;		// 個別のマテリアルグループ
-	bool hasIndividualMaterials_ = false;	// 個別マテリアルを持っているかのフラグ
-
-	// オブジェクトの状態
 	std::string name_ = "Object3D";
 	std::string modelTag_ = "";
-	std::string textureName_ = "";			// プリミティブ用のテクスチャ名
+	std::string textureName_ = "";
 
 	// システム参照
 	DirectXCommon* directXCommon_ = nullptr;
@@ -157,38 +108,12 @@ protected:
 	ModelManager* modelManager_ = ModelManager::GetInstance();
 	Object3DCommon* object3DCommon_ = Object3DCommon::GetInstance();
 
-	/// <summary>
-	/// 個別マテリアルを作成する（共有モデルからコピー）
-	/// </summary>
-	void CreateIndividualMaterials() {
-		if (hasIndividualMaterials_ || !sharedModel_) {
-			return; // 既に作成済みまたは共有モデルがない
-		}
-
-		// 共有モデルと同じ数のマテリアルを作成
-		size_t materialCount = sharedModel_->GetMaterialCount();
-		individualMaterials_.Initialize(directXCommon_, materialCount);
-
-		// 共有モデルのマテリアル設定をコピー
-		for (size_t i = 0; i < materialCount; ++i) {
-			individualMaterials_.GetMaterial(i).CopyFrom(sharedModel_->GetMaterial(i));
-		}
-
-		hasIndividualMaterials_ = true;
-	}
-
 private:
-	// ダミーマテリアル（モデルがない場合の安全対策）
-	static Material dummyMaterial_;
 
-	// ImGui用の内部状態
-	Vector3 imguiPosition_{ 0.0f, 0.0f, 0.0f };
-	Vector3 imguiRotation_{ 0.0f, 0.0f, 0.0f };
-	Vector3 imguiScale_{ 1.0f, 1.0f, 1.0f };
 };
 
-class Triangle : public Object3D
-{
+
+class Triangle : public Object3D {
 public:
 	void Initialize(DirectXCommon* dxCommon, const std::string& modelTag = "triangle", const std::string& textureName = "white") {
 		Object3D::Initialize(dxCommon, modelTag, textureName);
@@ -197,8 +122,7 @@ public:
 	}
 };
 
-class Sphere : public Object3D
-{
+class Sphere : public Object3D {
 public:
 	void Initialize(DirectXCommon* dxCommon, const std::string& modelTag = "sphere", const std::string& textureName = "white") {
 		Object3D::Initialize(dxCommon, modelTag, textureName);
@@ -207,8 +131,7 @@ public:
 	}
 };
 
-class Plane : public Object3D
-{
+class Plane : public Object3D {
 public:
 	void Initialize(DirectXCommon* dxCommon, const std::string& modelTag = "plane", const std::string& textureName = "white") {
 		Object3D::Initialize(dxCommon, modelTag, textureName);
@@ -217,8 +140,7 @@ public:
 	}
 };
 
-class Model3D : public Object3D
-{
+class Model3D : public Object3D {
 public:
 	void Initialize(DirectXCommon* dxCommon, const std::string& modelTag, const std::string& textureName = "") {
 		Object3D::Initialize(dxCommon, modelTag, textureName);
