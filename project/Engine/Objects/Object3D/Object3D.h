@@ -3,6 +3,7 @@
 #include <memory>
 #include "DirectXCommon.h"
 #include "Transform3D.h"
+#include "Object3DCommon.h"		//共通設定部分
 #include "Light.h"
 #include "Managers/Texture/TextureManager.h"
 #include "Managers/Model/ModelManager.h"
@@ -125,34 +126,27 @@ public:
 	}
 
 	// オブジェクト状態
-	bool IsVisible() const { return isVisible_; }
-	bool IsActive() const { return isActive_; }
 	const std::string& GetName() const { return name_; }
 	const std::string& GetModelTag() const { return modelTag_; }
-
-	void SetVisible(bool visible) { isVisible_ = visible; }
-	void SetActive(bool active) { isActive_ = active; }
 	void SetName(const std::string& name) { name_ = name; }
 
-	// テクスチャ操作（プリミティブ用）
+	// テクスチャ操作
 	void SetTexture(const std::string& textureName) { textureName_ = textureName; }
 	const std::string& GetTextureName() const { return textureName_; }
 	bool HasCustomTexture() const { return !textureName_.empty(); }
 
 protected:
-	// 個別に持つコンポーネント
+	// トランスフォーム座標
 	Transform3D transform_;					// 個別のトランスフォーム（位置、回転、スケール）
 
 	// 共有リソースへの参照
 	Model* sharedModel_ = nullptr;			// 共有モデルへのポインタ
 
-	// 個別マテリアルシステム
+	// 個別マテリアルグループ
 	MaterialGroup individualMaterials_;		// 個別のマテリアルグループ
 	bool hasIndividualMaterials_ = false;	// 個別マテリアルを持っているかのフラグ
 
 	// オブジェクトの状態
-	bool isVisible_ = true;
-	bool isActive_ = true;
 	std::string name_ = "Object3D";
 	std::string modelTag_ = "";
 	std::string textureName_ = "";			// プリミティブ用のテクスチャ名
@@ -161,6 +155,7 @@ protected:
 	DirectXCommon* directXCommon_ = nullptr;
 	TextureManager* textureManager_ = TextureManager::GetInstance();
 	ModelManager* modelManager_ = ModelManager::GetInstance();
+	Object3DCommon* object3DCommon_ = Object3DCommon::GetInstance();
 
 	/// <summary>
 	/// 個別マテリアルを作成する（共有モデルからコピー）

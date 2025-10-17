@@ -51,6 +51,8 @@ void Engine::InitializeManagers() {
 
 	//スプライトの共通部分を初期化
 	SpriteCommon::GetInstance()->Initialize(directXCommon_.get());
+	//オブジェクト3Dの共通部分を初期化
+	Object3DCommon::GetInstance()->Initialize(directXCommon_.get());
 
 	// カメラコントローラー取得
 	cameraController_ = CameraController::GetInstance();

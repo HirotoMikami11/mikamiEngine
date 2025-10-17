@@ -39,7 +39,7 @@ bool TextureManager::LoadTexture(const std::string& filename, const std::string&
 	}
 
 	// 使用可能なSRVスロットを割り当て
-	// Allotateで自動であいてるスロットに確保する
+	// Allotaterで自動であいてるスロットに確保する
 	auto descriptorHandle = descriptorManager->AllocateSRV();
 	if (!descriptorHandle.isValid) {
 		// SRVのヒープが最大値の場合はログを出力して失敗

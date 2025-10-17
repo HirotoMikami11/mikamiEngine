@@ -1,5 +1,6 @@
 #include "Object3D.h"
 #include "Managers/ImGui/ImGuiManager.h"
+#include "Object3DCommon.h"
 
 // 静的メンバの定義
 Material Object3D::dummyMaterial_;
@@ -38,10 +39,6 @@ void Object3D::Initialize(DirectXCommon* dxCommon, const std::string& modelTag, 
 }
 
 void Object3D::Update(const Matrix4x4& viewProjectionMatrix) {
-	// アクティブでない場合は更新を止める
-	if (!isActive_) {
-		return;
-	}
 
 	// トランスフォーム行列の更新
 	transform_.UpdateMatrix(viewProjectionMatrix);
@@ -57,16 +54,14 @@ void Object3D::Update(const Matrix4x4& viewProjectionMatrix) {
 }
 
 void Object3D::Draw(const Light& directionalLight) {
-	// 非表示、アクティブでない場合、または共有モデルがない場合は描画しない
-	if (!isVisible_ || !isActive_ || !sharedModel_ || !sharedModel_->IsValid()) {
+	// または共有モデルがない場合は描画しない
+	if (!sharedModel_ || !sharedModel_->IsValid()) {
 		return;
 	}
 
 	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
 	// 3Dの描画設定
-	commandList->SetGraphicsRootSignature(directXCommon_->GetRootSignature());
-	commandList->SetPipelineState(directXCommon_->GetPipelineState());
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	object3DCommon_->setCommonSpriteRenderSettings(commandList);
 
 	// ライトを設定
 	commandList->SetGraphicsRootConstantBufferView(3, directionalLight.GetResource()->GetGPUVirtualAddress());
@@ -118,10 +113,6 @@ void Object3D::ImGui() {
 #ifdef USEIMGUI
 	// 現在の名前を表示
 	if (ImGui::TreeNode(name_.c_str())) {
-		// 表示・アクティブ状態
-		ImGui::Checkbox("Visible", &isVisible_);
-		ImGui::Checkbox("Active", &isActive_);
-
 		// Transform
 		if (ImGui::CollapsingHeader("Transform")) {
 			imguiPosition_ = transform_.GetPosition();

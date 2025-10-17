@@ -134,6 +134,7 @@ public:
 
 	/// <summary>
 	/// モデルが有効かどうか
+	/// メッシュがなかったりするとおかしくなる為
 	/// </summary>
 	/// <returns>有効かどうか</returns>
 	bool IsValid() const { return !meshes_.empty() && meshes_[0].GetVertexCount() > 0; }
