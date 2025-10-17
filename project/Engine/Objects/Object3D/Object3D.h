@@ -11,11 +11,11 @@
 /// <summary>
 /// ゲームオブジェクト - 共有モデルと個別Transform、個別マテリアルを使用
 /// </summary>
-class GameObject
+class Object3D
 {
 public:
-	GameObject() = default;
-	virtual ~GameObject() = default;
+	Object3D() = default;
+	virtual ~Object3D() = default;
 
 	/// <summary>
 	/// 初期化（共有モデルを使用）
@@ -153,7 +153,7 @@ protected:
 	// オブジェクトの状態
 	bool isVisible_ = true;
 	bool isActive_ = true;
-	std::string name_ = "GameObject";
+	std::string name_ = "Object3D";
 	std::string modelTag_ = "";
 	std::string textureName_ = "";			// プリミティブ用のテクスチャ名
 
@@ -192,41 +192,41 @@ private:
 	Vector3 imguiScale_{ 1.0f, 1.0f, 1.0f };
 };
 
-class Triangle : public GameObject
+class Triangle : public Object3D
 {
 public:
 	void Initialize(DirectXCommon* dxCommon, const std::string& modelTag = "triangle", const std::string& textureName = "white") {
-		GameObject::Initialize(dxCommon, modelTag, textureName);
+		Object3D::Initialize(dxCommon, modelTag, textureName);
 		name_ = ObjectIDManager::GetInstance()->GenerateName("Triangle");
 		SetLightingMode(LightingMode::HalfLambert);
 	}
 };
 
-class Sphere : public GameObject
+class Sphere : public Object3D
 {
 public:
 	void Initialize(DirectXCommon* dxCommon, const std::string& modelTag = "sphere", const std::string& textureName = "white") {
-		GameObject::Initialize(dxCommon, modelTag, textureName);
+		Object3D::Initialize(dxCommon, modelTag, textureName);
 		name_ = ObjectIDManager::GetInstance()->GenerateName("Sphere");
 		SetLightingMode(LightingMode::HalfLambert);
 	}
 };
 
-class Plane : public GameObject
+class Plane : public Object3D
 {
 public:
 	void Initialize(DirectXCommon* dxCommon, const std::string& modelTag = "plane", const std::string& textureName = "white") {
-		GameObject::Initialize(dxCommon, modelTag, textureName);
+		Object3D::Initialize(dxCommon, modelTag, textureName);
 		name_ = ObjectIDManager::GetInstance()->GenerateName("Plane");
 		SetLightingMode(LightingMode::HalfLambert);
 	}
 };
 
-class Model3D : public GameObject
+class Model3D : public Object3D
 {
 public:
 	void Initialize(DirectXCommon* dxCommon, const std::string& modelTag, const std::string& textureName = "") {
-		GameObject::Initialize(dxCommon, modelTag, textureName);
+		Object3D::Initialize(dxCommon, modelTag, textureName);
 		name_ = ObjectIDManager::GetInstance()->GenerateNameModel(std::format("{}", modelTag), "Model3D");
 		SetLightingMode(LightingMode::HalfLambert);
 	}

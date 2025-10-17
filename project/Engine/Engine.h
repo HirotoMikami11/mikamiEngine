@@ -19,7 +19,7 @@
 
 ///Objects
 #include "CameraController.h"
-#include "GameObject.h"
+#include "Object3D.h"
 #include "Sprite.h"
 #include "Light.h"
 

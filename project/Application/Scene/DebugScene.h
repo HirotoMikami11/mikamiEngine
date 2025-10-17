@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-#include "GameObject.h"
+#include "Object3D.h"
 #include "Light.h"
 #include "GridLine.h"
 #include "CameraController.h"

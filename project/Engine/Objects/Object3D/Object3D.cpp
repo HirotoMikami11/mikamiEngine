@@ -1,10 +1,10 @@
-#include "GameObject.h"
+#include "Object3D.h"
 #include "Managers/ImGui/ImGuiManager.h"
 
 // 静的メンバの定義
-Material GameObject::dummyMaterial_;
+Material Object3D::dummyMaterial_;
 
-void GameObject::Initialize(DirectXCommon* dxCommon, const std::string& modelTag, const std::string& textureName) {
+void Object3D::Initialize(DirectXCommon* dxCommon, const std::string& modelTag, const std::string& textureName) {
 	directXCommon_ = dxCommon;
 	modelTag_ = modelTag;
 	textureName_ = textureName;
@@ -37,7 +37,7 @@ void GameObject::Initialize(DirectXCommon* dxCommon, const std::string& modelTag
 	hasIndividualMaterials_ = false;
 }
 
-void GameObject::Update(const Matrix4x4& viewProjectionMatrix) {
+void Object3D::Update(const Matrix4x4& viewProjectionMatrix) {
 	// アクティブでない場合は更新を止める
 	if (!isActive_) {
 		return;
@@ -56,7 +56,7 @@ void GameObject::Update(const Matrix4x4& viewProjectionMatrix) {
 	}
 }
 
-void GameObject::Draw(const Light& directionalLight) {
+void Object3D::Draw(const Light& directionalLight) {
 	// 非表示、アクティブでない場合、または共有モデルがない場合は描画しない
 	if (!isVisible_ || !isActive_ || !sharedModel_ || !sharedModel_->IsValid()) {
 		return;
@@ -114,7 +114,7 @@ void GameObject::Draw(const Light& directionalLight) {
 	}
 }
 
-void GameObject::ImGui() {
+void Object3D::ImGui() {
 #ifdef USEIMGUI
 	// 現在の名前を表示
 	if (ImGui::TreeNode(name_.c_str())) {

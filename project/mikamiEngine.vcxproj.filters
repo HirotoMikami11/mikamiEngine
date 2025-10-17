@@ -228,7 +228,7 @@
     <ClCompile Include="Engine\Objects\Light\Light.cpp">
       <Filter>Engine\Objects\Light</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Objects\GameObject\GameObject.cpp">
+    <ClCompile Include="Engine\Objects\Object3D\Object3D.cpp">
       <Filter>Engine\Objects\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Managers\Texture\Texture.cpp">
@@ -291,19 +291,19 @@
     <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Vignette\VignettePostEffect.cpp">
       <Filter>Engine\OffScreenRenderer\PostEffect\Vignette</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Objects\GameObject\Material.cpp">
+    <ClCompile Include="Engine\Objects\Object3D\Material.cpp">
       <Filter>Engine\Objects\GameObject\Model\Materials</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Objects\GameObject\MaterialGroup.cpp">
+    <ClCompile Include="Engine\Objects\Object3D\MaterialGroup.cpp">
       <Filter>Engine\Objects\GameObject\Model\Materials</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Objects\GameObject\Mesh.cpp">
+    <ClCompile Include="Engine\Objects\Object3D\Mesh.cpp">
       <Filter>Engine\Objects\GameObject\Model\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Objects\GameObject\Model.cpp">
+    <ClCompile Include="Engine\Objects\Object3D\Model.cpp">
       <Filter>Engine\Objects\GameObject\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Objects\GameObject\Transform3D.cpp">
+    <ClCompile Include="Engine\Objects\Object3D\Transform3D.cpp">
       <Filter>Engine\Objects\GameObject\Transform</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Managers\Transition\TransitionManager.cpp">
@@ -460,7 +460,7 @@
     <ClInclude Include="Engine\Objects\Light\Light.h">
       <Filter>Engine\Objects\Light</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\GameObject\GameObject.h">
+    <ClInclude Include="Engine\Objects\Object3D\Object3D.h">
       <Filter>Engine\Objects\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Managers\Texture\Texture.h">
@@ -529,19 +529,19 @@
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Vignette\VignettePostEffect.h">
       <Filter>Engine\OffScreenRenderer\PostEffect\Vignette</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\GameObject\Material.h">
+    <ClInclude Include="Engine\Objects\Object3D\Material.h">
       <Filter>Engine\Objects\GameObject\Model\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\GameObject\MaterialGroup.h">
+    <ClInclude Include="Engine\Objects\Object3D\MaterialGroup.h">
       <Filter>Engine\Objects\GameObject\Model\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\GameObject\Mesh.h">
+    <ClInclude Include="Engine\Objects\Object3D\Mesh.h">
       <Filter>Engine\Objects\GameObject\Model\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\GameObject\Model.h">
+    <ClInclude Include="Engine\Objects\Object3D\Model.h">
       <Filter>Engine\Objects\GameObject\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\GameObject\Transform3D.h">
+    <ClInclude Include="Engine\Objects\Object3D\Transform3D.h">
       <Filter>Engine\Objects\GameObject\Transform</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Managers\Transition\SceneTransitionHelper.h">

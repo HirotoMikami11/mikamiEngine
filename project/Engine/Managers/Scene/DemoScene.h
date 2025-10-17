@@ -4,7 +4,7 @@
 
 #include "Sprite.h"
 #include "Light.h"
-#include "GameObject.h"
+#include "Object3D.h"
 #include "CameraController.h"
 #include "GridLine.h"
 #include "Engine.h"
