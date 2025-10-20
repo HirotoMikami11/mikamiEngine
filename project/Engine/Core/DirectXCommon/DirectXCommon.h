@@ -73,7 +73,8 @@ public:
 	ID3D12PipelineState* GetSpritePipelineState() const { return spritePipelineState.Get(); }
 	ID3D12RootSignature* GetLineRootSignature() const { return lineRootSignature.Get(); }
 	ID3D12PipelineState* GetLinePipelineState() const { return linePipelineState.Get(); }
-
+	ID3D12RootSignature* GetParticleRootSignature() const { return particleRootSignature.Get(); }
+	ID3D12PipelineState* GetParticlePipelineState() const { return particlePipelineState.Get(); }
 	///参照で返すゲッター？
 	const ComPtr<ID3D12Device>& GetDeviceComPtr() const { return device; }
 	const ComPtr<ID3D12GraphicsCommandList>& GetCommandListComPtr() const { return commandList; }
@@ -163,6 +164,12 @@ private:
 	void MakeLinePSO();
 
 	/// <summary>
+	/// パーティクル描画用のPSOを作成する
+	/// </summary>
+	void MakeParticlePSO();
+
+
+	/// <summary>
 	/// ViewportとScissor
 	/// </summary>
 	void MakeViewport();
@@ -230,6 +237,9 @@ private:
 	ComPtr<ID3D12RootSignature> lineRootSignature;
 	ComPtr<ID3D12PipelineState> linePipelineState;
 
+	//パーティクル用PSO
+	ComPtr<ID3D12RootSignature> particleRootSignature;
+	ComPtr<ID3D12PipelineState> particlePipelineState;
 
 	//ビューポート
 	D3D12_VIEWPORT viewport{};

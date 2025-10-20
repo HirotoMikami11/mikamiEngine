@@ -22,6 +22,7 @@
 #include "Object3D.h"
 #include "Sprite.h"
 #include "Light.h"
+#include "Particle.h"
 
 class Engine {
 public:

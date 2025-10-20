@@ -6,7 +6,7 @@
 /// <summary>
 /// スプライトの共通部分
 /// </summary>
-class Object3DCommon
+class ParticleCommon
 {
 public:
 	//クラス内でのみ,namespace省略(エイリアステンプレート)
@@ -14,7 +14,7 @@ public:
 
 
 	//シングルトン
-	static Object3DCommon* GetInstance();
+	static ParticleCommon* GetInstance();
 
 	/// <summary>
 	/// 初期化
@@ -30,10 +30,10 @@ public:
 private:
 
 	// コンストラクタ
-	Object3DCommon() = default;
-	~Object3DCommon() = default;
-	Object3DCommon(const Object3DCommon&) = delete;
-	Object3DCommon& operator=(const Object3DCommon&) = delete;
+	ParticleCommon() = default;
+	~ParticleCommon() = default;
+	ParticleCommon(const ParticleCommon&) = delete;
+	ParticleCommon& operator=(const ParticleCommon&) = delete;
 
 	// 基本情報
 	DirectXCommon* directXCommon_ = nullptr;

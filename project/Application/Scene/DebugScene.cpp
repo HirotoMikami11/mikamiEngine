@@ -92,6 +92,20 @@ void DebugScene::InitializeGameObjects() {
 	);
 	gridLine_->SetName("Main Grid");
 
+
+	///*-----------------------------------------------------------------------*///
+	///									平面									///
+	///*-----------------------------------------------------------------------*///
+	Vector3Transform transformParicle{
+		{1.0f, 5.0f, 1.0f},
+		{0.0f, 0.0f, 0.0f},
+		{0.0f, 0.0f, 0.0f}
+	};
+
+	particle_ = std::make_unique<Particle>();
+	particle_->Initialize(directXCommon_, "plane", "uvChecker");
+	//particle_->SetTransform(transformParicle);
+
 	///*-----------------------------------------------------------------------*///
 	///									ライト									///
 	///*-----------------------------------------------------------------------*///
@@ -115,6 +129,8 @@ void DebugScene::UpdateGameObjects() {
 
 	// グリッド線更新
 	gridLine_->Update(viewProjectionMatrix);
+
+	particle_->Update(viewProjectionMatrix);
 }
 
 void DebugScene::DrawOffscreen() {
@@ -124,6 +140,8 @@ void DebugScene::DrawOffscreen() {
 	// 3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	// 平面の描画
 	plane_->Draw(directionalLight_);
+
+	particle_->Draw(directionalLight_);
 }
 
 void DebugScene::DrawBackBuffer() {

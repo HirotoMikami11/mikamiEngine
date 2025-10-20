@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "Object3D.h"
+#include "Particle.h"
 #include "Light.h"
 #include "GridLine.h"
 #include "CameraController.h"
@@ -58,6 +59,7 @@ private:
 	// ゲームオブジェクト
 	std::unique_ptr<Plane> plane_;
 	std::unique_ptr<GridLine> gridLine_;
+	std::unique_ptr<Particle> particle_;
 
 	// ライティング
 	Light directionalLight_;

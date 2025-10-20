@@ -181,6 +181,9 @@
     <Filter Include="Application\Scene">
       <UniqueIdentifier>{1a98cd13-8ade-4ea0-bbc6-aef34b53af74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="リソース ファイル\Shader\Particle">
+      <UniqueIdentifier>{f3c5cc07-9e49-479f-bec5-40b9dfdeceaf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -378,6 +381,12 @@
     <ClCompile Include="Engine\Objects\Particle\Particle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Objects\Particle\TransformParticle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Particle\ParticleCommon.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -415,6 +424,12 @@
     </FxCompile>
     <FxCompile Include="resources\Shader\Vignette\Vignette.PS.hlsl">
       <Filter>リソース ファイル\Shader\Vignette</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\Particle\Particle.PS.hlsl">
+      <Filter>リソース ファイル\Shader\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\Particle\Particle.VS.hlsl">
+      <Filter>リソース ファイル\Shader\Particle</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -637,6 +652,12 @@
     <ClInclude Include="Engine\Objects\Particle\Particle.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Objects\Particle\TransformParticle.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Particle\ParticleCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli">
@@ -665,6 +686,9 @@
     </None>
     <None Include="resources\Shader\Vignette\Vignette.hlsli">
       <Filter>リソース ファイル\Shader\Vignette</Filter>
+    </None>
+    <None Include="resources\Shader\Particle\Particle.hlsli">
+      <Filter>リソース ファイル\Shader\Particle</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

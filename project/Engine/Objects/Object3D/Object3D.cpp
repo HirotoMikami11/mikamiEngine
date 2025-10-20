@@ -37,7 +37,7 @@ void Object3D::Draw(const Light& directionalLight) {
 	}
 
 	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
-	object3DCommon_->setCommonSpriteRenderSettings(commandList);
+	object3DCommon_->setCommonRenderSettings(commandList);
 
 	// ライトを設定
 	commandList->SetGraphicsRootConstantBufferView(3, directionalLight.GetResource()->GetGPUVirtualAddress());
@@ -56,7 +56,7 @@ void Object3D::Draw(const Light& directionalLight) {
 			materialIndex = 0;
 		}
 
-		// 【シンプル】常に自分のマテリアルを使う
+		// 常に自分のマテリアルを使う
 		commandList->SetGraphicsRootConstantBufferView(0,
 			materials_.GetMaterial(materialIndex).GetResource()->GetGPUVirtualAddress());
 

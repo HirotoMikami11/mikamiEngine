@@ -207,6 +207,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Objects\Sprite\SpriteCommon.cpp" />
     <ClCompile Include="Engine\Objects\Object3D\Object3DCommon.cpp" />
     <ClCompile Include="Engine\Objects\Particle\Particle.cpp" />
+    <ClCompile Include="Engine\Objects\Particle\TransformParticle.cpp" />
+    <ClCompile Include="Engine\Objects\Particle\ParticleCommon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -248,6 +250,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\Particle\Particle.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\Particle\Particle.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="resources\Shader\RGBShift\RGBShift.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -344,6 +356,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Objects\Sprite\SpriteCommon.h" />
     <ClInclude Include="Engine\Objects\Object3D\Object3DCommon.h" />
     <ClInclude Include="Engine\Objects\Particle\Particle.h" />
+    <ClInclude Include="Engine\Objects\Particle\TransformParticle.h" />
+    <ClInclude Include="Engine\Objects\Particle\ParticleCommon.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
@@ -357,6 +371,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="resources\Shader\LineGlitch\LineGlitch.hlsli" />
     <None Include="resources\Shader\Line\Line.hlsli" />
     <None Include="resources\Shader\Object3d\Object3d.hlsli" />
+    <None Include="resources\Shader\Particle\Particle.hlsli" />
     <None Include="resources\Shader\RGBShift\RGBShift.hlsli" />
     <None Include="resources\Shader\Sprite\Sprite.hlsli" />
     <None Include="resources\Shader\Vignette\Vignette.hlsli" />

@@ -5,7 +5,7 @@ void Material::Initialize(DirectXCommon* dxCommon) {
 	// マテリアルデータにマップ
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	// デフォルト設定で初期化
-	SetDefaultSettings();
+	SetLitObjectSettings();
 }
 
 void Material::SetDefaultSettings() {

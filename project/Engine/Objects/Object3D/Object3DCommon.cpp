@@ -11,9 +11,9 @@ void Object3DCommon::Initialize(DirectXCommon* dxCommon)
 	directXCommon_ = dxCommon;
 }
 
-void Object3DCommon::setCommonSpriteRenderSettings(ID3D12GraphicsCommandList* commandList)
+void Object3DCommon::setCommonRenderSettings(ID3D12GraphicsCommandList* commandList)
 {
-	// スプライト専用のPSOを設定
+	// 3Dオブジェクト専用のPSOを設定
 	commandList->SetGraphicsRootSignature(directXCommon_->GetRootSignature());
 	commandList->SetPipelineState(directXCommon_->GetPipelineState());
 	// プリミティブトポロジを設定

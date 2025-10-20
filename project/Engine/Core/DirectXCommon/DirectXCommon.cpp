@@ -127,6 +127,9 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	// 線分用のPSO
 	MakeLinePSO();
 
+	// パーティクル用のPSO
+	MakeParticlePSO();
+	
 	///*-----------------------------------------------------------------------*///
 	//																			//
 	///							ViewportとScissor							   ///
@@ -513,6 +516,35 @@ void DirectXCommon::MakeLinePSO() {
 	linePipelineState = psoInfo.pipelineState;
 
 	Logger::Log(Logger::GetStream(), "Complete create Line PSO using PSOFactory!!\n");
+}
+
+void DirectXCommon::MakeParticlePSO()
+{
+	// RootSignatureを構築
+	RootSignatureBuilder rsBuilder;
+	rsBuilder.AddCBV(0, D3D12_SHADER_VISIBILITY_PIXEL)		// Material (b0)PS
+		.AddSRV(0, 1, D3D12_SHADER_VISIBILITY_VERTEX)		// Transform (t0)VS
+		.AddSRV(0, 1, D3D12_SHADER_VISIBILITY_PIXEL)		// Texture (t0)PS
+		.AddCBV(1, D3D12_SHADER_VISIBILITY_PIXEL)			// DirectionalLight (b1)PS
+		.AddStaticSampler(0);								// Sampler (s0)
+
+	// PSO設定を構築（プリセット使用）
+	auto psoDesc = PSODescriptor::Create3D()
+		.SetVertexShader(L"resources/Shader/Particle/Particle.VS.hlsl")
+		.SetPixelShader(L"resources/Shader/Particle/Particle.PS.hlsl");
+
+	// PSO生成
+	auto psoInfo = psoFactory_->CreatePSO(psoDesc, rsBuilder);
+	if (!psoInfo.IsValid()) {
+		Logger::Log(Logger::GetStream(), "DirectXCommon: Failed to create 3D PSO\n");
+		assert(false);
+	}
+
+	particleRootSignature = psoInfo.rootSignature;
+	particlePipelineState = psoInfo.pipelineState;
+
+	Logger::Log(Logger::GetStream(), "Complete create Particle PSO using PSOFactory!!\n");
+
 }
 
 DirectXCommon::ComPtr<IDxcBlob>DirectXCommon::CompileShader(
