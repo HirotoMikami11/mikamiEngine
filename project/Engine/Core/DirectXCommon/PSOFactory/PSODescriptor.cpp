@@ -69,6 +69,27 @@ PSODescriptor PSODescriptor::CreateLine() {
 	return desc;
 }
 
+PSODescriptor PSODescriptor::CreateParticle()
+{
+	PSODescriptor desc;
+
+	// 3Dオブジェクト用のデフォルト設定
+	desc.SetVertexShader(L"resources/Shader/Object3d/Object3d.VS.hlsl", L"main")
+		.SetPixelShader(L"resources/Shader/Object3d/Object3d.PS.hlsl", L"main")
+		.SetBlendMode(BlendMode::AlphaBlend)
+		.SetCullMode(CullMode::Back)
+		.EnableDepth(true)
+		.EnableDepthWrite(true)
+		.SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+
+	// 標準的な3D頂点レイアウト
+	desc.AddInputElement({ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT })
+		.AddInputElement({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT })
+		.AddInputElement({ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT });
+
+	return desc;
+}
+
 PSODescriptor PSODescriptor::CreatePostEffect() {
 	PSODescriptor desc;
 

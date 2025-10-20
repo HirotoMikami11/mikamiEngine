@@ -130,7 +130,7 @@ void Object3D::ImGui() {
 				if (ImGui::TreeNode(materialName.c_str())) {
 					Material& material = GetMaterial(i);
 
-					// 色設定（シンプル！）
+					// 色設定
 					Vector4 color = material.GetColor();
 					if (ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&color.x))) {
 						material.SetColor(color);

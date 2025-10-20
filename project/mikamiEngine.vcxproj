@@ -329,6 +329,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Objects\Light\Light.h" />
     <ClInclude Include="Engine\Objects\Line\GridLine.h" />
     <ClInclude Include="Engine\Objects\Line\LineRenderer.h" />
+    <ClInclude Include="Engine\Objects\Particle\ParticleState.h" />
     <ClInclude Include="Engine\Objects\Sprite\Sprite.h" />
     <ClInclude Include="Engine\Objects\Sprite\Transform2D.h" />
     <ClInclude Include="Engine\OffscreenRenderer\OffscreenRenderer.h" />

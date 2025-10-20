@@ -142,8 +142,6 @@ void DirectXCommon::Finalize() {
 	if (descriptorManager_) {
 		descriptorManager_->Finalize();
 	}
-	//CloseHandle(fenceEvent);
-
 }
 
 ///*-----------------------------------------------------------------------*///
@@ -412,10 +410,6 @@ void DirectXCommon::MakeFenceEvent()
 	assert(SUCCEEDED(hr));	//Fenceが生成できなかったので起動できない
 	Logger::Log(Logger::GetStream(), "Complete create fence!!\n");//フェンス生成完了のログを出す
 
-	//FenceのSignal(GPUに指定の位置で指定の値を書き込んでもらう命令)を待つためのEvent(メッセージ)を作成する
-	//fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	//assert(fenceEvent != nullptr);	 //作成が上手くできなかったら起動できない
-
 }
 
 void DirectXCommon::InitalizeDXC()
@@ -529,7 +523,7 @@ void DirectXCommon::MakeParticlePSO()
 		.AddStaticSampler(0);								// Sampler (s0)
 
 	// PSO設定を構築（プリセット使用）
-	auto psoDesc = PSODescriptor::Create3D()
+	auto psoDesc = PSODescriptor::CreateParticle()
 		.SetVertexShader(L"resources/Shader/Particle/Particle.VS.hlsl")
 		.SetPixelShader(L"resources/Shader/Particle/Particle.PS.hlsl");
 

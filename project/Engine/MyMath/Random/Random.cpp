@@ -5,8 +5,6 @@ Random::Random() : randomEngine_(seedGenerator_()) {
 }
 
 Random& Random::GetInstance() {
-	// C++11以降、local staticは自動的にスレッドセーフ
-	//AIの指示に従った。マルチスレッドの安全性のためらしい
 	static Random instance;
 	return instance;
 }

@@ -74,6 +74,12 @@ public:
 	static PSODescriptor CreateLine();
 
 	/// <summary>
+	/// パーティクル用のデフォルト設定を作成
+	/// </summary>
+	/// <returns></returns>
+	static PSODescriptor CreateParticle();
+
+	/// <summary>
 	/// ポストエフェクト用のデフォルト設定を作成
 	/// </summary>
 	static PSODescriptor CreatePostEffect();

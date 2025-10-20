@@ -68,7 +68,7 @@ void DebugScene::InitializeGameObjects() {
 	Vector3Transform transformPlane{
 		{1.0f, 1.0f, 1.0f},
 		{0.0f, 0.0f, 0.0f},
-		{0.0f, 0.0f, 0.0f}
+		{0.0f, 0.0f, 5.0f}
 	};
 
 	plane_ = std::make_unique<Plane>();
@@ -103,7 +103,7 @@ void DebugScene::InitializeGameObjects() {
 	};
 
 	particle_ = std::make_unique<Particle>();
-	particle_->Initialize(directXCommon_, "plane", "uvChecker");
+	particle_->Initialize(directXCommon_, "plane", 10, "uvChecker");
 	//particle_->SetTransform(transformParicle);
 
 	///*-----------------------------------------------------------------------*///
@@ -130,7 +130,7 @@ void DebugScene::UpdateGameObjects() {
 	// グリッド線更新
 	gridLine_->Update(viewProjectionMatrix);
 
-	particle_->Update(viewProjectionMatrix);
+	particle_->Update(viewProjectionMatrix,(1.0f/60.0f));
 }
 
 void DebugScene::DrawOffscreen() {
@@ -158,6 +158,11 @@ void DebugScene::ImGui() {
 	ImGui::Spacing();
 	ImGui::Text("Plane");
 	plane_->ImGui();
+
+	ImGui::Spacing();
+	ImGui::Text("Particle");
+	particle_->ImGui();
+
 
 	ImGui::Spacing();
 	ImGui::Text("Grid Line");

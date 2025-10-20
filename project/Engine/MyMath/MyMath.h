@@ -378,6 +378,7 @@ namespace MyMath {
 
 	/// <summary>
 	/// トランスフォーム
+	/// 
 	/// </summary>
 	struct Vector3Transform final {
 		Vector3 scale;
