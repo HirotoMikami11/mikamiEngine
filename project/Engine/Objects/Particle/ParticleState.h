@@ -10,13 +10,11 @@
 struct ParticleState {
 	Vector3Transform transform;	// 大きさ、回転、位置
 	Vector3 velocity;			// 速度
-	bool isActive;				// アクティブ状態
 
 	// デフォルトコンストラクタ
 	ParticleState()
 		: transform{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} }
 		, velocity{ 0.0f, 0.0f, 0.0f }
-		, isActive(true)
 	{
 	}
 };

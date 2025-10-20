@@ -1,5 +1,6 @@
 #include "Random.h"
 
+
 Random::Random() : randomEngine_(seedGenerator_()) {
 	//シードの設定完了してる
 }
@@ -42,5 +43,14 @@ Vector3 Random::GenerateVector3WithOffset(const Vector3& baseVector, const Vecto
 		GenerateFloatWithOffset(baseVector.x, offsetVector.x),
 		GenerateFloatWithOffset(baseVector.y, offsetVector.y),
 		GenerateFloatWithOffset(baseVector.z, offsetVector.z)
+	};
+}
+
+Vector3 Random::GenerateVector3OriginOffset(float offset)
+{
+	return Vector3{
+		GenerateFloatWithOffset(0.0f, offset),
+		GenerateFloatWithOffset(0.0f, offset),
+		GenerateFloatWithOffset(0.0f, offset)
 	};
 }

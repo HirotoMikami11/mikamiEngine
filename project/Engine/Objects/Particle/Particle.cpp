@@ -2,6 +2,7 @@
 #include "Particle.h"
 #include "Managers/ImGui/ImGuiManager.h"
 #include "Object3DCommon.h"
+#include "Random/Random.h"
 
 void Particle::Initialize(DirectXCommon* dxCommon, const std::string& modelTag,
 	uint32_t numParticles, const std::string& textureName) {
@@ -9,6 +10,7 @@ void Particle::Initialize(DirectXCommon* dxCommon, const std::string& modelTag,
 	modelTag_ = modelTag;
 	textureName_ = textureName;
 	numParticles_ = numParticles;
+
 
 	// パーティクル配列の初期化
 	particles_.resize(numParticles_);
@@ -18,15 +20,10 @@ void Particle::Initialize(DirectXCommon* dxCommon, const std::string& modelTag,
 		// 位置を少しずつずらして配置
 		particles_[i].transform.scale = { 1.0f, 1.0f, 1.0f };
 		particles_[i].transform.rotate = { 0.0f, 0.0f, 0.0f };
-		particles_[i].transform.translate = {
-			i * 0.1f,// X軸方向に並べる
-			i * 0.1f,
-			i * 0.1f
-		};
-
+		//原点から-1~1の範囲
+		particles_[i].transform.translate = Random::GetInstance().GenerateVector3OriginOffset(1.0f);
 		// 全て上方向の速度を設定
-		particles_[i].velocity = { 0.0f, 1.0f, 0.0f };	// Y軸正方向
-		particles_[i].isActive = true;
+		particles_[i].velocity = Random::GetInstance().GenerateVector3OriginOffset(1.0f);
 	}
 
 	// GPU転送用バッファの作成
@@ -86,12 +83,10 @@ void Particle::Update(const Matrix4x4& viewProjectionMatrix, float deltaTime) {
 void Particle::UpdateParticles(float deltaTime) {
 	// 各パーティクルの物理更新
 	for (auto& particle : particles_) {
-		if (particle.isActive) {
-			// 速度を位置に加算
-			particle.transform.translate.x += particle.velocity.x * deltaTime;
-			particle.transform.translate.y += particle.velocity.y * deltaTime;
-			particle.transform.translate.z += particle.velocity.z * deltaTime;
-		}
+		// 速度を位置に加算
+		particle.transform.translate.x += particle.velocity.x * deltaTime;
+		particle.transform.translate.y += particle.velocity.y * deltaTime;
+		particle.transform.translate.z += particle.velocity.z * deltaTime;
 	}
 }
 

@@ -96,7 +96,7 @@ private:
 	// パーティクルデータ
 	std::vector<ParticleState> particles_;
 	uint32_t numParticles_ = 0;
-	bool enableUpdate_ = true;	// 更新を有効にするか
+	bool enableUpdate_ = false;	// 更新を有効にするか
 
 	// GPU転送用バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformResource_;

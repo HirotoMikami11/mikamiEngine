@@ -59,6 +59,13 @@ public:
 	/// <returns>オフセットが適用されたベクトル</returns>
 	Vector3 GenerateVector3WithOffset(const Vector3& baseVector, const Vector3& offsetVector);
 
+	/// <summary>
+	/// Vector3の原点からオフセットを適用した乱数ベクトルを生成
+	/// </summary>
+	/// <param name="offset">各成分のオフセット幅</param>
+	/// <returns>原点からオフセット分足し引きしたベクトル</returns>
+	Vector3 GenerateVector3OriginOffset(float offset);
+
 private:
 	Random();
 	~Random() = default;
