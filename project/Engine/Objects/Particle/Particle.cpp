@@ -9,21 +9,15 @@ void Particle::Initialize(DirectXCommon* dxCommon, const std::string& modelTag,
 	directXCommon_ = dxCommon;
 	modelTag_ = modelTag;
 	textureName_ = textureName;
-	numParticles_ = numParticles;
+	numMaxParticles_ = numParticles;
 
 
 	// パーティクル配列の初期化
-	particles_.resize(numParticles_);
+	particles_.resize(numMaxParticles_);
 
 	// 各パーティクルの初期状態を設定
-	for (uint32_t i = 0; i < numParticles_; ++i) {
-		// 位置を少しずつずらして配置
-		particles_[i].transform.scale = { 1.0f, 1.0f, 1.0f };
-		particles_[i].transform.rotate = { 0.0f, 0.0f, 0.0f };
-		//原点から-1~1の範囲
-		particles_[i].transform.translate = Random::GetInstance().GenerateVector3OriginOffset(1.0f);
-		// 全て上方向の速度を設定
-		particles_[i].velocity = Random::GetInstance().GenerateVector3OriginOffset(1.0f);
+	for (uint32_t i = 0; i < numMaxParticles_; ++i) {
+		particles_[i] = MakeNewParticle();
 	}
 
 	// GPU転送用バッファの作成
@@ -37,16 +31,17 @@ void Particle::CreateTransformBuffer() {
 	// トランスフォーム用のリソースを作成
 	transformResource_ = CreateBufferResource(
 		directXCommon_->GetDevice(),
-		sizeof(TransformationMatrix) * numParticles_
+		sizeof(ParticleForGPU) * numMaxParticles_
 	);
 
 	// トランスフォームデータにマップ
-	transformResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformData_));
+	transformResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
 
 	// 初期化
-	for (uint32_t i = 0; i < numParticles_; ++i) {
-		transformData_[i].World = MakeIdentity4x4();
-		transformData_[i].WVP = MakeIdentity4x4();
+	for (uint32_t i = 0; i < numMaxParticles_; ++i) {
+		instancingData_[i].World = MakeIdentity4x4();
+		instancingData_[i].WVP = MakeIdentity4x4();
+		instancingData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	// SRVの作成
@@ -56,8 +51,8 @@ void Particle::CreateTransformBuffer() {
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	srvDesc.Buffer.FirstElement = 0;
 	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	srvDesc.Buffer.NumElements = numParticles_;
-	srvDesc.Buffer.StructureByteStride = sizeof(TransformationMatrix);
+	srvDesc.Buffer.NumElements = numMaxParticles_;
+	srvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
 
 	srvHandle_ = directXCommon_->GetDescriptorManager()->AllocateSRV();
 	directXCommon_->GetDevice()->CreateShaderResourceView(
@@ -68,45 +63,83 @@ void Particle::CreateTransformBuffer() {
 }
 
 void Particle::Update(const Matrix4x4& viewProjectionMatrix, float deltaTime) {
-	// 更新が有効な場合のみ物理更新を実行
+	// 更新が有効な場合のみ更新を実行
 	if (enableUpdate_) {
 		UpdateParticles(deltaTime);
 	}
 
-	// GPU転送用のトランスフォーム行列を更新
-	UpdateTransformBuffer(viewProjectionMatrix);
+	// GPU転送用のデータを更新
+	UpdateParticleForGPUBuffer(viewProjectionMatrix);
 
 	// マテリアル更新
 	materials_.UpdateAllUVTransforms();
 }
 
 void Particle::UpdateParticles(float deltaTime) {
-	// 各パーティクルの物理更新
-	for (auto& particle : particles_) {
+	// 各パーティクルの更新
+
+	//描画数をリセット
+	numInstance = 0;
+
+	for (uint32_t i = 0; i < numMaxParticles_; ++i) {
+		//寿命が尽きていたら更新せず、描画から外す
+		if (particles_[i].lifeTime<=particles_[i].currentTime) {
+			//インクリメントしない
+			continue;
+		}
+
 		// 速度を位置に加算
-		particle.transform.translate.x += particle.velocity.x * deltaTime;
-		particle.transform.translate.y += particle.velocity.y * deltaTime;
-		particle.transform.translate.z += particle.velocity.z * deltaTime;
+		particles_[i].transform.translate.x += particles_[i].velocity.x * deltaTime;
+		particles_[i].transform.translate.y += particles_[i].velocity.y * deltaTime;
+		particles_[i].transform.translate.z += particles_[i].velocity.z * deltaTime;
+		//寿命計算
+		particles_[i].currentTime += deltaTime;
+		
+		//描画する数をインクリメント
+		++numInstance;
+
 	}
 }
 
-void Particle::UpdateTransformBuffer(const Matrix4x4& viewProjectionMatrix) {
+
+ParticleState Particle::MakeNewParticle()
+{
+	ParticleState state;
+	state.transform.scale = { 1.0f, 1.0f, 1.0f };
+	state.transform.rotate = { 0.0f, 0.0f, 0.0f };
+	//原点から-1~1の範囲
+	state.transform.translate = Random::GetInstance().GenerateVector3OriginOffset(1.0f);
+	// ランダム速度を設定
+	state.velocity = Random::GetInstance().GenerateVector3OriginOffset(1.0f);
+	//ランダムな色を設定
+	state.color = Random::GetInstance().GenerateRandomVector4();
+	//寿命を設定
+	state.lifeTime = Random::GetInstance().GenerateFloat(1.0f, 3.0f);
+	state.currentTime = 0.0f;
+
+
+	return state;
+}
+
+void Particle::UpdateParticleForGPUBuffer(const Matrix4x4& viewProjectionMatrix) {
 	// 各パーティクルのワールド行列とWVP行列を計算
-	for (uint32_t i = 0; i < numParticles_; ++i) {
+	for (uint32_t i = 0; i < numMaxParticles_; ++i) {
 		const auto& particle = particles_[i];
 
 		// ワールド行列の計算
-		transformData_[i].World = MakeAffineMatrix(
+		instancingData_[i].World = MakeAffineMatrix(
 			particle.transform.scale,
 			particle.transform.rotate,
 			particle.transform.translate
 		);
 
 		// WVP行列の計算
-		transformData_[i].WVP = Matrix4x4Multiply(
-			transformData_[i].World,
+		instancingData_[i].WVP = Matrix4x4Multiply(
+			instancingData_[i].World,
 			viewProjectionMatrix
 		);
+		//カラーをそのまま渡す
+		instancingData_[i].color = particles_[i].color;
 	}
 }
 
@@ -151,7 +184,7 @@ void Particle::Draw(const Light& directionalLight) {
 
 		// メッシュをバインドして描画（インスタンス数を指定）
 		const_cast<Mesh&>(mesh).Bind(commandList);
-		const_cast<Mesh&>(mesh).Draw(commandList, numParticles_);
+		const_cast<Mesh&>(mesh).Draw(commandList, numInstance);
 	}
 }
 
@@ -160,7 +193,7 @@ void Particle::ImGui() {
 	if (ImGui::TreeNode(name_.c_str())) {
 		// パーティクルシステム全体の設定
 		if (ImGui::CollapsingHeader("Particle System", ImGuiTreeNodeFlags_DefaultOpen)) {
-			ImGui::Text("Particle Count: %u", numParticles_);
+			ImGui::Text("Particle Count: %u", numMaxParticles_);
 
 			// 更新の有効/無効切り替え
 			ImGui::Checkbox("Enable Update", &enableUpdate_);
@@ -170,7 +203,7 @@ void Particle::ImGui() {
 
 		// 個別パーティクルの表示（最初の5つまで）
 		if (ImGui::CollapsingHeader("Individual Particles")) {
-			uint32_t displayCount = std::min(numParticles_, 5u);
+			uint32_t displayCount = std::min(numMaxParticles_, 5u);
 			ImGui::Text("Showing first %u particles", displayCount);
 
 			for (uint32_t i = 0; i < displayCount; ++i) {

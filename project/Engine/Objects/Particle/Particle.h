@@ -82,10 +82,10 @@ private:
 	void CreateTransformBuffer();
 
 	/// <summary>
-	/// GPU転送用のトランスフォームデータを更新
+	/// GPU転送用のデータを更新
 	/// </summary>
 	/// <param name="viewProjectionMatrix">ビュープロジェクション行列</param>
-	void UpdateTransformBuffer(const Matrix4x4& viewProjectionMatrix);
+	void UpdateParticleForGPUBuffer(const Matrix4x4& viewProjectionMatrix);
 
 	/// <summary>
 	/// パーティクルの物理更新
@@ -93,14 +93,22 @@ private:
 	/// <param name="deltaTime">デルタタイム</param>
 	void UpdateParticles(float deltaTime);
 
+	/// <summary>
+	/// 各パーティクルの初期状態を設定する
+	/// </summary>
+	ParticleState MakeNewParticle();
+
+
+
 	// パーティクルデータ
 	std::vector<ParticleState> particles_;
-	uint32_t numParticles_ = 0;
-	bool enableUpdate_ = false;	// 更新を有効にするか
+	uint32_t numMaxParticles_ = 0;		//表示する最大数
+	uint32_t numInstance = 0;	
+	bool enableUpdate_ = false;			// 更新を有効にするか
 
 	// GPU転送用バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformResource_;
-	TransformationMatrix* transformData_ = nullptr;
+	ParticleForGPU* instancingData_ = nullptr;
 	DescriptorHeapManager::DescriptorHandle srvHandle_;
 
 	// モデルとマテリアル

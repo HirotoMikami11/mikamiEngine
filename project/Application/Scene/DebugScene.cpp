@@ -130,23 +130,42 @@ void DebugScene::UpdateGameObjects() {
 	// グリッド線更新
 	gridLine_->Update(viewProjectionMatrix);
 
-	particle_->Update(viewProjectionMatrix,(1.0f/60.0f));
+	particle_->Update(viewProjectionMatrix, (1.0f / 60.0f));
 }
 
 void DebugScene::DrawOffscreen() {
-	// グリッド線を描画（3D要素）
+
+	///
+	/// グリッド線を描画（3D要素）
+	/// 
 	gridLine_->Draw(viewProjectionMatrix);
 
-	// 3Dゲームオブジェクトの描画（オフスクリーンに描画）
+	///
+	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
+	/// 
 	// 平面の描画
 	plane_->Draw(directionalLight_);
 
+
+	///
+	/// パーティクル・スプライトの描画（オフスクリーンに描画）
+	/// 
 	particle_->Draw(directionalLight_);
+
+
+
 }
 
 void DebugScene::DrawBackBuffer() {
-	// UI要素があればここに描画
-	// 現在は何も描画しない
+	///
+	/// 3Dゲームオブジェクトの描画（オフスクリーンの外に描画）
+	///
+
+
+	///
+	/// パーティクル・スプライトの描画（オフスクリーンの外に描画）
+	/// 
+
 }
 
 void DebugScene::ImGui() {

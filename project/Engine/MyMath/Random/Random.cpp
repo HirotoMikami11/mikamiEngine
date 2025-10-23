@@ -1,6 +1,4 @@
 #include "Random.h"
-
-
 Random::Random() : randomEngine_(seedGenerator_()) {
 	//シードの設定完了してる
 }
@@ -52,5 +50,23 @@ Vector3 Random::GenerateVector3OriginOffset(float offset)
 		GenerateFloatWithOffset(0.0f, offset),
 		GenerateFloatWithOffset(0.0f, offset),
 		GenerateFloatWithOffset(0.0f, offset)
+	};
+}
+
+Vector4 Random::GenerateVector4WithOffset(const Vector4& baseColor, float offset) {
+	return Vector4{
+		GenerateFloatWithOffset(baseColor.x, offset),
+		GenerateFloatWithOffset(baseColor.y, offset),
+		GenerateFloatWithOffset(baseColor.z, offset),
+		baseColor.w  // A値は維持
+	};
+}
+
+Vector4 Random::GenerateRandomVector4(float alpha) {
+	return Vector4{
+		GenerateNormalized(),
+		GenerateNormalized(),
+		GenerateNormalized(),
+		alpha  // 指定されたA値を使用
 	};
 }

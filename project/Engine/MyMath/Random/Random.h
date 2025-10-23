@@ -66,6 +66,21 @@ public:
 	/// <returns>原点からオフセット分足し引きしたベクトル</returns>
 	Vector3 GenerateVector3OriginOffset(float offset);
 
+	/// <summary>
+	/// Vector4（RGBA）のRGB成分にオフセットを適用した乱数カラーを生成（A値は維持）
+	/// </summary>
+	/// <param name="baseColor">基準カラー</param>
+	/// <param name="offset">RGB各成分のオフセット幅</param>
+	/// <returns>オフセットが適用されたカラー（A値は元のまま）</returns>
+	Vector4 GenerateVector4WithOffset(const Vector4& baseColor, float offset);
+
+	/// <summary>
+	/// 完全にランダムなVector4（RGBA）カラーを生成（A値は維持）
+	/// </summary>
+	/// <param name="alpha">透明度（デフォルト: 1.0f）</param>
+	/// <returns>ランダムなRGB値と指定されたA値を持つカラー</returns>
+	Vector4 GenerateRandomVector4(float alpha = 1.0f);
+
 private:
 	Random();
 	~Random() = default;
