@@ -4,6 +4,7 @@
 
 NormalCamera::NormalCamera()
 	: cameraTransform_{}
+	, cameraMatrix_{}
 	, viewProjectionMatrix_{}
 	, spriteViewProjectionMatrix_{}
 	, viewMatrix_{}
@@ -42,8 +43,8 @@ void NormalCamera::SetDefaultCamera(const Vector3& position, const Vector3& rota
 	aspectRatio_ = (float(GraphicsConfig::kClientWidth) / float(GraphicsConfig::kClientHeight));
 
 	// 初期行列計算
-	Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform_.scale, cameraTransform_.rotate, cameraTransform_.translate);
-	viewMatrix_ = Matrix4x4Inverse(cameraMatrix);
+	cameraMatrix_ = MakeAffineMatrix(cameraTransform_.scale, cameraTransform_.rotate, cameraTransform_.translate);
+	viewMatrix_ = Matrix4x4Inverse(cameraMatrix_);
 
 	// プロジェクション行列は最初に作っておく
 	projectionMatrix_ = MakePerspectiveFovMatrix(fov_, aspectRatio_, nearClip_, farClip_);
@@ -63,8 +64,8 @@ void NormalCamera::SetDefaultCamera(const Vector3& position, const Vector3& rota
 
 void NormalCamera::UpdateMatrix() {
 	// 3D用のビュープロジェクション行列を計算
-	Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform_.scale, cameraTransform_.rotate, cameraTransform_.translate);
-	viewMatrix_ = Matrix4x4Inverse(cameraMatrix);
+	cameraMatrix_ = MakeAffineMatrix(cameraTransform_.scale, cameraTransform_.rotate, cameraTransform_.translate);
+	viewMatrix_ = Matrix4x4Inverse(cameraMatrix_);
 	viewProjectionMatrix_ = Matrix4x4Multiply(viewMatrix_, projectionMatrix_);
 }
 

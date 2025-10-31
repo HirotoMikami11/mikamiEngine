@@ -28,7 +28,7 @@ public:
 	/// </summary>
 	void ImGui() override;
 
-
+	Matrix4x4 GetCameraMatrix() const override { return cameraMatrix_; }
 	Matrix4x4 GetViewProjectionMatrix() const override { return viewProjectionMatrix_; }
 	Matrix4x4 GetSpriteViewProjectionMatrix() const override { return spriteViewProjectionMatrix_; }
 	Vector3 GetPosition() const override { return cameraTransform_.translate; }
@@ -66,6 +66,7 @@ private:
 	float aspectRatio_ = (float(GraphicsConfig::kClientWidth) / float(GraphicsConfig::kClientHeight));
 
 	// 行列 
+	Matrix4x4 cameraMatrix_;
 	Matrix4x4 viewMatrix_;
 	//プロジェクション行列
 	Matrix4x4 projectionMatrix_;			//3D用のプロジェクション行列

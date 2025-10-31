@@ -10,6 +10,7 @@ DebugCamera::DebugCamera()
 		.translate{0.0f, 0.0f, -10.0f}
 	}
 	, viewProjectionMatrix_{}
+	, cameraMatrix_{}
 	, viewMatrix_{}
 	, projectionMatrix_{}
 	, spherical_{}
@@ -285,12 +286,12 @@ void DebugCamera::UpdateMatrix() {
 	cameraTransform_.rotate = { pitch, yaw, 0.0f };
 
 	// ビュー行列
-	Matrix4x4 cameraMatrix = MakeAffineMatrix(
+	cameraMatrix_ = MakeAffineMatrix(
 		cameraTransform_.scale,
 		cameraTransform_.rotate,
 		cameraTransform_.translate
 	);
-	viewMatrix_ = Matrix4x4Inverse(cameraMatrix);
+	viewMatrix_ = Matrix4x4Inverse(cameraMatrix_);
 	// ビュープロジェクション行列
 	viewProjectionMatrix_ = Matrix4x4Multiply(viewMatrix_, projectionMatrix_);
 }

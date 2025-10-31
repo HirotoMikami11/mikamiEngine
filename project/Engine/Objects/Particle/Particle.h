@@ -8,6 +8,7 @@
 #include "Light.h"
 #include "Managers/Texture/TextureManager.h"
 #include "Managers/Model/ModelManager.h"
+#include "CameraController.h"
 
 
 /// <summary>
@@ -99,7 +100,14 @@ private:
 	/// </summary>
 	ParticleState MakeNewParticle();
 
+	/// <summary>
+	/// ビルボード行列を作成
+	/// </summary>
+	/// <param name="viewMatrix">カメラ行列</param>
+	/// <returns></returns>
+	void MakeBillboardMatrix(const Matrix4x4& viewMatrix);
 
+	void UpdateBillboardMatrix(const ParticleState particle);
 
 	// パーティクルデータ
 	std::vector<ParticleState> particles_;
@@ -120,9 +128,15 @@ private:
 	std::string modelTag_ = "";
 	std::string textureName_ = "";
 
+	///ビルボード機能
+	bool isBillboard_ = false;		// ビルボードを有効にするか
+	Matrix4x4 billboardMatrix_;		// ビルボード行列
+	
+
 	// システム参照
 	DirectXCommon* directXCommon_ = nullptr;
 	TextureManager* textureManager_ = TextureManager::GetInstance();
 	ModelManager* modelManager_ = ModelManager::GetInstance();
 	ParticleCommon* particleCommon_ = ParticleCommon::GetInstance();
+	CameraController* cameraController_ = CameraController::GetInstance();
 };

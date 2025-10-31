@@ -30,6 +30,8 @@ public:
 	virtual void ImGui() = 0;
 
 
+	virtual Matrix4x4 GetCameraMatrix() const = 0;
+
 	// ビュープロジェクション行列を取得
 	virtual Matrix4x4 GetViewProjectionMatrix() const = 0;
 	virtual Matrix4x4 GetSpriteViewProjectionMatrix() const = 0;

@@ -11,6 +11,8 @@ void Particle::Initialize(DirectXCommon* dxCommon, const std::string& modelTag,
 	textureName_ = textureName;
 	numMaxParticles_ = numParticles;
 
+	enableUpdate_ = false;
+	isBillboard_ = true;
 
 	// パーティクル配列の初期化
 	particles_.resize(numMaxParticles_);
@@ -26,7 +28,13 @@ void Particle::Initialize(DirectXCommon* dxCommon, const std::string& modelTag,
 	// モデルとマテリアル、テクスチャを設定
 	SetModel(modelTag, textureName);
 
-	enableUpdate_ = false;
+	// ビルボード処理
+	if (isBillboard_) {
+		//現在登録されているカメラ行列を使ってビルボード行列を作成
+		MakeBillboardMatrix(cameraController_->GetCameraMatrix());
+	}
+
+
 }
 
 void Particle::CreateTransformBuffer() {
@@ -68,6 +76,12 @@ void Particle::Update(const Matrix4x4& viewProjectionMatrix, float deltaTime) {
 	// 更新が有効な場合のみ更新を実行
 	if (enableUpdate_) {
 		UpdateParticles(deltaTime);
+	}
+
+	// ビルボード処理
+	if (isBillboard_) {
+		//現在登録されているカメラ行列を使ってビルボード行列を作成
+		MakeBillboardMatrix(cameraController_->GetCameraMatrix());
 	}
 
 	// GPU転送用のデータを更新
@@ -125,17 +139,48 @@ ParticleState Particle::MakeNewParticle()
 	return state;
 }
 
+
+
+void Particle::MakeBillboardMatrix(const Matrix4x4& cameraMatrix)
+{
+	//プリミティブとして作成した平面はデフォルト状態でカメラと向き合うようになっているのでY回転はしない。
+	billboardMatrix_ = cameraMatrix;
+	//平行移動成分を0
+	//Scaleが含まれるとおかしくなる
+	billboardMatrix_.m[3][0] = 0.0f;
+	billboardMatrix_.m[3][1] = 0.0f;
+	billboardMatrix_.m[3][2] = 0.0f;
+
+}
+
 void Particle::UpdateParticleForGPUBuffer(const Matrix4x4& viewProjectionMatrix) {
 	// 各パーティクルのワールド行列とWVP行列を計算
 	for (uint32_t i = 0; i < numMaxParticles_; ++i) {
 		const auto& particle = particles_[i];
 
 		// ワールド行列の計算
-		instancingData_[i].World = MakeAffineMatrix(
+		Matrix4x4 baseWorld = MakeAffineMatrix(
 			particle.transform.scale,
 			particle.transform.rotate,
 			particle.transform.translate
 		);
+
+		if (isBillboard_) {
+			//billboardが有効な場合は回転にbillboard行列
+			Matrix4x4 scaleMatrix = MakeScaleMatrix(particle.transform.scale);
+			Matrix4x4 translateMatrix = MakeTranslateMatrix(particle.transform.translate);
+
+			// World = Scale * Billboard * Translate
+			instancingData_[i].World = Matrix4x4Multiply(
+				Matrix4x4Multiply(scaleMatrix, billboardMatrix_),
+				translateMatrix
+			);
+
+		} else {
+			//billboardが無効な場合はベースののワールド座標を渡す
+			instancingData_[i].World = baseWorld;
+		}
+
 
 		// WVP行列の計算
 		instancingData_[i].WVP = Matrix4x4Multiply(
@@ -206,6 +251,7 @@ void Particle::ImGui() {
 
 			// 更新の有効/無効切り替え
 			ImGui::Checkbox("Enable Update", &enableUpdate_);
+			ImGui::Checkbox("billboard Update", &isBillboard_);
 
 			ImGui::Separator();
 		}

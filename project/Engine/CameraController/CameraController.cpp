@@ -112,6 +112,13 @@ BaseCamera* CameraController::GetActiveCamera() const {
 	return (it != registeredCameras_.end()) ? it->second.camera.get() : nullptr;
 }
 
+Matrix4x4 CameraController::GetCameraMatrix() const
+{
+	BaseCamera* activeCamera = GetActiveCamera();
+	return activeCamera ? activeCamera->GetCameraMatrix() : MakeIdentity4x4();
+}
+
+
 Matrix4x4 CameraController::GetViewProjectionMatrix() const {
 	BaseCamera* activeCamera = GetActiveCamera();
 	return activeCamera ? activeCamera->GetViewProjectionMatrix() : MakeIdentity4x4();

@@ -87,7 +87,7 @@ public:
 	/// </summary>
 	bool IsRegistered(const std::string& cameraId) const;
 
-
+	Matrix4x4 GetCameraMatrix() const;
 	Matrix4x4 GetViewProjectionMatrix() const;
 	Matrix4x4 GetViewProjectionMatrixSprite() const;
 
