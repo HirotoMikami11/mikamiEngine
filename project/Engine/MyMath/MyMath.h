@@ -378,7 +378,9 @@ namespace MyMath {
 
 	/// <summary>
 	/// トランスフォーム
-	/// 
+	/// <para>Scale<para>
+	/// <para>rotate<para>
+	/// <para>Translate<para>
 	/// </summary>
 	struct Vector3Transform final {
 		Vector3 scale;

@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "Managers/ImGui/ImGuiManager.h"
+#include <numbers>
 
 NormalCamera::NormalCamera()
 	: cameraTransform_{}
@@ -101,7 +102,7 @@ void NormalCamera::ImGui() {
 		UpdateMatrix();
 	}
 
-	if (ImGui::SliderFloat3("Rotation", &cameraTransform_.rotate.x, -(float)M_PI, (float)M_PI)) {
+	if (ImGui::SliderFloat3("Rotation", &cameraTransform_.rotate.x, -std::numbers::pi_v<float>, std::numbers::pi_v<float>)) {
 		// 回転変更時は行列を更新
 		UpdateMatrix();
 	}

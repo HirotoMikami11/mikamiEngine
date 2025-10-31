@@ -76,10 +76,10 @@ PSODescriptor PSODescriptor::CreateParticle()
 	// 3Dオブジェクト用のデフォルト設定
 	desc.SetVertexShader(L"resources/Shader/Object3d/Object3d.VS.hlsl", L"main")
 		.SetPixelShader(L"resources/Shader/Object3d/Object3d.PS.hlsl", L"main")
-		.SetBlendMode(BlendMode::AlphaBlend)
+		.SetBlendMode(BlendMode::Add)
 		.SetCullMode(CullMode::Back)
 		.EnableDepth(true)
-		.EnableDepthWrite(true)
+		.EnableDepthWrite(false)
 		.SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 
 	// 標準的な3D頂点レイアウト

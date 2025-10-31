@@ -78,6 +78,7 @@ void Engine::LoadDefaultResources() {
 	textureManager_->LoadTexture("resources/Texture/uvChecker.png", "uvChecker");
 	textureManager_->LoadTexture("resources/Texture/monsterBall.png", "monsterBall");
 	textureManager_->LoadTexture("resources/Texture/white2x2.png", "white");
+	textureManager_->LoadTexture("resources/Texture/circle.png", "circle");
 
 	///*-----------------------------------------------------------------------*///
 	///								音声データの読み込み							///

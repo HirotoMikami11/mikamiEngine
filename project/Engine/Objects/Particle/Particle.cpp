@@ -25,6 +25,8 @@ void Particle::Initialize(DirectXCommon* dxCommon, const std::string& modelTag,
 
 	// モデルとマテリアル、テクスチャを設定
 	SetModel(modelTag, textureName);
+
+	enableUpdate_ = false;
 }
 
 void Particle::CreateTransformBuffer() {
@@ -75,29 +77,31 @@ void Particle::Update(const Matrix4x4& viewProjectionMatrix, float deltaTime) {
 	materials_.UpdateAllUVTransforms();
 }
 
-void Particle::UpdateParticles(float deltaTime) {
-	// 各パーティクルの更新
 
-	//描画数をリセット
+void Particle::UpdateParticles(float deltaTime) {
+	// 描画数をリセット
 	numInstance = 0;
 
 	for (uint32_t i = 0; i < numMaxParticles_; ++i) {
-		//寿命が尽きていたら更新せず、描画から外す
-		if (particles_[i].lifeTime<=particles_[i].currentTime) {
-			//インクリメントしない
-			continue;
+		// 寿命が尽きていたら新しいパーティクルを生成
+		if (particles_[i].lifeTime <= particles_[i].currentTime) {
+			particles_[i] = MakeNewParticle();
 		}
 
 		// 速度を位置に加算
 		particles_[i].transform.translate.x += particles_[i].velocity.x * deltaTime;
 		particles_[i].transform.translate.y += particles_[i].velocity.y * deltaTime;
 		particles_[i].transform.translate.z += particles_[i].velocity.z * deltaTime;
-		//寿命計算
-		particles_[i].currentTime += deltaTime;
-		
-		//描画する数をインクリメント
-		++numInstance;
 
+		//色を透明にしていく
+		float alpha = 1.0f - (particles_[i].currentTime / particles_[i].lifeTime);
+		particles_[i].color.w = alpha;
+
+		// 寿命計算
+		particles_[i].currentTime += deltaTime;
+
+		// 全てのパーティクルを描画対象にする
+		++numInstance;
 	}
 }
 
@@ -138,14 +142,18 @@ void Particle::UpdateParticleForGPUBuffer(const Matrix4x4& viewProjectionMatrix)
 			instancingData_[i].World,
 			viewProjectionMatrix
 		);
-		//カラーをそのまま渡す
+		// 色の設定
 		instancingData_[i].color = particles_[i].color;
 	}
 }
 
 void Particle::Draw(const Light& directionalLight) {
 	if (!sharedModel_ || !sharedModel_->IsValid()) {
-		return;
+		return; // モデルが無効な場合はスキップ
+	}
+
+	if (numInstance == 0) {
+		return; // 描画するパーティクルがない場合はスキップ
 	}
 
 	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
@@ -194,6 +202,7 @@ void Particle::ImGui() {
 		// パーティクルシステム全体の設定
 		if (ImGui::CollapsingHeader("Particle System", ImGuiTreeNodeFlags_DefaultOpen)) {
 			ImGui::Text("Particle Count: %u", numMaxParticles_);
+			ImGui::Text("Active Instances: %u", numInstance);
 
 			// 更新の有効/無効切り替え
 			ImGui::Checkbox("Enable Update", &enableUpdate_);
@@ -220,6 +229,10 @@ void Particle::ImGui() {
 						particle.velocity.x,
 						particle.velocity.y,
 						particle.velocity.z);
+
+					ImGui::Text("Life: %.2f / %.2f",
+						particle.currentTime,
+						particle.lifeTime);
 
 					// 速度の編集
 					if (ImGui::DragFloat3("Edit Velocity", &particle.velocity.x, 0.01f)) {

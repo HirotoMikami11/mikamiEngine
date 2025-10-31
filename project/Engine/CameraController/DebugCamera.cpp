@@ -1,6 +1,7 @@
 #include "DebugCamera.h"
 #include "Managers/ImGui/ImGuiManager.h"
 #include <cmath>
+#include <numbers>
 
 DebugCamera::DebugCamera()
 	: cameraTransform_{
@@ -366,7 +367,7 @@ void DebugCamera::ImGui() {
 			positionChanged = true;
 		}
 
-		if (ImGui::DragFloat3("Rotation", &cartesianRotation_.x, 0.01f, -(float)M_PI, (float)M_PI)) {
+		if (ImGui::DragFloat3("Rotation", &cartesianRotation_.x, 0.01f, -std::numbers::pi_v<float>, std::numbers::pi_v<float>)) {
 			cameraTransform_.rotate = cartesianRotation_;
 			rotationChanged = true;
 		}
@@ -383,12 +384,12 @@ void DebugCamera::ImGui() {
 	// 球面座標系の設定（折りたたみ可能）
 	if (ImGui::CollapsingHeader("Spherical Coordinates")) {
 		ImGui::Text("  Radius: %.2f", spherical_.radius);
-		ImGui::Text("  Theta: %.2f rad (%.1f deg)", spherical_.theta, spherical_.theta * 180.0f / (float)M_PI);
-		ImGui::Text("  Phi: %.2f rad (%.1f deg)", spherical_.phi, spherical_.phi * 180.0f / (float)M_PI);
+		ImGui::Text("  Theta: %.2f rad (%.1f deg)", spherical_.theta, spherical_.theta * 180.0f / std::numbers::pi_v<float>);
+		ImGui::Text("  Phi: %.2f rad (%.1f deg)", spherical_.phi, spherical_.phi * 180.0f / std::numbers::pi_v<float>);
 
 		ImGui::DragFloat("Distance", &spherical_.radius, 0.1f, minDistance_, maxDistance_);
 
-		if (ImGui::DragFloat("Theta", &spherical_.theta, 0.01f, -(float)M_PI, (float)M_PI) ||
+		if (ImGui::DragFloat("Theta", &spherical_.theta, 0.01f, -std::numbers::pi_v<float>, std::numbers::pi_v<float>) ||
 			ImGui::DragFloat("Phi", &spherical_.phi, 0.01f, minPhi_, maxPhi_)) {
 			UpdatePositionFromSpherical();
 		}

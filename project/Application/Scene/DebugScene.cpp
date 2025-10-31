@@ -94,7 +94,7 @@ void DebugScene::InitializeGameObjects() {
 
 
 	///*-----------------------------------------------------------------------*///
-	///									平面									///
+	///									パーティクル									///
 	///*-----------------------------------------------------------------------*///
 	Vector3Transform transformParicle{
 		{1.0f, 5.0f, 1.0f},
@@ -103,7 +103,7 @@ void DebugScene::InitializeGameObjects() {
 	};
 
 	particle_ = std::make_unique<Particle>();
-	particle_->Initialize(directXCommon_, "plane", 10, "uvChecker");
+	particle_->Initialize(directXCommon_, "plane", 10, "circle");
 	//particle_->SetTransform(transformParicle);
 
 	///*-----------------------------------------------------------------------*///

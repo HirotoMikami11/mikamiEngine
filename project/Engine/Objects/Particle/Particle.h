@@ -13,6 +13,7 @@
 /// <summary>
 /// パーティクル
 /// <para>構造上トランスフォームを独立させない</para>
+/// <para>3Dobjectより後ろに描画する</para>
 /// </summary>
 class Particle
 {
@@ -103,7 +104,7 @@ private:
 	// パーティクルデータ
 	std::vector<ParticleState> particles_;
 	uint32_t numMaxParticles_ = 0;		//表示する最大数
-	uint32_t numInstance = 0;	
+	uint32_t numInstance = 0;
 	bool enableUpdate_ = false;			// 更新を有効にするか
 
 	// GPU転送用バッファ

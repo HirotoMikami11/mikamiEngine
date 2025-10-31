@@ -41,9 +41,9 @@ PixelShaderOutput main(VertexShaderOutput input)
     }
     
     ////パーティクルはライティングしない
-    //サンプリングしたtextureの色とマテリアルん色を乗算して合成する
+    //サンプリングしたtextureの色とマテリアルの色を乗算して合成する
     output.color.rgb = gMaterial.color.rgb * textureColor.rgb * input.color.rgb;
-    // アルファ値：テクスチャとマテリアルの両方を乗算
+    // アルファ値もテクスチャとマテリアルの両方を乗算
     output.color.a = gMaterial.color.a * textureColor.a * input.color.a;
     
    //output.colorのa値が0のときPixelを破棄(空白で塗りつぶされないように)
