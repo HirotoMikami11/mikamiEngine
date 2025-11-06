@@ -5,6 +5,8 @@
 #include "Transform3D.h"
 #include "ParticleState.h"
 #include "Random/Random.h"
+#include "MyFunction.h"
+#include "LineRenderer.h"
 
 // 前方宣言
 class ParticleGroup;
@@ -31,8 +33,14 @@ public:
 	/// 更新処理（パーティクルの発生制御のみ）
 	/// </summary>
 	/// <param name="deltaTime">デルタタイム</param>
-	/// <param name="targetGroup">ターゲットグループへのポインタ（Managerから渡される）</param>
+	/// <param name="targetGroup">ターゲットグループへのポインタ（ParticleSystemから渡される）</param>
 	void Update(float deltaTime, ParticleGroup* targetGroup);
+
+	/// <summary>
+	/// デバッグ描画（AABB表示）
+	/// </summary>
+	/// <param name="viewProjectionMatrix">ビュープロジェクション行列</param>
+	void DrawDebug(const Matrix4x4& viewProjectionMatrix);
 
 	/// <summary>
 	/// ImGui用のデバッグ表示
@@ -58,7 +66,20 @@ public:
 		particleLifeTimeMax_ = max;
 	}
 	void SetParticleVelocityRange(float range) { velocityRange_ = range; }
-	void SetParticleSpawnRange(float range) { spawnRange_ = range; }
+
+	// 発生範囲（AABB）の設定
+	void SetSpawnArea(const AABB& aabb) { spawnArea_ = aabb; FixAABBMinMax(spawnArea_); }
+	const AABB& GetSpawnArea() const { return spawnArea_; }
+
+	/// <summary>
+	/// 発生範囲をサイズで設定（中心からの±offset）
+	/// </summary>
+	void SetSpawnAreaSize(const Vector3& size);
+
+	// デバッグ表示設定
+	void SetShowDebugAABB(bool show) { showDebugAABB_ = show; }
+	bool IsShowDebugAABB() const { return showDebugAABB_; }
+	void SetDebugAABBColor(const Vector4& color) { debugAABBColor_ = color; }
 
 	// 状態取得
 	const std::string& GetName() const { return name_; }
@@ -81,6 +102,11 @@ private:
 	/// <returns>生成されたパーティクル</returns>
 	ParticleState CreateNewParticle();
 
+	/// <summary>
+	/// AABBのデバッグ線を作成
+	/// </summary>
+	void CreateDebugAABBLines();
+
 	// エミッター設定
 	Transform3D emitterTransform_;			// エミッターのトランスフォーム
 	uint32_t emitCount_ = 5;				// 1回の発生で生成するパーティクル数
@@ -92,7 +118,17 @@ private:
 	float particleLifeTimeMin_ = 1.0f;		// パーティクル寿命の最小値
 	float particleLifeTimeMax_ = 3.0f;		// パーティクル寿命の最大値
 	float velocityRange_ = 1.0f;			// 初期速度の範囲
-	float spawnRange_ = 1.0f;				// 生成位置の範囲
+
+	// 発生範囲(AABBで1の範囲)
+	AABB spawnArea_ = {
+		{-0.5f, -0.5f, -0.5f},	// min
+		{0.5f, 0.5f, 0.5f}		// max
+	};
+
+	// デバッグ描画
+	std::unique_ptr<LineRenderer> debugLineRenderer_;
+	bool showDebugAABB_ = false;
+	Vector4 debugAABBColor_ = { 1.0f, 0.0f, 0.0f, 1.0f };	// 赤色
 
 	std::string name_ = "ParticleEmitter";
 	std::string targetGroupName_ = "";		// ターゲットグループ名

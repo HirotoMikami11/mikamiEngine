@@ -44,10 +44,22 @@ void ParticleSystem::Draw(const Light& directionalLight)
 	}
 }
 
+void ParticleSystem::DrawDebug(const Matrix4x4& viewProjectionMatrix)
+{
+
+#ifdef USEIMGUI
+	// すべてのエミッターのデバッグ描画
+	for (auto& [emitterName, emitter] : emitters_) {
+		emitter->DrawDebug(viewProjectionMatrix);
+	}
+#endif 
+
+}
+
 void ParticleSystem::ImGui()
 {
 #ifdef USEIMGUI
-	if (ImGui::TreeNode("Particle Manager")) {
+	if (ImGui::TreeNode("Particle System")) {
 		// 統計情報
 		if (ImGui::CollapsingHeader("Statistics", ImGuiTreeNodeFlags_DefaultOpen)) {
 			ImGui::Text("Groups: %zu", groups_.size());

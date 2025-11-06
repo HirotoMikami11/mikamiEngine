@@ -95,38 +95,39 @@ void DebugScene::InitializeGameObjects() {
 
 
 	///*-----------------------------------------------------------------------*///
-	///					パーティクルマネージャーの初期化							///
+	///					パーティクルシステムの初期化							///
 	///*-----------------------------------------------------------------------*///
 
 	// ParticleSystemシングルトンを取得
 	particleSystem_ = ParticleSystem::GetInstance();
 	particleSystem_->Initialize(directXCommon_);
 
-	// 【ステップ1】パーティクルグループを作成
-	// グループ1: 円形パーティクル（200個まで）
+	///パーティクルグループを作成
+
+	//円形パーティクル
 	particleSystem_->CreateGroup(
-		"CircleParticles",  // グループ名
-		"plane",            // モデル
-		200,                // 最大パーティクル数
-		"circle",           // テクスチャ
-		true                // ビルボードON
+		"CircleParticles",	// グループ名
+		"plane",			// モデル
+		400,				// 最大パーティクル数
+		"circle",			// テクスチャ
+		true				// ビルボードON
 	);
 
-	// グループ2: 四角形パーティクル（100個まで）
+	//四角形パーティクル
 	particleSystem_->CreateGroup(
-		"SquareParticles",  // グループ名
-		"plane",            // モデル
-		100,                // 最大パーティクル数
-		"uvChecker",        // テクスチャ
-		true                // ビルボードON
+		"SquareParticles",	// グループ名
+		"plane",			// モデル
+		100,				// 最大パーティクル数
+		"uvChecker",		// テクスチャ
+		true				// ビルボードON
 	);
 
-	// 【ステップ2】エミッターを作成
+	///エミッター作成
 
-	// エミッター1: 中央（CircleParticlesグループに発生）
+	//中央
 	ParticleEmitter* centerEmitter = particleSystem_->CreateEmitter(
-		"CenterEmitter",     // エミッター名
-		"CircleParticles"    // ターゲットグループ名
+		"CenterEmitter",	// エミッター名
+		"CircleParticles"	// ターゲットグループ名
 	);
 	if (centerEmitter) {
 		centerEmitter->GetTransform().SetPosition({ 0.0f, 0.0f, 0.0f });
@@ -135,13 +136,16 @@ void DebugScene::InitializeGameObjects() {
 		centerEmitter->SetEmitEnabled(true);
 		centerEmitter->SetParticleLifeTimeRange(2.0f, 4.0f);
 		centerEmitter->SetParticleVelocityRange(1.5f);
-		centerEmitter->SetParticleSpawnRange(0.3f);
+		// AABB発生範囲を設定
+		centerEmitter->SetSpawnAreaSize({ 0.5f, 0.5f, 0.5f });	// 1x1x1の範囲
+		// デバッグ表示を有効化
+		centerEmitter->SetShowDebugAABB(true);
 	}
 
-	// エミッター2: 左側（CircleParticlesグループに発生）
+	//左側
 	ParticleEmitter* leftEmitter = particleSystem_->CreateEmitter(
-		"LeftEmitter",       // エミッター名
-		"CircleParticles"    // ターゲットグループ名
+		"LeftEmitter",		// エミッター名
+		"CircleParticles"	// ターゲットグループ名
 	);
 	if (leftEmitter) {
 		leftEmitter->GetTransform().SetPosition({ -5.0f, 2.0f, 0.0f });
@@ -150,13 +154,16 @@ void DebugScene::InitializeGameObjects() {
 		leftEmitter->SetEmitEnabled(true);
 		leftEmitter->SetParticleLifeTimeRange(1.0f, 2.5f);
 		leftEmitter->SetParticleVelocityRange(2.0f);
-		leftEmitter->SetParticleSpawnRange(0.5f);
+		// AABB発生範囲を設定（大きめ）
+		leftEmitter->SetSpawnAreaSize({ 1.0f, 1.0f, 1.0f });	// 2x2x2の範囲
+		// デバッグ表示を有効化
+		leftEmitter->SetShowDebugAABB(true);
 	}
 
-	// エミッター3: 右側（SquareParticlesグループに発生）
+	//右側
 	ParticleEmitter* rightEmitter = particleSystem_->CreateEmitter(
-		"RightEmitter",      // エミッター名
-		"SquareParticles"    // ターゲットグループ名
+		"RightEmitter",		// エミッター名
+		"SquareParticles"	// ターゲットグループ名
 	);
 	if (rightEmitter) {
 		rightEmitter->GetTransform().SetPosition({ 5.0f, 2.0f, 0.0f });
@@ -165,7 +172,14 @@ void DebugScene::InitializeGameObjects() {
 		rightEmitter->SetEmitEnabled(true);
 		rightEmitter->SetParticleLifeTimeRange(1.5f, 3.0f);
 		rightEmitter->SetParticleVelocityRange(1.0f);
-		rightEmitter->SetParticleSpawnRange(0.2f);
+		// AABB発生範囲を設定(Y方向に長め設定)
+		AABB customArea;
+		customArea.min = { -0.3f, -0.3f, -0.3f };
+		customArea.max = { 0.3f, 2.0f, 0.3f };
+		rightEmitter->SetSpawnArea(customArea);
+		// デバッグ表示を有効化
+		rightEmitter->SetShowDebugAABB(true);
+		rightEmitter->SetDebugAABBColor({ 0.0f, 0.5f, 1.0f, 1.0f });	// 水色
 	}
 
 	///*-----------------------------------------------------------------------*///
@@ -192,7 +206,7 @@ void DebugScene::UpdateGameObjects() {
 	// グリッド線更新
 	gridLine_->Update(viewProjectionMatrix);
 
-	// パーティクルマネージャーの更新（全グループ・全エミッター）
+	// パーティクルシステムの更新（全グループ・全エミッター）
 	particleSystem_->Update(viewProjectionMatrix, 1.0f / 60.0f);
 }
 
@@ -213,8 +227,9 @@ void DebugScene::DrawOffscreen() {
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
 	/// 
-	// パーティクルマネージャーの描画（全グループ）
+	// パーティクルシステムの描画（全グループ）
 	particleSystem_->Draw(directionalLight_);
+	particleSystem_->DrawDebug(viewProjectionMatrix);	/// デバッグ描画
 }
 
 void DebugScene::DrawBackBuffer() {
@@ -240,8 +255,8 @@ void DebugScene::ImGui() {
 	plane_->ImGui();
 
 	ImGui::Spacing();
-	ImGui::Text("=== Particle Manager ===");
-	// パーティクルマネージャー（全グループと全エミッターを表示）
+	ImGui::Text("=== Particle System ===");
+	// パーティクルシステム（全グループと全エミッターを表示）
 	particleSystem_->ImGui();
 
 	ImGui::Spacing();
@@ -257,7 +272,7 @@ void DebugScene::ImGui() {
 }
 
 void DebugScene::Finalize() {
-	// シーン終了時にパーティクルマネージャーをクリア
+	// シーン終了時にパーティクルシステムをクリア
 	if (particleSystem_) {
 		particleSystem_->Clear();
 	}

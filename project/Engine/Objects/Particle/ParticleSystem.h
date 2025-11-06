@@ -45,6 +45,12 @@ public:
 	void Draw(const Light& directionalLight);
 
 	/// <summary>
+	/// デバッグ描画（AABBなど）
+	/// </summary>
+	/// <param name="viewProjectionMatrix">ビュープロジェクション行列</param>
+	void DrawDebug(const Matrix4x4& viewProjectionMatrix);
+
+	/// <summary>
 	/// ImGui用のデバッグ表示
 	/// </summary>
 	void ImGui();

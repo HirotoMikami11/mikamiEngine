@@ -61,7 +61,7 @@ private:
 	std::unique_ptr<Plane> plane_;
 	std::unique_ptr<GridLine> gridLine_;
 
-	// パーティクルマネージャー
+	// パーティクルシステム
 	ParticleSystem* particleSystem_;
 
 	// ライティング
