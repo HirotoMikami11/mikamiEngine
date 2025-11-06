@@ -228,15 +228,10 @@ void FixAABBMinMax(AABB& aabb);
 /// <returns></returns>
 bool IsCollision(const AABB& aabb, const Segment& segment);
 
-
-
-
-
-
-
-
-
-
-
-
-
+/// <summary>
+/// AABBと点の衝突判定
+/// </summary>
+/// <param name="aabb">AABB</param>
+/// <param name="point">点の座標</param>
+/// <returns>点がAABB内にあればtrue</returns>
+bool IsCollision(const AABB& aabb, const Vector3& point);

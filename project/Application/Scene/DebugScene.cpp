@@ -1,6 +1,10 @@
 #include "DebugScene.h"
 #include "Managers/ImGui/ImGuiManager.h" 
 
+///使用するフィールド
+#include "GravityField.h"
+#include "AccelerationField.h"
+
 
 DebugScene::DebugScene()
 	: BaseScene("DebugScene") // シーン名を設定
@@ -181,6 +185,47 @@ void DebugScene::InitializeGameObjects() {
 		rightEmitter->SetShowDebugAABB(true);
 		rightEmitter->SetDebugAABBColor({ 0.0f, 0.5f, 1.0f, 1.0f });	// 水色
 	}
+
+	///*-----------------------------------------------------------------------*///
+	///								加速度フィールド							///
+	///*-----------------------------------------------------------------------*///
+
+	// 上昇フィールド（中央）
+	auto* upwardField = particleSystem_->CreateField<AccelerationField>("UpwardField");
+	if (upwardField) {
+		upwardField->GetTransform().SetPosition({ 0.0f, 1.0f, 0.0f });
+		upwardField->SetAcceleration({ 0.0f, 2.0f, 0.0f });  // 上向きの加速度
+		upwardField->SetAreaSize({ 2.0f, 2.0f, 2.0f });  // 4x4x4の範囲
+		upwardField->SetEnabled(true);
+		upwardField->SetShowDebugVisualization(true);
+	}
+
+	// 渦フィールド（左側）
+	auto* vortexField = particleSystem_->CreateField<AccelerationField>("VortexField");
+	if (vortexField) {
+		vortexField->GetTransform().SetPosition({ -5.0f, 3.0f, 0.0f });
+		vortexField->SetAcceleration({ 1.0f, 0.5f, 0.0f });  // 右上向きの加速度
+		vortexField->SetAreaSize({ 1.5f, 1.5f, 1.5f });  // 3x3x3の範囲
+		vortexField->SetEnabled(true);
+		vortexField->SetShowDebugVisualization(true);
+	}
+
+	///*-----------------------------------------------------------------------*///
+	///								重力フィールド									///
+	///*-----------------------------------------------------------------------*///
+
+	// 重力フィールド（右側）
+	auto* gravityField = particleSystem_->CreateField<GravityField>("GravityField");
+	if (gravityField) {
+		gravityField->GetTransform().SetPosition({ 5.0f, 3.0f, 0.0f });
+		gravityField->SetGravityStrength(8.0f);		// 重力の強さ
+		gravityField->SetEffectRadius(4.0f);		// 効果範囲（球体）
+		gravityField->SetDeleteRadius(0.5f);		// 削除範囲
+		gravityField->SetEnabled(true);
+		gravityField->SetShowDebugVisualization(true);
+		gravityField->SetDebugColor({ 1.0f, 0.0f, 1.0f, 1.0f });  // マゼンタ
+	}
+
 
 	///*-----------------------------------------------------------------------*///
 	///									ライト									///

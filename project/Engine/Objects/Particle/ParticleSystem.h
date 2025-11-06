@@ -6,8 +6,11 @@
 #include "DirectXCommon.h"
 #include "ParticleGroup.h"
 #include "ParticleEmitter.h"
+#include "BaseField.h"
 #include "Light.h"
 #include "CameraController.h"
+
+
 
 /// <summary>
 /// パーティクルシステム（シングルトン）
@@ -95,6 +98,51 @@ public:
 	void RemoveEmitter(const std::string& emitterName);
 
 	/// <summary>
+	/// フィールドを作成（テンプレート）
+	/// </summary>
+	/// <typeparam name="FieldType">作成するフィールドの型</typeparam>
+	/// <param name="fieldName">フィールド名</param>
+	/// <returns>作成されたフィールドへのポインタ</returns>
+	template<typename FieldType>
+	FieldType* CreateField(const std::string& fieldName)
+	{
+		static_assert(std::is_base_of<BaseField, FieldType>::value, "FieldType must derive from BaseField");
+
+		// 同じ名前のフィールドが既に存在するかチェック
+		if (fields_.find(fieldName) != fields_.end()) {
+			Logger::Log(Logger::GetStream(),
+				std::format("ParticleSystem: Field '{}' already exists!\n", fieldName));
+			return nullptr;
+		}
+
+		// 新しいフィールドを作成
+		auto field = std::make_unique<FieldType>();
+		field->Initialize(directXCommon_);
+		field->SetName(fieldName);
+
+		// フィールドを登録
+		FieldType* fieldPtr = field.get();
+		fields_[fieldName] = std::move(field);
+
+		Logger::Log(Logger::GetStream(),
+			std::format("ParticleSystem: Created field '{}' (type: {})\n", fieldName, fieldPtr->GetTypeName()));
+
+		return fieldPtr;
+	}
+
+	/// <summary>
+	/// フィールドを削除
+	/// </summary>
+	/// <param name="fieldName">フィールド名</param>
+	void RemoveField(const std::string& fieldName);
+
+	/// <summary>
+	/// フィールド数を取得
+	/// </summary>
+	size_t GetFieldCount() const { return fields_.size(); }
+
+
+	/// <summary>
 	/// すべてのグループとエミッターをクリア
 	/// </summary>
 	void Clear();
@@ -123,6 +171,9 @@ private:
 
 	// エミッター（エミッター名 : エミッター）
 	std::unordered_map<std::string, std::unique_ptr<ParticleEmitter>> emitters_;
+
+	// フィールド（フィールド名 : フィールド）
+	std::unordered_map<std::string, std::unique_ptr<BaseField>> fields_;
 
 	// ビルボード行列（全グループ共通）
 	Matrix4x4 billboardMatrix_;

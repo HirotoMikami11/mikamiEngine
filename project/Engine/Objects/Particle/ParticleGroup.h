@@ -8,6 +8,9 @@
 #include "Managers/Texture/TextureManager.h"
 #include "Managers/Model/ModelManager.h"
 
+
+// 前方宣言
+class BaseField;
 /// <summary>
 /// パーティクルグループ
 /// <para>同じモデル・テクスチャを使用するパーティクルの集合</para>
@@ -36,7 +39,7 @@ public:
 	/// <param name="viewProjectionMatrix">ビュープロジェクション行列</param>
 	/// <param name="billboardMatrix">ビルボード行列（Managerから渡される）</param>
 	/// <param name="deltaTime">デルタタイム</param>
-	void Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& billboardMatrix, float deltaTime);
+	void Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& billboardMatrix, float deltaTime, const std::vector<BaseField*>& fields = {});
 
 	/// <summary>
 	/// 描画処理
@@ -109,7 +112,7 @@ private:
 	/// パーティクルの物理更新
 	/// </summary>
 	/// <param name="deltaTime">デルタタイム</param>
-	void UpdateParticles(float deltaTime);
+	void UpdateParticles(float deltaTime, const std::vector<BaseField*>& fields = {});
 
 	/// <summary>
 	/// モデルとマテリアルを設定

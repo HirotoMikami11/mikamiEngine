@@ -125,22 +125,22 @@ void ParticleEmitter::CreateDebugAABBLines()
 	// 前回の線をクリア
 	debugLineRenderer_->Reset();
 
-	// エミッターの位置を取得
-	Vector3 emitterPos = emitterTransform_.GetPosition();
+	// ワールド座標でのAABBを取得
+	AABB worldAABB = GetWorldAABB();
 
-	// AABBの8頂点を計算（エミッター位置を基準に）
+	// AABBの8頂点を計算（ワールド座標）
 	Vector3 vertices[8] = {
 		// 底面（min.y）
-		{ emitterPos.x + spawnArea_.min.x, emitterPos.y + spawnArea_.min.y, emitterPos.z + spawnArea_.min.z },	// 0: 左下手前
-		{ emitterPos.x + spawnArea_.max.x, emitterPos.y + spawnArea_.min.y, emitterPos.z + spawnArea_.min.z },	// 1: 右下手前
-		{ emitterPos.x + spawnArea_.max.x, emitterPos.y + spawnArea_.min.y, emitterPos.z + spawnArea_.max.z },	// 2: 右下奥
-		{ emitterPos.x + spawnArea_.min.x, emitterPos.y + spawnArea_.min.y, emitterPos.z + spawnArea_.max.z },	// 3: 左下奥
+		{ worldAABB.min.x, worldAABB.min.y, worldAABB.min.z },	// 0: 左下手前
+		{ worldAABB.max.x, worldAABB.min.y, worldAABB.min.z },	// 1: 右下手前
+		{ worldAABB.max.x, worldAABB.min.y, worldAABB.max.z },	// 2: 右下奥
+		{ worldAABB.min.x, worldAABB.min.y, worldAABB.max.z },	// 3: 左下奥
 
 		// 上面（max.y）
-		{ emitterPos.x + spawnArea_.min.x, emitterPos.y + spawnArea_.max.y, emitterPos.z + spawnArea_.min.z },	// 4: 左上手前
-		{ emitterPos.x + spawnArea_.max.x, emitterPos.y + spawnArea_.max.y, emitterPos.z + spawnArea_.min.z },	// 5: 右上手前
-		{ emitterPos.x + spawnArea_.max.x, emitterPos.y + spawnArea_.max.y, emitterPos.z + spawnArea_.max.z },	// 6: 右上奥
-		{ emitterPos.x + spawnArea_.min.x, emitterPos.y + spawnArea_.max.y, emitterPos.z + spawnArea_.max.z }	// 7: 左上奥
+		{ worldAABB.min.x, worldAABB.max.y, worldAABB.min.z },	// 4: 左上手前
+		{ worldAABB.max.x, worldAABB.max.y, worldAABB.min.z },	// 5: 右上手前
+		{ worldAABB.max.x, worldAABB.max.y, worldAABB.max.z },	// 6: 右上奥
+		{ worldAABB.min.x, worldAABB.max.y, worldAABB.max.z }	// 7: 左上奥
 	};
 
 	// 底面の4本の線
@@ -252,4 +252,24 @@ void ParticleEmitter::ImGui()
 		ImGui::TreePop();
 	}
 #endif
+}
+AABB ParticleEmitter::GetWorldAABB() const
+{
+	// エミッターの位置を取得
+	Vector3 emitterPos = emitterTransform_.GetPosition();
+
+	// ローカル座標のAABBをワールド座標に変換
+	AABB worldAABB;
+	worldAABB.min = {
+		emitterPos.x + spawnArea_.min.x,
+		emitterPos.y + spawnArea_.min.y,
+		emitterPos.z + spawnArea_.min.z
+	};
+	worldAABB.max = {
+		emitterPos.x + spawnArea_.max.x,
+		emitterPos.y + spawnArea_.max.y,
+		emitterPos.z + spawnArea_.max.z
+	};
+
+	return worldAABB;
 }

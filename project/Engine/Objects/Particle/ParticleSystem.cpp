@@ -21,6 +21,11 @@ void ParticleSystem::Update(const Matrix4x4& viewProjectionMatrix, float deltaTi
 	// ビルボード行列を計算（全グループ共通）
 	CalculateBillboardMatrix();
 
+	// すべてのフィールドを更新
+	for (auto& [fieldName, field] : fields_) {
+		field->Update(deltaTime);
+	}
+
 	// すべてのエミッターを更新
 	for (auto& [emitterName, emitter] : emitters_) {
 		// ターゲットグループを取得
@@ -30,9 +35,15 @@ void ParticleSystem::Update(const Matrix4x4& viewProjectionMatrix, float deltaTi
 		emitter->Update(deltaTime, targetGroup);
 	}
 
-	// すべてのグループを更新
+	// フィールドのポインタリストを作成
+	std::vector<BaseField*> fieldPtrs;
+	for (auto& [fieldName, field] : fields_) {
+		fieldPtrs.push_back(field.get());
+	}
+
+	// すべてのグループを更新（フィールドを渡す）
 	for (auto& [groupName, group] : groups_) {
-		group->Update(viewProjectionMatrix, billboardMatrix_, deltaTime);
+		group->Update(viewProjectionMatrix, billboardMatrix_, deltaTime, fieldPtrs);
 	}
 }
 
@@ -52,6 +63,11 @@ void ParticleSystem::DrawDebug(const Matrix4x4& viewProjectionMatrix)
 	for (auto& [emitterName, emitter] : emitters_) {
 		emitter->DrawDebug(viewProjectionMatrix);
 	}
+
+	// すべてのフィールドのデバッグ描画
+	for (auto& [fieldName, field] : fields_) {
+		field->DrawDebug(viewProjectionMatrix);
+	}
 #endif 
 
 }
@@ -59,6 +75,7 @@ void ParticleSystem::DrawDebug(const Matrix4x4& viewProjectionMatrix)
 void ParticleSystem::ImGui()
 {
 #ifdef USEIMGUI
+	ImGui::Text("Fields: %zu", fields_.size());
 	if (ImGui::TreeNode("Particle System")) {
 		// 統計情報
 		if (ImGui::CollapsingHeader("Statistics", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -99,6 +116,17 @@ void ParticleSystem::ImGui()
 			}
 		}
 
+
+		// フィールド
+		if (ImGui::CollapsingHeader("Acceleration Fields")) {
+			if (fields_.empty()) {
+				ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "No fields created");
+			} else {
+				for (auto& [fieldName, field] : fields_) {
+					field->ImGui();
+				}
+			}
+		}
 		ImGui::TreePop();
 	}
 #endif
@@ -194,7 +222,8 @@ void ParticleSystem::Clear()
 {
 	emitters_.clear();
 	groups_.clear();
-	Logger::Log(Logger::GetStream(), "ParticleSystem: Cleared all groups and emitters\n");
+	fields_.clear();
+	Logger::Log(Logger::GetStream(), "ParticleSystem: Cleared all groups, emitters, and fields\n");
 }
 
 void ParticleSystem::CalculateBillboardMatrix()
@@ -209,4 +238,14 @@ void ParticleSystem::CalculateBillboardMatrix()
 	billboardMatrix_.m[3][0] = 0.0f;
 	billboardMatrix_.m[3][1] = 0.0f;
 	billboardMatrix_.m[3][2] = 0.0f;
+}
+
+void ParticleSystem::RemoveField(const std::string& fieldName)
+{
+	auto it = fields_.find(fieldName);
+	if (it != fields_.end()) {
+		fields_.erase(it);
+		Logger::Log(Logger::GetStream(),
+			std::format("ParticleSystem: Removed field '{}'\n", fieldName));
+	}
 }

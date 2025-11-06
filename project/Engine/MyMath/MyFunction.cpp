@@ -505,3 +505,19 @@ bool IsCollision(const AABB& aabb, const Segment& segment) {
 }
 
 
+
+/// <summary>
+/// AABBと点の衝突判定
+/// </summary>
+/// <param name="aabb">AABB</param>
+/// <param name="point">点の座標</param>
+/// <returns>点がAABB内にあればtrue</returns>
+bool IsCollision(const AABB& aabb, const Vector3& point) {
+	// 点が各軸でAABBの範囲内にあるかチェック
+	if (point.x >= aabb.min.x && point.x <= aabb.max.x &&
+		point.y >= aabb.min.y && point.y <= aabb.max.y &&
+		point.z >= aabb.min.z && point.z <= aabb.max.z) {
+		return true;
+	}
+	return false;
+}

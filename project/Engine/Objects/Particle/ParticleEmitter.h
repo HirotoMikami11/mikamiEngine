@@ -76,6 +76,11 @@ public:
 	/// </summary>
 	void SetSpawnAreaSize(const Vector3& size);
 
+	/// <summary>
+	/// ワールド座標でのAABBを取得
+	/// </summary>
+	AABB GetWorldAABB() const;
+
 	// デバッグ表示設定
 	void SetShowDebugAABB(bool show) { showDebugAABB_ = show; }
 	bool IsShowDebugAABB() const { return showDebugAABB_; }

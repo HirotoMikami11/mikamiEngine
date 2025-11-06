@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "ParticleGroup.h"
+#include "BaseField.h"
 #include "Managers/ImGui/ImGuiManager.h"
 #include "Logger.h"
 #include <algorithm>
@@ -79,10 +80,10 @@ void ParticleGroup::ClearAllParticles()
 	activeParticleCount_ = 0;
 }
 
-void ParticleGroup::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& billboardMatrix, float deltaTime)
+void ParticleGroup::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& billboardMatrix, float deltaTime, const std::vector<BaseField*>& fields)
 {
 	// パーティクルの更新
-	UpdateParticles(deltaTime);
+	UpdateParticles(deltaTime, fields);
 
 	// GPU転送用のデータを更新（ビルボード行列はManagerから受け取る）
 	UpdateParticleForGPUBuffer(viewProjectionMatrix, billboardMatrix);
@@ -91,7 +92,7 @@ void ParticleGroup::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x
 	materials_.UpdateAllUVTransforms();
 }
 
-void ParticleGroup::UpdateParticles(float deltaTime)
+void ParticleGroup::UpdateParticles(float deltaTime, const std::vector<BaseField*>& fields)
 {
 	// アクティブなパーティクル数をリセット
 	activeParticleCount_ = 0;
@@ -104,6 +105,24 @@ void ParticleGroup::UpdateParticles(float deltaTime)
 		// 寿命チェック
 		if (particle.lifeTime <= particle.currentTime) {
 			// 寿命が尽きたパーティクルを削除
+			it = particles_.erase(it);
+			continue;
+		}
+
+		// フィールドの効果を適用
+		bool shouldDelete = false;
+		for (auto* field : fields) {
+			if (field && field->IsEnabled() && field->IsInField(particle.transform.translate)) {
+				// フィールドの効果を適用
+				shouldDelete = field->ApplyEffect(particle, deltaTime);
+				if (shouldDelete) {
+					break;	// 削除フラグが立ったらループを抜ける
+				}
+			}
+		}
+
+		// フィールドによって削除フラグが立った場合
+		if (shouldDelete) {
 			it = particles_.erase(it);
 			continue;
 		}
