@@ -94,17 +94,80 @@ void DebugScene::InitializeGameObjects() {
 
 
 	///*-----------------------------------------------------------------------*///
-	///									パーティクル									///
+	///						パーティクルシステムとエミッター							///
 	///*-----------------------------------------------------------------------*///
-	Vector3Transform transformParicle{
-		{1.0f, 5.0f, 1.0f},
-		{0.0f, 0.0f, 0.0f},
-		{0.0f, 0.0f, 0.0f}
-	};
 
-	particle_ = std::make_unique<Particle>();
-	particle_->Initialize(directXCommon_, "plane", 10, "circle");
-	//particle_->SetTransform(transformParicle);
+	// パーティクルシステムの作成（パーティクルの管理・更新・描画）
+	particleSystem_ = std::make_unique<Particle>();
+	particleSystem_->Initialize(directXCommon_, "plane", 200, "circle");
+	particleSystem_->SetName("Particle System");
+	particleSystem_->SetBillboard(true);
+
+	// エミッター1: 中央から上に向かって発生するエミッター
+	{
+		auto emitter = std::make_unique<ParticleEmitter>();
+		emitter->Initialize(directXCommon_, particleSystem_.get());
+		emitter->SetName("Center Emitter");
+
+		// エミッターの位置
+		emitter->GetTransform().SetPosition({ 0.0f, 0.0f, 0.0f });
+
+		// 発生設定
+		emitter->SetEmitCount(3);			// 1回で3個
+		emitter->SetFrequency(0.2f);		// 0.2秒ごと
+		emitter->SetEmitEnabled(true);
+
+		// パーティクル設定
+		emitter->SetParticleLifeTimeRange(2.0f, 4.0f);	// 寿命2-4秒
+		emitter->SetParticleVelocityRange(1.5f);		// 速度範囲
+		emitter->SetParticleSpawnRange(0.3f);			// 生成範囲
+
+		emitters_.push_back(std::move(emitter));
+	}
+
+	// エミッター2: 左側から発生するエミッター
+	{
+		auto emitter = std::make_unique<ParticleEmitter>();
+		emitter->Initialize(directXCommon_, particleSystem_.get());
+		emitter->SetName("Left Emitter");
+
+		// エミッターの位置
+		emitter->GetTransform().SetPosition({ -5.0f, 2.0f, 0.0f });
+
+		// 発生設定
+		emitter->SetEmitCount(5);			// 1回で5個
+		emitter->SetFrequency(0.5f);		// 0.5秒ごと
+		emitter->SetEmitEnabled(true);
+
+		// パーティクル設定
+		emitter->SetParticleLifeTimeRange(1.0f, 2.5f);	// 寿命1-2.5秒
+		emitter->SetParticleVelocityRange(2.0f);		// 速度範囲
+		emitter->SetParticleSpawnRange(0.5f);			// 生成範囲
+
+		emitters_.push_back(std::move(emitter));
+	}
+
+	// エミッター3: 右側から発生するエミッター
+	{
+		auto emitter = std::make_unique<ParticleEmitter>();
+		emitter->Initialize(directXCommon_, particleSystem_.get());
+		emitter->SetName("Right Emitter");
+
+		// エミッターの位置
+		emitter->GetTransform().SetPosition({ 5.0f, 2.0f, 0.0f });
+
+		// 発生設定
+		emitter->SetEmitCount(2);			// 1回で2個
+		emitter->SetFrequency(0.3f);		// 0.3秒ごと
+		emitter->SetEmitEnabled(true);
+
+		// パーティクル設定
+		emitter->SetParticleLifeTimeRange(1.5f, 3.0f);	// 寿命1.5-3秒
+		emitter->SetParticleVelocityRange(1.0f);		// 速度範囲
+		emitter->SetParticleSpawnRange(0.2f);			// 生成範囲
+
+		emitters_.push_back(std::move(emitter));
+	}
 
 	///*-----------------------------------------------------------------------*///
 	///									ライト									///
@@ -130,7 +193,13 @@ void DebugScene::UpdateGameObjects() {
 	// グリッド線更新
 	gridLine_->Update(viewProjectionMatrix);
 
-	particle_->Update(viewProjectionMatrix, (1.0f / 60.0f));
+	// エミッターの更新（パーティクルの発生制御）
+	for (auto& emitter : emitters_) {
+		emitter->Update(1.0f / 60.0f);
+	}
+
+	// パーティクルシステムの更新
+	particleSystem_->Update(viewProjectionMatrix, 1.0f / 60.0f);
 }
 
 void DebugScene::DrawOffscreen() {
@@ -150,7 +219,7 @@ void DebugScene::DrawOffscreen() {
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
 	/// 
-	particle_->Draw(directionalLight_);
+	particleSystem_->Draw(directionalLight_);
 
 
 
@@ -179,8 +248,16 @@ void DebugScene::ImGui() {
 	plane_->ImGui();
 
 	ImGui::Spacing();
-	ImGui::Text("Particle");
-	particle_->ImGui();
+	ImGui::Text("=== Particle System ===");
+	// パーティクルシステム
+	particleSystem_->ImGui();
+
+	ImGui::Spacing();
+	ImGui::Text("=== Emitters ===");
+	// エミッター
+	for (auto& emitter : emitters_) {
+		emitter->ImGui();
+	}
 
 
 	ImGui::Spacing();

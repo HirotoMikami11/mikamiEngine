@@ -1,54 +1,48 @@
 #define NOMINMAX
 #include "Particle.h"
 #include "Managers/ImGui/ImGuiManager.h"
-#include "Object3DCommon.h"
-#include "Random/Random.h"
+#include "Logger.h"
+#include <algorithm>
 
 void Particle::Initialize(DirectXCommon* dxCommon, const std::string& modelTag,
-	uint32_t numParticles, const std::string& textureName) {
+	uint32_t maxParticles, const std::string& textureName)
+{
 	directXCommon_ = dxCommon;
 	modelTag_ = modelTag;
 	textureName_ = textureName;
-	numMaxParticles_ = numParticles;
+	maxParticles_ = maxParticles;
 
-	enableUpdate_ = false;
 	isBillboard_ = true;
+	activeParticleCount_ = 0;
 
-	// パーティクル配列の初期化
-	particles_.resize(numMaxParticles_);
-
-	// 各パーティクルの初期状態を設定
-	for (uint32_t i = 0; i < numMaxParticles_; ++i) {
-		particles_[i] = MakeNewParticle();
-	}
+	// パーティクル配列の予約
+	particles_.reserve(maxParticles_);
 
 	// GPU転送用バッファの作成
 	CreateTransformBuffer();
 
-	// モデルとマテリアル、テクスチャを設定
+	// モデルとマテリアルを設定
 	SetModel(modelTag, textureName);
 
-	// ビルボード処理
+	// ビルボード行列の初期化
 	if (isBillboard_) {
-		//現在登録されているカメラ行列を使ってビルボード行列を作成
 		MakeBillboardMatrix(cameraController_->GetCameraMatrix());
 	}
-
-
 }
 
-void Particle::CreateTransformBuffer() {
+void Particle::CreateTransformBuffer()
+{
 	// トランスフォーム用のリソースを作成
 	transformResource_ = CreateBufferResource(
 		directXCommon_->GetDevice(),
-		sizeof(ParticleForGPU) * numMaxParticles_
+		sizeof(ParticleForGPU) * maxParticles_
 	);
 
 	// トランスフォームデータにマップ
 	transformResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
 
 	// 初期化
-	for (uint32_t i = 0; i < numMaxParticles_; ++i) {
+	for (uint32_t i = 0; i < maxParticles_; ++i) {
 		instancingData_[i].World = MakeIdentity4x4();
 		instancingData_[i].WVP = MakeIdentity4x4();
 		instancingData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -61,7 +55,7 @@ void Particle::CreateTransformBuffer() {
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	srvDesc.Buffer.FirstElement = 0;
 	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	srvDesc.Buffer.NumElements = numMaxParticles_;
+	srvDesc.Buffer.NumElements = maxParticles_;
 	srvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
 
 	srvHandle_ = directXCommon_->GetDescriptorManager()->AllocateSRV();
@@ -72,15 +66,32 @@ void Particle::CreateTransformBuffer() {
 	);
 }
 
-void Particle::Update(const Matrix4x4& viewProjectionMatrix, float deltaTime) {
-	// 更新が有効な場合のみ更新を実行
-	if (enableUpdate_) {
-		UpdateParticles(deltaTime);
+bool Particle::AddParticle(const ParticleState& particle)
+{
+	// 最大数に達していないかチェック
+	if (particles_.size() >= maxParticles_) {
+		// 満杯なので追加できない
+		return false;
 	}
+
+	// パーティクルを追加
+	particles_.push_back(particle);
+	return true;
+}
+
+void Particle::ClearAllParticles()
+{
+	particles_.clear();
+	activeParticleCount_ = 0;
+}
+
+void Particle::Update(const Matrix4x4& viewProjectionMatrix, float deltaTime)
+{
+	// パーティクルの更新
+	UpdateParticles(deltaTime);
 
 	// ビルボード処理
 	if (isBillboard_) {
-		//現在登録されているカメラ行列を使ってビルボード行列を作成
 		MakeBillboardMatrix(cameraController_->GetCameraMatrix());
 	}
 
@@ -91,82 +102,60 @@ void Particle::Update(const Matrix4x4& viewProjectionMatrix, float deltaTime) {
 	materials_.UpdateAllUVTransforms();
 }
 
+void Particle::UpdateParticles(float deltaTime)
+{
+	// アクティブなパーティクル数をリセット
+	activeParticleCount_ = 0;
 
-void Particle::UpdateParticles(float deltaTime) {
-	// 描画数をリセット
-	numInstance = 0;
+	// 死んだパーティクルを削除するためのイテレータ
+	auto it = particles_.begin();
+	while (it != particles_.end()) {
+		auto& particle = *it;
 
-	for (uint32_t i = 0; i < numMaxParticles_; ++i) {
-		// 寿命が尽きていたら新しいパーティクルを生成
-		if (particles_[i].lifeTime <= particles_[i].currentTime) {
-			particles_[i] = MakeNewParticle();
+		// 寿命チェック
+		if (particle.lifeTime <= particle.currentTime) {
+			// 寿命が尽きたパーティクルを削除
+			it = particles_.erase(it);
+			continue;
 		}
 
 		// 速度を位置に加算
-		particles_[i].transform.translate.x += particles_[i].velocity.x * deltaTime;
-		particles_[i].transform.translate.y += particles_[i].velocity.y * deltaTime;
-		particles_[i].transform.translate.z += particles_[i].velocity.z * deltaTime;
+		particle.transform.translate.x += particle.velocity.x * deltaTime;
+		particle.transform.translate.y += particle.velocity.y * deltaTime;
+		particle.transform.translate.z += particle.velocity.z * deltaTime;
 
-		//色を透明にしていく
-		float alpha = 1.0f - (particles_[i].currentTime / particles_[i].lifeTime);
-		particles_[i].color.w = alpha;
+		// 色を透明にしていく（アルファフェード）
+		float alpha = 1.0f - (particle.currentTime / particle.lifeTime);
+		particle.color.w = alpha;
 
-		// 寿命計算
-		particles_[i].currentTime += deltaTime;
+		// 寿命を進める
+		particle.currentTime += deltaTime;
 
-		// 全てのパーティクルを描画対象にする
-		++numInstance;
+		// アクティブなパーティクルとしてカウント
+		++activeParticleCount_;
+		++it;
 	}
 }
 
-
-ParticleState Particle::MakeNewParticle()
-{
-	ParticleState state;
-	state.transform.scale = { 1.0f, 1.0f, 1.0f };
-	state.transform.rotate = { 0.0f, 0.0f, 0.0f };
-	//原点から-1~1の範囲
-	state.transform.translate = Random::GetInstance().GenerateVector3OriginOffset(1.0f);
-	// ランダム速度を設定
-	state.velocity = Random::GetInstance().GenerateVector3OriginOffset(1.0f);
-	//ランダムな色を設定
-	state.color = Random::GetInstance().GenerateRandomVector4();
-	//寿命を設定
-	state.lifeTime = Random::GetInstance().GenerateFloat(1.0f, 3.0f);
-	state.currentTime = 0.0f;
-
-
-	return state;
-}
-
-
-
 void Particle::MakeBillboardMatrix(const Matrix4x4& cameraMatrix)
 {
-	//プリミティブとして作成した平面はデフォルト状態でカメラと向き合うようになっているのでY回転はしない。
+	// ビルボード行列の作成
 	billboardMatrix_ = cameraMatrix;
-	//平行移動成分を0
-	//Scaleが含まれるとおかしくなる
+
+	// 平行移動成分を0にする
 	billboardMatrix_.m[3][0] = 0.0f;
 	billboardMatrix_.m[3][1] = 0.0f;
 	billboardMatrix_.m[3][2] = 0.0f;
-
 }
 
-void Particle::UpdateParticleForGPUBuffer(const Matrix4x4& viewProjectionMatrix) {
-	// 各パーティクルのワールド行列とWVP行列を計算
-	for (uint32_t i = 0; i < numMaxParticles_; ++i) {
+void Particle::UpdateParticleForGPUBuffer(const Matrix4x4& viewProjectionMatrix)
+{
+	// アクティブなパーティクルのみGPUバッファに書き込む
+	for (uint32_t i = 0; i < activeParticleCount_ && i < particles_.size(); ++i) {
 		const auto& particle = particles_[i];
 
-		// ワールド行列の計算
-		Matrix4x4 baseWorld = MakeAffineMatrix(
-			particle.transform.scale,
-			particle.transform.rotate,
-			particle.transform.translate
-		);
-
 		if (isBillboard_) {
-			//billboardが有効な場合は回転にbillboard行列
+			// ビルボードが有効な場合
 			Matrix4x4 scaleMatrix = MakeScaleMatrix(particle.transform.scale);
 			Matrix4x4 translateMatrix = MakeTranslateMatrix(particle.transform.translate);
 
@@ -175,30 +164,34 @@ void Particle::UpdateParticleForGPUBuffer(const Matrix4x4& viewProjectionMatrix)
 				Matrix4x4Multiply(scaleMatrix, billboardMatrix_),
 				translateMatrix
 			);
-
 		} else {
-			//billboardが無効な場合はベースののワールド座標を渡す
-			instancingData_[i].World = baseWorld;
+			// ビルボードが無効な場合
+			instancingData_[i].World = MakeAffineMatrix(
+				particle.transform.scale,
+				particle.transform.rotate,
+				particle.transform.translate
+			);
 		}
-
 
 		// WVP行列の計算
 		instancingData_[i].WVP = Matrix4x4Multiply(
 			instancingData_[i].World,
 			viewProjectionMatrix
 		);
+
 		// 色の設定
-		instancingData_[i].color = particles_[i].color;
+		instancingData_[i].color = particle.color;
 	}
 }
 
-void Particle::Draw(const Light& directionalLight) {
+void Particle::Draw(const Light& directionalLight)
+{
 	if (!sharedModel_ || !sharedModel_->IsValid()) {
-		return; // モデルが無効な場合はスキップ
+		return;
 	}
 
-	if (numInstance == 0) {
-		return; // 描画するパーティクルがない場合はスキップ
+	if (activeParticleCount_ == 0) {
+		return;
 	}
 
 	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
@@ -210,7 +203,6 @@ void Particle::Draw(const Light& directionalLight) {
 		const Mesh& mesh = meshes[i];
 		size_t materialIndex = sharedModel_->GetMeshMaterialIndex(i);
 
-		// 範囲チェック
 		if (materialIndex >= materials_.GetMaterialCount()) {
 			materialIndex = 0;
 		}
@@ -235,33 +227,30 @@ void Particle::Draw(const Light& directionalLight) {
 		commandList->SetGraphicsRootConstantBufferView(3,
 			directionalLight.GetResource()->GetGPUVirtualAddress());
 
-		// メッシュをバインドして描画（インスタンス数を指定）
+		// メッシュをバインドして描画（アクティブなパーティクル数を指定）
 		const_cast<Mesh&>(mesh).Bind(commandList);
-		const_cast<Mesh&>(mesh).Draw(commandList, numInstance);
+		const_cast<Mesh&>(mesh).Draw(commandList, activeParticleCount_);
 	}
 }
 
-void Particle::ImGui() {
+void Particle::ImGui()
+{
 #ifdef USEIMGUI
 	if (ImGui::TreeNode(name_.c_str())) {
 		// パーティクルシステム全体の設定
 		if (ImGui::CollapsingHeader("Particle System", ImGuiTreeNodeFlags_DefaultOpen)) {
-			ImGui::Text("Particle Count: %u", numMaxParticles_);
-			ImGui::Text("Active Instances: %u", numInstance);
-
-			// 更新の有効/無効切り替え
-			ImGui::Checkbox("Enable Update", &enableUpdate_);
-			ImGui::Checkbox("billboard Update", &isBillboard_);
+			ImGui::Text("Active Particles: %u / %u", activeParticleCount_, maxParticles_);
+			ImGui::Checkbox("Billboard", &isBillboard_);
 
 			ImGui::Separator();
 		}
 
 		// 個別パーティクルの表示（最初の5つまで）
 		if (ImGui::CollapsingHeader("Individual Particles")) {
-			uint32_t displayCount = std::min(numMaxParticles_, 5u);
+			uint32_t displayCount = std::min(activeParticleCount_, 5u);
 			ImGui::Text("Showing first %u particles", displayCount);
 
-			for (uint32_t i = 0; i < displayCount; ++i) {
+			for (uint32_t i = 0; i < displayCount && i < particles_.size(); ++i) {
 				std::string particleLabel = std::format("Particle {}", i);
 				if (ImGui::TreeNode(particleLabel.c_str())) {
 					auto& particle = particles_[i];
@@ -280,10 +269,7 @@ void Particle::ImGui() {
 						particle.currentTime,
 						particle.lifeTime);
 
-					// 速度の編集
-					if (ImGui::DragFloat3("Edit Velocity", &particle.velocity.x, 0.01f)) {
-						// 速度が変更された
-					}
+					ImGui::ColorEdit4("Color", &particle.color.x);
 
 					ImGui::TreePop();
 				}
@@ -295,7 +281,6 @@ void Particle::ImGui() {
 			size_t materialCount = GetMaterialCount();
 			ImGui::Text("Material Count: %zu", materialCount);
 
-			// 全マテリアル設定
 			if (ImGui::TreeNode("All Materials")) {
 				Material& baseMaterial = GetMaterial(0);
 				Vector4 color = baseMaterial.GetColor();
@@ -316,44 +301,13 @@ void Particle::ImGui() {
 			}
 		}
 
-		// テクスチャ設定
-		if (ImGui::CollapsingHeader("Texture")) {
-			std::vector<std::string> textureList = textureManager_->GetTextureTagList();
-			if (!textureList.empty()) {
-				std::vector<const char*> textureNames;
-				textureNames.push_back("Default");
-
-				for (const auto& texture : textureList) {
-					textureNames.push_back(texture.c_str());
-				}
-
-				int currentIndex = 0;
-				if (!textureName_.empty()) {
-					for (size_t i = 0; i < textureList.size(); ++i) {
-						if (textureList[i] == textureName_) {
-							currentIndex = static_cast<int>(i + 1);
-							break;
-						}
-					}
-				}
-
-				if (ImGui::Combo("Custom Texture", &currentIndex, textureNames.data(),
-					static_cast<int>(textureNames.size()))) {
-					if (currentIndex == 0) {
-						SetTexture("");
-					} else {
-						SetTexture(textureList[currentIndex - 1]);
-					}
-				}
-			}
-		}
-
 		ImGui::TreePop();
 	}
 #endif
 }
 
-void Particle::SetModel(const std::string& modelTag, const std::string& textureName) {
+void Particle::SetModel(const std::string& modelTag, const std::string& textureName)
+{
 	// 共有モデルを取得
 	sharedModel_ = modelManager_->GetModel(modelTag);
 	if (sharedModel_ == nullptr) {
@@ -372,5 +326,5 @@ void Particle::SetModel(const std::string& modelTag, const std::string& textureN
 		materials_.GetMaterial(i).CopyFrom(sharedModel_->GetMaterial(i));
 	}
 
-	SetTexture(textureName);
+	textureName_ = textureName;
 }

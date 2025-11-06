@@ -209,6 +209,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Objects\Particle\Particle.cpp" />
     <ClCompile Include="Engine\Objects\Particle\TransformParticle.cpp" />
     <ClCompile Include="Engine\Objects\Particle\ParticleCommon.cpp" />
+    <ClCompile Include="Engine\Objects\Particle\ParticleEmitter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -359,6 +360,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Objects\Particle\Particle.h" />
     <ClInclude Include="Engine\Objects\Particle\TransformParticle.h" />
     <ClInclude Include="Engine\Objects\Particle\ParticleCommon.h" />
+    <ClInclude Include="Engine\Objects\Particle\ParticleEmitter.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

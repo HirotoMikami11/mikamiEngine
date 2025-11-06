@@ -1,8 +1,10 @@
 #pragma once
 #include <memory>
+#include <vector>
 
 #include "Object3D.h"
 #include "Particle.h"
+#include "ParticleEmitter.h"
 #include "Light.h"
 #include "GridLine.h"
 #include "CameraController.h"
@@ -59,7 +61,12 @@ private:
 	// ゲームオブジェクト
 	std::unique_ptr<Plane> plane_;
 	std::unique_ptr<GridLine> gridLine_;
-	std::unique_ptr<Particle> particle_;
+
+	// パーティクルシステム（パーティクルの管理・更新・描画）
+	std::unique_ptr<Particle> particleSystem_;
+
+	// パーティクルエミッター（射出機能）
+	std::vector<std::unique_ptr<ParticleEmitter>> emitters_;
 
 	// ライティング
 	Light directionalLight_;
