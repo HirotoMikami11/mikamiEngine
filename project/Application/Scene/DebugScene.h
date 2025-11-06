@@ -1,10 +1,8 @@
 #pragma once
 #include <memory>
-#include <vector>
 
 #include "Object3D.h"
-#include "Particle.h"
-#include "ParticleEmitter.h"
+#include "ParticleSystem.h"
 #include "Light.h"
 #include "GridLine.h"
 #include "CameraController.h"
@@ -16,6 +14,7 @@
 /// <summary>
 /// デバッグ用シーン
 /// このシーンで様々な機能を試す
+/// ParticleSystemを使用してパーティクルシステムを管理
 /// </summary>
 class DebugScene : public BaseScene {
 public:
@@ -62,11 +61,8 @@ private:
 	std::unique_ptr<Plane> plane_;
 	std::unique_ptr<GridLine> gridLine_;
 
-	// パーティクルシステム（パーティクルの管理・更新・描画）
-	std::unique_ptr<Particle> particleSystem_;
-
-	// パーティクルエミッター（射出機能）
-	std::vector<std::unique_ptr<ParticleEmitter>> emitters_;
+	// パーティクルマネージャー
+	ParticleSystem* particleSystem_;
 
 	// ライティング
 	Light directionalLight_;

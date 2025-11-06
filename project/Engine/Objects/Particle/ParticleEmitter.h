@@ -1,14 +1,18 @@
 #pragma once
 #include <memory>
+#include <string>
 #include "DirectXCommon.h"
 #include "Transform3D.h"
 #include "ParticleState.h"
-#include "Particle.h"
 #include "Random/Random.h"
+
+// 前方宣言
+class ParticleGroup;
 
 /// <summary>
 /// パーティクルエミッター
-/// <para>Particleクラスにパーティクルを追加する</para>
+/// <para>発生タイミングと射出機能のみを担当</para>
+/// <para>ParticleSystemを介してParticleGroupにパーティクルを追加する</para>
 /// </summary>
 class ParticleEmitter
 {
@@ -20,14 +24,15 @@ public:
 	/// エミッターの初期化
 	/// </summary>
 	/// <param name="dxCommon">DirectXCommonのポインタ</param>
-	/// <param name="targetParticle">パーティクルを追加する対象のParticleシステム</param>
-	void Initialize(DirectXCommon* dxCommon, Particle* targetParticle);
+	/// <param name="targetGroupName">ターゲットグループ名</param>
+	void Initialize(DirectXCommon* dxCommon, const std::string& targetGroupName);
 
 	/// <summary>
 	/// 更新処理（パーティクルの発生制御のみ）
 	/// </summary>
 	/// <param name="deltaTime">デルタタイム</param>
-	void Update(float deltaTime);
+	/// <param name="targetGroup">ターゲットグループへのポインタ（Managerから渡される）</param>
+	void Update(float deltaTime, ParticleGroup* targetGroup);
 
 	/// <summary>
 	/// ImGui用のデバッグ表示
@@ -59,18 +64,16 @@ public:
 	const std::string& GetName() const { return name_; }
 	void SetName(const std::string& name) { name_ = name; }
 
-	/// <summary>
-	/// ターゲットParticleを設定
-	/// </summary>
-	void SetTargetParticle(Particle* targetParticle) { targetParticle_ = targetParticle; }
-	Particle* GetTargetParticle() const { return targetParticle_; }
+	const std::string& GetTargetGroupName() const { return targetGroupName_; }
+	void SetTargetGroupName(const std::string& groupName) { targetGroupName_ = groupName; }
 
 private:
 	/// <summary>
 	/// パーティクルを発生させる
 	/// </summary>
 	/// <param name="deltaTime">デルタタイム</param>
-	void EmitParticles(float deltaTime);
+	/// <param name="targetGroup">ターゲットグループ</param>
+	void EmitParticles(float deltaTime, ParticleGroup* targetGroup);
 
 	/// <summary>
 	/// 新しいパーティクルを生成
@@ -92,9 +95,7 @@ private:
 	float spawnRange_ = 1.0f;				// 生成位置の範囲
 
 	std::string name_ = "ParticleEmitter";
-
-	// ターゲットParticleシステムへのポインタ
-	Particle* targetParticle_ = nullptr;
+	std::string targetGroupName_ = "";		// ターゲットグループ名
 
 	// システム参照
 	DirectXCommon* directXCommon_ = nullptr;

@@ -3,9 +3,7 @@
 
 /// <summary>
 /// 個々のパーティクルの状態を保持する構造体
-/// <para>Scale</para>
-/// <para>Rotate</para>
-/// <para>Translate</para>
+/// パーティクル一個分ののデータ
 /// </summary>
 struct ParticleState {
 	Vector3Transform transform;	// 大きさ、回転、位置

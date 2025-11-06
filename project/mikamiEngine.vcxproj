@@ -206,10 +206,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Utility\StringUtility.cpp" />
     <ClCompile Include="Engine\Objects\Sprite\SpriteCommon.cpp" />
     <ClCompile Include="Engine\Objects\Object3D\Object3DCommon.cpp" />
-    <ClCompile Include="Engine\Objects\Particle\Particle.cpp" />
     <ClCompile Include="Engine\Objects\Particle\TransformParticle.cpp" />
     <ClCompile Include="Engine\Objects\Particle\ParticleCommon.cpp" />
     <ClCompile Include="Engine\Objects\Particle\ParticleEmitter.cpp" />
+    <ClCompile Include="Engine\Objects\Particle\ParticleGroup.cpp" />
+    <ClCompile Include="Engine\Objects\Particle\ParticleSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -357,10 +358,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Utility\StringUtility.h" />
     <ClInclude Include="Engine\Objects\Sprite\SpriteCommon.h" />
     <ClInclude Include="Engine\Objects\Object3D\Object3DCommon.h" />
-    <ClInclude Include="Engine\Objects\Particle\Particle.h" />
     <ClInclude Include="Engine\Objects\Particle\TransformParticle.h" />
     <ClInclude Include="Engine\Objects\Particle\ParticleCommon.h" />
     <ClInclude Include="Engine\Objects\Particle\ParticleEmitter.h" />
+    <ClInclude Include="Engine\Objects\Particle\ParticleGroup.h" />
+    <ClInclude Include="Engine\Objects\Particle\ParticleSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

@@ -1,10 +1,11 @@
 #include "ParticleEmitter.h"
+#include "ParticleGroup.h"
 #include "Managers/ImGui/ImGuiManager.h"
 
-void ParticleEmitter::Initialize(DirectXCommon* dxCommon, Particle* targetParticle)
+void ParticleEmitter::Initialize(DirectXCommon* dxCommon, const std::string& targetGroupName)
 {
 	directXCommon_ = dxCommon;
-	targetParticle_ = targetParticle;
+	targetGroupName_ = targetGroupName;
 
 	// エミッタートランスフォームを初期化
 	emitterTransform_.Initialize(dxCommon);
@@ -14,10 +15,10 @@ void ParticleEmitter::Initialize(DirectXCommon* dxCommon, Particle* targetPartic
 	frequencyTimer_ = 0.0f;
 }
 
-void ParticleEmitter::Update(float deltaTime)
+void ParticleEmitter::Update(float deltaTime, ParticleGroup* targetGroup)
 {
-	// ターゲットParticleが設定されていない場合は何もしない
-	if (!targetParticle_) {
+	// ターゲットグループが設定されていない場合は何もしない
+	if (!targetGroup) {
 		return;
 	}
 
@@ -27,11 +28,11 @@ void ParticleEmitter::Update(float deltaTime)
 
 	// パーティクルの発生
 	if (isEmitting_) {
-		EmitParticles(deltaTime);
+		EmitParticles(deltaTime, targetGroup);
 	}
 }
 
-void ParticleEmitter::EmitParticles(float deltaTime)
+void ParticleEmitter::EmitParticles(float deltaTime, ParticleGroup* targetGroup)
 {
 	// 頻度タイマーを進める
 	frequencyTimer_ += deltaTime;
@@ -42,10 +43,10 @@ void ParticleEmitter::EmitParticles(float deltaTime)
 
 		// 指定された数のパーティクルを生成
 		for (uint32_t i = 0; i < emitCount_; ++i) {
-			// ターゲットParticleに追加を試みる
+			// ターゲットグループに追加を試みる
 			ParticleState newParticle = CreateNewParticle();
 
-			if (!targetParticle_->AddParticle(newParticle)) {
+			if (!targetGroup->AddParticle(newParticle)) {
 				// 追加に失敗した（満杯）場合はこれ以上追加しない
 				break;
 			}
@@ -88,14 +89,7 @@ void ParticleEmitter::ImGui()
 	if (ImGui::TreeNode(name_.c_str())) {
 		// エミッター設定
 		if (ImGui::CollapsingHeader("Emitter Settings", ImGuiTreeNodeFlags_DefaultOpen)) {
-			if (targetParticle_) {
-				ImGui::Text("Target Particle: %s", targetParticle_->GetName().c_str());
-				ImGui::Text("Particle Count: %u / %u",
-					targetParticle_->GetActiveParticleCount(),
-					targetParticle_->GetMaxParticleCount());
-			} else {
-				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "No Target Particle!");
-			}
+			ImGui::Text("Target Group: %s", targetGroupName_.c_str());
 
 			ImGui::Separator();
 

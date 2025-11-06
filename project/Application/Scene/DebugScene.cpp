@@ -8,6 +8,7 @@ DebugScene::DebugScene()
 	, directXCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
 	, textureManager_(nullptr)
+	, particleSystem_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
 {
 }
@@ -94,79 +95,77 @@ void DebugScene::InitializeGameObjects() {
 
 
 	///*-----------------------------------------------------------------------*///
-	///						パーティクルシステムとエミッター							///
+	///					パーティクルマネージャーの初期化							///
 	///*-----------------------------------------------------------------------*///
 
-	// パーティクルシステムの作成（パーティクルの管理・更新・描画）
-	particleSystem_ = std::make_unique<Particle>();
-	particleSystem_->Initialize(directXCommon_, "plane", 200, "circle");
-	particleSystem_->SetName("Particle System");
-	particleSystem_->SetBillboard(true);
+	// ParticleSystemシングルトンを取得
+	particleSystem_ = ParticleSystem::GetInstance();
+	particleSystem_->Initialize(directXCommon_);
 
-	// エミッター1: 中央から上に向かって発生するエミッター
-	{
-		auto emitter = std::make_unique<ParticleEmitter>();
-		emitter->Initialize(directXCommon_, particleSystem_.get());
-		emitter->SetName("Center Emitter");
+	// 【ステップ1】パーティクルグループを作成
+	// グループ1: 円形パーティクル（200個まで）
+	particleSystem_->CreateGroup(
+		"CircleParticles",  // グループ名
+		"plane",            // モデル
+		200,                // 最大パーティクル数
+		"circle",           // テクスチャ
+		true                // ビルボードON
+	);
 
-		// エミッターの位置
-		emitter->GetTransform().SetPosition({ 0.0f, 0.0f, 0.0f });
+	// グループ2: 四角形パーティクル（100個まで）
+	particleSystem_->CreateGroup(
+		"SquareParticles",  // グループ名
+		"plane",            // モデル
+		100,                // 最大パーティクル数
+		"uvChecker",        // テクスチャ
+		true                // ビルボードON
+	);
 
-		// 発生設定
-		emitter->SetEmitCount(3);			// 1回で3個
-		emitter->SetFrequency(0.2f);		// 0.2秒ごと
-		emitter->SetEmitEnabled(true);
+	// 【ステップ2】エミッターを作成
 
-		// パーティクル設定
-		emitter->SetParticleLifeTimeRange(2.0f, 4.0f);	// 寿命2-4秒
-		emitter->SetParticleVelocityRange(1.5f);		// 速度範囲
-		emitter->SetParticleSpawnRange(0.3f);			// 生成範囲
-
-		emitters_.push_back(std::move(emitter));
+	// エミッター1: 中央（CircleParticlesグループに発生）
+	ParticleEmitter* centerEmitter = particleSystem_->CreateEmitter(
+		"CenterEmitter",     // エミッター名
+		"CircleParticles"    // ターゲットグループ名
+	);
+	if (centerEmitter) {
+		centerEmitter->GetTransform().SetPosition({ 0.0f, 0.0f, 0.0f });
+		centerEmitter->SetEmitCount(3);
+		centerEmitter->SetFrequency(0.2f);
+		centerEmitter->SetEmitEnabled(true);
+		centerEmitter->SetParticleLifeTimeRange(2.0f, 4.0f);
+		centerEmitter->SetParticleVelocityRange(1.5f);
+		centerEmitter->SetParticleSpawnRange(0.3f);
 	}
 
-	// エミッター2: 左側から発生するエミッター
-	{
-		auto emitter = std::make_unique<ParticleEmitter>();
-		emitter->Initialize(directXCommon_, particleSystem_.get());
-		emitter->SetName("Left Emitter");
-
-		// エミッターの位置
-		emitter->GetTransform().SetPosition({ -5.0f, 2.0f, 0.0f });
-
-		// 発生設定
-		emitter->SetEmitCount(5);			// 1回で5個
-		emitter->SetFrequency(0.5f);		// 0.5秒ごと
-		emitter->SetEmitEnabled(true);
-
-		// パーティクル設定
-		emitter->SetParticleLifeTimeRange(1.0f, 2.5f);	// 寿命1-2.5秒
-		emitter->SetParticleVelocityRange(2.0f);		// 速度範囲
-		emitter->SetParticleSpawnRange(0.5f);			// 生成範囲
-
-		emitters_.push_back(std::move(emitter));
+	// エミッター2: 左側（CircleParticlesグループに発生）
+	ParticleEmitter* leftEmitter = particleSystem_->CreateEmitter(
+		"LeftEmitter",       // エミッター名
+		"CircleParticles"    // ターゲットグループ名
+	);
+	if (leftEmitter) {
+		leftEmitter->GetTransform().SetPosition({ -5.0f, 2.0f, 0.0f });
+		leftEmitter->SetEmitCount(5);
+		leftEmitter->SetFrequency(0.5f);
+		leftEmitter->SetEmitEnabled(true);
+		leftEmitter->SetParticleLifeTimeRange(1.0f, 2.5f);
+		leftEmitter->SetParticleVelocityRange(2.0f);
+		leftEmitter->SetParticleSpawnRange(0.5f);
 	}
 
-	// エミッター3: 右側から発生するエミッター
-	{
-		auto emitter = std::make_unique<ParticleEmitter>();
-		emitter->Initialize(directXCommon_, particleSystem_.get());
-		emitter->SetName("Right Emitter");
-
-		// エミッターの位置
-		emitter->GetTransform().SetPosition({ 5.0f, 2.0f, 0.0f });
-
-		// 発生設定
-		emitter->SetEmitCount(2);			// 1回で2個
-		emitter->SetFrequency(0.3f);		// 0.3秒ごと
-		emitter->SetEmitEnabled(true);
-
-		// パーティクル設定
-		emitter->SetParticleLifeTimeRange(1.5f, 3.0f);	// 寿命1.5-3秒
-		emitter->SetParticleVelocityRange(1.0f);		// 速度範囲
-		emitter->SetParticleSpawnRange(0.2f);			// 生成範囲
-
-		emitters_.push_back(std::move(emitter));
+	// エミッター3: 右側（SquareParticlesグループに発生）
+	ParticleEmitter* rightEmitter = particleSystem_->CreateEmitter(
+		"RightEmitter",      // エミッター名
+		"SquareParticles"    // ターゲットグループ名
+	);
+	if (rightEmitter) {
+		rightEmitter->GetTransform().SetPosition({ 5.0f, 2.0f, 0.0f });
+		rightEmitter->SetEmitCount(2);
+		rightEmitter->SetFrequency(0.3f);
+		rightEmitter->SetEmitEnabled(true);
+		rightEmitter->SetParticleLifeTimeRange(1.5f, 3.0f);
+		rightEmitter->SetParticleVelocityRange(1.0f);
+		rightEmitter->SetParticleSpawnRange(0.2f);
 	}
 
 	///*-----------------------------------------------------------------------*///
@@ -193,12 +192,7 @@ void DebugScene::UpdateGameObjects() {
 	// グリッド線更新
 	gridLine_->Update(viewProjectionMatrix);
 
-	// エミッターの更新（パーティクルの発生制御）
-	for (auto& emitter : emitters_) {
-		emitter->Update(1.0f / 60.0f);
-	}
-
-	// パーティクルシステムの更新
+	// パーティクルマネージャーの更新（全グループ・全エミッター）
 	particleSystem_->Update(viewProjectionMatrix, 1.0f / 60.0f);
 }
 
@@ -219,10 +213,8 @@ void DebugScene::DrawOffscreen() {
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
 	/// 
+	// パーティクルマネージャーの描画（全グループ）
 	particleSystem_->Draw(directionalLight_);
-
-
-
 }
 
 void DebugScene::DrawBackBuffer() {
@@ -248,17 +240,9 @@ void DebugScene::ImGui() {
 	plane_->ImGui();
 
 	ImGui::Spacing();
-	ImGui::Text("=== Particle System ===");
-	// パーティクルシステム
+	ImGui::Text("=== Particle Manager ===");
+	// パーティクルマネージャー（全グループと全エミッターを表示）
 	particleSystem_->ImGui();
-
-	ImGui::Spacing();
-	ImGui::Text("=== Emitters ===");
-	// エミッター
-	for (auto& emitter : emitters_) {
-		emitter->ImGui();
-	}
-
 
 	ImGui::Spacing();
 	ImGui::Text("Grid Line");
@@ -273,5 +257,8 @@ void DebugScene::ImGui() {
 }
 
 void DebugScene::Finalize() {
-	// unique_ptrで自動的に解放される
+	// シーン終了時にパーティクルマネージャーをクリア
+	if (particleSystem_) {
+		particleSystem_->Clear();
+	}
 }

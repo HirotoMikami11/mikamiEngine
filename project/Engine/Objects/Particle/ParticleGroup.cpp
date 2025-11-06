@@ -1,18 +1,18 @@
 #define NOMINMAX
-#include "Particle.h"
+#include "ParticleGroup.h"
 #include "Managers/ImGui/ImGuiManager.h"
 #include "Logger.h"
 #include <algorithm>
 
-void Particle::Initialize(DirectXCommon* dxCommon, const std::string& modelTag,
-	uint32_t maxParticles, const std::string& textureName)
+void ParticleGroup::Initialize(DirectXCommon* dxCommon, const std::string& modelTag,
+	uint32_t maxParticles, const std::string& textureName, bool useBillboard)
 {
 	directXCommon_ = dxCommon;
 	modelTag_ = modelTag;
 	textureName_ = textureName;
 	maxParticles_ = maxParticles;
+	useBillboard_ = useBillboard;
 
-	isBillboard_ = true;
 	activeParticleCount_ = 0;
 
 	// パーティクル配列の予約
@@ -23,14 +23,9 @@ void Particle::Initialize(DirectXCommon* dxCommon, const std::string& modelTag,
 
 	// モデルとマテリアルを設定
 	SetModel(modelTag, textureName);
-
-	// ビルボード行列の初期化
-	if (isBillboard_) {
-		MakeBillboardMatrix(cameraController_->GetCameraMatrix());
-	}
 }
 
-void Particle::CreateTransformBuffer()
+void ParticleGroup::CreateTransformBuffer()
 {
 	// トランスフォーム用のリソースを作成
 	transformResource_ = CreateBufferResource(
@@ -66,11 +61,10 @@ void Particle::CreateTransformBuffer()
 	);
 }
 
-bool Particle::AddParticle(const ParticleState& particle)
+bool ParticleGroup::AddParticle(const ParticleState& particle)
 {
 	// 最大数に達していないかチェック
 	if (particles_.size() >= maxParticles_) {
-		// 満杯なので追加できない
 		return false;
 	}
 
@@ -79,30 +73,25 @@ bool Particle::AddParticle(const ParticleState& particle)
 	return true;
 }
 
-void Particle::ClearAllParticles()
+void ParticleGroup::ClearAllParticles()
 {
 	particles_.clear();
 	activeParticleCount_ = 0;
 }
 
-void Particle::Update(const Matrix4x4& viewProjectionMatrix, float deltaTime)
+void ParticleGroup::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& billboardMatrix, float deltaTime)
 {
 	// パーティクルの更新
 	UpdateParticles(deltaTime);
 
-	// ビルボード処理
-	if (isBillboard_) {
-		MakeBillboardMatrix(cameraController_->GetCameraMatrix());
-	}
-
-	// GPU転送用のデータを更新
-	UpdateParticleForGPUBuffer(viewProjectionMatrix);
+	// GPU転送用のデータを更新（ビルボード行列はManagerから受け取る）
+	UpdateParticleForGPUBuffer(viewProjectionMatrix, billboardMatrix);
 
 	// マテリアル更新
 	materials_.UpdateAllUVTransforms();
 }
 
-void Particle::UpdateParticles(float deltaTime)
+void ParticleGroup::UpdateParticles(float deltaTime)
 {
 	// アクティブなパーティクル数をリセット
 	activeParticleCount_ = 0;
@@ -137,31 +126,20 @@ void Particle::UpdateParticles(float deltaTime)
 	}
 }
 
-void Particle::MakeBillboardMatrix(const Matrix4x4& cameraMatrix)
-{
-	// ビルボード行列の作成
-	billboardMatrix_ = cameraMatrix;
-
-	// 平行移動成分を0にする
-	billboardMatrix_.m[3][0] = 0.0f;
-	billboardMatrix_.m[3][1] = 0.0f;
-	billboardMatrix_.m[3][2] = 0.0f;
-}
-
-void Particle::UpdateParticleForGPUBuffer(const Matrix4x4& viewProjectionMatrix)
+void ParticleGroup::UpdateParticleForGPUBuffer(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& billboardMatrix)
 {
 	// アクティブなパーティクルのみGPUバッファに書き込む
 	for (uint32_t i = 0; i < activeParticleCount_ && i < particles_.size(); ++i) {
 		const auto& particle = particles_[i];
 
-		if (isBillboard_) {
-			// ビルボードが有効な場合
+		if (useBillboard_) {
+			// ビルボードが有効な場合（ビルボード行列はManagerから受け取る）
 			Matrix4x4 scaleMatrix = MakeScaleMatrix(particle.transform.scale);
 			Matrix4x4 translateMatrix = MakeTranslateMatrix(particle.transform.translate);
 
 			// World = Scale * Billboard * Translate
 			instancingData_[i].World = Matrix4x4Multiply(
-				Matrix4x4Multiply(scaleMatrix, billboardMatrix_),
+				Matrix4x4Multiply(scaleMatrix, billboardMatrix),
 				translateMatrix
 			);
 		} else {
@@ -184,7 +162,7 @@ void Particle::UpdateParticleForGPUBuffer(const Matrix4x4& viewProjectionMatrix)
 	}
 }
 
-void Particle::Draw(const Light& directionalLight)
+void ParticleGroup::Draw(const Light& directionalLight)
 {
 	if (!sharedModel_ || !sharedModel_->IsValid()) {
 		return;
@@ -233,14 +211,14 @@ void Particle::Draw(const Light& directionalLight)
 	}
 }
 
-void Particle::ImGui()
+void ParticleGroup::ImGui()
 {
 #ifdef USEIMGUI
 	if (ImGui::TreeNode(name_.c_str())) {
-		// パーティクルシステム全体の設定
-		if (ImGui::CollapsingHeader("Particle System", ImGuiTreeNodeFlags_DefaultOpen)) {
+		// パーティクルグループ全体の設定
+		if (ImGui::CollapsingHeader("Particle Group", ImGuiTreeNodeFlags_DefaultOpen)) {
 			ImGui::Text("Active Particles: %u / %u", activeParticleCount_, maxParticles_);
-			ImGui::Checkbox("Billboard", &isBillboard_);
+			ImGui::Checkbox("Use Billboard", &useBillboard_);
 
 			ImGui::Separator();
 		}
@@ -306,7 +284,7 @@ void Particle::ImGui()
 #endif
 }
 
-void Particle::SetModel(const std::string& modelTag, const std::string& textureName)
+void ParticleGroup::SetModel(const std::string& modelTag, const std::string& textureName)
 {
 	// 共有モデルを取得
 	sharedModel_ = modelManager_->GetModel(modelTag);
