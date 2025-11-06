@@ -236,17 +236,6 @@ bool IsCollision(const AABB& aabb, const Segment& segment);
 
 
 
-/*-----------------------------------------------------------------------*/
-//
-//								描画関数
-//
-/*-----------------------------------------------------------------------*/
-//グリッド線を描画する関数
-void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
-
-//球体を表示する関数
-void DrawSphere(const SphereMath& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
-
 
 
 

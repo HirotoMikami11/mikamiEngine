@@ -84,11 +84,6 @@ private:
 	/// </summary>
 	void UpdateVertexBuffer();
 
-	/// <summary>
-	/// マテリアルバッファを更新
-	/// </summary>
-	void UpdateMaterialBuffer();
-
 private:
 	//DirectXCommon参照
 	DirectXCommon* directXCommon_ = nullptr;

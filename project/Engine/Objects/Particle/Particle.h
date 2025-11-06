@@ -107,8 +107,6 @@ private:
 	/// <returns></returns>
 	void MakeBillboardMatrix(const Matrix4x4& viewMatrix);
 
-	void UpdateBillboardMatrix(const ParticleState particle);
-
 	// パーティクルデータ
 	std::vector<ParticleState> particles_;
 	uint32_t numMaxParticles_ = 0;		//表示する最大数
@@ -131,7 +129,7 @@ private:
 	///ビルボード機能
 	bool isBillboard_ = false;		// ビルボードを有効にするか
 	Matrix4x4 billboardMatrix_;		// ビルボード行列
-	
+
 
 	// システム参照
 	DirectXCommon* directXCommon_ = nullptr;
