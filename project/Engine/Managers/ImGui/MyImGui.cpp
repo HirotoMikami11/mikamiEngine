@@ -4,6 +4,7 @@
 namespace myImGui {
 
 	void CenterText(const char* text) {
+#ifdef USEIMGUI
 		// テキストを中央に配置するためのオフセットを計算
 		float windowWidth = ImGui::GetWindowSize().x;
 		float textWidth = ImGui::CalcTextSize(text).x;
@@ -20,22 +21,28 @@ namespace myImGui {
 
 		// 左揃えに戻す（次の行のXを元の位置に）
 		ImGui::SetCursorPosX(cursorPos.x);
+#endif
 	}
 
 	void SectionHeader(const char* text) {
+#ifdef USEIMGUI
 		ImGui::Separator();
 		CenterText(text);
 		ImGui::Separator();
 		ImGui::Spacing();
+#endif
 	}
 
 	void IndentedText(const char* text, float indent) {
+#ifdef USEIMGUI
 		ImGui::Indent(indent);
 		ImGui::TextUnformatted(text);
 		ImGui::Unindent(indent);
+#endif
 	}
 
 	void ColoredText(const char* text, const Vector4& color) {
+#ifdef USEIMGUI
 		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(
 			static_cast<int>(color.x * 255),
 			static_cast<int>(color.y * 255),
@@ -44,13 +51,17 @@ namespace myImGui {
 		));
 		ImGui::TextUnformatted(text);
 		ImGui::PopStyleColor();
+#endif
 	}
 
 	bool DragIntRange(const char* label, int& value, int min, int max, int speed) {
+#ifdef USEIMGUI
 		return ImGui::DragInt(label, &value, static_cast<float>(speed), min, max);
+#endif
 	}
 
 	void HelpMarker(const char* desc) {
+#ifdef USEIMGUI
 		ImGui::TextDisabled("(?)");
 		if (ImGui::IsItemHovered()) {
 			ImGui::BeginTooltip();
@@ -59,27 +70,37 @@ namespace myImGui {
 			ImGui::PopTextWrapPos();
 			ImGui::EndTooltip();
 		}
+#endif
 	}
 
 	void WarningText(const char* text) {
+#ifdef USEIMGUI
 		ColoredText(text, { 1.0f, 1.0f, 0.0f, 1.0f }); // 黄色
+#endif
 	}
 
 	void SuccessText(const char* text) {
+#ifdef USEIMGUI
 		ColoredText(text, { 0.0f, 1.0f, 0.0f, 1.0f }); // 緑色
+#endif
 	}
 
 	void ErrorText(const char* text) {
+#ifdef USEIMGUI
 		ColoredText(text, { 1.0f, 0.0f, 0.0f, 1.0f }); // 赤色
+#endif
 	}
 
 	void SeparatorWithSpacing() {
+#ifdef USEIMGUI
 		ImGui::Spacing();
 		ImGui::Separator();
 		ImGui::Spacing();
+#endif
 	}
 
 	void TabbedSection(const std::vector<std::string>& tabs, int& selectedTab, const std::vector<std::function<void()>>& tabContents) {
+#ifdef USEIMGUI
 		if (tabs.empty() || tabContents.empty()) return;
 
 		// タブバーを描画
@@ -91,15 +112,18 @@ namespace myImGui {
 				}
 			}
 			ImGui::EndTabBar();
+
 		}
 
 		// 選択されたタブの内容を描画
 		if (selectedTab >= 0 && selectedTab < static_cast<int>(tabContents.size())) {
 			tabContents[selectedTab]();
 		}
+#endif
 	}
 
 	void FramedSection(const char* label, const std::function<void()>& content, const Vector4* color) {
+#ifdef USEIMGUI
 		ImVec4 frameColor = color ?
 			ImVec4(color->x, color->y, color->z, color->w) :
 			ImGui::GetStyleColorVec4(ImGuiCol_Border);
@@ -128,11 +152,12 @@ namespace myImGui {
 
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor();
+#endif
 	}
 
 	void OnOffButton(bool& isOn, const char* text, Vector2 size)
 	{
-
+#ifdef USEIMGUI
 		ImVec2 bottomSize = { size.x,size.y };
 
 		// ON 状態なら緑色にする
@@ -151,5 +176,6 @@ namespace myImGui {
 		if (isOn) {
 			ImGui::PopStyleColor(2);
 		}
+#endif
 	}
 }
