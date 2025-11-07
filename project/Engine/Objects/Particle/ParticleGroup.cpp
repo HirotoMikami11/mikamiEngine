@@ -26,8 +26,7 @@ void ParticleGroup::Initialize(DirectXCommon* dxCommon, const std::string& model
 	SetModel(modelTag, textureName);
 }
 
-void ParticleGroup::CreateTransformBuffer()
-{
+void ParticleGroup::CreateTransformBuffer() {
 	// トランスフォーム用のリソースを作成
 	transformResource_ = CreateBufferResource(
 		directXCommon_->GetDevice(),
@@ -44,22 +43,21 @@ void ParticleGroup::CreateTransformBuffer()
 		instancingData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
-	// SRVの作成
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	srvDesc.Buffer.FirstElement = 0;
-	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	srvDesc.Buffer.NumElements = maxParticles_;
-	srvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
+	auto descriptorManager = directXCommon_->GetDescriptorManager();
 
-	srvHandle_ = directXCommon_->GetDescriptorManager()->AllocateSRV();
-	directXCommon_->GetDevice()->CreateShaderResourceView(
+	// 構造化バッファ用のSRVを作成
+	srvHandle_ = descriptorManager->CreateSRVForStructuredBuffer(
 		transformResource_.Get(),
-		&srvDesc,
-		srvHandle_.cpuHandle
+		maxParticles_,
+		sizeof(ParticleForGPU)
 	);
+
+	// エラーチェック
+	if (!srvHandle_.isValid) {
+		Logger::Log(Logger::GetStream(),
+			std::format("Failed to create SRV for ParticleGroup (maxParticles: {})\n", maxParticles_));
+		assert(false && "SRV creation failed");
+	}
 }
 
 bool ParticleGroup::AddParticle(const ParticleState& particle)

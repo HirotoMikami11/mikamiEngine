@@ -1,4 +1,4 @@
-#include"DescriptorHeapManager.h"
+#include "DescriptorHeapManager.h"
 
 void DescriptorHeapManager::Initialize(Microsoft::WRL::ComPtr<ID3D12Device> device) {
 	device_ = device;
@@ -13,22 +13,20 @@ void DescriptorHeapManager::Initialize(Microsoft::WRL::ComPtr<ID3D12Device> devi
 	dsvHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, GraphicsConfig::kDSVHeapSize, false);
 	srvHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, GraphicsConfig::kSRVHeapSize, true);
 
-
-	// 使用状況管理配列を初期化(生成したヒープの大きさだけフラグの数を持っておく)
+	// 使用状況管理配列を初期化
 	rtvUsedFlags_.resize(GraphicsConfig::kRTVHeapSize, false);
 	dsvUsedFlags_.resize(GraphicsConfig::kDSVHeapSize, false);
 	srvUsedFlags_.resize(GraphicsConfig::kSRVHeapSize, false);
 
 	// 予約済みのもののUsedFlagを立てておく
-	// スワップチェーンRTVを予約
 	rtvUsedFlags_[GraphicsConfig::kSwapChainRTV0Index] = true;
 	rtvUsedFlags_[GraphicsConfig::kSwapChainRTV1Index] = true;
-
-	// メインDSVを予約
 	dsvUsedFlags_[GraphicsConfig::kMainDSVIndex] = true;
-
-	// ImGui用SRVを予約
 	srvUsedFlags_[GraphicsConfig::kImGuiSRVIndex] = true;
+
+	// DescriptorViewFactoryを初期化
+	viewFactory_ = std::make_unique<DescriptorViewFactory>();
+	viewFactory_->Initialize(device);
 
 	isInitialized_ = true;
 
@@ -38,12 +36,18 @@ void DescriptorHeapManager::Initialize(Microsoft::WRL::ComPtr<ID3D12Device> devi
 }
 
 void DescriptorHeapManager::Finalize() {
+	// ビューファクトリーを終了
+	if (viewFactory_) {
+		viewFactory_->Finalize();
+		viewFactory_.reset();
+	}
+
 	// 使用状況をクリア
 	rtvUsedFlags_.clear();
 	dsvUsedFlags_.clear();
 	srvUsedFlags_.clear();
 
-	// ヒープをクリア（ComPtrが自動で解放）
+	// ヒープをクリア
 	rtvHeap_.Reset();
 	dsvHeap_.Reset();
 	srvHeap_.Reset();
@@ -54,212 +58,157 @@ void DescriptorHeapManager::Finalize() {
 	Logger::Log(Logger::GetStream(), "DescriptorHeapManager finalized.\n");
 }
 
-
-
-//																			//
-//							割り当てと解放										//
-//																			//
-
-
+//=============================================================================
+// 割り当てと解放
+//=============================================================================
 
 DescriptorHeapManager::DescriptorHandle DescriptorHeapManager::AllocateRTV() {
 	assert(isInitialized_);
-	///あいているインデックスを探す
 	auto indexOpt = FindAvailableIndex(rtvUsedFlags_);
 	if (!indexOpt.has_value()) {
-		// 空きがない場合はログを出力
 		Logger::Log(Logger::GetStream(), "Failed to allocate RTV: No available slots\n");
 		return DescriptorHandle{};
 	}
 
 	uint32_t index = indexOpt.value();
-	rtvUsedFlags_[index] = true;	//空きが見つかればそこの使用フラグを立てる
+	rtvUsedFlags_[index] = true;
 
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCPUHandle(HeapType::RTV, index);
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = {}; // RTVはGPUハンドル不要
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = {};
 
-	// 生成できたとログを出力
 	Logger::Log(Logger::GetStream(), std::format("Allocated RTV at index: {}\n", index));
 	return DescriptorHandle(cpuHandle, gpuHandle, index);
 }
 
 DescriptorHeapManager::DescriptorHandle DescriptorHeapManager::AllocateDSV() {
 	assert(isInitialized_);
-	///あいているインデックスを探す
 	auto indexOpt = FindAvailableIndex(dsvUsedFlags_);
 	if (!indexOpt.has_value()) {
-		// 空きがない場合はログを出力
 		Logger::Log(Logger::GetStream(), "Failed to allocate DSV: No available slots\n");
 		return DescriptorHandle{};
 	}
 
 	uint32_t index = indexOpt.value();
-	dsvUsedFlags_[index] = true;//空きが見つかればそこの使用フラグを立てる
+	dsvUsedFlags_[index] = true;
 
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCPUHandle(HeapType::DSV, index);
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = {}; // DSVはGPUハンドル不要
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = {};
 
-	// 生成できたとログを出力
 	Logger::Log(Logger::GetStream(), std::format("Allocated DSV at index: {}\n", index));
 	return DescriptorHandle(cpuHandle, gpuHandle, index);
 }
 
 DescriptorHeapManager::DescriptorHandle DescriptorHeapManager::AllocateSRV() {
 	assert(isInitialized_);
-	///あいているインデックスを探す
 	auto indexOpt = FindAvailableIndex(srvUsedFlags_);
 	if (!indexOpt.has_value()) {
-		// 空きがない場合はログを出力
 		Logger::Log(Logger::GetStream(), "Failed to allocate SRV: No available slots\n");
 		return DescriptorHandle{};
 	}
 
 	uint32_t index = indexOpt.value();
-	srvUsedFlags_[index] = true;//空きが見つかればそこの使用フラグを立てる
+	srvUsedFlags_[index] = true;
 
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCPUHandle(HeapType::SRV, index);
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = GetGPUHandle(HeapType::SRV, index);
-	// 生成できたとログを出力
+
 	Logger::Log(Logger::GetStream(), std::format("Allocated SRV at index: {}\n", index));
 	return DescriptorHandle(cpuHandle, gpuHandle, index);
 }
 
 void DescriptorHeapManager::ReleaseRTV(uint32_t index) {
 	assert(isInitialized_);
-
 	if (!IsValidIndex(HeapType::RTV, index)) {
-		// 無効なインデックスの場合はログを出力
 		Logger::Log(Logger::GetStream(), std::format("Invalid RTV index for release: {}\n", index));
 		return;
 	}
-
 	if (!rtvUsedFlags_[index]) {
-		// 既に解放されている場合は警告を出力
 		Logger::Log(Logger::GetStream(), std::format("Warning: RTV index {} is already released\n", index));
 		return;
 	}
-
-	// 実際の解放処理
 	rtvUsedFlags_[index] = false;
 	Logger::Log(Logger::GetStream(), std::format("Released RTV at index: {}\n", index));
 }
 
 void DescriptorHeapManager::ReleaseDSV(uint32_t index) {
 	assert(isInitialized_);
-
 	if (!IsValidIndex(HeapType::DSV, index)) {
-		// 無効なインデックスの場合はログを出力
 		Logger::Log(Logger::GetStream(), std::format("Invalid DSV index for release: {}\n", index));
 		return;
 	}
-
 	if (!dsvUsedFlags_[index]) {
-		// 既に解放されている場合は警告を出力
 		Logger::Log(Logger::GetStream(), std::format("Warning: DSV index {} is already released\n", index));
 		return;
 	}
-
-	// 実際の解放処理
 	dsvUsedFlags_[index] = false;
 	Logger::Log(Logger::GetStream(), std::format("Released DSV at index: {}\n", index));
 }
 
 void DescriptorHeapManager::ReleaseSRV(uint32_t index) {
 	assert(isInitialized_);
-
-	// 無効なインデックスの場合はログを出力
 	if (!IsValidIndex(HeapType::SRV, index)) {
 		Logger::Log(Logger::GetStream(), std::format("Invalid SRV index for release: {}\n", index));
 		return;
 	}
-
-	// 既に解放されている場合は警告を出力
 	if (!srvUsedFlags_[index]) {
 		Logger::Log(Logger::GetStream(), std::format("Warning: SRV index {} is already released\n", index));
 		return;
 	}
-
-	// 実際の解放処理
 	srvUsedFlags_[index] = false;
 	Logger::Log(Logger::GetStream(), std::format("Released SRV at index: {}\n", index));
 }
 
-
-//																			//
-//						指定したインデックスを予約								//
-//																			//
-
+//=============================================================================
+// 指定したインデックスを予約
+//=============================================================================
 
 std::optional<DescriptorHeapManager::DescriptorHandle> DescriptorHeapManager::ReserveRTV(uint32_t index) {
 	assert(isInitialized_);
-
 	if (!IsValidIndex(HeapType::RTV, index)) {
-		// 無効なインデックスの場合はログを出力
 		Logger::Log(Logger::GetStream(), std::format("Invalid RTV index for reservation: {}\n", index));
 		return std::nullopt;
 	}
-
 	if (rtvUsedFlags_[index]) {
-		// 既に使用中の場合はログを出力
 		Logger::Log(Logger::GetStream(), std::format("RTV index {} is already in use\n", index));
 		return std::nullopt;
 	}
-
-	// 使用フラグを立てる
 	rtvUsedFlags_[index] = true;
-
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCPUHandle(HeapType::RTV, index);
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = {};
-
-	// 予約できたとログを出力
 	Logger::Log(Logger::GetStream(), std::format("Reserved RTV at index: {}\n", index));
 	return DescriptorHandle(cpuHandle, gpuHandle, index);
 }
 
 std::optional<DescriptorHeapManager::DescriptorHandle> DescriptorHeapManager::ReserveDSV(uint32_t index) {
 	assert(isInitialized_);
-
 	if (!IsValidIndex(HeapType::DSV, index)) {
-		// 無効なインデックスの場合はログを出力
 		Logger::Log(Logger::GetStream(), std::format("Invalid DSV index for reservation: {}\n", index));
 		return std::nullopt;
 	}
-
 	if (dsvUsedFlags_[index]) {
-		// 既に使用中の場合はログを出力
 		Logger::Log(Logger::GetStream(), std::format("DSV index {} is already in use\n", index));
 		return std::nullopt;
 	}
-
-	// 使用フラグを立てる
 	dsvUsedFlags_[index] = true;
-
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCPUHandle(HeapType::DSV, index);
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = {};
-
-	// 予約できたとログを出力
 	Logger::Log(Logger::GetStream(), std::format("Reserved DSV at index: {}\n", index));
 	return DescriptorHandle(cpuHandle, gpuHandle, index);
 }
 
 std::optional<DescriptorHeapManager::DescriptorHandle> DescriptorHeapManager::ReserveSRV(uint32_t index) {
 	assert(isInitialized_);
-
 	if (!IsValidIndex(HeapType::SRV, index)) {
 		Logger::Log(Logger::GetStream(), std::format("Invalid SRV index for reservation: {}\n", index));
 		return std::nullopt;
 	}
-
 	if (srvUsedFlags_[index]) {
 		Logger::Log(Logger::GetStream(), std::format("SRV index {} is already in use\n", index));
 		return std::nullopt;
 	}
-
 	srvUsedFlags_[index] = true;
-
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCPUHandle(HeapType::SRV, index);
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = GetGPUHandle(HeapType::SRV, index);
-
 	Logger::Log(Logger::GetStream(), std::format("Reserved SRV at index: {}\n", index));
 	return DescriptorHandle(cpuHandle, gpuHandle, index);
 }
@@ -270,11 +219,9 @@ std::optional<DescriptorHeapManager::DescriptorHandle> DescriptorHeapManager::Re
 
 D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeapManager::GetCPUHandle(HeapType type, uint32_t index) const {
 	assert(isInitialized_);
-
 	D3D12_CPU_DESCRIPTOR_HANDLE handle = {};
 	uint32_t descriptorSize = 0;
 
-	// ヒープの種類に応じてハンドルとサイズを設定
 	switch (type) {
 	case HeapType::RTV:
 		assert(IsValidIndex(type, index));
@@ -296,26 +243,22 @@ D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeapManager::GetCPUHandle(HeapType type, u
 		break;
 	}
 
-	//先頭からインデックス分だけポインタを進める
 	handle.ptr += (descriptorSize * index);
 	return handle;
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeapManager::GetGPUHandle(HeapType type, uint32_t index) const {
 	assert(isInitialized_);
-	assert(type == HeapType::SRV); // GPUハンドルはSRVのみなので違ったらアサ―ト
-
+	assert(type == HeapType::SRV);
 	assert(IsValidIndex(type, index));
 
 	D3D12_GPU_DESCRIPTOR_HANDLE handle = srvHeap_->GetGPUDescriptorHandleForHeapStart();
-	//先頭からインデックス分だけポインタを進める
 	handle.ptr += (srvDescriptorSize_ * index);
 	return handle;
 }
 
 uint32_t DescriptorHeapManager::GetAvailableCount(HeapType type) const {
 	assert(isInitialized_);
-
 	const std::vector<bool>* usedFlags = nullptr;
 	switch (type) {
 	case HeapType::RTV: usedFlags = &rtvUsedFlags_; break;
@@ -335,7 +278,6 @@ uint32_t DescriptorHeapManager::GetAvailableCount(HeapType type) const {
 
 uint32_t DescriptorHeapManager::GetUsedCount(HeapType type) const {
 	assert(isInitialized_);
-
 	const std::vector<bool>* usedFlags = nullptr;
 	uint32_t totalCount = 0;
 
@@ -362,7 +304,6 @@ uint32_t DescriptorHeapManager::GetUsedCount(HeapType type) const {
 
 bool DescriptorHeapManager::IsIndexUsed(HeapType type, uint32_t index) const {
 	assert(isInitialized_);
-
 	if (!IsValidIndex(type, index)) {
 		return false;
 	}
@@ -373,6 +314,256 @@ bool DescriptorHeapManager::IsIndexUsed(HeapType type, uint32_t index) const {
 	case HeapType::SRV: return srvUsedFlags_[index];
 	default: assert(false); return false;
 	}
+}
+
+//=============================================================================
+// SRV作成関数（DescriptorViewFactoryへのラッパー）
+//=============================================================================
+
+DescriptorHeapManager::DescriptorHandle DescriptorHeapManager::CreateSRVForTexture2D(
+	ID3D12Resource* resource,
+	DXGI_FORMAT format,
+	uint32_t mipLevels) {
+
+	assert(isInitialized_ && viewFactory_);
+
+	// SRVを割り当て
+	DescriptorHandle handle = AllocateSRV();
+	if (!handle.isValid) {
+		Logger::Log(Logger::GetStream(), "Failed to allocate SRV for Texture2D\n");
+		return DescriptorHandle{};
+	}
+
+	// ViewFactoryでSRVを作成
+	viewFactory_->CreateSRVForTexture2D(resource, handle.cpuHandle, format, mipLevels);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("Created Texture2D SRV at index: {}\n", handle.index));
+	return handle;
+}
+
+std::optional<DescriptorHeapManager::DescriptorHandle> DescriptorHeapManager::CreateSRVForTexture2DAtIndex(
+	ID3D12Resource* resource,
+	DXGI_FORMAT format,
+	uint32_t index,
+	uint32_t mipLevels) {
+
+	assert(isInitialized_ && viewFactory_);
+
+	// 指定インデックスでSRVを予約
+	auto handleOpt = ReserveSRV(index);
+	if (!handleOpt.has_value()) {
+		Logger::Log(Logger::GetStream(),
+			std::format("Failed to reserve SRV at index: {}\n", index));
+		return std::nullopt;
+	}
+
+	DescriptorHandle handle = handleOpt.value();
+
+	// ViewFactoryでSRVを作成
+	viewFactory_->CreateSRVForTexture2D(resource, handle.cpuHandle, format, mipLevels);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("Created Texture2D SRV at reserved index: {}\n", index));
+	return handle;
+}
+
+DescriptorHeapManager::DescriptorHandle DescriptorHeapManager::CreateSRVForTexture3D(
+	ID3D12Resource* resource,
+	DXGI_FORMAT format,
+	uint32_t mipLevels) {
+
+	assert(isInitialized_ && viewFactory_);
+
+	DescriptorHandle handle = AllocateSRV();
+	if (!handle.isValid) {
+		Logger::Log(Logger::GetStream(), "Failed to allocate SRV for Texture3D\n");
+		return DescriptorHandle{};
+	}
+
+	viewFactory_->CreateSRVForTexture3D(resource, handle.cpuHandle, format, mipLevels);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("Created Texture3D SRV at index: {}\n", handle.index));
+	return handle;
+}
+
+DescriptorHeapManager::DescriptorHandle DescriptorHeapManager::CreateSRVForTextureCube(
+	ID3D12Resource* resource,
+	DXGI_FORMAT format,
+	uint32_t mipLevels) {
+
+	assert(isInitialized_ && viewFactory_);
+
+	DescriptorHandle handle = AllocateSRV();
+	if (!handle.isValid) {
+		Logger::Log(Logger::GetStream(), "Failed to allocate SRV for TextureCube\n");
+		return DescriptorHandle{};
+	}
+
+	viewFactory_->CreateSRVForTextureCube(resource, handle.cpuHandle, format, mipLevels);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("Created TextureCube SRV at index: {}\n", handle.index));
+	return handle;
+}
+
+DescriptorHeapManager::DescriptorHandle DescriptorHeapManager::CreateSRVForStructuredBuffer(
+	ID3D12Resource* resource,
+	uint32_t numElements,
+	uint32_t structureByteStride) {
+
+	assert(isInitialized_ && viewFactory_);
+
+	DescriptorHandle handle = AllocateSRV();
+	if (!handle.isValid) {
+		Logger::Log(Logger::GetStream(), "Failed to allocate SRV for StructuredBuffer\n");
+		return DescriptorHandle{};
+	}
+
+	viewFactory_->CreateSRVForStructuredBuffer(
+		resource, handle.cpuHandle, numElements, structureByteStride);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("Created StructuredBuffer SRV at index: {}\n", handle.index));
+	return handle;
+}
+
+std::optional<DescriptorHeapManager::DescriptorHandle> DescriptorHeapManager::CreateSRVForStructuredBufferAtIndex(
+	ID3D12Resource* resource,
+	uint32_t numElements,
+	uint32_t structureByteStride,
+	uint32_t index) {
+
+	assert(isInitialized_ && viewFactory_);
+
+	auto handleOpt = ReserveSRV(index);
+	if (!handleOpt.has_value()) {
+		Logger::Log(Logger::GetStream(),
+			std::format("Failed to reserve SRV at index: {}\n", index));
+		return std::nullopt;
+	}
+
+	DescriptorHandle handle = handleOpt.value();
+
+	viewFactory_->CreateSRVForStructuredBuffer(
+		resource, handle.cpuHandle, numElements, structureByteStride);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("Created StructuredBuffer SRV at reserved index: {}\n", index));
+	return handle;
+}
+
+DescriptorHeapManager::DescriptorHandle DescriptorHeapManager::CreateSRVForRawBuffer(
+	ID3D12Resource* resource,
+	uint32_t numElements) {
+
+	assert(isInitialized_ && viewFactory_);
+
+	DescriptorHandle handle = AllocateSRV();
+	if (!handle.isValid) {
+		Logger::Log(Logger::GetStream(), "Failed to allocate SRV for RawBuffer\n");
+		return DescriptorHandle{};
+	}
+
+	viewFactory_->CreateSRVForRawBuffer(resource, handle.cpuHandle, numElements);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("Created RawBuffer SRV at index: {}\n", handle.index));
+	return handle;
+}
+
+DescriptorHeapManager::DescriptorHandle DescriptorHeapManager::CreateSRVForTypedBuffer(
+	ID3D12Resource* resource,
+	DXGI_FORMAT format,
+	uint32_t numElements) {
+
+	assert(isInitialized_ && viewFactory_);
+
+	DescriptorHandle handle = AllocateSRV();
+	if (!handle.isValid) {
+		Logger::Log(Logger::GetStream(), "Failed to allocate SRV for TypedBuffer\n");
+		return DescriptorHandle{};
+	}
+
+	viewFactory_->CreateSRVForTypedBuffer(resource, handle.cpuHandle, format, numElements);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("Created TypedBuffer SRV at index: {}\n", handle.index));
+	return handle;
+}
+
+void DescriptorHeapManager::CreateSRVForTexture2DWithHandle(
+	const DescriptorHandle& handle,
+	ID3D12Resource* resource,
+	DXGI_FORMAT format,
+	uint32_t mipLevels) {
+
+	assert(isInitialized_ && viewFactory_);
+	assert(handle.isValid);
+
+	viewFactory_->CreateSRVForTexture2D(resource, handle.cpuHandle, format, mipLevels);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("Created Texture2D SRV with existing handle at index: {}\n", handle.index));
+}
+
+void DescriptorHeapManager::CreateSRVForStructuredBufferWithHandle(
+	const DescriptorHandle& handle,
+	ID3D12Resource* resource,
+	uint32_t numElements,
+	uint32_t structureByteStride) {
+
+	assert(isInitialized_ && viewFactory_);
+	assert(handle.isValid);
+
+	viewFactory_->CreateSRVForStructuredBuffer(
+		resource, handle.cpuHandle, numElements, structureByteStride);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("Created StructuredBuffer SRV with existing handle at index: {}\n", handle.index));
+}
+
+//=============================================================================
+// RTV/DSV作成関数（DescriptorViewFactoryへのラッパー）
+//=============================================================================
+
+DescriptorHeapManager::DescriptorHandle DescriptorHeapManager::CreateRTVForTexture2D(
+	ID3D12Resource* resource,
+	DXGI_FORMAT format) {
+
+	assert(isInitialized_ && viewFactory_);
+
+	DescriptorHandle handle = AllocateRTV();
+	if (!handle.isValid) {
+		Logger::Log(Logger::GetStream(), "Failed to allocate RTV for Texture2D\n");
+		return DescriptorHandle{};
+	}
+
+	viewFactory_->CreateRTVForTexture2D(resource, handle.cpuHandle, format);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("Created Texture2D RTV at index: {}\n", handle.index));
+	return handle;
+}
+
+DescriptorHeapManager::DescriptorHandle DescriptorHeapManager::CreateDSVForTexture2D(
+	ID3D12Resource* resource,
+	DXGI_FORMAT format) {
+
+	assert(isInitialized_ && viewFactory_);
+
+	DescriptorHandle handle = AllocateDSV();
+	if (!handle.isValid) {
+		Logger::Log(Logger::GetStream(), "Failed to allocate DSV for Texture2D\n");
+		return DescriptorHandle{};
+	}
+
+	viewFactory_->CreateDSVForTexture2D(resource, handle.cpuHandle, format);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("Created Texture2D DSV at index: {}\n", handle.index));
+	return handle;
 }
 
 //=============================================================================
@@ -407,11 +598,9 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DescriptorHeapManager::CreateDescri
 }
 
 std::optional<uint32_t> DescriptorHeapManager::FindAvailableIndex(const std::vector<bool>& usedFlags) const {
-
-	// 空いているインデックスを先頭から走査する
 	for (size_t i = 0; i < usedFlags.size(); ++i) {
 		if (!usedFlags[i]) {
-			return static_cast<uint32_t>(i);// 空いているインデックスを返す
+			return static_cast<uint32_t>(i);
 		}
 	}
 	return std::nullopt;

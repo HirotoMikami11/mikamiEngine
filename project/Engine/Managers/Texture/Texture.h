@@ -116,10 +116,4 @@ private:
 		const Microsoft::WRL::ComPtr<ID3D12Device>& device,
 		const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList);
 
-	/// <summary>
-	/// SRVを作成する
-	/// </summary>
-	void CreateSRV(
-		const Microsoft::WRL::ComPtr<ID3D12Device>& device,
-		D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle);
 };

@@ -334,115 +334,68 @@ void OffscreenRenderer::CreateDepthStencilTexture() {
 
 void OffscreenRenderer::CreateRTV() {
 	auto descriptorManager = dxCommon_->GetDescriptorManager();
-	if (!descriptorManager) {
-		Logger::Log(Logger::GetStream(), "DescriptorManager is null\n");
-		return;
-	}
 
-	// RTVを割り当て
-	rtvHandle_ = descriptorManager->AllocateRTV();
-	if (!rtvHandle_.isValid) {
-		Logger::Log(Logger::GetStream(), "Failed to allocate RTV for offscreen renderer\n");
-		return;
-	}
-
-	// RTV作成
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
-	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-
-	dxCommon_->GetDevice()->CreateRenderTargetView(
+	// RTV作成（割り当て + ビュー作成を実行）
+	rtvHandle_ = descriptorManager->CreateRTVForTexture2D(
 		renderTargetTexture_.Get(),
-		&rtvDesc,
-		rtvHandle_.cpuHandle);
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB
+	);
 
-	Logger::Log(Logger::GetStream(), std::format("Complete create offscreen RTV (Index: {})!!\n", rtvHandle_.index));
+	if (!rtvHandle_.isValid) {
+		Logger::Log(Logger::GetStream(), "Failed to create RTV for OffscreenRenderer\n");
+		assert(false && "RTV creation failed");
+	}
 }
 
 void OffscreenRenderer::CreateDSV() {
 	auto descriptorManager = dxCommon_->GetDescriptorManager();
-	if (!descriptorManager) {
-		Logger::Log(Logger::GetStream(), "DescriptorManager is null\n");
-		return;
-	}
 
-	// DSVを割り当て
-	dsvHandle_ = descriptorManager->AllocateDSV();
-	if (!dsvHandle_.isValid) {
-		Logger::Log(Logger::GetStream(), "Failed to allocate DSV for offscreen renderer\n");
-		return;
-	}
-
-	// DSV作成
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;  // DSV用フォーマット
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-
-	dxCommon_->GetDevice()->CreateDepthStencilView(
+	// DSV作成（割り当て + ビュー作成を実行）
+	dsvHandle_ = descriptorManager->CreateDSVForTexture2D(
 		depthStencilTexture_.Get(),
-		&dsvDesc,
-		dsvHandle_.cpuHandle);
+		DXGI_FORMAT_D24_UNORM_S8_UINT
+	);
 
-	Logger::Log(Logger::GetStream(), std::format("Complete create offscreen DSV (Index: {})!!\n", dsvHandle_.index));
+	if (!dsvHandle_.isValid) {
+		Logger::Log(Logger::GetStream(), "Failed to create DSV for OffscreenRenderer\n");
+		assert(false && "DSV creation failed");
+	}
 }
 
 void OffscreenRenderer::CreateSRV() {
 	auto descriptorManager = dxCommon_->GetDescriptorManager();
-	if (!descriptorManager) {
-		Logger::Log(Logger::GetStream(), "DescriptorManager is null\n");
-		return;
-	}
 
-	// SRVを割り当て
-	srvHandle_ = descriptorManager->AllocateSRV();
-	if (!srvHandle_.isValid) {
-		Logger::Log(Logger::GetStream(), "Failed to allocate SRV for offscreen renderer\n");
-		return;
-	}
-
-	// SRV作成
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
-
-	dxCommon_->GetDevice()->CreateShaderResourceView(
+	// SRV作成（割り当て + ビュー作成を実行）
+	srvHandle_ = descriptorManager->CreateSRVForTexture2D(
 		renderTargetTexture_.Get(),
-		&srvDesc,
-		srvHandle_.cpuHandle);
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+		1									// mipLevels
+	);
 
-	Logger::Log(Logger::GetStream(), std::format("Complete create offscreen SRV (Index: {})!!\n", srvHandle_.index));
+	if (!srvHandle_.isValid) {
+		Logger::Log(Logger::GetStream(), "Failed to create SRV for OffscreenRenderer\n");
+		assert(false && "SRV creation failed");
+	}
 }
 
 void OffscreenRenderer::CreateDepthSRV() {
 	auto descriptorManager = dxCommon_->GetDescriptorManager();
-	if (!descriptorManager) {
-		Logger::Log(Logger::GetStream(), "DescriptorManager is null\n");
-		return;
-	}
 
-	// 深度用SRVを割り当て
-	depthSrvHandle_ = descriptorManager->AllocateSRV();
-	if (!depthSrvHandle_.isValid) {
-		Logger::Log(Logger::GetStream(), "Failed to allocate depth SRV for offscreen renderer\n");
-		return;
-	}
-
-	// 深度用SRV作成
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;  // 深度読み取り用フォーマット
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
-
-	dxCommon_->GetDevice()->CreateShaderResourceView(
+	// 深度テクスチャ用のSRV作成
+	// 深度テクスチャは特殊なフォーマットを使用
+	depthSrvHandle_ = descriptorManager->CreateSRVForTexture2D(
 		depthStencilTexture_.Get(),
-		&srvDesc,
-		depthSrvHandle_.cpuHandle);
+		DXGI_FORMAT_R24_UNORM_X8_TYPELESS,	// 深度用のSRVフォーマット
+		1									// mipLevels
+	);
 
-	Logger::Log(Logger::GetStream(), std::format("Complete create offscreen depth SRV (Index: {})!!\n", depthSrvHandle_.index));
+	if (!depthSrvHandle_.isValid) {
+		Logger::Log(Logger::GetStream(), "Failed to create depth SRV for OffscreenRenderer\n");
+		assert(false && "Depth SRV creation failed");
+	}
 }
+
+
 void OffscreenRenderer::CreatePSO() {
 	// RootSignatureを構築
 	RootSignatureBuilder rsBuilder;

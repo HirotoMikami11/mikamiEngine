@@ -139,6 +139,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.cpp" />
     <ClCompile Include="Engine\Objects\Particle\Field\BaseField.cpp" />
     <ClCompile Include="Engine\Objects\Particle\Field\AccelerationField.cpp" />
     <ClCompile Include="Application\Scene\DebugScene.cpp" />
@@ -288,6 +289,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.h" />
     <ClInclude Include="Engine\Objects\Particle\Field\BaseField.h" />
     <ClInclude Include="Engine\Objects\Particle\Field\AccelerationField.h" />
     <ClInclude Include="Application\Scene\DebugScene.h" />

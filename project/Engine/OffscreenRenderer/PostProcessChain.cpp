@@ -244,21 +244,19 @@ void PostProcessChain::CreateIntermediateSRVs() {
 	auto descriptorManager = dxCommon_->GetDescriptorManager();
 
 	for (int i = 0; i < 2; ++i) {
-		// SRVを割り当て
-		intermediateSRVHandles_[i] = descriptorManager->AllocateSRV();
-		assert(intermediateSRVHandles_[i].isValid);
-
-		// SRV作成
-		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-		srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MipLevels = 1;
-
-		dxCommon_->GetDevice()->CreateShaderResourceView(
+		// SRV作成（割り当て + ビュー作成を実行）
+		intermediateSRVHandles_[i] = descriptorManager->CreateSRVForTexture2D(
 			intermediateBuffers_[i].Get(),
-			&srvDesc,
-			intermediateSRVHandles_[i].cpuHandle);
+			DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+			1  // mipLevels
+		);
+
+		// エラーチェック
+		if (!intermediateSRVHandles_[i].isValid) {
+			Logger::Log(Logger::GetStream(),
+				std::format("Failed to create intermediate SRV {} for PostProcessChain\n", i));
+			assert(false && "SRV creation failed");
+		}
 	}
 
 	Logger::Log(Logger::GetStream(), "Created intermediate SRVs for PostProcessChain.\n");
@@ -268,19 +266,18 @@ void PostProcessChain::CreateIntermediateRTVs() {
 	auto descriptorManager = dxCommon_->GetDescriptorManager();
 
 	for (int i = 0; i < 2; ++i) {
-		// RTVを割り当て
-		intermediateRTVHandles_[i] = descriptorManager->AllocateRTV();
-		assert(intermediateRTVHandles_[i].isValid);
-
-		// RTV作成
-		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
-		rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-
-		dxCommon_->GetDevice()->CreateRenderTargetView(
+		// RTV作成（割り当て + ビュー作成を実行）
+		intermediateRTVHandles_[i] = descriptorManager->CreateRTVForTexture2D(
 			intermediateBuffers_[i].Get(),
-			&rtvDesc,
-			intermediateRTVHandles_[i].cpuHandle);
+			DXGI_FORMAT_R8G8B8A8_UNORM_SRGB
+		);
+
+		// エラーチェック
+		if (!intermediateRTVHandles_[i].isValid) {
+			Logger::Log(Logger::GetStream(),
+				std::format("Failed to create intermediate RTV {} for PostProcessChain\n", i));
+			assert(false && "RTV creation failed");
+		}
 	}
 
 	Logger::Log(Logger::GetStream(), "Created intermediate RTVs for PostProcessChain.\n");

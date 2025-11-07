@@ -11,6 +11,7 @@ void TransformParticle::Initialize(DirectXCommon* dxCommon)
 
 	// デフォルト設定で初期化
 	SetDefaultTransform();
+
 	// SRVの作成
 	MakeStructuredBufferSRV(dxCommon);
 }
@@ -19,7 +20,6 @@ void TransformParticle::UpdateMatrix(const Matrix4x4& viewProjectionMatrix)
 {
 	for (size_t index = 0; index < kNumInstance; ++index)
 	{
-
 		transformData_[index].World = MakeAffineMatrix(
 			transform_[index].scale,
 			transform_[index].rotate,
@@ -37,32 +37,27 @@ void TransformParticle::UpdateMatrix(const Matrix4x4& viewProjectionMatrix)
 	}
 }
 
-
 void TransformParticle::MakeStructuredBufferSRV(DirectXCommon* dxCommon)
 {
+	auto descriptorManager = dxCommon->GetDescriptorManager();
 
+	// 構造化バッファ用のSRVを作成
+	srvHandle = descriptorManager->CreateSRVForStructuredBuffer(
+		transformResource_.Get(),
+		kNumInstance,
+		sizeof(TransformationMatrix)
+	);
 
-	///textureとSRVの設定が異なる
-	// SRV設定
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	srvDesc.Buffer.FirstElement = 0;
-	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	srvDesc.Buffer.NumElements = kNumInstance;
-	srvDesc.Buffer.StructureByteStride = sizeof(TransformationMatrix); //構造化バッファの1要素分のサイズ
+	// エラーチェック
+	if (!srvHandle.isValid) {
+		Logger::Log(Logger::GetStream(), "Failed to create SRV for TransformParticle\n");
+		assert(false && "SRV creation failed");
+	}
 
-	srvHandle = dxCommon->GetDescriptorManager()->AllocateSRV();
-	// SRVの生成
-	dxCommon->GetDevice()->CreateShaderResourceView(transformResource_.Get(), &srvDesc, srvHandle.cpuHandle);
 }
 
-
 void TransformParticle::SetDefaultTransform() {
-
 	// デフォルト値に設定
-
 	for (size_t index = 0; index < kNumInstance; ++index)
 	{
 		// GPU側のデータも単位行列で初期化
@@ -71,10 +66,7 @@ void TransformParticle::SetDefaultTransform() {
 		transform_[index].scale = { 1.0f, 1.0f, 1.0f };
 		transform_[index].rotate = { 0.0f, 0.0f, 0.0f };
 		transform_[index].translate = { index * 0.1f, index * -0.1f, index * 0.1f };
-
 	}
-
-
 }
 
 void TransformParticle::AddPosition(const Vector3& Position)
@@ -85,7 +77,6 @@ void TransformParticle::AddPosition(const Vector3& Position)
 		transform_[index].translate.y += Position.y;
 		transform_[index].translate.z += Position.z;
 	}
-
 }
 
 void TransformParticle::AddRotation(const Vector3& rotation)
@@ -96,8 +87,6 @@ void TransformParticle::AddRotation(const Vector3& rotation)
 		transform_[index].rotate.y += rotation.y;
 		transform_[index].rotate.z += rotation.z;
 	}
-
-
 }
 
 void TransformParticle::AddScale(const Vector3& Scale)
@@ -108,5 +97,4 @@ void TransformParticle::AddScale(const Vector3& Scale)
 		transform_[index].scale.y += Scale.y;
 		transform_[index].scale.z += Scale.z;
 	}
-
 }
