@@ -204,7 +204,7 @@
     <ClCompile Include="Engine\Core\WinApp\WinApp.cpp">
       <Filter>Engine\BaseSystem\WinApp</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\DirectXCommon\DescriptorHeapManager.cpp">
+    <ClCompile Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorHeapManager.cpp">
       <Filter>Engine\BaseSystem\DirectXCommon</Filter>
     </ClCompile>
     <ClCompile Include="Engine\OffscreenRenderer\OffscreenRenderer.cpp">
@@ -466,7 +466,7 @@
     <ClInclude Include="Engine\Core\GraphicsConfig.h">
       <Filter>Engine\BaseSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager.h">
+    <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorHeapManager.h">
       <Filter>Engine\BaseSystem\DirectXCommon</Filter>
     </ClInclude>
     <ClInclude Include="Engine\OffscreenRenderer\OffscreenRenderer.h">
