@@ -33,10 +33,10 @@ void DebugCamera::Update() {
 	HandleDebugInput();
 
 	if (enableCameraControl_) {
-		HandlePivotRotation();      // 中クリックでピボット回転
-		HandleCameraMovement();     // Shift+ 中クリックで移動
-		HandleZoom();               // Shift+ マウスホイールでズーム
-		HandleKeyboardMovement();   // キーボードでの移動
+		HandlePivotRotation();		// 中クリックでピボット回転
+		HandleCameraMovement();		// Shift+ 中クリックで移動
+		HandleZoom();				// Shift+ マウスホイールでズーム
+		HandleKeyboardMovement();	// キーボードでの移動
 	}
 
 	// デカルト座標系の変数を現在の状態に同期
@@ -128,8 +128,8 @@ SphericalCoordinates DebugCamera::CartesianToSpherical(const Vector3& cartesian,
 
 	if (result.radius > 0.0f) {
 		// 距離が0でない場合は角度を計算
-		result.theta = atan2f(relative.z, relative.x);     // 水平角
-		result.phi = acosf(relative.y / result.radius);    // 垂直角
+		result.theta = atan2f(relative.z, relative.x);		// 水平角
+		result.phi = acosf(relative.y / result.radius);		// 垂直角
 	} else {
 		// 距離が0の場合は、角度に意味がないので0.0fに設定しておく
 		result.theta = 0.0f;
@@ -176,8 +176,8 @@ void DebugCamera::HandlePivotRotation() {
 		float deltaPhi = mouseDelta.y * rotationSensitivity_;
 
 		// 球面座標を更新するだけなので、Thetaとphiを加える
-		spherical_.theta -= deltaTheta;     // 水平回転
-		spherical_.phi -= deltaPhi;         // 垂直回転
+		spherical_.theta -= deltaTheta;		// 水平回転
+		spherical_.phi -= deltaPhi;			// 垂直回転
 
 		// 制限
 		spherical_.phi = std::clamp(spherical_.phi, minPhi_, maxPhi_);
@@ -398,7 +398,7 @@ void DebugCamera::ImGui() {
 
 	ImGui::Separator();
 
-	// 移動・操作設定（折りたたみ可能）
+	// 移動・操作設定
 	if (ImGui::CollapsingHeader("Movement & Control Settings", ImGuiTreeNodeFlags_DefaultOpen)) {
 		ImGui::DragFloat("Keyboard Speed", &keyboardSpeed_, 0.01f, 0.01f, 2.0f);
 		ImGui::DragFloat("Mouse Pan Speed", &mousePanSpeed_, 0.001f, 0.001f, 0.1f);

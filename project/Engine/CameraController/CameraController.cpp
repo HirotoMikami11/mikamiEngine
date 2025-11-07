@@ -181,18 +181,6 @@ std::vector<std::string> CameraController::GetRegisteredCameraIds() const {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 void CameraController::ImGui() {
 #ifdef USEIMGUI
 	ImGui::Begin("CameraController");
