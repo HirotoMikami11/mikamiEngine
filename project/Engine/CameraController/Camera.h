@@ -1,6 +1,8 @@
 #pragma once
 #include "BaseCamera.h"
 #include "DirectXCommon.h"
+#include "Structures.h"
+#include <wrl.h>
 
 /// <summary>
 /// 通常カメラ(定点から指定方向を見るカメラ)
@@ -14,9 +16,10 @@ public:
 	/// <summary>
 	/// カメラの初期化
 	/// </summary>
+	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <param name="position">初期位置</param>
 	/// <param name="rotation">初期回転（デフォルト：{0,0,0}）</param>
-	void Initialize(const Vector3& position, const Vector3& rotation = { 0.0f, 0.0f, 0.0f }) override;
+	void Initialize(DirectXCommon* dxCommon, const Vector3& position, const Vector3& rotation = { 0.0f, 0.0f, 0.0f }) override;
 
 	/// <summary>
 	/// カメラの更新
@@ -35,6 +38,7 @@ public:
 	Vector3 GetRotation() const override { return cameraTransform_.rotate; }
 	void SetPosition(const Vector3& position) override { cameraTransform_.translate = position; }
 	std::string GetCameraType() const override { return "Normal"; }
+	ID3D12Resource* GetCameraForGPUResource() const override { return cameraForGPUResource_.Get(); }
 
 	// NormalCamera固有機能
 	// カメラの回転を設定
@@ -52,6 +56,8 @@ public:
 
 
 private:
+	// DirectXCommon参照
+	DirectXCommon* directXCommon_ = nullptr;
 
 	// 3Dカメラ用のトランスフォーム
 	Vector3Transform cameraTransform_;
@@ -77,6 +83,10 @@ private:
 	// スプライト用ビュープロジェクション行列を使用するかどうか
 	bool useSpriteViewProjectionMatrix_;
 
+	// カメラ情報（GPU用）
+	Microsoft::WRL::ComPtr<ID3D12Resource> cameraForGPUResource_;
+	CameraForGPU* cameraForGPUData_ = nullptr;
+
 	/// <summary>
 	/// 指定座標・回転でデフォルト値を設定
 	/// </summary>
@@ -93,4 +103,9 @@ private:
 	/// スプライト用行列の更新
 	/// </summary>
 	void UpdateSpriteMatrix();
+
+	/// <summary>
+	/// カメラ情報（GPU用）を更新
+	/// </summary>
+	void UpdateCameraForGPU();
 };

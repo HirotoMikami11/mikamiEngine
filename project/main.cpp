@@ -86,5 +86,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// エンジンの終了処理(最後)
 	engine->Finalize();
 
+	
 	return 0;
 }

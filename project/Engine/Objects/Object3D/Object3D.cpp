@@ -1,6 +1,7 @@
 #include "Object3D.h"
 #include "Managers/ImGui/ImGuiManager.h"
 #include "Object3DCommon.h"
+#include "CameraController.h"
 
 void Object3D::Initialize(DirectXCommon* dxCommon, const std::string& modelTag, const std::string& textureName) {
 	directXCommon_ = dxCommon;
@@ -41,6 +42,11 @@ void Object3D::Draw(const Light& directionalLight) {
 
 	// ライトを設定
 	commandList->SetGraphicsRootConstantBufferView(3, directionalLight.GetResource()->GetGPUVirtualAddress());
+	// カメラを設定
+	ID3D12Resource* cameraResource = CameraController::GetInstance()->GetCameraForGPUResource();
+	if (cameraResource) {
+		commandList->SetGraphicsRootConstantBufferView(4, cameraResource->GetGPUVirtualAddress());
+	}
 
 	// トランスフォームを設定
 	commandList->SetGraphicsRootConstantBufferView(1, transform_.GetResource()->GetGPUVirtualAddress());
@@ -111,7 +117,7 @@ void Object3D::ImGui() {
 						SetAllMaterialsColor(color, lightingMode);
 					}
 
-					const char* lightingModeNames[] = { "None", "Lambert", "Half-Lambert" };
+					const char* lightingModeNames[] = { "None", "Lambert", "Half-Lambert","PhongSpecular"};
 					int currentModeIndex = static_cast<int>(lightingMode);
 					if (ImGui::Combo("Lighting", &currentModeIndex, lightingModeNames, IM_ARRAYSIZE(lightingModeNames))) {
 						LightingMode newMode = static_cast<LightingMode>(currentModeIndex);
@@ -137,7 +143,7 @@ void Object3D::ImGui() {
 					}
 
 					// ライティング設定
-					const char* lightingModeNames[] = { "None", "Lambert", "Half-Lambert" };
+					const char* lightingModeNames[] = { "None", "Lambert", "Half-Lambert","PhongSpecular" };
 					LightingMode currentMode = material.GetLightingMode();
 					int currentModeIndex = static_cast<int>(currentMode);
 					if (ImGui::Combo("Lighting", &currentModeIndex, lightingModeNames, IM_ARRAYSIZE(lightingModeNames))) {

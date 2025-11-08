@@ -182,6 +182,9 @@ void Engine::Finalize() {
 		offscreenRenderer_.reset();
 	}
 
+
+
+
 	// オーディオ終了処理
 	if (audioManager_) {
 		audioManager_->Finalize();
@@ -213,6 +216,8 @@ void Engine::Finalize() {
 		directXCommon_->Finalize();
 		directXCommon_.reset();
 	}
+
+
 
 	// COM終了処理
 	CoUninitialize();

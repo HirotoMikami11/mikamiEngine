@@ -1,4 +1,5 @@
 #include "Material.h"
+
 void Material::Initialize(DirectXCommon* dxCommon) {
 	// マテリアル用のリソースを作成
 	materialResource_ = CreateBufferResource(dxCommon->GetDevice(), sizeof(MaterialData));
@@ -14,9 +15,10 @@ void Material::SetDefaultSettings() {
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	lightingMode_ = LightingMode::None;
 	materialData_->enableLighting = false;
-	materialData_->useLambertianReflectance = false;
-	materialData_->padding[0] = 0.0f;
-	materialData_->padding[1] = 0.0f;
+	materialData_->lightingMode = 0;
+	shininess_ = 30.0f;
+	materialData_->shininess = shininess_;
+	materialData_->padding = 0.0f;
 	materialData_->uvTransform = MakeIdentity4x4();
 }
 
@@ -25,32 +27,36 @@ void Material::SetLitObjectSettings() {
 	// ライティング有効、白色、UV変換は単位行列
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	SetLightingMode(LightingMode::HalfLambert);
-	materialData_->padding[0] = 0.0f;
-	materialData_->padding[1] = 0.0f;
+	shininess_ = 30.0f;
+	materialData_->shininess = shininess_;
+	materialData_->padding = 0.0f;
 	materialData_->uvTransform = MakeIdentity4x4();
 }
 
 void Material::SetLightingMode(LightingMode mode) {
 	// ライティングモードを設定
 	lightingMode_ = mode;
+	materialData_->lightingMode = static_cast<int32_t>(mode);
 
 	switch (mode) {
 		//ライティングなし
 	case LightingMode::None:
 		materialData_->enableLighting = false;
-		materialData_->useLambertianReflectance = false;
 		break;
 
 		// ランバート反射
 	case LightingMode::Lambert:
 		materialData_->enableLighting = true;
-		materialData_->useLambertianReflectance = true;
 		break;
 
 		// ハーフランバート反射
 	case LightingMode::HalfLambert:
 		materialData_->enableLighting = true;
-		materialData_->useLambertianReflectance = false;
+		break;
+
+		// Phong鏡面反射
+	case LightingMode::PhongSpecular:
+		materialData_->enableLighting = true;
 		break;
 	}
 }
@@ -65,6 +71,7 @@ void Material::UpdateUVTransform() {
 void Material::CopyFrom(const Material& source) {
 	SetColor(source.GetColor());
 	SetLightingMode(source.GetLightingMode());
+	SetShininess(source.GetShininess());
 	SetUVTransformScale(source.GetUVTransformScale());
 	SetUVTransformRotateZ(source.GetUVTransformRotateZ());
 	SetUVTransformTranslate(source.GetUVTransformTranslate());

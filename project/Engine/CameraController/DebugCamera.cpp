@@ -19,14 +19,29 @@ DebugCamera::DebugCamera()
 	, input_(nullptr) {
 }
 
-DebugCamera::~DebugCamera() = default;
+DebugCamera::~DebugCamera() {
+	// CameraForGPUリソースをUnmap
+	if (cameraForGPUResource_ && cameraForGPUData_) {
+		cameraForGPUResource_->Unmap(0, nullptr);
+		cameraForGPUData_ = nullptr;
+	}
+}
+void DebugCamera::Initialize(DirectXCommon* dxCommon, const Vector3& position, const Vector3& rotation) {
+	// DirectXCommonを保存
+	directXCommon_ = dxCommon;
 
-void DebugCamera::Initialize(const Vector3& position, const Vector3& rotation) {
 	input_ = Input::GetInstance();
 	// 初期値を保存
 	initialPosition_ = position;
 	initialRotation_ = rotation;
 	SetDefaultCamera(position, rotation);
+
+	// CameraForGPU用のリソースを作成
+	cameraForGPUResource_ = CreateBufferResource(directXCommon_->GetDevice(), sizeof(CameraForGPU));
+	cameraForGPUResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPUData_));
+
+	// 初期化
+	UpdateCameraForGPU();
 }
 
 void DebugCamera::Update() {
@@ -45,6 +60,8 @@ void DebugCamera::Update() {
 
 	// 行列の更新
 	UpdateMatrix();
+	// カメラ情報（GPU用）を更新
+	UpdateCameraForGPU();
 }
 
 Matrix4x4 DebugCamera::GetSpriteViewProjectionMatrix() const {
@@ -333,6 +350,13 @@ Vector3 DebugCamera::GetCameraUp() const {
 	// +Y方向のローカルベクトルをワールド方向に変換
 	Vector3 localUp = { 0.0f, 1.0f, 0.0f };
 	return TransformDirection(localUp, cameraMatrix);
+}
+
+void DebugCamera::UpdateCameraForGPU() {
+	if (cameraForGPUData_) {
+		cameraForGPUData_->worldPosition = cameraTransform_.translate;
+		cameraForGPUData_->padding = 0.0f;
+	}
 }
 
 void DebugCamera::ImGui() {

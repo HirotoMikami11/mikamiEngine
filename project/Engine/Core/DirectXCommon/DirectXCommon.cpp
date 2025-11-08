@@ -129,7 +129,7 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 
 	// パーティクル用のPSO
 	MakeParticlePSO();
-	
+
 	///*-----------------------------------------------------------------------*///
 	//																			//
 	///							ViewportとScissor							   ///
@@ -139,9 +139,13 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 }
 
 void DirectXCommon::Finalize() {
+
+
 	if (descriptorManager_) {
 		descriptorManager_->Finalize();
 	}
+
+
 }
 
 ///*-----------------------------------------------------------------------*///
@@ -442,6 +446,7 @@ void DirectXCommon::MakePSO() {
 		.AddCBV(0, D3D12_SHADER_VISIBILITY_VERTEX)			// Transform (b0)
 		.AddSRV(0, 1, D3D12_SHADER_VISIBILITY_PIXEL)		// Texture (t0)
 		.AddCBV(1, D3D12_SHADER_VISIBILITY_PIXEL)			// DirectionalLight (b1)
+		.AddCBV(2, D3D12_SHADER_VISIBILITY_PIXEL)			// Camera (b2)
 		.AddStaticSampler(0);								// Sampler (s0)
 
 	// PSO設定を構築（プリセット使用）
