@@ -14,6 +14,15 @@ void CameraController::Initialize(DirectXCommon* dxCommon, const Vector3& positi
 	SetActiveCamera("normal");
 }
 
+void CameraController::Finalize() {
+	// 全てのカメラを破棄してリソース解放
+	registeredCameras_.clear();
+
+	// アクティブカメラIDをリセット
+	activeCameraId_ = "normal";
+	lastActiveCameraId_ = "normal";
+}
+
 void CameraController::RegisterBuiltInCameras(DirectXCommon* dxCommon, const Vector3& initialPosition, const Vector3& initialRotation) {
 	// カメラを登録
 	auto normalCamera = std::make_unique<NormalCamera>();

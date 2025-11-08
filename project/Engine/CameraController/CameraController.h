@@ -26,6 +26,11 @@ public:
 	void Initialize(DirectXCommon* dxCommon, const Vector3& position, const Vector3& rotation = { 0.0f, 0.0f, 0.0f });
 
 	/// <summary>
+	/// 終了処理（全カメラのリソース解放）
+	/// </summary>
+	void Finalize();
+
+	/// <summary>
 	/// 全カメラの更新処理
 	/// </summary>
 	void Update();

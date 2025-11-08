@@ -107,7 +107,7 @@ void Engine::LoadDefaultResources() {
 	modelManager_->LoadPrimitive(MeshType::TRIANGLE, "triangle");
 	modelManager_->LoadPrimitive(MeshType::PLANE, "plane");
 
-	
+
 }
 
 void Engine::Update() {
@@ -182,8 +182,10 @@ void Engine::Finalize() {
 		offscreenRenderer_.reset();
 	}
 
-
-
+	// カメラコントローラー終了処理
+	if (cameraController_) {
+		cameraController_->Finalize();
+	}
 
 	// オーディオ終了処理
 	if (audioManager_) {
@@ -248,7 +250,7 @@ void Engine::ImGui() {
 	///
 	/// カメラコントローラーのデバッグUI
 	///
-	
+
 	///個別のウィンドウに表示
 	if (cameraController_) {
 		//カメラコントローラーのアップデートがないとエラー
