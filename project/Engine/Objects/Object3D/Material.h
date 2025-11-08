@@ -60,7 +60,7 @@ public:
 	// Getter
 	Vector4 GetColor() const { return materialData_->color; }
 	LightingMode GetLightingMode() const { return lightingMode_; }
-	float GetShininess() const { return shininess_; }
+	float GetShininess() const { return  materialData_->shininess; }
 	Matrix4x4 GetUVTransform() const { return materialData_->uvTransform; }
 	Vector2 GetUVTransformScale() const { return uvScale_; }
 	float GetUVTransformRotateZ() const { return uvRotateZ_; }
@@ -71,7 +71,7 @@ public:
 	// Setter
 	void SetColor(const Vector4& color) { materialData_->color = color; }
 	void SetLightingMode(LightingMode mode);
-	void SetShininess(float shininess) { shininess_ = shininess; materialData_->shininess = shininess; }
+	void SetShininess(float shininess) { materialData_->shininess = shininess; }
 	void SetUVTransform(const Matrix4x4& uvTransform) { materialData_->uvTransform = uvTransform; }
 	void SetUVTransformScale(const Vector2& uvScale) { uvScale_ = uvScale; UpdateUVTransform(); }
 	void SetUVTransformRotateZ(float uvRotateZ) { uvRotateZ_ = uvRotateZ; UpdateUVTransform(); }
@@ -85,8 +85,6 @@ private:
 
 	// ライティングモード
 	LightingMode lightingMode_ = LightingMode::None;
-	// 光沢度（鏡面反射の鋭さ）
-	float shininess_ = 30.0f;
 
 	// UVTransformを変更するための変数
 	Vector2 uvTranslate_ = { 0.0f, 0.0f };

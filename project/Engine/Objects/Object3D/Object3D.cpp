@@ -117,7 +117,7 @@ void Object3D::ImGui() {
 						SetAllMaterialsColor(color, lightingMode);
 					}
 
-					const char* lightingModeNames[] = { "None", "Lambert", "Half-Lambert","PhongSpecular"};
+					const char* lightingModeNames[] = { "None", "Lambert", "Half-Lambert","PhongSpecular" };
 					int currentModeIndex = static_cast<int>(lightingMode);
 					if (ImGui::Combo("Lighting", &currentModeIndex, lightingModeNames, IM_ARRAYSIZE(lightingModeNames))) {
 						LightingMode newMode = static_cast<LightingMode>(currentModeIndex);
@@ -149,6 +149,15 @@ void Object3D::ImGui() {
 					if (ImGui::Combo("Lighting", &currentModeIndex, lightingModeNames, IM_ARRAYSIZE(lightingModeNames))) {
 						material.SetLightingMode(static_cast<LightingMode>(currentModeIndex));
 					}
+
+
+					if (currentMode == LightingMode::PhongSpecular) {
+						float shininess = material.GetShininess();
+						if (ImGui::DragFloat("Specular Shininess", &shininess, 0.01f, 0.0f, 100.0f)) {
+							material.SetShininess(shininess);
+						}
+					}
+
 
 					// UV設定
 					Vector2 uvPosition = material.GetUVTransformTranslate();

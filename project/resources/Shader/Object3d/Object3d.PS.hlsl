@@ -81,10 +81,11 @@ PixelShaderOutput main(VertexShaderOutput input)
             float3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
             
             // 反射ベクトルを計算（入射ベクトルを反射）
-            float3 reflectLight = reflect(-lightDir, normal);
+            float3 halfVector = normalize(-gDirectionalLight.direction + toEye);
+            float NDotH = dot(normal, halfVector);
             
             // 鏡面反射の強度を計算
-            float specularPow = pow(saturate(dot(reflectLight, toEye)), gMaterial.shininess);
+            float specularPow = pow(saturate(NDotH), gMaterial.shininess);
             
             // 鏡面反射の色（白色）
             specularColor = float3(1.0f, 1.0f, 1.0f) * specularPow * gDirectionalLight.color.rgb * gDirectionalLight.intensity;

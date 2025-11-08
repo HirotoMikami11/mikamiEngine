@@ -16,8 +16,7 @@ void Material::SetDefaultSettings() {
 	lightingMode_ = LightingMode::None;
 	materialData_->enableLighting = false;
 	materialData_->lightingMode = 0;
-	shininess_ = 30.0f;
-	materialData_->shininess = shininess_;
+	materialData_->shininess = 30.0f;
 	materialData_->padding = 0.0f;
 	materialData_->uvTransform = MakeIdentity4x4();
 }
@@ -27,8 +26,7 @@ void Material::SetLitObjectSettings() {
 	// ライティング有効、白色、UV変換は単位行列
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	SetLightingMode(LightingMode::HalfLambert);
-	shininess_ = 30.0f;
-	materialData_->shininess = shininess_;
+	materialData_->shininess = 30.0f;
 	materialData_->padding = 0.0f;
 	materialData_->uvTransform = MakeIdentity4x4();
 }
