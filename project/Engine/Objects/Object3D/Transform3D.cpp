@@ -24,6 +24,9 @@ void Transform3D::UpdateMatrix(const Matrix4x4& viewProjectionMatrix)
 
 	// ビュープロジェクション行列を掛け算してWVP行列を計算
 	transformData_->WVP = Matrix4x4Multiply(transformData_->World, viewProjectionMatrix);
+
+	// 法線変換用の逆転置行列を計算
+	transformData_->WorldInverseTranspose = Matrix4x4Transpose(Matrix4x4Inverse(transformData_->World));
 }
 
 void Transform3D::SetDefaultTransform() {
@@ -36,6 +39,7 @@ void Transform3D::SetDefaultTransform() {
 	// GPU側のデータも単位行列で初期化
 	transformData_->World = MakeIdentity4x4();
 	transformData_->WVP = MakeIdentity4x4();
+	transformData_->WorldInverseTranspose = MakeIdentity4x4();
 }
 
 void Transform3D::AddPosition(const Vector3& Position)

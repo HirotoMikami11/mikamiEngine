@@ -41,6 +41,7 @@ public:
 
 	Matrix4x4 GetWorldMatrix() const { return transformData_->World; };
 	Matrix4x4 GetWVPMatrix() const { return transformData_->WVP; };
+	Matrix4x4 GetWorldInverseTranspose() const { return transformData_->WorldInverseTranspose; };
 	ID3D12Resource* GetResource() const { return transformResource_.Get(); }
 	///トランスフォームデータの直接取得（ImGui用）
 	TransformationMatrix* GetTransformDataPtr() const { return transformData_; }
