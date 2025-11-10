@@ -1,0 +1,84 @@
+#pragma once
+#include "BaseField.h"
+
+/// <summary>
+/// 重力フィールド
+/// <para>フィールド中心に向かってパーティクルを引き寄せる</para>
+/// <para>中心に到達したパーティクルは削除される</para>
+/// </summary>
+class GravityField : public BaseField
+{
+public:
+	GravityField() = default;
+	~GravityField() override = default;
+
+	/// <summary>
+	/// フィールドの初期化
+	/// </summary>
+	/// <param name="dxCommon">DirectXCommonのポインタ</param>
+	void Initialize(DirectXCommon* dxCommon) override;
+
+	/// <summary>
+	/// パーティクルに効果を適用
+	/// </summary>
+	/// <param name="particle">対象のパーティクル</param>
+	/// <param name="deltaTime">デルタタイム</param>
+	/// <returns>パーティクルが中心に到達した場合true（削除）</returns>
+	bool ApplyEffect(ParticleState& particle, float deltaTime) override;
+
+	/// <summary>
+	/// 指定した点がフィールド内にあるかチェック
+	/// </summary>
+	/// <param name="point">チェックする点の座標</param>
+	/// <returns>範囲内ならtrue</returns>
+	bool IsInField(const Vector3& point) const override;
+
+	/// <summary>
+	/// ImGui用のデバッグ表示
+	/// </summary>
+	void ImGui() override;
+
+	/// <summary>
+	/// フィールドタイプ名
+	/// </summary>
+	const char* GetTypeName() const override { return "Gravity Field"; }
+
+	// 重力設定
+	void SetGravityStrength(float strength) { gravityStrength_ = strength; }
+	float GetGravityStrength() const { return gravityStrength_; }
+
+	// 効果範囲（球体）の設定
+	void SetEffectRadius(float radius) { effectRadius_ = radius; }
+	float GetEffectRadius() const { return effectRadius_; }
+
+	// 削除範囲の設定
+	void SetDeleteRadius(float radius) { deleteRadius_ = radius; }
+	float GetDeleteRadius() const { return deleteRadius_; }
+
+	/// <summary>
+	/// フィールド中心座標を取得（ワールド座標）
+	/// </summary>
+	Vector3 GetCenter() const { return fieldTransform_.GetPosition(); }
+
+protected:
+	/// <summary>
+	/// 球体のデバッグ線を作成
+	/// </summary>
+	void CreateDebugShape() override;
+
+private:
+	/// <summary>
+	/// 円を描画するヘルパー関数
+	/// </summary>
+	/// <param name="center">中心座標</param>
+	/// <param name="radius">半径</param>
+	/// <param name="axis">回転軸（0=YZ平面, 1=XZ平面, 2=XY平面）</param>
+	/// <param name="segments">分割数</param>
+	/// <param name="color">色</param>
+	void DrawCircle(const Vector3& center, float radius, int axis, int segments, const Vector4& color);
+
+	// 重力フィールド固有のパラメータ
+	float gravityStrength_ = 5.0f;		// 重力の強さ
+	float effectRadius_ = 3.0f;			// 効果範囲（球体の半径）
+	float deleteRadius_ = 0.3f;			// 削除範囲（中心からこの距離以下で削除）
+};
