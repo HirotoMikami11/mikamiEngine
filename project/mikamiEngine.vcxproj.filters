@@ -246,7 +246,7 @@
     <ClCompile Include="Engine\Managers\Audio\AudioManager.cpp">
       <Filter>Engine\Managers\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Managers\Scene\DemoScene.cpp">
+    <ClCompile Include="Application\Scene\DemoScene.cpp">
       <Filter>Engine\Managers\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Managers\Scene\SceneManager.cpp">
@@ -517,7 +517,7 @@
     <ClInclude Include="Engine\Managers\Scene\BaseScene.h">
       <Filter>Engine\Managers\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\Scene\DemoScene.h">
+    <ClInclude Include="Application\Scene\DemoScene.h">
       <Filter>Engine\Managers\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Managers\Scene\SceneManager.h">

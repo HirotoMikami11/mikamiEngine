@@ -19,8 +19,6 @@ public:
 	/// </summary>
 	virtual void Initialize() = 0;
 
-
-
 	/// <summary>
 	/// 更新処理
 	/// </summary>

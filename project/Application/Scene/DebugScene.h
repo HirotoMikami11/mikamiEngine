@@ -53,11 +53,9 @@ private:
 	void UpdateGameObjects();
 
 	// ゲームオブジェクト
-	std::unique_ptr<Plane> plane_;
+	std::unique_ptr<Sphere> sphere_;
+	std::unique_ptr<Model3D> terrain_;
 	std::unique_ptr<GridLine> gridLine_;
-
-	// パーティクルシステム
-	ParticleSystem* particleSystem_;
 
 	// ライティング
 	Light directionalLight_;

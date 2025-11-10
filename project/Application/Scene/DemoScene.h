@@ -6,6 +6,7 @@
 #include "Light.h"
 #include "Object3D.h"
 #include "CameraController.h"
+#include "ParticleSystem.h"
 #include "GridLine.h"
 #include "Engine.h"
 #include "DirectXCommon.h"
@@ -63,6 +64,10 @@ private:
 
 	std::unique_ptr<Sprite> sprite_;
 	std::unique_ptr<GridLine> gridLine_;
+
+
+	// パーティクルシステム
+	ParticleSystem* particleSystem_;
 
 	// ライティング
 	Light directionalLight_;

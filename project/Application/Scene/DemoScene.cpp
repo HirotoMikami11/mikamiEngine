@@ -1,10 +1,15 @@
 #include "DemoScene.h"
 #include "Managers/ImGui/ImGuiManager.h" 
 
+///使用するフィールド
+#include "GravityField.h"
+#include "AccelerationField.h"
+
 
 DemoScene::DemoScene()
 	: BaseScene("DemoScene") // シーン名を設定
 	, cameraController_(nullptr)
+	, particleSystem_(nullptr)
 	, directXCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
 	, modelManager_(nullptr)
@@ -24,15 +29,15 @@ void DemoScene::ConfigureOffscreenEffects()
 	offscreenRenderer_->DisableAllEffects();
 
 
-	auto* depthFogEffect = offscreenRenderer_->GetDepthFogEffect();
-	if (depthFogEffect) {
-		depthFogEffect->SetEnabled(true);
-		depthFogEffect->SetFogDistance(0.2f, 40.0f); // 深度フォグの距離を設定
-	}
-	auto* depthOfFieldEffect = offscreenRenderer_->GetDepthOfFieldEffect();
-	if (depthOfFieldEffect) {
-		depthOfFieldEffect->SetEnabled(true);
-	}
+	//auto* depthFogEffect = offscreenRenderer_->GetDepthFogEffect();
+	//if (depthFogEffect) {
+	//	depthFogEffect->SetEnabled(true);
+	//	depthFogEffect->SetFogDistance(0.2f, 40.0f); // 深度フォグの距離を設定
+	//}
+	//auto* depthOfFieldEffect = offscreenRenderer_->GetDepthOfFieldEffect();
+	//if (depthOfFieldEffect) {
+	//	depthOfFieldEffect->SetEnabled(true);
+	//}
 	auto* vignetteEffect = offscreenRenderer_->GetVignetteEffect();
 	if (vignetteEffect) {
 		vignetteEffect->SetEnabled(true);
@@ -51,7 +56,7 @@ void DemoScene::Initialize() {
 	// 座標と回転を指定して初期化
 	Vector3 initialPosition = { 0.0f, 6.8f, -18.0f };
 	Vector3 initialRotation = { 0.4f, 0.0f, 0.0f };
-	cameraController_->Initialize(directXCommon_,initialPosition, initialRotation);
+	cameraController_->Initialize(directXCommon_, initialPosition, initialRotation);
 	cameraController_->SetActiveCamera("normal");
 
 	// ゲームオブジェクト初期化
@@ -131,7 +136,135 @@ void DemoScene::InitializeGameObjects() {
 	);
 	gridLine_->SetName("Main Grid");
 
+	///*-----------------------------------------------------------------------*///
+	///					パーティクルシステムの初期化							///
+	///*-----------------------------------------------------------------------*///
+#pragma region パーティクル
+	// ParticleSystemシングルトンを取得
+	particleSystem_ = ParticleSystem::GetInstance();
+	particleSystem_->Initialize(directXCommon_);
 
+	///パーティクルグループを作成
+
+	//円形パーティクル
+	particleSystem_->CreateGroup(
+		"CircleParticles",	// グループ名
+		"plane",			// モデル
+		400,				// 最大パーティクル数
+		"circle",			// テクスチャ
+		true				// ビルボードON
+	);
+
+	//四角形パーティクル
+	particleSystem_->CreateGroup(
+		"SquareParticles",	// グループ名
+		"plane",			// モデル
+		100,				// 最大パーティクル数
+		"uvChecker",		// テクスチャ
+		true				// ビルボードON
+	);
+
+	///エミッター作成
+
+	//中央
+	ParticleEmitter* centerEmitter = particleSystem_->CreateEmitter(
+		"CenterEmitter",	// エミッター名
+		"CircleParticles"	// ターゲットグループ名
+	);
+	if (centerEmitter) {
+		centerEmitter->GetTransform().SetPosition({ 0.0f, 0.0f, 0.0f });
+		centerEmitter->SetEmitCount(3);
+		centerEmitter->SetFrequency(0.2f);
+		centerEmitter->SetEmitEnabled(true);
+		centerEmitter->SetParticleLifeTimeRange(2.0f, 4.0f);
+		centerEmitter->SetParticleVelocityRange(1.5f);
+		// AABB発生範囲を設定
+		centerEmitter->SetSpawnAreaSize({ 0.5f, 0.5f, 0.5f });	// 1x1x1の範囲
+		// デバッグ表示を有効化
+		centerEmitter->SetShowDebugAABB(true);
+	}
+
+	//左側
+	ParticleEmitter* leftEmitter = particleSystem_->CreateEmitter(
+		"LeftEmitter",		// エミッター名
+		"CircleParticles"	// ターゲットグループ名
+	);
+	if (leftEmitter) {
+		leftEmitter->GetTransform().SetPosition({ -5.0f, 2.0f, 0.0f });
+		leftEmitter->SetEmitCount(5);
+		leftEmitter->SetFrequency(0.5f);
+		leftEmitter->SetEmitEnabled(true);
+		leftEmitter->SetParticleLifeTimeRange(1.0f, 2.5f);
+		leftEmitter->SetParticleVelocityRange(2.0f);
+		// AABB発生範囲を設定（大きめ）
+		leftEmitter->SetSpawnAreaSize({ 1.0f, 1.0f, 1.0f });	// 2x2x2の範囲
+		// デバッグ表示を有効化
+		leftEmitter->SetShowDebugAABB(true);
+	}
+
+	//右側
+	ParticleEmitter* rightEmitter = particleSystem_->CreateEmitter(
+		"RightEmitter",		// エミッター名
+		"SquareParticles"	// ターゲットグループ名
+	);
+	if (rightEmitter) {
+		rightEmitter->GetTransform().SetPosition({ 5.0f, 2.0f, 0.0f });
+		rightEmitter->SetEmitCount(2);
+		rightEmitter->SetFrequency(0.3f);
+		rightEmitter->SetEmitEnabled(true);
+		rightEmitter->SetParticleLifeTimeRange(1.5f, 3.0f);
+		rightEmitter->SetParticleVelocityRange(1.0f);
+		// AABB発生範囲を設定(Y方向に長め設定)
+		AABB customArea;
+		customArea.min = { -0.3f, -0.3f, -0.3f };
+		customArea.max = { 0.3f, 2.0f, 0.3f };
+		rightEmitter->SetSpawnArea(customArea);
+		// デバッグ表示を有効化
+		rightEmitter->SetShowDebugAABB(true);
+		rightEmitter->SetDebugAABBColor({ 0.0f, 0.5f, 1.0f, 1.0f });	// 水色
+	}
+
+	///*-----------------------------------------------------------------------*///
+	///								加速度フィールド							///
+	///*-----------------------------------------------------------------------*///
+
+	// 上昇フィールド（中央）
+	auto* upwardField = particleSystem_->CreateField<AccelerationField>("UpwardField");
+	if (upwardField) {
+		upwardField->GetTransform().SetPosition({ 0.0f, 1.0f, 0.0f });
+		upwardField->SetAcceleration({ 0.0f, 2.0f, 0.0f });  // 上向きの加速度
+		upwardField->SetAreaSize({ 2.0f, 2.0f, 2.0f });  // 4x4x4の範囲
+		upwardField->SetEnabled(true);
+		upwardField->SetShowDebugVisualization(true);
+	}
+
+	// 渦フィールド（左側）
+	auto* vortexField = particleSystem_->CreateField<AccelerationField>("VortexField");
+	if (vortexField) {
+		vortexField->GetTransform().SetPosition({ -5.0f, 3.0f, 0.0f });
+		vortexField->SetAcceleration({ 1.0f, 0.5f, 0.0f });  // 右上向きの加速度
+		vortexField->SetAreaSize({ 1.5f, 1.5f, 1.5f });  // 3x3x3の範囲
+		vortexField->SetEnabled(true);
+		vortexField->SetShowDebugVisualization(true);
+	}
+
+	///*-----------------------------------------------------------------------*///
+	///								重力フィールド									///
+	///*-----------------------------------------------------------------------*///
+
+	// 重力フィールド（右側）
+	auto* gravityField = particleSystem_->CreateField<GravityField>("GravityField");
+	if (gravityField) {
+		gravityField->GetTransform().SetPosition({ 5.0f, 3.0f, 0.0f });
+		gravityField->SetGravityStrength(8.0f);		// 重力の強さ
+		gravityField->SetEffectRadius(4.0f);		// 効果範囲（球体）
+		gravityField->SetDeleteRadius(0.5f);		// 削除範囲
+		gravityField->SetEnabled(true);
+		gravityField->SetShowDebugVisualization(true);
+		gravityField->SetDebugColor({ 1.0f, 0.0f, 1.0f, 1.0f });  // マゼンタ
+	}
+
+#pragma endregion
 
 	///*-----------------------------------------------------------------------*///
 	///								矩形Sprite									///
@@ -176,13 +309,21 @@ void DemoScene::UpdateGameObjects() {
 	modelMultiMaterial_->Update(viewProjectionMatrix);
 	// グリッド線更新
 	gridLine_->Update(viewProjectionMatrix);
+
+	// パーティクルシステムの更新（全グループ・全エミッター）
+	particleSystem_->Update(viewProjectionMatrix, 1.0f / 60.0f);
 }
 
 void DemoScene::DrawOffscreen() {
-	// グリッド線を描画（3D要素）
+
+	///
+	/// グリッド線を描画（3D要素）
+	/// 
 	gridLine_->Draw(viewProjectionMatrix);
 
-	// 3Dゲームオブジェクトの描画（オフスクリーンに描画）
+	///
+	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
+	/// 
 	// 球体の描画
 	sphere_->Draw(directionalLight_);
 	//平面の描画
@@ -191,10 +332,24 @@ void DemoScene::DrawOffscreen() {
 	modelMultiMesh_->Draw(directionalLight_);
 	//マルチマテリアルモデルの描画
 	modelMultiMaterial_->Draw(directionalLight_);
+
+	///
+	/// パーティクル・スプライトの描画（オフスクリーンに描画）
+	/// 
+	// パーティクルシステムの描画（全グループ）
+	particleSystem_->Draw(directionalLight_);
+	particleSystem_->DrawDebug(viewProjectionMatrix);	/// デバッグ描画
 }
 
 void DemoScene::DrawBackBuffer() {
-	// UI(スプライトなど)の描画（オフスクリーン外に描画）
+	///
+	/// 3Dゲームオブジェクトの描画（オフスクリーンの外に描画）
+	///
+
+
+	///
+	/// パーティクル・スプライトの描画（オフスクリーンの外に描画）
+	/// 
 	sprite_->Draw();
 }
 
@@ -227,6 +382,11 @@ void DemoScene::ImGui() {
 	modelMultiMaterial_->ImGui();
 
 	ImGui::Spacing();
+	ImGui::Text("Particle System");
+	// パーティクルシステム（全グループと全エミッターを表示）
+	particleSystem_->ImGui();
+
+	ImGui::Spacing();
 	// ライトのImGui
 	ImGui::Text("Lighting");
 	directionalLight_.ImGui("DirectionalLight");
@@ -237,4 +397,8 @@ void DemoScene::ImGui() {
 
 void DemoScene::Finalize() {
 	// unique_ptrで自動的に解放される
+	// シーン終了時にパーティクルシステムをクリア
+	if (particleSystem_) {
+		particleSystem_->Clear();
+	}
 }

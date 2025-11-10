@@ -2,7 +2,7 @@
 /// 				Scene							///
 #include "Managers/Scene/SceneManager.h"
 //最初から用意されているシーン
-#include "Managers/Scene/DemoScene.h"
+#include "DemoScene.h"
 #include "DebugScene.h"
 
 /// 				Transitions							///

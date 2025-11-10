@@ -67,6 +67,7 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Model/MultiMesh", "multiMesh.obj", "model_MultiMesh", false},
 		{"resources/Model/MultiMaterial", "multiMaterial.obj", "model_MultiMaterial", false},
 		{"resources/Model/Goldfish", "Mesh_Goldfish.obj", "modelfish", false},
+		{"resources/Model/terrain", "terrain.obj", "model_terrain", false},
 
 		// モデルはここに追加
 		// {"resources/Model/NewModel", "newModel.obj", "model_New", false},
@@ -77,9 +78,9 @@ void ResourceLoader::RegisterAllResources() {
 	///*-----------------------------------------------------------------------*///
 	audios_ = {
 		// 音声はここに追加
-		 {"resources/Audio/Alarm01.wav", "Alarm"},
-		 {"resources/Audio/Bgm01.mp3", "BGM"},
-		 {"resources/Audio/Se01.mp3", "SE"},
+		 //{"resources/Audio/Alarm01.wav", "Alarm"},
+		 //{"resources/Audio/Bgm01.mp3", "BGM"},
+		 //{"resources/Audio/Se01.mp3", "SE"},
 	};
 }
 
