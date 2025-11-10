@@ -59,6 +59,7 @@ void Sprite::Initialize(DirectXCommon* dxCommon, const Vector2& center, const Ve
 	};
 	transform_.SetTransform(initialTransform);
 
+
 	// スプライト専用のマテリアルリソースを作成
 	CreateBuffers();
 
