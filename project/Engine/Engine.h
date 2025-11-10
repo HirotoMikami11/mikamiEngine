@@ -10,10 +10,10 @@
 
 ///Managers
 #include "Input.h"
-#include "Managers/Audio/AudioManager.h"
-#include "Managers/Texture/TextureManager.h"
-#include "Managers/Model/ModelManager.h"
-#include "Managers/ImGui/ImGuiManager.h" 
+#include "Audio/AudioManager.h"
+#include "Texture/TextureManager.h"
+#include "Model/ModelManager.h"
+#include "ImGui/ImGuiManager.h" 
 #include "FrameTimer.h"
 #include "OffscreenRenderer.h"
 

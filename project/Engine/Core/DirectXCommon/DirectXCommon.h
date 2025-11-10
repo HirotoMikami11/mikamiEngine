@@ -6,8 +6,8 @@
 #include<dxgi1_6.h>
 #include <dxgidebug.h>
 ///DirectXTex
-#include"../externals/DirectXTex/DirectXTex.h"
-#include"../externals/DirectXTex/d3dx12.h"
+#include"DirectXTex.h"
+#include"d3dx12.h"
 ///DXC
 #include <dxcapi.h>
 #include <chrono>

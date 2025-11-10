@@ -1,5 +1,5 @@
 #include "MyImGui.h"
-#include "../externals/imgui/imgui.h"
+#include "imgui.h"
 
 namespace myImGui {
 
