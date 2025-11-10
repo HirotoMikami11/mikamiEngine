@@ -16,9 +16,10 @@ using namespace MyMath;
 /// ライティングモードの定義
 /// </summary>
 enum class LightingMode {
-	None = 0,		// ライティングなし
-	Lambert = 1,	// ランバート反射
-	HalfLambert = 2	// ハーフランバート反射
+	None = 0,			// ライティングなし
+	Lambert = 1,		// ランバート反射
+	HalfLambert = 2,	// ハーフランバート反射
+	PhongSpecular = 3	// Phong鏡面反射
 };
 
 /// <summary>
@@ -59,6 +60,7 @@ public:
 	// Getter
 	Vector4 GetColor() const { return materialData_->color; }
 	LightingMode GetLightingMode() const { return lightingMode_; }
+	float GetShininess() const { return  materialData_->shininess; }
 	Matrix4x4 GetUVTransform() const { return materialData_->uvTransform; }
 	Vector2 GetUVTransformScale() const { return uvScale_; }
 	float GetUVTransformRotateZ() const { return uvRotateZ_; }
@@ -69,6 +71,7 @@ public:
 	// Setter
 	void SetColor(const Vector4& color) { materialData_->color = color; }
 	void SetLightingMode(LightingMode mode);
+	void SetShininess(float shininess) { materialData_->shininess = shininess; }
 	void SetUVTransform(const Matrix4x4& uvTransform) { materialData_->uvTransform = uvTransform; }
 	void SetUVTransformScale(const Vector2& uvScale) { uvScale_ = uvScale; UpdateUVTransform(); }
 	void SetUVTransformRotateZ(float uvRotateZ) { uvRotateZ_ = uvRotateZ; UpdateUVTransform(); }

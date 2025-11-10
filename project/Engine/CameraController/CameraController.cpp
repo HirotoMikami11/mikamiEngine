@@ -9,20 +9,29 @@ CameraController* CameraController::GetInstance() {
 	return &instance;
 }
 
-void CameraController::Initialize(const Vector3& position, const Vector3& rotation) {
-	RegisterBuiltInCameras(position, rotation);
+void CameraController::Initialize(DirectXCommon* dxCommon, const Vector3& position, const Vector3& rotation) {
+	RegisterBuiltInCameras(dxCommon, position, rotation);
 	SetActiveCamera("normal");
 }
 
-void CameraController::RegisterBuiltInCameras(const Vector3& initialPosition, const Vector3& initialRotation) {
+void CameraController::Finalize() {
+	// 全てのカメラを破棄してリソース解放
+	registeredCameras_.clear();
+
+	// アクティブカメラIDをリセット
+	activeCameraId_ = "normal";
+	lastActiveCameraId_ = "normal";
+}
+
+void CameraController::RegisterBuiltInCameras(DirectXCommon* dxCommon, const Vector3& initialPosition, const Vector3& initialRotation) {
 	// カメラを登録
 	auto normalCamera = std::make_unique<NormalCamera>();
-	normalCamera->Initialize(initialPosition, initialRotation);
+	normalCamera->Initialize(dxCommon, initialPosition, initialRotation);
 	registeredCameras_["normal"] = { std::move(normalCamera), true };
 
 	// Debugカメラを登録
 	auto debugCamera = std::make_unique<DebugCamera>();
-	debugCamera->Initialize(initialPosition, initialRotation);
+	debugCamera->Initialize(dxCommon, initialPosition, initialRotation);
 	registeredCameras_["debug"] = { std::move(debugCamera), true };
 }
 
@@ -159,6 +168,10 @@ Vector3 CameraController::GetForward() const {
 
 	// 正規化して返す
 	return Normalize(forward);
+}
+ID3D12Resource* CameraController::GetCameraForGPUResource() const {
+	BaseCamera* activeCamera = GetActiveCamera();
+	return activeCamera ? activeCamera->GetCameraForGPUResource() : nullptr;
 }
 bool CameraController::IsRegistered(const std::string& cameraId) const {
 	return registeredCameras_.find(cameraId) != registeredCameras_.end();

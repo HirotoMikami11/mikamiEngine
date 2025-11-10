@@ -6,6 +6,7 @@
 
 #include "BaseCamera.h"
 #include "DirectXCommon.h"
+#include "Structures.h"
 #include "Input.h"
 
 /// <summary>
@@ -35,9 +36,10 @@ public:
 	/// <summary>
 	/// カメラの初期化
 	/// </summary>
+	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <param name="position">初期位置</param>
 	/// <param name="rotation">初期回転（デフォルト：{0,0,0}）</param>
-	void Initialize(const Vector3& position, const Vector3& rotation = { 0.0f, 0.0f, 0.0f }) override;
+	void Initialize(DirectXCommon* dxCommon, const Vector3& position, const Vector3& rotation = { 0.0f, 0.0f, 0.0f }) override;
 
 	/// <summary>
 	/// カメラの更新
@@ -48,10 +50,11 @@ public:
 	Matrix4x4 GetViewProjectionMatrix() const override { return viewProjectionMatrix_; }
 	Matrix4x4 GetSpriteViewProjectionMatrix() const override;
 	Vector3 GetPosition() const override { return cameraTransform_.translate; }
-	Vector3 GetRotation() const { return cameraTransform_.rotate; }
+	Vector3 GetRotation() const override { return cameraTransform_.rotate; }
 	const Vector3Transform& GetTransform() const { return cameraTransform_; }
 	Vector3 GetTarget() const { return target_; }
 	std::string GetCameraType() const override { return "Debug"; }
+	ID3D12Resource* GetCameraForGPUResource() const override { return cameraForGPUResource_.Get(); }
 
 
 	void SetPosition(const Vector3& position) override;
@@ -65,6 +68,8 @@ public:
 
 
 private:
+	// DirectXCommon参照
+	DirectXCommon* directXCommon_ = nullptr;
 
 	/// <summary>
 	/// 初期座標・回転を指定してデフォルト値を設定
@@ -144,6 +149,10 @@ private:
 	Vector3 GetCameraRight() const;
 	Vector3 GetCameraUp() const;
 
+	/// <summary>
+	/// カメラ情報（GPU用）を更新
+	/// </summary>
+	void UpdateCameraForGPU();
 
 
 	Vector3Transform cameraTransform_;
@@ -154,6 +163,9 @@ private:
 	Matrix4x4 projectionMatrix_;
 	Matrix4x4 viewProjectionMatrix_;
 
+	// カメラ情報（GPU用）
+	Microsoft::WRL::ComPtr<ID3D12Resource> cameraForGPUResource_;
+	CameraForGPU* cameraForGPUData_ = nullptr;
 
 	Vector3 target_ = { 0.0f, 0.0f, 0.0f };			// ピボットの中心座標
 	SphericalCoordinates spherical_;				// 球面座標系での位置

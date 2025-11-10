@@ -3,24 +3,42 @@
 #include <numbers>
 
 NormalCamera::NormalCamera()
-	: cameraTransform_{}
+	: directXCommon_(nullptr)
+	, cameraTransform_{}
 	, cameraMatrix_{}
 	, viewProjectionMatrix_{}
 	, spriteViewProjectionMatrix_{}
 	, viewMatrix_{}
 	, projectionMatrix_{}
 	, spriteProjectionMatrix_{}
-	, useSpriteViewProjectionMatrix_(true) {
+	, useSpriteViewProjectionMatrix_(true)
+	, cameraForGPUData_(nullptr) {
 }
 
-NormalCamera::~NormalCamera() = default;
+NormalCamera::~NormalCamera() {
+	// CameraForGPUリソースをUnmap
+	if (cameraForGPUResource_ && cameraForGPUData_) {
+		cameraForGPUResource_->Unmap(0, nullptr);
+		cameraForGPUData_ = nullptr;
+	}
+}
 
-void NormalCamera::Initialize(const Vector3& position, const Vector3& rotation) {
+void NormalCamera::Initialize(DirectXCommon* dxCommon, const Vector3& position, const Vector3& rotation) {
+	// DirectXCommonを保存
+	directXCommon_ = dxCommon;
+
 	// 初期値を保存
 	initialPosition_ = position;
 	initialRotation_ = rotation;
 	// 指定座標・回転でデフォルト値を設定
 	SetDefaultCamera(position, rotation);
+
+	// CameraForGPU用のリソースを作成
+	cameraForGPUResource_ = CreateBufferResource(directXCommon_->GetDevice(), sizeof(CameraForGPU));
+	cameraForGPUResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPUData_));
+
+	// 初期化
+	UpdateCameraForGPU();
 }
 
 void NormalCamera::Update() {
@@ -28,6 +46,8 @@ void NormalCamera::Update() {
 	UpdateMatrix();
 	// スプライト用の行列を更新
 	UpdateSpriteMatrix();
+	// カメラ情報（GPU用）を更新
+	UpdateCameraForGPU();
 }
 
 void NormalCamera::SetDefaultCamera(const Vector3& position, const Vector3& rotation) {
@@ -75,6 +95,13 @@ void NormalCamera::UpdateSpriteMatrix() {
 		// スプライト用のビュープロジェクション行列を計算
 		Matrix4x4 spriteViewMatrix = MakeIdentity4x4();
 		spriteViewProjectionMatrix_ = Matrix4x4Multiply(spriteViewMatrix, spriteProjectionMatrix_);
+	}
+}
+
+void NormalCamera::UpdateCameraForGPU() {
+	if (cameraForGPUData_) {
+		cameraForGPUData_->worldPosition = cameraTransform_.translate;
+		cameraForGPUData_->padding = 0.0f;
 	}
 }
 
@@ -127,7 +154,7 @@ void NormalCamera::ImGui() {
 
 	// リセットボタン
 	if (ImGui::Button("Reset Camera")) {
-		SetDefaultCamera(initialPosition_,initialRotation_);
+		SetDefaultCamera(initialPosition_, initialRotation_);
 	}
 #endif
 }

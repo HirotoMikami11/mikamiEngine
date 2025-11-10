@@ -56,7 +56,7 @@ void DebugScene::Initialize() {
 	// 座標と回転を指定して初期化
 	Vector3 initialPosition = { 0.0f, 6.8f, -18.0f };
 	Vector3 initialRotation = { 0.4f, 0.0f, 0.0f };
-	cameraController_->Initialize(initialPosition, initialRotation);
+	cameraController_->Initialize(directXCommon_, initialPosition, initialRotation);
 	cameraController_->SetActiveCamera("normal");
 
 	// ゲームオブジェクト初期化

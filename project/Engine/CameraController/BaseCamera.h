@@ -1,6 +1,10 @@
 #pragma once
 #include "MyFunction.h"
 #include <string>
+#include <d3d12.h>
+
+// 前方宣言
+class DirectXCommon;
 
 /// <summary>
 /// カメラの基底クラス
@@ -15,9 +19,10 @@ public:
 	/// <summary>
 	/// カメラの初期化
 	/// </summary>
+	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <param name="position">初期位置</param>
 	/// <param name="rotation">初期回転（デフォルト：{0,0,0}）</param>
-	virtual void Initialize(const Vector3& position, const Vector3& rotation = { 0.0f, 0.0f, 0.0f }) = 0;
+	virtual void Initialize(DirectXCommon* dxCommon, const Vector3& position, const Vector3& rotation = { 0.0f, 0.0f, 0.0f }) = 0;
 
 	/// <summary>
 	/// カメラの更新
@@ -43,6 +48,9 @@ public:
 
 	// カメラが有効かどうかを取得
 	virtual bool IsActive() const { return true; }
+
+	// カメラ情報のGPUリソースを取得（Phong鏡面反射用）
+	virtual ID3D12Resource* GetCameraForGPUResource() const = 0;
 
 protected:
 

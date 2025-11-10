@@ -23,7 +23,12 @@ public:
 	/// </summary>
 	/// <param name="position">初期位置</param>
 	/// <param name="rotation">初期回転（デフォルト：{0,0,0}）</param>
-	void Initialize(const Vector3& position, const Vector3& rotation = { 0.0f, 0.0f, 0.0f });
+	void Initialize(DirectXCommon* dxCommon, const Vector3& position, const Vector3& rotation = { 0.0f, 0.0f, 0.0f });
+
+	/// <summary>
+	/// 終了処理（全カメラのリソース解放）
+	/// </summary>
+	void Finalize();
 
 	/// <summary>
 	/// 全カメラの更新処理
@@ -110,6 +115,12 @@ public:
 	Vector3 GetForward() const;
 
 
+	/// <summary>
+	/// アクティブカメラのCameraForGPUリソースを取得
+	/// </summary>
+	/// <returns>CameraForGPUリソース</returns>
+	ID3D12Resource* GetCameraForGPUResource() const;
+
 	BaseCamera* GetCamera(const std::string& cameraId) const;
 
 private:
@@ -141,7 +152,7 @@ private:
 	BaseCamera* GetActiveCamera() const;
 
 	// エンジン標準カメラの登録
-	void RegisterBuiltInCameras(const Vector3& initialPosition, const Vector3& initialRotation);
+	void RegisterBuiltInCameras(DirectXCommon* dxCommon, const Vector3& initialPosition, const Vector3& initialRotation);
 
 	//デバッグ入力処理（Shift+TABでの切り替え）
 	void HandleDebugInput();
