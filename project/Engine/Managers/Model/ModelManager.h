@@ -73,6 +73,11 @@ public:
 	/// <returns>モデル数</returns>
 	size_t GetModelCount() const { return models_.size(); }
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ImGui();
+
 private:
 	ModelManager() = default;
 	~ModelManager();

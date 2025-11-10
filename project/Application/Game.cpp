@@ -38,8 +38,6 @@ void Game::InitializeScenes() {
 	 auto debugScene = std::make_unique<DebugScene>();
 	 sceneManager_->RegisterScene("DebugScene", std::move(debugScene));
 
-	// (初期化時に一度だけ)既に登録されているシーンのリソースを読み込み
-	sceneManager_->LoadAllSceneResources();
 	// デフォルトシーンを設定（最初に表示するシーン）
 	sceneManager_->ChangeScene("DebugScene");
 }
@@ -60,7 +58,7 @@ void Game::RegisterTransitionEffects()
 
 void Game::Update() {
 
-	// トランジションマネージャーの更新（エフェクトの更新）
+	// トランジションマネージャーの更新
 	if (transitionManager_) {
 		transitionManager_->Update(1.0f / 60.0f); //時間
 	}
@@ -69,8 +67,6 @@ void Game::Update() {
 	if (sceneManager_) {
 		sceneManager_->Update();
 	}
-
-
 
 	// シーンマネージャーのImGui更新
 	if (sceneManager_) {

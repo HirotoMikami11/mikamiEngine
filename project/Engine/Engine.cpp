@@ -12,8 +12,9 @@ void Engine::Initialize(const std::wstring& title) {
 	InitializeBase(title);
 	// Manager関連の初期化
 	InitializeManagers();
-	//初期化時にリソースを読み込んでおく
-	LoadDefaultResources();
+
+	// ResourceLoader経由で全リソースを読み込み
+	resourceLoader_->LoadAllResources();
 }
 
 void Engine::InitializeBase(const std::wstring& title) {
@@ -30,30 +31,38 @@ void Engine::InitializeBase(const std::wstring& title) {
 }
 
 void Engine::InitializeManagers() {
+
+
 	// 入力マネージャー初期化
 	inputManager_ = Input::GetInstance();
 	inputManager_->Initialize(winApp_.get());
+
+	// FPSタイマー取得
+	frameTimer_ = &FrameTimer::GetInstance();
 
 	// テクスチャマネージャー初期化
 	textureManager_ = TextureManager::GetInstance();
 	textureManager_->Initialize(directXCommon_.get());
 
-	// オーディオマネージャー初期化
-	audioManager_ = AudioManager::GetInstance();
-	audioManager_->Initialize();
-
-	// FPSタイマー取得
-	frameTimer_ = &FrameTimer::GetInstance();
-
 	// モデルマネージャー初期化
 	modelManager_ = ModelManager::GetInstance();
 	modelManager_->Initialize(directXCommon_.get());
 
-	//スプライトの共通部分を初期化
+	// オーディオマネージャー初期化
+	audioManager_ = AudioManager::GetInstance();
+	audioManager_->Initialize();
+
+	// ResourceLoader初期化
+	resourceLoader_ = ResourceLoader::GetInstance();
+	resourceLoader_->Initialize();
+
+	// スプライトの共通部分を初期化
 	SpriteCommon::GetInstance()->Initialize(directXCommon_.get());
-	//オブジェクト3Dの共通部分を初期化
+
+	// オブジェクト3Dの共通部分を初期化
 	Object3DCommon::GetInstance()->Initialize(directXCommon_.get());
-	//パーティクルの共通部分を初期化
+
+	// パーティクルの共通部分を初期化
 	ParticleCommon::GetInstance()->Initialize(directXCommon_.get());
 
 	// カメラコントローラー取得
@@ -66,49 +75,8 @@ void Engine::InitializeManagers() {
 	// オフスクリーンレンダラー初期化
 	offscreenRenderer_ = std::make_unique<OffscreenRenderer>();
 	offscreenRenderer_->Initialize(directXCommon_.get());
-
 }
 
-void Engine::LoadDefaultResources() {
-	///汎用的でエンジン側で先に読み込んでおきたいもののみここで読み込む
-
-	///*-----------------------------------------------------------------------*///
-	///								テクスチャの読み込み							///
-	///*-----------------------------------------------------------------------*///
-	textureManager_->LoadTexture("resources/Texture/uvChecker.png", "uvChecker");
-	textureManager_->LoadTexture("resources/Texture/monsterBall.png", "monsterBall");
-	textureManager_->LoadTexture("resources/Texture/white2x2.png", "white");
-	textureManager_->LoadTexture("resources/Texture/circle.png", "circle");
-
-	///*-----------------------------------------------------------------------*///
-	///								音声データの読み込み							///
-	///*-----------------------------------------------------------------------*///
-
-	////ゲーム開始前に読み込む音声データ
-	//audioManager_->LoadAudio("resources/Audio/Alarm01.wav", "Alarm");
-	//audioManager_->LoadAudio("resources/Audio/Bgm01.mp3", "BGM");
-	//audioManager_->LoadAudio("resources/Audio/Se01.mp3", "SE");
-
-	////tagを利用して再生
-	//audioManager_->Play("Alarm");
-	//audioManager_->SetVolume("Alarm", 0.1f);	
-
-	//audioManager_->PlayLoop("BGM");
-	//audioManager_->SetVolume("BGM", 0.1f);
-
-	//audioManager_->PlayLoop("SE");
-	//audioManager_->SetVolume("SE", 0.1f);
-
-	///*-----------------------------------------------------------------------*///
-	///								モデルデータの読み込み							///
-	///*-----------------------------------------------------------------------*///
-	// プリミティブ事前読み込み
-	modelManager_->LoadPrimitive(MeshType::SPHERE, "sphere");
-	modelManager_->LoadPrimitive(MeshType::TRIANGLE, "triangle");
-	modelManager_->LoadPrimitive(MeshType::PLANE, "plane");
-
-
-}
 
 void Engine::Update() {
 	// ウィンドウメッセージの処理
@@ -171,6 +139,11 @@ void Engine::EndDrawBackBuffer() {
 }
 
 void Engine::Finalize() {
+	// ResourceLoaderの終了処理
+	if (resourceLoader_) {
+		resourceLoader_->Finalize();
+	}
+
 	// ImGui終了処理
 	if (imguiManager_) {
 		imguiManager_->Finalize();
@@ -219,8 +192,6 @@ void Engine::Finalize() {
 		directXCommon_.reset();
 	}
 
-
-
 	// COM終了処理
 	CoUninitialize();
 }
@@ -234,18 +205,16 @@ void Engine::ImGui() {
 	//FPS関連
 	frameTimer_->ImGui();
 
+	/// ResourceLoaderのImGui（各Managerの詳細を含む）
+	resourceLoader_->ImGui();
+
 	/// オフスクリーンレンダラー（グリッチエフェクト含む）のImGui
 	offscreenRenderer_->ImGui();
 
 	///入力のImGui
 	inputManager_->ImGui();
 
-	///音声関連のImGui
-	audioManager_->ImGui();
-
 	ImGui::End();
-
-
 
 	///
 	/// カメラコントローラーのデバッグUI

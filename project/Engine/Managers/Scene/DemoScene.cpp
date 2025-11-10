@@ -16,33 +16,6 @@ DemoScene::DemoScene()
 
 DemoScene::~DemoScene() = default;
 
-
-void DemoScene::LoadResources() {
-	// リソースの読み込み
-	Logger::Log(Logger::GetStream(), "TitleScene: Loading resources...\n");
-
-	// リソースマネージャーの取得
-	modelManager_ = ModelManager::GetInstance();
-	textureManager_ = TextureManager::GetInstance();
-
-	// モデルを事前読み込み
-	//modelManager_->LoadModel("resources/Model/Plane", "plane.obj", "model_Plane");
-
-	//バニー
-	//modelManager_->LoadModel("resources/Model/Bunny", "bunny.obj", "model_Bunny");
-	////ティーポット
-	//modelManager_->LoadModel("resources/Model/Teapot", "teapot.obj", "model_Teapot");
-
-	//マルチメッシュ
-	modelManager_->LoadModel("resources/Model/MultiMesh", "multiMesh.obj", "model_MultiMesh");
-	//マルチマテリアル
-	modelManager_->LoadModel("resources/Model/MultiMaterial", "multiMaterial.obj", "model_MultiMaterial");
-	//
-	modelManager_->LoadModel("resources/Model/Goldfish", "Mesh_Goldfish.obj", "modelfish");
-
-	Logger::Log(Logger::GetStream(), "TitleScene: Resources loaded successfully\n");
-}
-
 void DemoScene::ConfigureOffscreenEffects()
 {
 	/// オフスクリーンレンダラーのエフェクト設定

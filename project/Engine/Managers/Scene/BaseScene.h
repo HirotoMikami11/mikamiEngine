@@ -10,11 +10,6 @@ public:
 	virtual ~BaseScene() = default;
 
 	/// <summary>
-	/// リソース読み込み（起動時に1回のみ実行）
-	/// </summary>
-	virtual void LoadResources() {}
-
-	/// <summary>
 	/// シーンに入った時のオフスクリーン設定
 	/// </summary>
 	virtual void ConfigureOffscreenEffects() {}

@@ -19,20 +19,6 @@ DebugScene::DebugScene()
 
 DebugScene::~DebugScene() = default;
 
-
-void DebugScene::LoadResources() {
-	// リソースの読み込み
-	Logger::Log(Logger::GetStream(), "DebugScene: Loading resources...\n");
-
-	// リソースマネージャーの取得
-	textureManager_ = TextureManager::GetInstance();
-
-	// テクスチャの事前読み込み（必要に応じて）
-
-
-	Logger::Log(Logger::GetStream(), "DebugScene: Resources loaded successfully\n");
-}
-
 void DebugScene::ConfigureOffscreenEffects()
 {
 	/// オフスクリーンレンダラーのエフェクト設定

@@ -1,5 +1,8 @@
 #include "ModelManager.h"
+#include "Managers/ImGui/ImGuiManager.h"
 #include <cassert>
+#include <algorithm>
+#include <vector>
 
 ModelManager* ModelManager::GetInstance() {
 	static ModelManager instance;
@@ -109,4 +112,67 @@ void ModelManager::UnloadAll() {
 
 bool ModelManager::HasModel(const std::string& tagName) const {
 	return models_.find(tagName) != models_.end();
+}
+
+void ModelManager::ImGui() {
+#ifdef USEIMGUI
+	// モデルの総数
+	ImGui::Text("Total Models: %zu", models_.size());
+
+	ImGui::Separator();
+
+	// モデルが存在しない場合
+	if (models_.empty()) {
+		ImGui::TextDisabled("No models loaded");
+		return;
+	}
+
+	// モデル一覧の表示
+	if (ImGui::TreeNode("Model List")) {
+		// タグ名リストをアルファベット順にソート
+		std::vector<std::string> tagList;
+		tagList.reserve(models_.size());
+		for (const auto& pair : models_) {
+			tagList.push_back(pair.first);
+		}
+		std::sort(tagList.begin(), tagList.end());
+
+		for (const auto& tag : tagList) {
+			ImGui::PushID(tag.c_str());
+
+			// モデルの存在確認（念のため）
+			bool exists = HasModel(tag);
+			if (exists) {
+				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "[OK]");
+			} else {
+				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "[ERROR]");
+			}
+
+			ImGui::SameLine();
+
+			// ツリーノードで詳細表示
+			if (ImGui::TreeNode(tag.c_str())) {
+				Model* model = GetModel(tag);
+				if (model) {
+					// シンプルな情報表示（メッシュ数とマテリアル数のみ）
+					ImGui::Text("Meshes: %zu", model->GetMeshCount());
+					ImGui::Text("Materials: %zu", model->GetMaterialCount());
+
+					// アンロードボタン
+					ImGui::Spacing();
+					if (ImGui::SmallButton("Unload")) {
+						UnloadModel(tag);
+					}
+				}
+				ImGui::TreePop();
+			}
+
+			ImGui::PopID();
+		}
+
+		ImGui::TreePop();
+	}
+
+	ImGui::Separator();
+#endif
 }

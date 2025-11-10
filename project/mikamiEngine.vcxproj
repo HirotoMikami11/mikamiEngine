@@ -242,6 +242,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Objects\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Engine\Objects\Particle\ParticleGroup.cpp" />
     <ClCompile Include="Engine\Objects\Particle\ParticleSystem.cpp" />
+    <ClCompile Include="Engine\Managers\ResourceLoader\ResourceLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -429,15 +430,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Objects\Particle\ParticleGroup.h" />
     <ClInclude Include="Engine\Objects\Particle\ParticleSystem.h" />
     <ClInclude Include="Engine\Objects\Particle\Field\GravityField.h" />
+    <ClInclude Include="Engine\Managers\ResourceLoader\ResourceLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
       <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
     </ProjectReference>
-<ProjectReference Include="externals\imgui\imgui.vcxproj" Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Development'">
-    <Project>{40e77351-8bb1-4a16-be64-622d1013eed8}</Project>
-  </ProjectReference>
-</ItemGroup>
+    <ProjectReference Include="externals\imgui\imgui.vcxproj" Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Development'">
+      <Project>{40e77351-8bb1-4a16-be64-622d1013eed8}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <None Include="resources\Shader\DepthFog\DepthFog.hlsli" />
     <None Include="resources\Shader\DepthOfField\DepthOfField.hlsli" />

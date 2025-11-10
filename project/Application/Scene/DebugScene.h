@@ -22,11 +22,6 @@ public:
 	~DebugScene() override;
 
 	/// <summary>
-	/// リソース読み込み（1回のみ実行）
-	/// </summary>
-	void LoadResources() override;
-
-	/// <summary>
 	/// シーンに入った時のオフスクリーン設定
 	/// </summary>
 	void ConfigureOffscreenEffects() override;

@@ -79,6 +79,19 @@ public:
 	void StopAll();
 
 	/// <summary>
+	/// 音声が読み込まれているかチェック
+	/// </summary>
+	/// <param name="tagName">識別用のタグ名</param>
+	/// <returns>存在するかどうか</returns>
+	bool HasAudio(const std::string& tagName) const;
+
+	/// <summary>
+	/// 読み込まれている音声の数を取得
+	/// </summary>
+	/// <returns>音声数</returns>
+	size_t GetAudioCount() const { return audios.size(); }
+
+	/// <summary>
 	/// ImGui
 	/// </summary>
 	void ImGui();

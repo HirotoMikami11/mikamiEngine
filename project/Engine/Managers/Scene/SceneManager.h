@@ -80,11 +80,6 @@ public:
 	const std::string& GetCurrentSceneName() const { return currentSceneName_; }
 
 	/// <summary>
-	/// 登録済みの全シーンのリソースを読み込み
-	/// </summary>
-	void LoadAllSceneResources();
-
-	/// <summary>
 	/// シーン変更時のコールバックを設定
 	/// </summary>
 	void SetSceneChangeCallback(SceneChangeCallback callback) { sceneChangeCallback_ = callback; }

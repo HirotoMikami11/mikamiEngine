@@ -13,18 +13,6 @@ void SceneManager::Initialize() {
 	Logger::Log(Logger::GetStream(), "SceneManager initialized\n");
 }
 
-void SceneManager::LoadAllSceneResources() {
-	// 登録されている全シーンのリソースを読み込み
-	for (auto& [sceneName, scene] : scenes_) {
-		if (!scene->IsResourcesLoaded()) {
-			Logger::Log(Logger::GetStream(), std::format("Loading resources for scene: {}\n", sceneName));
-			scene->LoadResources();
-			scene->SetResourcesLoaded(true);
-			Logger::Log(Logger::GetStream(), std::format("Resources loaded for scene: {}\n", sceneName));
-		}
-	}
-}
-
 void SceneManager::Update() {
 	// シーン切り替えの処理
 	ProcessSceneChange();
@@ -64,14 +52,6 @@ void SceneManager::Finalize() {
 void SceneManager::RegisterScene(const std::string& sceneName, std::unique_ptr<BaseScene> scene) {
 	assert(scene != nullptr);
 	scenes_[sceneName] = std::move(scene);
-
-	// 新しく登録されたシーンのリソースを即座に読み込み
-	if (!scenes_[sceneName]->IsResourcesLoaded()) {
-		Logger::Log(Logger::GetStream(), std::format("Loading resources for newly registered scene: {}\n", sceneName));
-		scenes_[sceneName]->LoadResources();
-		scenes_[sceneName]->SetResourcesLoaded(true);
-		Logger::Log(Logger::GetStream(), std::format("Resources loaded for newly registered scene: {}\n", sceneName));
-	}
 }
 
 void SceneManager::UnregisterScene(const std::string& sceneName) {

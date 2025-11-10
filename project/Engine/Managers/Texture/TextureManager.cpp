@@ -1,4 +1,5 @@
 #include "TextureManager.h"
+#include "Managers/ImGui/ImGuiManager.h"
 
 // シングルトンインスタンス
 TextureManager* TextureManager::GetInstance() {
@@ -158,4 +159,72 @@ uint32_t TextureManager::GetUsedSRVCount() const {
 		return descriptorManager->GetUsedCount(DescriptorHeapManager::HeapType::SRV);
 	}
 	return 0;
+}
+
+void TextureManager::ImGui() {
+#ifdef USEIMGUI
+	// テクスチャの総数
+	ImGui::Text("Total Textures: %zu", textures_.size());
+
+	// SRVスロットの使用状況
+	uint32_t usedSRV = GetUsedSRVCount();
+	uint32_t availableSRV = GetAvailableSRVCount();
+	ImGui::Text("SRV Slots: %u used / %u available", usedSRV, availableSRV);
+
+	ImGui::Separator();
+
+	// テクスチャが存在しない場合
+	if (textures_.empty()) {
+		ImGui::TextDisabled("No textures loaded");
+		return;
+	}
+
+	// テクスチャ一覧の表示
+	if (ImGui::TreeNode("Texture List")) {
+		// アルファベット順にソート済みのリストを取得
+		auto tagList = GetTextureTagList();
+
+		for (const auto& tag : tagList) {
+			ImGui::PushID(tag.c_str());
+
+			// テクスチャの存在確認（念のため）
+			bool exists = HasTexture(tag);
+			if (exists) {
+				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "[OK]");
+			} else {
+				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "[ERROR]");
+			}
+
+
+			ImGui::SameLine();
+
+			// ツリーノードで詳細表示
+			if (ImGui::TreeNode(tag.c_str())) {
+				Texture* texture = GetTexture(tag);
+				if (texture) {
+					// ファイルパス表示
+					ImGui::Text("Path: %s", texture->GetFilePath().c_str());
+
+					// メタデータ表示
+					const auto& metadata = texture->GetMetadata();
+					ImGui::Text("Size: %llux%llu", metadata.width, metadata.height);
+					ImGui::Text("Mip Levels: %zu", metadata.mipLevels);
+					ImGui::Text("SRV Index: %u", texture->GetSRVIndex());
+
+					// アンロードボタン
+					if (ImGui::SmallButton("Unload")) {
+						UnloadTexture(tag);
+					}
+				}
+				ImGui::TreePop();
+			}
+
+			ImGui::PopID();
+		}
+
+		ImGui::TreePop();
+	}
+
+	ImGui::Separator();
+#endif
 }

@@ -13,6 +13,7 @@
 #include "Audio/AudioManager.h"
 #include "Texture/TextureManager.h"
 #include "Model/ModelManager.h"
+#include "ResourceLoader/ResourceLoader.h"
 #include "ImGui/ImGuiManager.h" 
 #include "FrameTimer.h"
 #include "OffscreenRenderer.h"
@@ -97,11 +98,6 @@ private:
 	/// </summary>
 	void InitializeManagers();
 
-	/// <summary>
-	/// デフォルトで読み込んでおきたいもの
-	/// </summary>
-	void LoadDefaultResources();
-
 	// 基盤システム
 	std::unique_ptr<WinApp> winApp_;
 	std::unique_ptr<DirectXCommon> directXCommon_;
@@ -115,6 +111,7 @@ private:
 	AudioManager* audioManager_;
 	ImGuiManager* imguiManager_;
 	ModelManager* modelManager_;
+	ResourceLoader* resourceLoader_;
 	FrameTimer* frameTimer_;
 
 	// カメラコントローラー

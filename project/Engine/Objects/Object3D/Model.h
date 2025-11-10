@@ -151,6 +151,8 @@ public:
 	/// <returns>オブジェクト名のリスト</returns>
 	const std::vector<std::string>& GetObjectNames() const { return objectNames_; }
 
+	const std::vector<ModelData>& GetModelData() const { return modelDataList_; }
+
 private:
 	//DirectXCommon参照
 	DirectXCommon* directXCommon_ = nullptr;

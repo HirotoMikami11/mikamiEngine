@@ -104,6 +104,11 @@ public:
 	/// <returns>使用中のスロット数</returns>
 	uint32_t GetUsedSRVCount() const;
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ImGui();
+
 private:
 	// コンストラクタ
 	TextureManager() = default;
