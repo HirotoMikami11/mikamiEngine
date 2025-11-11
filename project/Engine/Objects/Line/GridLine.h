@@ -97,12 +97,6 @@ public:
 	void SetVisible(bool visible) { isVisible_ = visible; }
 	void SetActive(bool active) { isActive_ = active; }
 	void SetName(const std::string& name) { name_ = name; }
-
-	// Transform関連
-	Transform3D& GetTransform() { return transform_; }
-	const Transform3D& GetTransform() const { return transform_; }
-	void SetTransform(const Vector3Transform& newTransform) { transform_.SetTransform(newTransform); }
-
 private:
 	/// <summary>
 	/// 各軸の線を生成
@@ -112,13 +106,9 @@ private:
 	void CreateYZGrid(float halfSize);
 
 	// 基本情報
-	DirectXCommon* directXCommon_ = nullptr;
 	bool isVisible_ = true;
 	bool isActive_ = true;
 	std::string name_ = "GridLine";
-
-	// Transform
-	Transform3D transform_;
 
 	// 線描画システム
 	std::unique_ptr<LineRenderer> lineRenderer_;

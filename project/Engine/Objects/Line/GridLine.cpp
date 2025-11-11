@@ -14,10 +14,6 @@ void GridLine::Initialize(DirectXCommon* dxCommon,
 	const Vector4& majorColor
 )
 {
-	directXCommon_ = dxCommon;
-
-	// Transformを初期化
-	transform_.Initialize(dxCommon);
 
 	// LineRendererを初期化
 	lineRenderer_ = std::make_unique<LineRenderer>();
@@ -86,9 +82,6 @@ void GridLine::Update(const Matrix4x4& viewProjectionMatrix)
 	if (!isActive_) {
 		return;
 	}
-
-	// Transform行列を更新
-	transform_.UpdateMatrix(viewProjectionMatrix);
 }
 
 void GridLine::Draw(const Matrix4x4& viewProjectionMatrix)
@@ -113,22 +106,7 @@ void GridLine::ImGui()
 
 		ImGui::Text("Line Count: %zu", GetLineCount());
 
-		// Transform
-		if (ImGui::CollapsingHeader("Transform")) {
-			Vector3 position = transform_.GetPosition();
-			Vector3 rotation = transform_.GetRotation();
-			Vector3 scale = transform_.GetScale();
 
-			if (ImGui::DragFloat3("Position", &position.x, 0.01f)) {
-				transform_.SetPosition(position);
-			}
-			if (ImGui::DragFloat3("Rotation", &rotation.x, 0.01f)) {
-				transform_.SetRotation(rotation);
-			}
-			if (ImGui::DragFloat3("Scale", &scale.x, 0.01f)) {
-				transform_.SetScale(scale);
-			}
-		}
 
 		// グリッド設定
 		if (ImGui::CollapsingHeader("Grid Settings")) {
