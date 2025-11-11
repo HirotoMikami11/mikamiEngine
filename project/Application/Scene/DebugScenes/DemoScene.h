@@ -1,17 +1,7 @@
 #pragma once
 #include <memory>
 
-#include "Engine.h"
-#include "DirectXCommon.h"
 #include "BaseScene.h"
-
-#include "Sprite.h"
-#include "Object3D.h"
-#include "Light.h"
-#include "GridLine.h"
-#include "CameraController.h"
-#include "ParticleSystem.h"
-#include "DebugDrawLineSystem.h"
 
 /// <summary>
 /// 絶対動くシーン(作り変えたりしない)

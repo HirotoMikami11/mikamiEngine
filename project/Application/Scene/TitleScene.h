@@ -1,20 +1,10 @@
 #pragma once
 #include <memory>
-#include <array>
 
-#include "Engine.h"
-#include "DirectXCommon.h"
-#include "Managers/Scene/BaseScene.h"
-
-#include "Sprite.h"
-#include "Light.h"
-#include "Object3D.h"
-#include "GridLine.h"
-#include "CameraController.h"
-#include "ParticleSystem.h"
+#include "BaseScene.h"
 
 /// <summary>
-/// ゲームシーン
+/// タイトルシーン
 /// </summary>
 class TitleScene : public BaseScene {
 public:
@@ -68,4 +58,5 @@ private:
 	// システム参照
 	DirectXCommon* directXCommon_;
 	OffscreenRenderer* offscreenRenderer_;
+	DebugDrawLineSystem* debugDrawLineSystem_;
 };

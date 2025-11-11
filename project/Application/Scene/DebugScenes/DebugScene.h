@@ -1,16 +1,7 @@
 #pragma once
 #include <memory>
 
-#include "Engine.h"
-#include "DirectXCommon.h"
 #include "BaseScene.h"
-
-#include "Object3D.h"
-#include "Light.h"
-#include "GridLine.h"
-#include "CameraController.h"
-#include "ParticleSystem.h"
-#include "DebugDrawLineSystem.h"
 
 /// <summary>
 /// デバッグ用シーン
