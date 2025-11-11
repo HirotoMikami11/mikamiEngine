@@ -2,8 +2,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "DirectXCommon.h"
-#include "MyFunction.h"
-
+#include "Structures.h"
 
 /// <summary>
 /// ライトクラス
@@ -58,5 +57,5 @@ public:
 private:
 	Type type_ = Type::DIRECTIONAL;
 	Microsoft::WRL::ComPtr<ID3D12Resource> lightResource_;
-	DirectionalLight* lightData_ = nullptr;
+	DirectionalLightData* lightData_ = nullptr;
 };

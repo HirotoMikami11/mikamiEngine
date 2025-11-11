@@ -8,7 +8,7 @@ void Light::Initialize(DirectXCommon* dxCommon, Type type)
 
 	//ライト用のリソースを作成
 	lightResource_ =
-		CreateBufferResource(dxCommon->GetDevice(), sizeof(DirectionalLight));
+		CreateBufferResource(dxCommon->GetDevice(), sizeof(DirectionalLightData));
 
 	//ライトのデータにマップ
 	lightResource_->Map(0, nullptr, reinterpret_cast<void**>(&lightData_));

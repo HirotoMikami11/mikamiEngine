@@ -38,7 +38,6 @@ struct CameraForGPU final {
 	float padding;			// 隙間
 };
 
-/// <summary>
 /// マテリアル
 /// </summary>
 struct  MaterialData final {
@@ -48,4 +47,36 @@ struct  MaterialData final {
 	float shininess;			//光沢度（鏡面反射の鋭さ）
 	float padding;				//隙間埋める
 	Matrix4x4 uvTransform;
+};
+
+/// <summary>
+/// 平行光源（GPU用）
+/// </summary>
+struct DirectionalLightData final {
+	Vector4 color;		// 色
+	Vector3 direction;	// 方向
+	float intensity;	// 強度
+};
+
+/// <summary>
+/// ポイントライト（GPU用）
+/// </summary>
+struct PointLightData final {
+	Vector4 color;		// 色
+	Vector3 position;	// 位置
+	float intensity;	// 強度
+	float radius;		// 影響範囲
+	float decay;		// 減衰率
+	float padding[2];	// アライメント調整
+};
+
+/// <summary>
+/// 統合ライティングデータ（GPU用）
+/// 全てのライト情報を1つのConstantBufferにまとめる
+/// </summary>
+struct LightingData final {
+	DirectionalLightData directionalLight;	// 平行光源
+	PointLightData pointLights[4];			// ポイントライト（最大4つ）
+	int32_t numPointLights;					// 有効なポイントライト数
+	float padding[3];						// アライメント調整
 };

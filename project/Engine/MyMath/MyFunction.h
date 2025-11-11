@@ -40,15 +40,6 @@ struct Segment {
 };
 
 /// <summary>
-/// 平行光源
-/// </summary>
-struct DirectionalLight {
-	Vector4  color;		//色
-	Vector3 direction;	//方向
-	float intensity;	//強度
-};
-
-/// <summary>
 /// 平面
 /// </summary>
 struct PlaneMath {
