@@ -1,17 +1,17 @@
 #pragma once
 #include <memory>
-#include <array>
 
-#include "Sprite.h"
-#include "Light.h"
-#include "Object3D.h"
-#include "CameraController.h"
-#include "ParticleSystem.h"
-#include "GridLine.h"
 #include "Engine.h"
 #include "DirectXCommon.h"
-#include "Managers/Scene/BaseScene.h"
+#include "BaseScene.h"
 
+#include "Sprite.h"
+#include "Object3D.h"
+#include "Light.h"
+#include "GridLine.h"
+#include "CameraController.h"
+#include "ParticleSystem.h"
+#include "DebugDrawLineSystem.h"
 
 /// <summary>
 /// 絶対動くシーン(作り変えたりしない)
@@ -21,8 +21,6 @@ class DemoScene : public BaseScene {
 public:
 	DemoScene();
 	~DemoScene() override;
-
-
 
 	/// <summary>
 	/// シーンに入った時のオフスクリーン設定
@@ -80,5 +78,6 @@ private:
 	// システム参照
 	DirectXCommon* directXCommon_;
 	OffscreenRenderer* offscreenRenderer_;
+	DebugDrawLineSystem* debugDrawLineSystem_;
 
 };

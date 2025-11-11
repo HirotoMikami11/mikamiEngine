@@ -9,9 +9,8 @@ void BaseField::Initialize(DirectXCommon* dxCommon)
 	fieldTransform_.Initialize(dxCommon);
 	fieldTransform_.SetDefaultTransform();
 
-	// デバッグ用LineRendererを初期化
-	debugLineRenderer_ = std::make_unique<LineRenderer>();
-	debugLineRenderer_->Initialize(dxCommon);
+	// DebugDrawLineSystemを取得
+	debugDrawLineSystem_ = DebugDrawLineSystem::GetInstance();
 }
 
 void BaseField::Update(float deltaTime)
@@ -21,18 +20,15 @@ void BaseField::Update(float deltaTime)
 	fieldTransform_.UpdateMatrix(dummyMatrix);
 }
 
-void BaseField::DrawDebug(const Matrix4x4& viewProjectionMatrix)
+void BaseField::AddLineDebug()
 {
-	if (!showDebugVisualization_ || !debugLineRenderer_) {
+	if (!showDebugVisualization_ ) {
 		return;
 	}
 
 #ifdef USEIMGUI
 	// デバッグ形状を作成
 	CreateDebugShape();
-
-	// LineRendererで描画
-	debugLineRenderer_->Draw(viewProjectionMatrix);
 #endif
 }
 

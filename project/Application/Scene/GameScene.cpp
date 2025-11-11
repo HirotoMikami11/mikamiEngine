@@ -7,6 +7,7 @@ GameScene::GameScene()
 	, cameraController_(nullptr)
 	, directXCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
+	, debugDrawLineSystem_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
 {
 }
@@ -26,6 +27,7 @@ void GameScene::Initialize() {
 	// システム参照の取得
 	directXCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
+	debugDrawLineSystem_ = Engine::GetInstance()->GetDebugDrawManager();
 
 	///*-----------------------------------------------------------------------*///
 	///								カメラの初期化									///
@@ -101,9 +103,6 @@ void GameScene::UpdateGameObjects() {
 	viewProjectionMatrix = cameraController_->GetViewProjectionMatrix();
 	// 球体の更新
 	sphere_->Update(viewProjectionMatrix);
-	// グリッド線更新
-	gridLine_->Update(viewProjectionMatrix);
-
 
 #pragma region 衝突判定
 
@@ -125,9 +124,9 @@ void GameScene::UpdateGameObjects() {
 void GameScene::DrawOffscreen() {
 
 	///
-	/// グリッド線を描画（3D要素）
+	/// グリッド線をLineSystemに追加する(実際に描画しない)
 	/// 
-	gridLine_->Draw(viewProjectionMatrix);
+	gridLine_->Draw();
 
 	///
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
@@ -139,6 +138,11 @@ void GameScene::DrawOffscreen() {
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
 	/// 
 
+	///
+	/// Line描画の一括実行
+	///
+
+	debugDrawLineSystem_->Draw(viewProjectionMatrix);
 }
 
 void GameScene::DrawBackBuffer() {

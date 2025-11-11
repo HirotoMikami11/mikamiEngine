@@ -411,6 +411,9 @@
     <ClCompile Include="Application\Scene\GameScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Objects\Line\DebugDrawLineSystem.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -520,7 +523,7 @@
     <ClInclude Include="Engine\Managers\Audio\AudioManager.h">
       <Filter>Engine\Managers\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\Scene\BaseScene.h">
+    <ClInclude Include="Application\Scene\BaseScene.h">
       <Filter>Engine\Managers\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h">
@@ -713,6 +716,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\GameScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Line\DebugDrawLineSystem.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

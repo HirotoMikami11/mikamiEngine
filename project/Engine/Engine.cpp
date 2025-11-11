@@ -75,6 +75,10 @@ void Engine::InitializeManagers() {
 	// オフスクリーンレンダラー初期化
 	offscreenRenderer_ = std::make_unique<OffscreenRenderer>();
 	offscreenRenderer_->Initialize(directXCommon_.get());
+
+	// DebugDrawLineSystem初期化
+	debugDrawManager_ = DebugDrawLineSystem::GetInstance();
+	debugDrawManager_->Initialize(directXCommon_.get());
 }
 
 
@@ -104,6 +108,11 @@ void Engine::StartDrawOffscreen() {
 
 	// フレーム開始
 	directXCommon_->BeginFrame();
+
+	// デバッグ描画のリセット（前フレームの線分をクリア）
+	if (debugDrawManager_) {
+		debugDrawManager_->Reset();
+	}
 
 	/// オフスクリーンの描画準備（3D描画用）
 	offscreenRenderer_->PreDraw();
@@ -139,6 +148,11 @@ void Engine::EndDrawBackBuffer() {
 }
 
 void Engine::Finalize() {
+	// DebugDrawLineSystemの終了処理
+	if (debugDrawManager_) {
+		debugDrawManager_->Finalize();
+	}
+
 	// ResourceLoaderの終了処理
 	if (resourceLoader_) {
 		resourceLoader_->Finalize();
@@ -213,6 +227,10 @@ void Engine::ImGui() {
 
 	///入力のImGui
 	inputManager_->ImGui();
+
+	/// デバッグ線のImGui
+	debugDrawManager_->ImGui();
+
 
 	ImGui::End();
 

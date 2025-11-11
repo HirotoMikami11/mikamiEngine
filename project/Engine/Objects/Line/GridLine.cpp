@@ -1,61 +1,59 @@
-#define NOMINMAX // C+標準のstd::maxを使えるようにするため(windows.hが上書きしてしまっている)
+#define NOMINMAX // C++標準のstd::maxを使えるようにするため(windows.hが上書きしてしまっている)
 #include "GridLine.h"
 #include "Managers/ImGui/ImGuiManager.h"
-#include "Managers/Texture/TextureManager.h"
-#include <algorithm>
 #include <cmath>
 
-void GridLine::Initialize(DirectXCommon* dxCommon,
-	const GridLineType& GridLineType,
-	float size,
-	float interval,
-	float majorInterval,
-	const Vector4& normalColor,
-	const Vector4& majorColor
-)
-{
-
-	// LineRendererを初期化
-	lineRenderer_ = std::make_unique<LineRenderer>();
-	lineRenderer_->Initialize(dxCommon);
-
-	// デフォルトでグリッドを作成
-	CreateGrid(GridLineType,
-		size,
-		interval,
-		majorInterval,
-		normalColor,
-		majorColor);
-}
-
-void GridLine::CreateGrid(
-	const GridLineType& GridLineType,
+void GridLine::Initialize(
+	DirectXCommon* dxCommon,
+	const GridLineType& gridType,
 	float size,
 	float interval,
 	float majorInterval,
 	const Vector4& normalColor,
 	const Vector4& majorColor)
 {
-	Clear();
+	directXCommon_ = dxCommon;
 
-	// 設定を保存
+	// DebugDrawLineSystemを取得
+	debugDrawLineSystem_ = DebugDrawLineSystem::GetInstance();
+	
+
+	// グリッド設定を保存
+	SetGridSettings(gridType, size, interval, majorInterval, normalColor, majorColor);
+}
+
+void GridLine::SetGridSettings(
+	const GridLineType& gridType,
+	float size,
+	float interval,
+	float majorInterval,
+	const Vector4& normalColor,
+	const Vector4& majorColor)
+{
+	gridType_ = gridType;
 	gridSize_ = size;
 	gridInterval_ = interval;
 	gridMajorInterval_ = majorInterval;
 	gridNormalColor_ = normalColor;
 	gridMajorColor_ = majorColor;
+}
 
-	float halfSize = size * 0.5f;
+void GridLine::Draw()
+{
+	if (!isVisible_ || !debugDrawLineSystem_) {
+		return;
+	}
 
-	switch (GridLineType) {
+	// グリッドタイプに応じて描画
+	switch (gridType_) {
 	case GridLineType::XZ:
-		CreateXZGrid(halfSize);
+		DrawXZGrid();
 		break;
 	case GridLineType::XY:
-		CreateXYGrid(halfSize);
+		DrawXYGrid();
 		break;
 	case GridLineType::YZ:
-		CreateYZGrid(halfSize);
+		DrawYZGrid();
 		break;
 	default:
 		Logger::Log(Logger::GetStream(), "GridLine: Unknown GridLineType specified.\n");
@@ -63,36 +61,120 @@ void GridLine::CreateGrid(
 	}
 }
 
-void GridLine::AddLine(const Vector3& start, const Vector3& end, const Vector4& color)
+void GridLine::DrawXZGrid()
 {
-	if (lineRenderer_) {
-		lineRenderer_->AddLine(start, end, color);
+	float halfSize = gridSize_ * 0.5f;
+
+	// X方向の線（Z軸に沿って）
+	for (float x = -halfSize; x <= halfSize; x += gridInterval_) {
+		Vector4 color;
+		if (std::abs(x) < 0.001f) {
+			// 原点のZ軸は青色
+			color = { 0.0f, 0.0f, 1.0f, 1.0f };
+		} else if (std::fmod(std::abs(x), gridMajorInterval_) < 0.001f) {
+			color = gridMajorColor_;
+		} else {
+			color = gridNormalColor_;
+		}
+
+		Vector3 start = { center_.x + x, center_.y, center_.z - halfSize };
+		Vector3 end = { center_.x + x, center_.y, center_.z + halfSize };
+		debugDrawLineSystem_->AddLine(start, end, color);
+	}
+
+	// Z方向の線（X軸に沿って）
+	for (float z = -halfSize; z <= halfSize; z += gridInterval_) {
+		Vector4 color;
+		if (std::abs(z) < 0.001f) {
+			// 原点のX軸は赤色
+			color = { 1.0f, 0.0f, 0.0f, 1.0f };
+		} else if (std::fmod(std::abs(z), gridMajorInterval_) < 0.001f) {
+			color = gridMajorColor_;
+		} else {
+			color = gridNormalColor_;
+		}
+
+		Vector3 start = { center_.x - halfSize, center_.y, center_.z + z };
+		Vector3 end = { center_.x + halfSize, center_.y, center_.z + z };
+		debugDrawLineSystem_->AddLine(start, end, color);
 	}
 }
 
-void GridLine::Clear()
+void GridLine::DrawXYGrid()
 {
-	if (lineRenderer_) {
-		lineRenderer_->Reset();
+	float halfSize = gridSize_ * 0.5f;
+
+	// X方向の線（Y軸に沿って）
+	for (float x = -halfSize; x <= halfSize; x += gridInterval_) {
+		Vector4 color;
+		if (std::abs(x) < 0.001f) {
+			// 原点のY軸は緑色
+			color = { 0.0f, 1.0f, 0.0f, 1.0f };
+		} else if (std::fmod(std::abs(x), gridMajorInterval_) < 0.001f) {
+			color = gridMajorColor_;
+		} else {
+			color = gridNormalColor_;
+		}
+
+		Vector3 start = { center_.x + x, center_.y - halfSize, center_.z };
+		Vector3 end = { center_.x + x, center_.y + halfSize, center_.z };
+		debugDrawLineSystem_->AddLine(start, end, color);
+	}
+
+	// Y方向の線（X軸に沿って）
+	for (float y = -halfSize; y <= halfSize; y += gridInterval_) {
+		Vector4 color;
+		if (std::abs(y) < 0.001f) {
+			// 原点のX軸は赤色
+			color = { 1.0f, 0.0f, 0.0f, 1.0f };
+		} else if (std::fmod(std::abs(y), gridMajorInterval_) < 0.001f) {
+			color = gridMajorColor_;
+		} else {
+			color = gridNormalColor_;
+		}
+
+		Vector3 start = { center_.x - halfSize, center_.y + y, center_.z };
+		Vector3 end = { center_.x + halfSize, center_.y + y, center_.z };
+		debugDrawLineSystem_->AddLine(start, end, color);
 	}
 }
 
-void GridLine::Update(const Matrix4x4& viewProjectionMatrix)
+void GridLine::DrawYZGrid()
 {
-	if (!isActive_) {
-		return;
-	}
-}
+	float halfSize = gridSize_ * 0.5f;
 
-void GridLine::Draw(const Matrix4x4& viewProjectionMatrix)
-{
-	if (!isVisible_ || !isActive_) {
-		return;
+	// Y方向の線（Z軸に沿って）X=0
+	for (float y = -halfSize; y <= halfSize; y += gridInterval_) {
+		Vector4 color;
+		if (std::abs(y) < 0.001f) {
+			// 原点のZ軸は青色
+			color = { 0.0f, 0.0f, 1.0f, 1.0f };
+		} else if (std::fmod(std::abs(y), gridMajorInterval_) < 0.001f) {
+			color = gridMajorColor_;
+		} else {
+			color = gridNormalColor_;
+		}
+
+		Vector3 start = { center_.x, center_.y + y, center_.z - halfSize };
+		Vector3 end = { center_.x, center_.y + y, center_.z + halfSize };
+		debugDrawLineSystem_->AddLine(start, end, color);
 	}
 
-	// LineRendererで一括描画
-	if (lineRenderer_ && !lineRenderer_->IsEmpty()) {
-		lineRenderer_->Draw(viewProjectionMatrix);
+	// Z方向の線（Y軸に沿って）X=0
+	for (float z = -halfSize; z <= halfSize; z += gridInterval_) {
+		Vector4 color;
+		if (std::abs(z) < 0.001f) {
+			// 原点のY軸は緑色
+			color = { 0.0f, 1.0f, 0.0f, 1.0f };
+		} else if (std::fmod(std::abs(z), gridMajorInterval_) < 0.001f) {
+			color = gridMajorColor_;
+		} else {
+			color = gridNormalColor_;
+		}
+
+		Vector3 start = { center_.x, center_.y - halfSize, center_.z + z };
+		Vector3 end = { center_.x, center_.y + halfSize, center_.z + z };
+		debugDrawLineSystem_->AddLine(start, end, color);
 	}
 }
 
@@ -102,15 +184,23 @@ void GridLine::ImGui()
 	if (ImGui::TreeNode(name_.c_str())) {
 		// 基本設定
 		ImGui::Checkbox("Visible", &isVisible_);
-		ImGui::Checkbox("Active", &isActive_);
 
-		ImGui::Text("Line Count: %zu", GetLineCount());
-
-
+		// 中心位置
+		if (ImGui::CollapsingHeader("Position", ImGuiTreeNodeFlags_DefaultOpen)) {
+			ImGui::DragFloat3("Center", &center_.x, 0.1f);
+		}
 
 		// グリッド設定
 		if (ImGui::CollapsingHeader("Grid Settings")) {
 			bool gridChanged = false;
+
+			// グリッドタイプ選択
+			const char* gridTypes[] = { "XZ Plane", "XY Plane", "YZ Plane" };
+			int currentType = static_cast<int>(gridType_);
+			if (ImGui::Combo("Grid Type", &currentType, gridTypes, 3)) {
+				gridType_ = static_cast<GridLineType>(currentType);
+				gridChanged = true;
+			}
 
 			if (ImGui::DragFloat("Grid Size", &gridSize_, 1.0f, 10.0f, 200.0f)) {
 				gridChanged = true;
@@ -132,128 +222,13 @@ void GridLine::ImGui()
 				gridChanged = true;
 			}
 
-			if (ImGui::Button("Regenerate Grid") || gridChanged) {
-				CreateGrid(GridLineType::XZ, gridSize_, gridInterval_, gridMajorInterval_, gridNormalColor_, gridMajorColor_);
+			// 変更があった場合は設定を再適用（次フレームで反映）
+			if (gridChanged) {
+				ImGui::Text("Settings will be applied on next frame");
 			}
-		}
-
-		// LineRendererの詳細情報
-		if (lineRenderer_) {
-			lineRenderer_->ImGui();
 		}
 
 		ImGui::TreePop();
 	}
 #endif
-}
-
-void GridLine::CreateXZGrid(float halfSize)
-{
-	// X方向の線（Z軸に沿って）
-	for (float x = -halfSize; x <= halfSize; x += gridInterval_) {
-		Vector4 color;
-		if (std::abs(x) < 0.001f) {//誤差で0にならない時のために0.001にしておく
-			//原点のZ軸は青色に変更する
-			color = Vector4{ 0.0f, 0.0f, 1.0f, 1.0f };
-		} else if (std::fmod(std::abs(x), gridMajorInterval_) < 0.001f) {
-			color = gridMajorColor_;
-		} else {
-			color = gridNormalColor_;
-		}
-
-		Vector3 start = { x, 0.0f, -halfSize };
-		Vector3 end = { x, 0.0f, halfSize };
-		AddLine(start, end, color);
-	}
-
-	// Z方向の線（X軸に沿って）
-	for (float z = -halfSize; z <= halfSize; z += gridInterval_) {
-		Vector4 color;
-
-		if (std::abs(z) < 0.001f) {//誤差で0にならない時のために0.001にしておく
-			//原点のX軸は赤色に変更する
-			color = Vector4{ 1.0f, 0.0f, 0.0f, 1.0f };
-		} else if (std::fmod(std::abs(z), gridMajorInterval_) < 0.001f) {
-			color = gridMajorColor_;
-		} else {
-			color = gridNormalColor_;
-		}
-
-		Vector3 start = { -halfSize, 0.0f, z };
-		Vector3 end = { halfSize, 0.0f, z };
-		AddLine(start, end, color);
-	}
-}
-
-void GridLine::CreateXYGrid(float halfSize)
-{
-	// X方向の線（Y軸に沿って）
-	for (float x = -halfSize; x <= halfSize; x += gridInterval_) {
-		Vector4 color;
-		if (std::abs(x) < 0.001f) {//誤差で0にならない時のために0.001にしておく
-			//原点のY軸は緑色に変更する
-			color = Vector4{ 0.0f, 1.0f, 0.0f, 1.0f };
-		} else if (std::fmod(std::abs(x), gridMajorInterval_) < 0.001f) {
-			color = gridMajorColor_;
-		} else {
-			color = gridNormalColor_;
-		}
-
-		Vector3 start = { x, -halfSize,0.0f };
-		Vector3 end = { x, halfSize,0.0f };
-		AddLine(start, end, color);
-	}
-
-	// Y方向の線（X軸に沿って）
-	for (float y = -halfSize; y <= halfSize; y += gridInterval_) {
-		Vector4 color;
-
-		if (std::abs(y) < 0.001f) {//誤差で0にならない時のために0.001にしておく
-			//原点のX軸は赤色に変更する
-			color = Vector4{ 1.0f, 0.0f, 0.0f, 1.0f };
-		} else if (std::fmod(std::abs(y), gridMajorInterval_) < 0.001f) {
-			color = gridMajorColor_;
-		} else {
-			color = gridNormalColor_;
-		}
-
-		Vector3 start = { -halfSize, y, 0.0f };
-		Vector3 end = { halfSize, y, 0.0f };
-		AddLine(start, end, color);
-	}
-}
-
-void GridLine::CreateYZGrid(float halfSize)
-{
-	// Y方向の線（Z軸に沿って）X=0
-	for (float y = -halfSize; y <= halfSize; y += gridInterval_) {
-		Vector4 color;
-		if (std::abs(y) < 0.001f) {
-			// 原点のZ軸は青色
-			color = Vector4{ 0.0f, 0.0f, 1.0f, 1.0f };
-		} else if (std::fmod(std::abs(y), gridMajorInterval_) < 0.001f) {
-			color = gridMajorColor_;
-		} else {
-			color = gridNormalColor_;
-		}
-		Vector3 start = { 0.0f, y, -halfSize };
-		Vector3 end = { 0.0f, y, halfSize };
-		AddLine(start, end, color);
-	}
-
-	// Z方向の線（Y軸に沿って）X=0
-	for (float z = -halfSize; z <= halfSize; z += gridInterval_) {
-		Vector4 color;
-		if (std::abs(z) < 0.001f) {
-			// 原点のY軸は緑色
-			color = Vector4{ 0.0f, 1.0f, 0.0f, 1.0f };
-		} else if (std::fmod(std::abs(z), gridMajorInterval_) < 0.001f) {
-			color = gridMajorColor_;
-		} else {
-			color = gridNormalColor_;
-		}
-		Vector3 start = { 0.0f, -halfSize, z };
-		Vector3 end = { 0.0f, halfSize, z };
-		AddLine(start, end, color);
-	}
 }

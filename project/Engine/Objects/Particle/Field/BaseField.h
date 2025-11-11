@@ -5,7 +5,7 @@
 #include "Transform3D.h"
 #include "ParticleState.h"
 #include "MyFunction.h"
-#include "LineRenderer.h"
+#include "DebugDrawLineSystem.h"
 
 /// <summary>
 /// フィールドの基底クラス
@@ -47,8 +47,7 @@ public:
 	/// <summary>
 	/// デバッグ描画
 	/// </summary>
-	/// <param name="viewProjectionMatrix">ビュープロジェクション行列</param>
-	virtual void DrawDebug(const Matrix4x4& viewProjectionMatrix);
+	virtual void AddLineDebug();
 
 	/// <summary>
 	/// ImGui用のデバッグ表示（派生クラスでオーバーライド可能）
@@ -87,7 +86,6 @@ protected:
 	bool isEnabled_ = true;						// フィールドが有効か
 
 	// デバッグ描画
-	std::unique_ptr<LineRenderer> debugLineRenderer_;
 	bool showDebugVisualization_ = false;
 	Vector4 debugColor_ = { 1.0f, 1.0f, 1.0f, 1.0f };	// 白色（デフォルト）
 
@@ -95,4 +93,6 @@ protected:
 
 	// システム参照
 	DirectXCommon* directXCommon_ = nullptr;
+	DebugDrawLineSystem* debugDrawLineSystem_ = nullptr;
+
 };

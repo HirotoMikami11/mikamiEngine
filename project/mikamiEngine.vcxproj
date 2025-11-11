@@ -141,6 +141,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="Application\CollisionManager\CollisionManager.cpp" />
     <ClCompile Include="Application\Scene\GameScene.cpp" />
+    <ClCompile Include="Engine\Objects\Line\DebugDrawLineSystem.cpp" />
     <ClCompile Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.cpp" />
     <ClCompile Include="Engine\Objects\Particle\Field\BaseField.cpp" />
     <ClCompile Include="Engine\Objects\Particle\Field\AccelerationField.cpp" />
@@ -323,6 +324,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\CollisionManager\CollisionConfig.h" />
     <ClInclude Include="Application\CollisionManager\CollisionManager.h" />
     <ClInclude Include="Application\Scene\GameScene.h" />
+    <ClInclude Include="Engine\Objects\Line\DebugDrawLineSystem.h" />
     <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.h" />
     <ClInclude Include="Engine\Objects\Particle\Field\BaseField.h" />
     <ClInclude Include="Engine\Objects\Particle\Field\AccelerationField.h" />
@@ -349,7 +351,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Core\Input\Input.h" />
     <ClInclude Include="Engine\Managers\Model\ModelManager.h" />
     <ClInclude Include="Engine\Managers\ObjectID\ObjectIDManager.h" />
-    <ClInclude Include="Engine\Managers\Scene\BaseScene.h" />
+    <ClInclude Include="Application\Scene\BaseScene.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h" />
     <ClInclude Include="Engine\Managers\Scene\SceneManager.h" />
     <ClInclude Include="Engine\Managers\Texture\Texture.h" />

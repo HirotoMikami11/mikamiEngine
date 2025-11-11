@@ -4,9 +4,9 @@
 #include <unordered_map>
 #include <string>
 #include <functional>
-#include "Managers/Scene/BaseScene.h"
+#include "BaseScene.h"
 
-/// <summary>
+/// <summary>B
 /// 純粋なシーン管理クラス
 /// トランジション処理は含まない
 /// </summary>

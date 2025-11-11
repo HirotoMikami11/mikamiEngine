@@ -1,15 +1,16 @@
 #pragma once
 #include <memory>
 
+#include "Engine.h"
+#include "DirectXCommon.h"
+#include "BaseScene.h"
+
 #include "Object3D.h"
-#include "ParticleSystem.h"
 #include "Light.h"
 #include "GridLine.h"
 #include "CameraController.h"
-
-#include "Engine.h"
-#include "DirectXCommon.h"
-#include "Managers/Scene/BaseScene.h"
+#include "ParticleSystem.h"
+#include "DebugDrawLineSystem.h"
 
 /// <summary>
 /// デバッグ用シーン
@@ -67,5 +68,5 @@ private:
 	// システム参照
 	DirectXCommon* directXCommon_;
 	OffscreenRenderer* offscreenRenderer_;
-
+	DebugDrawLineSystem* debugDrawLineSystem_;
 };

@@ -11,9 +11,8 @@ void ParticleEmitter::Initialize(DirectXCommon* dxCommon, const std::string& tar
 	emitterTransform_.Initialize(dxCommon);
 	emitterTransform_.SetDefaultTransform();
 
-	// デバッグ用LineRendererを初期化
-	debugLineRenderer_ = std::make_unique<LineRenderer>();
-	debugLineRenderer_->Initialize(dxCommon);
+	// DebugDrawLineSystemを取得
+	debugDrawLineSystem_ = DebugDrawLineSystem::GetInstance();
 
 	// 初期状態
 	frequencyTimer_ = 0.0f;
@@ -104,62 +103,18 @@ void ParticleEmitter::SetSpawnAreaSize(const Vector3& size)
 	FixAABBMinMax(spawnArea_);
 }
 
-void ParticleEmitter::DrawDebug(const Matrix4x4& viewProjectionMatrix)
+void ParticleEmitter::AddLineDebug()
 {
-	if (!showDebugAABB_ || !debugLineRenderer_) {
+	if (!showDebugAABB_) {
 		return;
 	}
 #ifdef USEIMGUI
-	// AABBのデバッグ線を作成
-	CreateDebugAABBLines();
-
-	// LineRendererで描画
-	debugLineRenderer_->Draw(viewProjectionMatrix);
-#endif 
-
-
-}
-
-void ParticleEmitter::CreateDebugAABBLines()
-{
-	// 前回の線をクリア
-	debugLineRenderer_->Reset();
-
 	// ワールド座標でのAABBを取得
 	AABB worldAABB = GetWorldAABB();
 
-	// AABBの8頂点を計算（ワールド座標）
-	Vector3 vertices[8] = {
-		// 底面（min.y）
-		{ worldAABB.min.x, worldAABB.min.y, worldAABB.min.z },	// 0: 左下手前
-		{ worldAABB.max.x, worldAABB.min.y, worldAABB.min.z },	// 1: 右下手前
-		{ worldAABB.max.x, worldAABB.min.y, worldAABB.max.z },	// 2: 右下奥
-		{ worldAABB.min.x, worldAABB.min.y, worldAABB.max.z },	// 3: 左下奥
-
-		// 上面（max.y）
-		{ worldAABB.min.x, worldAABB.max.y, worldAABB.min.z },	// 4: 左上手前
-		{ worldAABB.max.x, worldAABB.max.y, worldAABB.min.z },	// 5: 右上手前
-		{ worldAABB.max.x, worldAABB.max.y, worldAABB.max.z },	// 6: 右上奥
-		{ worldAABB.min.x, worldAABB.max.y, worldAABB.max.z }	// 7: 左上奥
-	};
-
-	// 底面の4本の線
-	debugLineRenderer_->AddLine(vertices[0], vertices[1], debugAABBColor_);	// 左下手前 → 右下手前
-	debugLineRenderer_->AddLine(vertices[1], vertices[2], debugAABBColor_);	// 右下手前 → 右下奥
-	debugLineRenderer_->AddLine(vertices[2], vertices[3], debugAABBColor_);	// 右下奥 → 左下奥
-	debugLineRenderer_->AddLine(vertices[3], vertices[0], debugAABBColor_);	// 左下奥 → 左下手前
-
-	// 上面の4本の線
-	debugLineRenderer_->AddLine(vertices[4], vertices[5], debugAABBColor_);	// 左上手前 → 右上手前
-	debugLineRenderer_->AddLine(vertices[5], vertices[6], debugAABBColor_);	// 右上手前 → 右上奥
-	debugLineRenderer_->AddLine(vertices[6], vertices[7], debugAABBColor_);	// 右上奥 → 左上奥
-	debugLineRenderer_->AddLine(vertices[7], vertices[4], debugAABBColor_);	// 左上奥 → 左上手前
-
-	// 縦の4本の線
-	debugLineRenderer_->AddLine(vertices[0], vertices[4], debugAABBColor_);	// 左下手前 → 左上手前
-	debugLineRenderer_->AddLine(vertices[1], vertices[5], debugAABBColor_);	// 右下手前 → 右上手前
-	debugLineRenderer_->AddLine(vertices[2], vertices[6], debugAABBColor_);	// 右下奥 → 右上奥
-	debugLineRenderer_->AddLine(vertices[3], vertices[7], debugAABBColor_);	// 左下奥 → 左上奥
+	// DebugDrawLineSystemでAABBを描画
+	debugDrawLineSystem_->DrawAABB(worldAABB, debugAABBColor_);
+#endif 
 }
 
 void ParticleEmitter::ImGui()
@@ -253,6 +208,7 @@ void ParticleEmitter::ImGui()
 	}
 #endif
 }
+
 AABB ParticleEmitter::GetWorldAABB() const
 {
 	// エミッターの位置を取得

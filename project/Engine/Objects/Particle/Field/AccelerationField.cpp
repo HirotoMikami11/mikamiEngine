@@ -64,44 +64,11 @@ AABB AccelerationField::GetWorldAABB() const
 
 void AccelerationField::CreateDebugShape()
 {
-	// 前回の線をクリア
-	debugLineRenderer_->Reset();
-
 	// ワールド座標でのAABBを取得
 	AABB worldAABB = GetWorldAABB();
 
-	// AABBの8頂点を計算（ワールド座標）
-	Vector3 vertices[8] = {
-		// 底面（min.y）
-		{ worldAABB.min.x, worldAABB.min.y, worldAABB.min.z },	// 0: 左下手前
-		{ worldAABB.max.x, worldAABB.min.y, worldAABB.min.z },	// 1: 右下手前
-		{ worldAABB.max.x, worldAABB.min.y, worldAABB.max.z },	// 2: 右下奥
-		{ worldAABB.min.x, worldAABB.min.y, worldAABB.max.z },	// 3: 左下奥
+	debugDrawLineSystem_->DrawAABB(worldAABB, debugColor_);
 
-		// 上面（max.y）
-		{ worldAABB.min.x, worldAABB.max.y, worldAABB.min.z },	// 4: 左上手前
-		{ worldAABB.max.x, worldAABB.max.y, worldAABB.min.z },	// 5: 右上手前
-		{ worldAABB.max.x, worldAABB.max.y, worldAABB.max.z },	// 6: 右上奥
-		{ worldAABB.min.x, worldAABB.max.y, worldAABB.max.z }	// 7: 左上奥
-	};
-
-	// 底面の4本の線
-	debugLineRenderer_->AddLine(vertices[0], vertices[1], debugColor_);
-	debugLineRenderer_->AddLine(vertices[1], vertices[2], debugColor_);
-	debugLineRenderer_->AddLine(vertices[2], vertices[3], debugColor_);
-	debugLineRenderer_->AddLine(vertices[3], vertices[0], debugColor_);
-
-	// 上面の4本の線
-	debugLineRenderer_->AddLine(vertices[4], vertices[5], debugColor_);
-	debugLineRenderer_->AddLine(vertices[5], vertices[6], debugColor_);
-	debugLineRenderer_->AddLine(vertices[6], vertices[7], debugColor_);
-	debugLineRenderer_->AddLine(vertices[7], vertices[4], debugColor_);
-
-	// 縦の4本の線
-	debugLineRenderer_->AddLine(vertices[0], vertices[4], debugColor_);
-	debugLineRenderer_->AddLine(vertices[1], vertices[5], debugColor_);
-	debugLineRenderer_->AddLine(vertices[2], vertices[6], debugColor_);
-	debugLineRenderer_->AddLine(vertices[3], vertices[7], debugColor_);
 }
 
 void AccelerationField::ImGui()

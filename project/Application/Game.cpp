@@ -33,11 +33,11 @@ void Game::InitializeScenes() {
 	auto demoScene = std::make_unique<DemoScene>();
 	sceneManager_->RegisterScene("DemoScene", std::move(demoScene));
 
-	 auto debugScene = std::make_unique<DebugScene>();
-	 sceneManager_->RegisterScene("DebugScene", std::move(debugScene));
+	auto debugScene = std::make_unique<DebugScene>();
+	sceneManager_->RegisterScene("DebugScene", std::move(debugScene));
 
-	 auto gameScene = std::make_unique<GameScene>();
-	 sceneManager_->RegisterScene("GameScene", std::move(gameScene));
+	auto gameScene = std::make_unique<GameScene>();
+	sceneManager_->RegisterScene("GameScene", std::move(gameScene));
 
 	// デフォルトシーンを設定（最初に表示するシーン）
 	sceneManager_->ChangeScene("DebugScene");
@@ -75,8 +75,8 @@ void Game::Update() {
 	}
 	// トランジションマネージャーのImGui
 	if (transitionManager_) {
-	//　TODO:imgui必要に応じて作成
-	// 	transitionManager_->ImGui();
+		//　TODO:imgui必要に応じて作成
+		// 	transitionManager_->ImGui();
 	}
 }
 

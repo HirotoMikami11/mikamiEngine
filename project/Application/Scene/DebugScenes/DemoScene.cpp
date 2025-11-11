@@ -12,6 +12,7 @@ DemoScene::DemoScene()
 	, particleSystem_(nullptr)
 	, directXCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
+	, debugDrawLineSystem_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
 	, viewProjectionMatrixSprite{ MakeIdentity4x4() }
 {
@@ -47,6 +48,8 @@ void DemoScene::Initialize() {
 	// システム参照の取得
 	directXCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
+	debugDrawLineSystem_ = Engine::GetInstance()->GetDebugDrawManager();
+
 	///*-----------------------------------------------------------------------*///
 	///								カメラの初期化									///
 	///*-----------------------------------------------------------------------*///
@@ -305,8 +308,6 @@ void DemoScene::UpdateGameObjects() {
 	modelMultiMesh_->Update(viewProjectionMatrix);
 	//マルチマテリアルモデルの更新
 	modelMultiMaterial_->Update(viewProjectionMatrix);
-	// グリッド線更新
-	gridLine_->Update(viewProjectionMatrix);
 
 	// パーティクルシステムの更新（全グループ・全エミッター）
 	particleSystem_->Update(viewProjectionMatrix, 1.0f / 60.0f);
@@ -315,9 +316,9 @@ void DemoScene::UpdateGameObjects() {
 void DemoScene::DrawOffscreen() {
 
 	///
-	/// グリッド線を描画（3D要素）
+	/// グリッド線をLineSystemに追加する(実際に描画しない)
 	/// 
-	gridLine_->Draw(viewProjectionMatrix);
+	gridLine_->Draw();
 
 	///
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
@@ -336,7 +337,13 @@ void DemoScene::DrawOffscreen() {
 	/// 
 	// パーティクルシステムの描画（全グループ）
 	particleSystem_->Draw(directionalLight_);
-	particleSystem_->DrawDebug(viewProjectionMatrix);	/// デバッグ描画
+
+	///
+	/// Line描画の一括実行
+	///
+
+	debugDrawLineSystem_->Draw(viewProjectionMatrix);
+
 }
 
 void DemoScene::DrawBackBuffer() {
