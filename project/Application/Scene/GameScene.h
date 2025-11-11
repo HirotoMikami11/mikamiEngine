@@ -2,15 +2,18 @@
 #include <memory>
 #include <array>
 
-#include "Sprite.h"
-#include "Light.h"
-#include "Object3D.h"
-#include "CameraController.h"
-#include "ParticleSystem.h"
-#include "GridLine.h"
 #include "Engine.h"
 #include "DirectXCommon.h"
 #include "Managers/Scene/BaseScene.h"
+
+#include "Sprite.h"
+#include "Light.h"
+#include "Object3D.h"
+#include "GridLine.h"
+#include "CameraController.h"
+#include "ParticleSystem.h"
+
+#include "CollisionManager/CollisionManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -62,6 +65,10 @@ private:
 	// カメラ
 	CameraController* cameraController_;
 	Matrix4x4 viewProjectionMatrix;
+
+	// 衝突マネージャー
+	std::unique_ptr<CollisionManager> collisionManager_;
+
 
 	// システム参照
 	DirectXCommon* directXCommon_;

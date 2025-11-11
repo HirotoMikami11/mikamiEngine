@@ -385,6 +385,10 @@ void DemoScene::ImGui() {
 	particleSystem_->ImGui();
 
 	ImGui::Spacing();
+	ImGui::Text("Grid Line");
+	gridLine_->ImGui();
+
+	ImGui::Spacing();
 	// ライトのImGui
 	ImGui::Text("Lighting");
 	directionalLight_.ImGui("DirectionalLight");

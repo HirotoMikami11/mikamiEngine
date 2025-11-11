@@ -37,6 +37,14 @@ void GameScene::Initialize() {
 	cameraController_->Initialize(directXCommon_, initialPosition, initialRotation);
 	cameraController_->SetActiveCamera("normal");
 
+	///*-----------------------------------------------------------------------*///
+	///								衝突マネージャー								///
+	///*-----------------------------------------------------------------------*///
+	// 衝突マネージャーの生成
+	collisionManager_ = std::make_unique<CollisionManager>();
+	// 衝突マネージャーの初期化
+	collisionManager_->Initialize();
+
 	// ゲームオブジェクト初期化
 	InitializeGameObjects();
 	//ポストエフェクトの初期設定
@@ -95,6 +103,22 @@ void GameScene::UpdateGameObjects() {
 	sphere_->Update(viewProjectionMatrix);
 	// グリッド線更新
 	gridLine_->Update(viewProjectionMatrix);
+
+
+#pragma region 衝突判定
+
+	// 衝突マネージャーのリストをクリアする
+	collisionManager_->ClearColliderList();
+
+	// Player, Enemyのコライダーを追加する
+	//collisionManager_->AddCollider(player_.get());
+	//for (const auto& enemy : enemies_) {
+	//	collisionManager_->AddCollider(enemy.get());
+	//}
+	// 衝突判定と応答
+	collisionManager_->Update();
+
+#pragma endregion
 
 }
 

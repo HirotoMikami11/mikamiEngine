@@ -27,7 +27,6 @@ struct LineData {
 
 /// <summary>
 /// 複数線分の一括描画システム
-/// KamataEngineのPrimitiveDrawerを参考にした実装
 /// </summary>
 class LineRenderer {
 public:
