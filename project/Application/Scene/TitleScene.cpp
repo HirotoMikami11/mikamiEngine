@@ -1,5 +1,6 @@
 #include "TitleScene.h"
 #include "Managers/ImGui/ImGuiManager.h" 
+#include "Managers/Transition/SceneTransitionHelper.h" 
 #include <numbers> 
 
 TitleScene::TitleScene()
@@ -86,6 +87,15 @@ void TitleScene::Update() {
 
 	// ゲームオブジェクト更新
 	UpdateGameObjects();
+
+
+	// ゲームシーンに移動
+	if (Input::GetInstance()->IsKeyTrigger(DIK_SPACE)) {
+		// フェードを使った遷移
+		SceneTransitionHelper::FadeToScene("GameScene", 1.0f);
+		return; // 以降の処理をスキップ
+	}
+
 }
 
 void TitleScene::UpdateGameObjects() {
