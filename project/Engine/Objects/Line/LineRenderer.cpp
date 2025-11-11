@@ -123,7 +123,7 @@ void LineRenderer::UpdateVertexBuffer() {
 
 void LineRenderer::ImGui() {
 #ifdef USEIMGUI
-	if (ImGui::TreeNode("Line Renderer")) {
+	if (ImGui::TreeNodeEx("Line Renderer", ImGuiTreeNodeFlags_DefaultOpen)) {
 		// 基本情報
 		ImGui::Checkbox("Visible", &isVisible_);
 		ImGui::Text("Line Count: %d / %d", GetLineCount(), kMaxLineCount);

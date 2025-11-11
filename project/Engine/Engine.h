@@ -17,6 +17,7 @@
 #include "ImGui/ImGuiManager.h" 
 #include "FrameTimer.h"
 #include "OffscreenRenderer.h"
+#include "DebugDrawLineSystem.h"
 
 ///Objects
 #include "CameraController.h"
@@ -76,6 +77,7 @@ public:
 	WinApp* GetWinApp() const { return winApp_.get(); }
 	DirectXCommon* GetDirectXCommon() const { return directXCommon_.get(); }
 	OffscreenRenderer* GetOffscreenRenderer() const { return offscreenRenderer_.get(); }
+	DebugDrawLineSystem* GetDebugDrawManager() const { return debugDrawManager_; }
 	bool IsClosedWindow() const { return ClosedWindow_; }
 
 private:
@@ -113,6 +115,7 @@ private:
 	ModelManager* modelManager_;
 	ResourceLoader* resourceLoader_;
 	FrameTimer* frameTimer_;
+	DebugDrawLineSystem* debugDrawManager_;
 
 	// カメラコントローラー
 	CameraController* cameraController_;

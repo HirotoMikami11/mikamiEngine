@@ -53,24 +53,22 @@ void ParticleSystem::Draw(const Light& directionalLight)
 	for (auto& [groupName, group] : groups_) {
 		group->Draw(directionalLight);
 	}
-}
-
-void ParticleSystem::DrawDebug(const Matrix4x4& viewProjectionMatrix)
-{
 
 #ifdef USEIMGUI
+	/// デバッグ描画(LineSystemに追加するだけでここで実際に描画してない)
 	// すべてのエミッターのデバッグ描画
 	for (auto& [emitterName, emitter] : emitters_) {
-		emitter->DrawDebug(viewProjectionMatrix);
+		emitter->AddLineDebug();
 	}
 
 	// すべてのフィールドのデバッグ描画
 	for (auto& [fieldName, field] : fields_) {
-		field->DrawDebug(viewProjectionMatrix);
+		field->AddLineDebug();
 	}
 #endif 
 
 }
+
 
 void ParticleSystem::ImGui()
 {

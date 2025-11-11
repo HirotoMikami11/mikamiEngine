@@ -6,7 +6,7 @@
 #include "ParticleState.h"
 #include "Random/Random.h"
 #include "MyFunction.h"
-#include "LineRenderer.h"
+#include "DebugDrawLineSystem.h"
 
 // 前方宣言
 class ParticleGroup;
@@ -39,8 +39,7 @@ public:
 	/// <summary>
 	/// デバッグ描画（AABB表示）
 	/// </summary>
-	/// <param name="viewProjectionMatrix">ビュープロジェクション行列</param>
-	void DrawDebug(const Matrix4x4& viewProjectionMatrix);
+	void AddLineDebug();
 
 	/// <summary>
 	/// ImGui用のデバッグ表示
@@ -107,11 +106,6 @@ private:
 	/// <returns>生成されたパーティクル</returns>
 	ParticleState CreateNewParticle();
 
-	/// <summary>
-	/// AABBのデバッグ線を作成
-	/// </summary>
-	void CreateDebugAABBLines();
-
 	// エミッター設定
 	Transform3D emitterTransform_;			// エミッターのトランスフォーム
 	uint32_t emitCount_ = 5;				// 1回の発生で生成するパーティクル数
@@ -131,7 +125,6 @@ private:
 	};
 
 	// デバッグ描画
-	std::unique_ptr<LineRenderer> debugLineRenderer_;
 	bool showDebugAABB_ = false;
 	Vector4 debugAABBColor_ = { 1.0f, 0.0f, 0.0f, 1.0f };	// 赤色
 
@@ -140,4 +133,5 @@ private:
 
 	// システム参照
 	DirectXCommon* directXCommon_ = nullptr;
+	DebugDrawLineSystem* debugDrawLineSystem_ = nullptr;
 };

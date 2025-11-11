@@ -63,57 +63,18 @@ bool GravityField::IsInField(const Vector3& point) const
 	return distance <= effectRadius_;
 }
 
-void GravityField::DrawCircle(const Vector3& center, float radius, int axis, int segments, const Vector4& color)
-{
-	const float angleStep = 2.0f * 3.14159265f / segments;
-
-	for (int i = 0; i < segments; ++i) {
-		float angle1 = i * angleStep;
-		float angle2 = (i + 1) * angleStep;
-
-		Vector3 p1, p2;
-
-		// 軸に応じて円を描画
-		switch (axis) {
-		case 0: // YZ平面（X軸周り）
-			p1 = { center.x, center.y + radius * std::cos(angle1), center.z + radius * std::sin(angle1) };
-			p2 = { center.x, center.y + radius * std::cos(angle2), center.z + radius * std::sin(angle2) };
-			break;
-		case 1: // XZ平面（Y軸周り）
-			p1 = { center.x + radius * std::cos(angle1), center.y, center.z + radius * std::sin(angle1) };
-			p2 = { center.x + radius * std::cos(angle2), center.y, center.z + radius * std::sin(angle2) };
-			break;
-		case 2: // XY平面（Z軸周り）
-			p1 = { center.x + radius * std::cos(angle1), center.y + radius * std::sin(angle1), center.z };
-			p2 = { center.x + radius * std::cos(angle2), center.y + radius * std::sin(angle2), center.z };
-			break;
-		}
-
-		debugLineRenderer_->AddLine(p1, p2, color);
-	}
-}
-
 void GravityField::CreateDebugShape()
 {
-	// 前回の線をクリア
-	debugLineRenderer_->Reset();
 
 	// フィールド中心座標を取得
 	Vector3 center = GetCenter();
 
-	// 効果範囲の球体を3つの円で表現
-	const int segments = 32;	// 円の分割数
-
-	// 3つの軸周りに円を描画
-	DrawCircle(center, effectRadius_, 0, segments, debugColor_);	// YZ平面
-	DrawCircle(center, effectRadius_, 1, segments, debugColor_);	// XZ平面
-	DrawCircle(center, effectRadius_, 2, segments, debugColor_);	// XY平面
-
 	// 削除範囲を異なる色で表示（赤色）
 	Vector4 deleteColor = { 1.0f, 0.0f, 0.0f, 1.0f };
-	DrawCircle(center, deleteRadius_, 0, segments / 2, deleteColor);
-	DrawCircle(center, deleteRadius_, 1, segments / 2, deleteColor);
-	DrawCircle(center, deleteRadius_, 2, segments / 2, deleteColor);
+
+	debugDrawLineSystem_->DrawSphere(center, effectRadius_, debugColor_);
+	debugDrawLineSystem_->DrawSphere(center, deleteRadius_, deleteColor);
+
 }
 
 void GravityField::ImGui()

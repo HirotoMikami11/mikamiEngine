@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseField.h"
+#include "DebugDrawLineSystem.h"
 
 /// <summary>
 /// 重力フィールド
@@ -67,16 +68,6 @@ protected:
 	void CreateDebugShape() override;
 
 private:
-	/// <summary>
-	/// 円を描画するヘルパー関数
-	/// </summary>
-	/// <param name="center">中心座標</param>
-	/// <param name="radius">半径</param>
-	/// <param name="axis">回転軸（0=YZ平面, 1=XZ平面, 2=XY平面）</param>
-	/// <param name="segments">分割数</param>
-	/// <param name="color">色</param>
-	void DrawCircle(const Vector3& center, float radius, int axis, int segments, const Vector4& color);
-
 	// 重力フィールド固有のパラメータ
 	float gravityStrength_ = 5.0f;		// 重力の強さ
 	float effectRadius_ = 3.0f;			// 効果範囲（球体の半径）
