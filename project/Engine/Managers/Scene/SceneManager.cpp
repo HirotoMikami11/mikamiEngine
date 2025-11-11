@@ -52,6 +52,7 @@ void SceneManager::Finalize() {
 void SceneManager::RegisterScene(const std::string& sceneName, std::unique_ptr<BaseScene> scene) {
 	assert(scene != nullptr);
 	scenes_[sceneName] = std::move(scene);
+	Logger::Log(Logger::GetStream(), std::format("registered scene: {}\n", sceneName));
 }
 
 void SceneManager::UnregisterScene(const std::string& sceneName) {
@@ -197,10 +198,9 @@ void SceneManager::DrawScenesUI() {
 			ImGui::Text("(Current)");
 		} else {
 			ImGui::SameLine();
-			ImGui::Text("(Res: %s, Obj: %s)",
-				scene->IsResourcesLoaded() ? "Yes" : "No",
-				scene->IsInitialized() ? "Yes" : "No"
-			);
+			//ImGui::Text("(Obj: %s)",
+			//	scene->IsInitialized() ? "Yes" : "No"
+			//);
 		}
 
 		// リセットボタン

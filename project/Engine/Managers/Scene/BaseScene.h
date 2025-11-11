@@ -46,9 +46,6 @@ public:
 	/// </summary>
 	virtual void ImGui() {}
 
-	// リソース読み込み状態の管理
-	bool IsResourcesLoaded() const { return resourcesLoaded_; }
-	void SetResourcesLoaded(bool loaded) { resourcesLoaded_ = loaded; }
 
 	// オブジェクト初期化状態の管理
 	bool IsInitialized() const { return initialized_; }
@@ -61,6 +58,6 @@ protected:
 	std::string sceneName_;
 
 private:
-	bool resourcesLoaded_ = false;	// リソース読み込み済みフラグ（保持される）
+
 	bool initialized_ = false;		// オブジェクト初期化済みフラグ（切り替え時リセット）
 };

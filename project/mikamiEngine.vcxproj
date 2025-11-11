@@ -233,6 +233,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClCompile>
     <ClCompile Include="Application\Game.cpp" />
     <ClCompile Include="Engine\Objects\Particle\Field\GravityField.cpp" />
+    <ClCompile Include="Application\Scene\GameClearScene.cpp" />
+    <ClCompile Include="Application\Scene\GameOverScene.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -245,6 +247,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Objects\Particle\ParticleGroup.cpp" />
     <ClCompile Include="Engine\Objects\Particle\ParticleSystem.cpp" />
     <ClCompile Include="Engine\Managers\ResourceLoader\ResourceLoader.cpp" />
+    <ClCompile Include="Application\Scene\TitleScene.cpp" />
+    <ClCompile Include="Application\Scene\SelectScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -437,6 +441,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Objects\Particle\ParticleSystem.h" />
     <ClInclude Include="Engine\Objects\Particle\Field\GravityField.h" />
     <ClInclude Include="Engine\Managers\ResourceLoader\ResourceLoader.h" />
+    <ClInclude Include="Application\Scene\GameClearScene.h" />
+    <ClInclude Include="Application\Scene\GameOverScene.h" />
+    <ClInclude Include="Application\Scene\TitleScene.h" />
+    <ClInclude Include="Application\Scene\SelectScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
