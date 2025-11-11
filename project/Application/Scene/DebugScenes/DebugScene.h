@@ -68,6 +68,4 @@ private:
 	DirectXCommon* directXCommon_;
 	OffscreenRenderer* offscreenRenderer_;
 
-	// リソース管理
-	TextureManager* textureManager_;
 };

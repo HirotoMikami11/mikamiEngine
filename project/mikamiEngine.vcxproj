@@ -105,7 +105,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Engine;$(ProjectDir)Application;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\DirectXCommon;$(ProjectDir)Engine\Core\DirectXCommon\DescriptorHeapManager;$(ProjectDir)Engine\Core\DirectXCommon\PSOFactory;$(ProjectDir)Engine\Core\Logger;$(ProjectDir)Engine\Core\WinApp;$(ProjectDir)Engine\Core\Input;$(ProjectDir)Engine\CameraController;$(ProjectDir)Engine\FrameTimer;$(ProjectDir)Engine\Managers;$(ProjectDir)Engine\MyMath;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Objects\Object3D;$(ProjectDir)Engine\Objects\Light;$(ProjectDir)Engine\Objects\Line;$(ProjectDir)Engine\Objects\Sprite;$(ProjectDir)Engine\OffscreenRenderer;$(ProjectDir)Application\Scene;$(ProjectDir)Engine\Objects\Particle;$(ProjectDir)Engine\Objects\Particle\Field;%(AdditionalIncludeDirectories);$(ProjectDir)\externals\DirectXTex;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\DirectXTex;$(ProjectDir)\externals\imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\externals\DirectXTex;$(ProjectDir)\externals\imgui;$(ProjectDir)Engine;$(ProjectDir)Application;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\DirectXCommon;$(ProjectDir)Engine\Core\DirectXCommon\DescriptorHeapManager;$(ProjectDir)Engine\Core\DirectXCommon\PSOFactory;$(ProjectDir)Engine\Core\Logger;$(ProjectDir)Engine\Core\WinApp;$(ProjectDir)Engine\Core\Input;$(ProjectDir)Engine\CameraController;$(ProjectDir)Engine\FrameTimer;$(ProjectDir)Engine\Managers;$(ProjectDir)Engine\MyMath;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Objects\Object3D;$(ProjectDir)Engine\Objects\Light;$(ProjectDir)Engine\Objects\Line;$(ProjectDir)Engine\Objects\Sprite;$(ProjectDir)Engine\OffscreenRenderer;$(ProjectDir)Engine\Objects\Particle;$(ProjectDir)Engine\Objects\Particle\Field;$(ProjectDir)Application\Scene;$(ProjectDir)Application\CollisionManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -139,10 +139,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application\CollisionManager\CollisionManager.cpp" />
+    <ClCompile Include="Application\Scene\GameScene.cpp" />
     <ClCompile Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.cpp" />
     <ClCompile Include="Engine\Objects\Particle\Field\BaseField.cpp" />
     <ClCompile Include="Engine\Objects\Particle\Field\AccelerationField.cpp" />
-    <ClCompile Include="Application\Scene\DebugScene.cpp" />
+    <ClCompile Include="Application\Scene\DebugScenes\DebugScene.cpp" />
     <ClCompile Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorHeapManager.cpp" />
     <ClCompile Include="Engine\Core\DirectXCommon\DirectXCommon.cpp" />
     <ClCompile Include="Engine\Core\DirectXCommon\PSOFactory\PSODescriptor.cpp" />
@@ -163,7 +165,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Core\Input\Input.cpp" />
     <ClCompile Include="Engine\Managers\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\Managers\ObjectID\ObjectIDManager.cpp" />
-    <ClCompile Include="Application\Scene\DemoScene.cpp" />
+    <ClCompile Include="Application\Scene\DebugScenes\DemoScene.cpp" />
     <ClCompile Include="Engine\Managers\Scene\SceneManager.cpp" />
     <ClCompile Include="Engine\Managers\Texture\Texture.cpp" />
     <ClCompile Include="Engine\Managers\Texture\TextureManager.cpp" />
@@ -317,10 +319,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application\CollisionManager\Collider.h" />
+    <ClInclude Include="Application\CollisionManager\CollisionConfig.h" />
+    <ClInclude Include="Application\CollisionManager\CollisionManager.h" />
+    <ClInclude Include="Application\Scene\GameScene.h" />
     <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.h" />
     <ClInclude Include="Engine\Objects\Particle\Field\BaseField.h" />
     <ClInclude Include="Engine\Objects\Particle\Field\AccelerationField.h" />
-    <ClInclude Include="Application\Scene\DebugScene.h" />
+    <ClInclude Include="Application\Scene\DebugScenes\DebugScene.h" />
     <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorHeapManager.h" />
     <ClInclude Include="Engine\Core\DirectXCommon\DirectXCommon.h" />
     <ClInclude Include="Engine\Core\DirectXCommon\PSOFactory\PSODescriptor.h" />
@@ -344,7 +350,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Managers\Model\ModelManager.h" />
     <ClInclude Include="Engine\Managers\ObjectID\ObjectIDManager.h" />
     <ClInclude Include="Engine\Managers\Scene\BaseScene.h" />
-    <ClInclude Include="Application\Scene\DemoScene.h" />
+    <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h" />
     <ClInclude Include="Engine\Managers\Scene\SceneManager.h" />
     <ClInclude Include="Engine\Managers\Texture\Texture.h" />
     <ClInclude Include="Engine\Managers\Texture\TextureManager.h" />

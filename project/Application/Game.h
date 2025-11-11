@@ -1,9 +1,7 @@
 #pragma once
 /// 				Scene							///
 #include "Managers/Scene/SceneManager.h"
-//最初から用意されているシーン
-#include "DemoScene.h"
-#include "DebugScene.h"
+
 
 /// 				Transitions							///
 #include "Managers/Transition/TransitionManager.h"
@@ -51,7 +49,4 @@ private:
 	// トランジションマネージャー
 	TransitionManager* transitionManager_;
 
-	// リソース管理
-	ModelManager* modelManager_;
-	TextureManager* textureManager_;
 };

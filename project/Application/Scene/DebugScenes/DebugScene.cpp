@@ -7,7 +7,6 @@ DebugScene::DebugScene()
 	, cameraController_(nullptr)
 	, directXCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
-	, textureManager_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
 {
 }

@@ -1,9 +1,11 @@
 #include "Game.h"
-
+//最初から用意されているシーン
+#include "DebugScenes/DemoScene.h"
+#include "DebugScenes/DebugScene.h"
+//必要なシーン郡
+#include "GameScene.h"
 
 Game::Game() :
-	textureManager_(nullptr),
-	modelManager_(nullptr),
 	sceneManager_(nullptr) {
 }
 
@@ -19,10 +21,6 @@ void Game::Initialize() {
 	transitionManager_ = TransitionManager::GetInstance();
 	transitionManager_->Initialize();
 
-	// リソースマネージャーの初期化
-	modelManager_ = ModelManager::GetInstance();
-	textureManager_ = TextureManager::GetInstance();
-
 	// カスタムトランジションエフェクトを登録
 	RegisterTransitionEffects();
 
@@ -37,6 +35,9 @@ void Game::InitializeScenes() {
 
 	 auto debugScene = std::make_unique<DebugScene>();
 	 sceneManager_->RegisterScene("DebugScene", std::move(debugScene));
+
+	 auto gameScene = std::make_unique<GameScene>();
+	 sceneManager_->RegisterScene("GameScene", std::move(gameScene));
 
 	// デフォルトシーンを設定（最初に表示するシーン）
 	sceneManager_->ChangeScene("DebugScene");

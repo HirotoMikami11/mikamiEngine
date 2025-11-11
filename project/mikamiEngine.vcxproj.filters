@@ -246,7 +246,7 @@
     <ClCompile Include="Engine\Managers\Audio\AudioManager.cpp">
       <Filter>Engine\Managers\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\DemoScene.cpp">
+    <ClCompile Include="Application\Scene\DebugScenes\DemoScene.cpp">
       <Filter>Engine\Managers\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Managers\Scene\SceneManager.cpp">
@@ -345,7 +345,7 @@
     <ClCompile Include="Engine\CameraController\CameraController.cpp">
       <Filter>Engine\CameraController</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\DebugScene.cpp">
+    <ClCompile Include="Application\Scene\DebugScenes\DebugScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Utility\StringUtility.cpp">
@@ -403,6 +403,12 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Managers\ResourceLoader\ResourceLoader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\CollisionManager\CollisionManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\GameScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -517,7 +523,7 @@
     <ClInclude Include="Engine\Managers\Scene\BaseScene.h">
       <Filter>Engine\Managers\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\DemoScene.h">
+    <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h">
       <Filter>Engine\Managers\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Managers\Scene\SceneManager.h">
@@ -625,7 +631,7 @@
     <ClInclude Include="Engine\CameraController\CameraController.h">
       <Filter>Engine\CameraController</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\DebugScene.h">
+    <ClInclude Include="Application\Scene\DebugScenes\DebugScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\Logger\LeakChecker.h">
@@ -695,6 +701,18 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Managers\ResourceLoader\ResourceLoader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\CollisionManager\CollisionConfig.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\CollisionManager\CollisionManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\CollisionManager\Collider.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\GameScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
