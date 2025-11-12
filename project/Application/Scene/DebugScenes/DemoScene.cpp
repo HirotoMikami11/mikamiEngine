@@ -294,7 +294,7 @@ void DemoScene::UpdateGameObjects() {
 	float gameDeltaTime = gameTimer.GetDeltaTime();
 
 	//球体を回転させる
-	float rotationSpeed = degToRad(30);
+	float rotationSpeed = DegToRad(30);
 	sphere_->AddRotation({ 0.0f, rotationSpeed, 0.0f });
 
 	// 行列更新

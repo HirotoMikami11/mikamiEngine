@@ -60,9 +60,19 @@ namespace MyMath {
 	float EaseOutBounce(float x);
 	float EaseInOutBounce(float x);
 
+	/// <summary>
+	/// ラジアンから度に変換
+	/// </summary>
+	/// <param name="degrees"></param>
+	/// <returns></returns>
+	float DegToRad(float degrees);
 
-	float degToRad(float degrees);
-
+	/// <summary>
+	/// 度からラジアン
+	/// </summary>
+	/// <param name="degrees"></param>
+	/// <returns></returns>
+	float RadToDeg(float radian);
 
 	///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//
 

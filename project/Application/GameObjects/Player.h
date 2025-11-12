@@ -1,6 +1,7 @@
 #pragma once
 #include "Collider.h"	//衝突判定
 #include "CollisionConfig.h"	//衝突属性のフラグを定義する
+
 class Player : public Collider
 {
 public:
@@ -34,11 +35,6 @@ public:
 	void Draw(const Light& directionalLight);
 
 	/// <summary>
-	/// UI描画（レティクル描画）
-	/// </summary>
-	void DrawUI();
-
-	/// <summary>
 	/// ImGui
 	/// </summary>
 	void ImGui();
@@ -49,10 +45,35 @@ public:
 	/// <param name="other">衝突相手のコライダー</param>
 	void OnCollision(Collider* other) override;
 
+	/// <summary>
+	/// ワールド座標を取得（オーバーライド）
+	/// </summary>
+	Vector3 GetWorldPosition() override;
+
 private:
+	/// <summary>
+	/// 移動処理（XZ平面）
+	/// </summary>
+	void ProcessMovement();
+
+	/// <summary>
+	/// 回転処理（向き制御）
+	/// </summary>
+	void ProcessRotation();
+
 	// ゲームオブジェクト
 	std::unique_ptr<Object3D> gameObject_;
+
 	// システム参照
 	DirectXCommon* directXCommon_ = nullptr;
-};
+	Input* input_ = nullptr;
 
+	// 移動関連
+	Vector3 velocity_;					// 速度
+	const float kAcceleration = 0.15f;	// 加速度
+	const float kLimitRunSpeed = 5.0f;	// 最大速度
+	const float kAttenuation = 0.1f;	// 減衰率（非入力時）
+
+	// 回転関連
+	const float kRotationSpeed = 0.05f;	// 回転速度
+};

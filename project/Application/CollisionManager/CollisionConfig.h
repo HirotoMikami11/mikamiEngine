@@ -13,3 +13,7 @@ const uint32_t kCollisionAttributePlayer = 0b1;
 // 敵陣営
 // 0b00000010
 const uint32_t kCollisionAttributeEnemy = 0b1 << 1;	//左シフト
+
+//その他オブジェクト(柱など)
+// 0b00000100
+const uint32_t kCollisionAttributeObjects = 0b1 << 2;	//左シフト

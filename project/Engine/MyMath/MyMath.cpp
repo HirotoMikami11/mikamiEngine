@@ -197,9 +197,17 @@ namespace MyMath {
 			: (1 + EaseOutBounce(2 * x - 1)) / 2;
 	}
 
-	float degToRad(float degrees) {
-		return degrees * std::numbers::pi_v<float> / 180.0f;
+	float DegToRad(float degrees)
+	{
+			return degrees * std::numbers::pi_v<float> / 180.0f;
 	}
+
+	float RadToDeg(float radian)
+	{
+		return radian * 180.0f / std::numbers::pi_v<float>;
+	}
+
+
 
 	///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//
 

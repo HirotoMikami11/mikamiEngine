@@ -5,6 +5,7 @@
 #include "CollisionManager.h"
 
 #include "GameObjects/Ground.h"
+#include "GameObjects/Player.h"
 
 /// <summary>
 /// ゲームシーン
@@ -47,9 +48,9 @@ private:
 	void UpdateGameObjects();
 
 	// ゲームオブジェクト
-	std::unique_ptr<Sphere> sphere_;
 	std::unique_ptr<GridLine> gridLine_;
 	std::unique_ptr<Ground> ground_;
+	std::unique_ptr<Player> player_;
 
 
 	// ライティング

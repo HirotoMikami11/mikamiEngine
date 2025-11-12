@@ -387,7 +387,7 @@ void DebugCamera::ImGui() {
 		bool positionChanged = false;
 		bool rotationChanged = false;
 
-		if (ImGui::DragFloat3("Position", &cartesianPosition_.x, 0.1f, -100.0f, 100.0f)) {
+		if (ImGui::DragFloat3("Position", &cartesianPosition_.x, 0.1f, -1000.0f, 1000.0f)) {
 			cameraTransform_.translate = cartesianPosition_;
 			positionChanged = true;
 		}

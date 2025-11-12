@@ -33,14 +33,11 @@ void GameScene::Initialize() {
 	///*-----------------------------------------------------------------------*///
 	cameraController_ = CameraController::GetInstance();
 	// 座標と回転を指定して初期化
-	Vector3 initialPosition = { 0.0f, 6.8f, -18.0f };
+	Vector3 initialPosition = { 0.0f, 15.951f, -39.645f };
 	Vector3 initialRotation = { 0.4f, 0.0f, 0.0f };
 	cameraController_->Initialize(directXCommon_, initialPosition, initialRotation);
 	cameraController_->SetActiveCamera("normal");
 
-	///*-----------------------------------------------------------------------*///
-	///								衝突マネージャー								///
-	///*-----------------------------------------------------------------------*///
 	// 衝突マネージャーの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	// 衝突マネージャーの初期化
@@ -54,18 +51,14 @@ void GameScene::Initialize() {
 
 void GameScene::InitializeGameObjects() {
 	///*-----------------------------------------------------------------------*///
-	///									球体										///
+	///								プレイヤー									///
 	///*-----------------------------------------------------------------------*///
-	Vector3Transform transformSphere{
-		{1.0f, 1.0f, 1.0f},
-		{0.0f, -std::numbers::pi_v<float>*0.5f, 0.0f},
-		{0.0f, 0.0f, 0.0f}
-	};
 
-	sphere_ = std::make_unique<Sphere>();
-	sphere_->Initialize(directXCommon_, "sphere", "monsterBall");
-	sphere_->SetTransform(transformSphere);
+	player_ = std::make_unique<Player>();
+	player_->Initialize(directXCommon_, { 0.0f, 0.5f, 0.0f });  // Y座標を0.5fに設定
 
+
+	///地面
 	ground_ = std::make_unique<Ground>();
 	ground_->Initialize(directXCommon_, { 0.0f,-0.51f,0.0f });
 
@@ -105,8 +98,8 @@ void GameScene::Update() {
 void GameScene::UpdateGameObjects() {
 	// 行列更新
 	viewProjectionMatrix = cameraController_->GetViewProjectionMatrix();
-	// 球体の更新
-	sphere_->Update(viewProjectionMatrix);
+	// 自機の更新
+	player_->Update(viewProjectionMatrix);
 
 	ground_->Update(viewProjectionMatrix);
 
@@ -117,11 +110,8 @@ void GameScene::UpdateGameObjects() {
 	// 衝突マネージャーのリストをクリアする
 	collisionManager_->ClearColliderList();
 
-	// Player, Enemyのコライダーを追加する
-	//collisionManager_->AddCollider(player_.get());
-	//for (const auto& enemy : enemies_) {
-	//	collisionManager_->AddCollider(enemy.get());
-	//}
+	// Player, 
+	collisionManager_->AddCollider(player_.get());
 	// 衝突判定と応答
 	collisionManager_->Update();
 
@@ -139,8 +129,8 @@ void GameScene::DrawOffscreen() {
 	///
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	/// 
-	// 球体の描画
-	sphere_->Draw(directionalLight_);
+	// 自機の描画
+	player_->Draw(directionalLight_);
 
 	ground_->Draw(directionalLight_);
 
@@ -174,8 +164,8 @@ void GameScene::ImGui() {
 	ImGui::Separator();
 
 	ImGui::Spacing();
-	ImGui::Text("Sphere");
-	sphere_->ImGui();
+	ImGui::Text("Player");
+	player_->ImGui();
 
 	ImGui::Spacing();
 	ImGui::Text("Ground");

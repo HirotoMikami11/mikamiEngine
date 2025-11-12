@@ -125,12 +125,12 @@ void NormalCamera::ImGui() {
 	ImGui::Separator();
 
 	// カメラの位置と回転を表示・編集
-	if (ImGui::SliderFloat3("Position", &cameraTransform_.translate.x, -50.0f, 50.0f)) {
+	if (ImGui::DragFloat3("Position", &cameraTransform_.translate.x, 0.1f, -1000.0f, 1000.0f)) {
 		// 位置変更時は行列を更新
 		UpdateMatrix();
 	}
 
-	if (ImGui::SliderFloat3("Rotation", &cameraTransform_.rotate.x, -std::numbers::pi_v<float>, std::numbers::pi_v<float>)) {
+	if (ImGui::DragFloat3("Rotation", &cameraTransform_.rotate.x, 0.01f, -std::numbers::pi_v<float>, std::numbers::pi_v<float>)) {
 		// 回転変更時は行列を更新
 		UpdateMatrix();
 	}
