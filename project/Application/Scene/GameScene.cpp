@@ -62,6 +62,11 @@ void GameScene::InitializeGameObjects() {
 	ground_ = std::make_unique<Ground>();
 	ground_->Initialize(directXCommon_, { 0.0f,-0.51f,0.0f });
 
+	///ボス
+	boss_ = std::make_unique<Boss>();
+	boss_->Initialize(directXCommon_, { -5.0f, 1.0f, 0.0f });
+
+
 
 
 	///*-----------------------------------------------------------------------*///
@@ -101,6 +106,9 @@ void GameScene::UpdateGameObjects() {
 	// 自機の更新
 	player_->Update(viewProjectionMatrix);
 
+	// ボスの更新
+	boss_->Update(viewProjectionMatrix);
+
 	ground_->Update(viewProjectionMatrix);
 
 
@@ -131,6 +139,10 @@ void GameScene::DrawOffscreen() {
 	/// 
 	// 自機の描画
 	player_->Draw(directionalLight_);
+
+	// ボスの描画
+	boss_->Draw(directionalLight_);
+
 
 	ground_->Draw(directionalLight_);
 
@@ -166,6 +178,11 @@ void GameScene::ImGui() {
 	ImGui::Spacing();
 	ImGui::Text("Player");
 	player_->ImGui();
+
+	ImGui::Spacing();
+	ImGui::Text("Boss");
+	boss_->ImGui();
+
 
 	ImGui::Spacing();
 	ImGui::Text("Ground");

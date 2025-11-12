@@ -4,8 +4,9 @@
 #include "BaseScene.h"
 #include "CollisionManager.h"
 
-#include "GameObjects/Ground.h"
-#include "GameObjects/Player.h"
+#include "Ground.h"
+#include "Player.h"
+#include "Boss.h"
 
 /// <summary>
 /// ゲームシーン
@@ -51,6 +52,7 @@ private:
 	std::unique_ptr<GridLine> gridLine_;
 	std::unique_ptr<Ground> ground_;
 	std::unique_ptr<Player> player_;
+	std::unique_ptr<Boss> boss_;
 
 
 	// ライティング

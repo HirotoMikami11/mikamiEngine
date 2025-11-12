@@ -205,30 +205,12 @@ void Player::Draw(const Light& directionalLight) {
 
 void Player::ImGui() {
 #ifdef USEIMGUI
-	ImGui::Text("Player");
-	ImGui::Separator();
+	if (ImGui::TreeNode("Player")) {
 
-	// 位置情報
-	Vector3 position = gameObject_->GetPosition();
-	ImGui::Text("Position: (%.2f, %.2f, %.2f)", position.x, position.y, position.z);
+		// 衝突判定情報
+		ImGui::Text("Collision Radius: %.2f", GetRadius());
 
-	// 速度情報
-	ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", velocity_.x, velocity_.y, velocity_.z);
-	float speed = std::sqrt(velocity_.x * velocity_.x + velocity_.z * velocity_.z);
-	ImGui::Text("Speed: %.2f", speed);
-
-	// 回転情報
-	Vector3 rotation = gameObject_->GetRotation();
-	ImGui::Text("Rotation: (%.2f, %.2f, %.2f)",
-		rotation.x * (180.0f / std::numbers::pi_v<float>),
-		rotation.y * (180.0f / std::numbers::pi_v<float>),
-		rotation.z * (180.0f / std::numbers::pi_v<float>));
-
-	// 衝突判定情報
-	ImGui::Text("Collision Radius: %.2f", GetRadius());
-
-	// ゲームオブジェクトのImGui
-	if (ImGui::TreeNode("GameObject")) {
+		// ゲームオブジェクトのImGui
 		gameObject_->ImGui();
 		ImGui::TreePop();
 	}
