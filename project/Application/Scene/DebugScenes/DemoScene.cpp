@@ -310,7 +310,7 @@ void DemoScene::UpdateGameObjects() {
 	//平面の移動（速度 × デルタタイムで正しく計算）
 	Input* input = Input::GetInstance();
 	Vector3 planePosition = plane_->GetPosition();
-	float moveSpeed = 1.5f;  // 秒速5メートル
+	float moveSpeed = 1.5f;
 
 	if (input->IsKeyDown(DIK_A)) {
 		planePosition.x -= moveSpeed * gameDeltaTime;  // 左移動
