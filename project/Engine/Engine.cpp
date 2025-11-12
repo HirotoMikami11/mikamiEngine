@@ -40,6 +40,9 @@ void Engine::InitializeManagers() {
 	// FPSタイマー取得
 	frameTimer_ = &FrameTimer::GetInstance();
 
+	// ゲームタイマー取得
+	gameTimer_ = &GameTimer::GetInstance();
+
 	// テクスチャマネージャー初期化
 	textureManager_ = TextureManager::GetInstance();
 	textureManager_->Initialize(directXCommon_.get());
@@ -90,6 +93,9 @@ void Engine::Update() {
 
 	// FPS開始
 	frameTimer_->BeginFrame();
+
+	// GameTimerの更新(deltaTimeから計算)
+	gameTimer_->Update(frameTimer_->GetDeltaTime());
 
 	// 入力更新
 	inputManager_->Update();
@@ -218,6 +224,9 @@ void Engine::ImGui() {
 
 	//FPS関連
 	frameTimer_->ImGui();
+
+	// GameTimer関連
+	gameTimer_->ImGui();
 
 	/// ResourceLoaderのImGui（各Managerの詳細を含む）
 	resourceLoader_->ImGui();

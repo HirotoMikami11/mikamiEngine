@@ -1,6 +1,7 @@
 #include "DemoScene.h"
 #include "Managers/ImGui/ImGuiManager.h" 
-
+#include "GameTimer.h"
+#include <numbers> 
 ///使用するフィールド
 #include "GravityField.h"
 #include "AccelerationField.h"
@@ -288,10 +289,14 @@ void DemoScene::Update() {
 }
 
 void DemoScene::UpdateGameObjects() {
+	//GameTimerからゲーム内デルタタイムを取得
+	GameTimer& gameTimer = GameTimer::GetInstance();
+	float gameDeltaTime = gameTimer.GetDeltaTime();
 
-
-	// 球体を回転させる
-	sphere_->AddRotation({ 0.0f, 0.015f, 0.0f });
+	//球体を回転させる（速度 × デルタタイムで正しく計算）
+	float rotationSpeed = 90.0f;  // 秒速90度（1秒で90度回転）
+	float rotationRadians = rotationSpeed * gameDeltaTime * (std::numbers::pi_v<float> / 180.0f);  // 度→ラジアン変換
+	sphere_->AddRotation({ 0.0f, rotationRadians, 0.0f });
 
 	// 行列更新
 	viewProjectionMatrix = cameraController_->GetViewProjectionMatrix();
@@ -301,16 +306,29 @@ void DemoScene::UpdateGameObjects() {
 	sphere_->Update(viewProjectionMatrix);
 	// スプライトの更新
 	sprite_->Update(viewProjectionMatrixSprite);
-	// 平面の更新
+
+	//平面の移動（速度 × デルタタイムで正しく計算）
+	Input* input = Input::GetInstance();
+	Vector3 planePosition = plane_->GetPosition();
+	float moveSpeed = 1.5f;  // 秒速5メートル
+
+	if (input->IsKeyDown(DIK_A)) {
+		planePosition.x -= moveSpeed * gameDeltaTime;  // 左移動
+	}
+	if (input->IsKeyDown(DIK_D)) {
+		planePosition.x += moveSpeed * gameDeltaTime;  // 右移動
+	}
+
+	plane_->SetPosition(planePosition);
 	plane_->Update(viewProjectionMatrix);
 
-	//マルチメッシュモデルの更新
+	// マルチメッシュモデルの更新
 	modelMultiMesh_->Update(viewProjectionMatrix);
-	//マルチマテリアルモデルの更新
+	// マルチマテリアルモデルの更新
 	modelMultiMaterial_->Update(viewProjectionMatrix);
 
-	// パーティクルシステムの更新（全グループ・全エミッター）
-	particleSystem_->Update(viewProjectionMatrix, 1.0f / 60.0f);
+	// パーティクルシステムの更新（ゲーム内デルタタイムを使用）
+	particleSystem_->Update(viewProjectionMatrix, gameDeltaTime);
 }
 
 void DemoScene::DrawOffscreen() {

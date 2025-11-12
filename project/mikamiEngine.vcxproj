@@ -79,7 +79,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\externals\DirectXTex;$(ProjectDir)\externals\imgui;$(ProjectDir)Engine;$(ProjectDir)Application;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\DirectXCommon;$(ProjectDir)Engine\Core\DirectXCommon\DescriptorHeapManager;$(ProjectDir)Engine\Core\DirectXCommon\PSOFactory;$(ProjectDir)Engine\Core\Logger;$(ProjectDir)Engine\Core\WinApp;$(ProjectDir)Engine\Core\Input;$(ProjectDir)Engine\CameraController;$(ProjectDir)Engine\FrameTimer;$(ProjectDir)Engine\Managers;$(ProjectDir)Engine\MyMath;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Objects\Object3D;$(ProjectDir)Engine\Objects\Light;$(ProjectDir)Engine\Objects\Line;$(ProjectDir)Engine\Objects\Sprite;$(ProjectDir)Engine\OffscreenRenderer;$(ProjectDir)Engine\Objects\Particle;$(ProjectDir)Engine\Objects\Particle\Field;$(ProjectDir)Application\Scene;$(ProjectDir)Application\CollisionManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\externals\DirectXTex;$(ProjectDir)\externals\imgui;$(ProjectDir)Engine;$(ProjectDir)Application;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\DirectXCommon;$(ProjectDir)Engine\Core\DirectXCommon\DescriptorHeapManager;$(ProjectDir)Engine\Core\DirectXCommon\PSOFactory;$(ProjectDir)Engine\Core\Logger;$(ProjectDir)Engine\Core\WinApp;$(ProjectDir)Engine\Core\Input;$(ProjectDir)Engine\CameraController;$(ProjectDir)Engine\Timers;$(ProjectDir)Engine\Managers;$(ProjectDir)Engine\MyMath;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Objects\Object3D;$(ProjectDir)Engine\Objects\Light;$(ProjectDir)Engine\Objects\Line;$(ProjectDir)Engine\Objects\Sprite;$(ProjectDir)Engine\OffscreenRenderer;$(ProjectDir)Engine\Objects\Particle;$(ProjectDir)Engine\Objects\Particle\Field;$(ProjectDir)Application\Scene;$(ProjectDir)Application\CollisionManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -158,7 +158,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\CameraController\CameraController.cpp" />
     <ClCompile Include="Engine\CameraController\DebugCamera.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
-    <ClCompile Include="Engine\FrameTimer\FrameTimer.cpp" />
+    <ClCompile Include="Engine\Timers\FrameTimer.cpp" />
     <ClCompile Include="Engine\Managers\Audio\Audio.cpp" />
     <ClCompile Include="Engine\Managers\Audio\AudioManager.cpp" />
     <ClCompile Include="Engine\Managers\ImGui\ImGuiManager.cpp" />
@@ -237,6 +237,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Scene\GameClearScene.cpp" />
     <ClCompile Include="Application\Scene\GameOverScene.cpp" />
     <ClCompile Include="Application\GameObjects\Ground.cpp" />
+    <ClCompile Include="Engine\Timers\GameTimer.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -349,7 +350,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\CameraController\CameraController.h" />
     <ClInclude Include="Engine\CameraController\DebugCamera.h" />
     <ClInclude Include="Engine\Engine.h" />
-    <ClInclude Include="Engine\FrameTimer\FrameTimer.h" />
+    <ClInclude Include="Engine\Timers\FrameTimer.h" />
     <ClInclude Include="Engine\Managers\Audio\Audio.h" />
     <ClInclude Include="Engine\Managers\Audio\AudioManager.h" />
     <ClInclude Include="Engine\Managers\ImGui\ImGuiManager.h" />
@@ -451,6 +452,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Scene\SelectScene.h" />
     <ClInclude Include="Application\GameObjects\Player.h" />
     <ClInclude Include="Application\GameObjects\Ground.h" />
+    <ClInclude Include="Engine\Timers\GameTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

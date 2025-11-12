@@ -225,7 +225,7 @@
     <ClCompile Include="Engine\OffscreenRenderer\OffscreenRenderer.cpp">
       <Filter>Engine\OffScreenRenderer</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\FrameTimer\FrameTimer.cpp">
+    <ClCompile Include="Engine\Timers\FrameTimer.cpp">
       <Filter>Engine\FrameTimer</Filter>
     </ClCompile>
     <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Grayscale\GrayscalePostEffect.cpp">
@@ -447,6 +447,9 @@
     <ClCompile Include="Application\GameObjects\Ground.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Timers\GameTimer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -520,7 +523,7 @@
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\PostEffect.h">
       <Filter>Engine\OffScreenRenderer\PostEffect</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\FrameTimer\FrameTimer.h">
+    <ClInclude Include="Engine\Timers\FrameTimer.h">
       <Filter>Engine\FrameTimer</Filter>
     </ClInclude>
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Grayscale\GrayscalePostEffect.h">
@@ -770,6 +773,9 @@
       <Filter>Application\GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="Application\GameObjects\Ground.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Timers\GameTimer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

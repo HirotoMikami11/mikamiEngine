@@ -16,6 +16,7 @@
 #include "ResourceLoader/ResourceLoader.h"
 #include "ImGui/ImGuiManager.h" 
 #include "FrameTimer.h"
+#include "GameTimer.h"
 #include "OffscreenRenderer.h"
 #include "DebugDrawLineSystem.h"
 
@@ -78,6 +79,7 @@ public:
 	DirectXCommon* GetDirectXCommon() const { return directXCommon_.get(); }
 	OffscreenRenderer* GetOffscreenRenderer() const { return offscreenRenderer_.get(); }
 	DebugDrawLineSystem* GetDebugDrawManager() const { return debugDrawManager_; }
+	GameTimer* GetGameTimer() const { return gameTimer_; }  // ← 追加
 	bool IsClosedWindow() const { return ClosedWindow_; }
 
 private:
@@ -115,6 +117,7 @@ private:
 	ModelManager* modelManager_;
 	ResourceLoader* resourceLoader_;
 	FrameTimer* frameTimer_;
+	GameTimer* gameTimer_;
 	DebugDrawLineSystem* debugDrawManager_;
 
 	// カメラコントローラー
