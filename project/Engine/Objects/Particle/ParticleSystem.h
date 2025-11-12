@@ -38,8 +38,7 @@ public:
 	/// 全グループとエミッターの更新
 	/// </summary>
 	/// <param name="viewProjectionMatrix">ビュープロジェクション行列</param>
-	/// <param name="deltaTime">デルタタイム</param>
-	void Update(const Matrix4x4& viewProjectionMatrix, float deltaTime);
+	void Update(const Matrix4x4& viewProjectionMatrix);
 
 	/// <summary>
 	/// 全グループの描画

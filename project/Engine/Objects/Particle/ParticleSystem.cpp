@@ -1,5 +1,7 @@
 #include "ParticleSystem.h"
 #include "Managers/ImGui/ImGuiManager.h"
+#include "GameTimer.h"
+
 #include "Logger.h"
 
 ParticleSystem* ParticleSystem::GetInstance()
@@ -16,14 +18,18 @@ void ParticleSystem::Initialize(DirectXCommon* dxCommon)
 	Logger::Log(Logger::GetStream(), "ParticleSystem: Initialized\n");
 }
 
-void ParticleSystem::Update(const Matrix4x4& viewProjectionMatrix, float deltaTime)
+void ParticleSystem::Update(const Matrix4x4& viewProjectionMatrix)
 {
+	//GameTimerからゲーム内デルタタイムを取得
+	GameTimer& gameTimer = GameTimer::GetInstance();
+	float gameDeltaTime = gameTimer.GetDeltaTime();
+
 	// ビルボード行列を計算（全グループ共通）
 	CalculateBillboardMatrix();
 
 	// すべてのフィールドを更新
 	for (auto& [fieldName, field] : fields_) {
-		field->Update(deltaTime);
+		field->Update(gameDeltaTime);
 	}
 
 	// すべてのエミッターを更新
@@ -32,7 +38,7 @@ void ParticleSystem::Update(const Matrix4x4& viewProjectionMatrix, float deltaTi
 		ParticleGroup* targetGroup = GetGroup(emitter->GetTargetGroupName());
 
 		// エミッターを更新（パーティクルを発生）
-		emitter->Update(deltaTime, targetGroup);
+		emitter->Update(gameDeltaTime, targetGroup);
 	}
 
 	// フィールドのポインタリストを作成
@@ -43,7 +49,7 @@ void ParticleSystem::Update(const Matrix4x4& viewProjectionMatrix, float deltaTi
 
 	// すべてのグループを更新（フィールドを渡す）
 	for (auto& [groupName, group] : groups_) {
-		group->Update(viewProjectionMatrix, billboardMatrix_, deltaTime, fieldPtrs);
+		group->Update(viewProjectionMatrix, billboardMatrix_, gameDeltaTime, fieldPtrs);
 	}
 }
 

@@ -61,7 +61,7 @@ namespace MyMath {
 	float EaseInOutBounce(float x);
 
 
-
+	float degToRad(float degrees);
 
 
 	///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//

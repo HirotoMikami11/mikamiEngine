@@ -293,10 +293,9 @@ void DemoScene::UpdateGameObjects() {
 	GameTimer& gameTimer = GameTimer::GetInstance();
 	float gameDeltaTime = gameTimer.GetDeltaTime();
 
-	//球体を回転させる（速度 × デルタタイムで正しく計算）
-	float rotationSpeed = 90.0f;  // 秒速90度（1秒で90度回転）
-	float rotationRadians = rotationSpeed * gameDeltaTime * (std::numbers::pi_v<float> / 180.0f);  // 度→ラジアン変換
-	sphere_->AddRotation({ 0.0f, rotationRadians, 0.0f });
+	//球体を回転させる
+	float rotationSpeed = degToRad(30);
+	sphere_->AddRotation({ 0.0f, rotationSpeed, 0.0f });
 
 	// 行列更新
 	viewProjectionMatrix = cameraController_->GetViewProjectionMatrix();
@@ -307,7 +306,7 @@ void DemoScene::UpdateGameObjects() {
 	// スプライトの更新
 	sprite_->Update(viewProjectionMatrixSprite);
 
-	//平面の移動（速度 × デルタタイムで正しく計算）
+	//平面の移動
 	Input* input = Input::GetInstance();
 	Vector3 planePosition = plane_->GetPosition();
 	float moveSpeed = 1.5f;
@@ -327,8 +326,8 @@ void DemoScene::UpdateGameObjects() {
 	// マルチマテリアルモデルの更新
 	modelMultiMaterial_->Update(viewProjectionMatrix);
 
-	// パーティクルシステムの更新（ゲーム内デルタタイムを使用）
-	particleSystem_->Update(viewProjectionMatrix, gameDeltaTime);
+	// パーティクルシステムの更新
+	particleSystem_->Update(viewProjectionMatrix);
 }
 
 void DemoScene::DrawOffscreen() {

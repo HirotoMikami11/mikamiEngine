@@ -1,4 +1,5 @@
 #include "Transform3D.h"
+#include "GameTimer.h"
 
 void Transform3D::Initialize(DirectXCommon* dxCommon)
 {
@@ -44,22 +45,32 @@ void Transform3D::SetDefaultTransform() {
 
 void Transform3D::AddPosition(const Vector3& Position)
 {
-	transform_.translate.x += Position.x;
-	transform_.translate.y += Position.y;
-	transform_.translate.z += Position.z;
+	//GameTimerからゲーム内デルタタイムを取得
+	GameTimer& gameTimer = GameTimer::GetInstance();
+	float gameDeltaTime = gameTimer.GetDeltaTime();
+
+	transform_.translate.x += Position.x * gameDeltaTime;
+	transform_.translate.y += Position.y * gameDeltaTime;
+	transform_.translate.z += Position.z * gameDeltaTime;
 }
 
 void Transform3D::AddRotation(const Vector3& rotation)
 {
-	transform_.rotate.x += rotation.x;
-	transform_.rotate.y += rotation.y;
-	transform_.rotate.z += rotation.z;
+	//GameTimerからゲーム内デルタタイムを取得
+	GameTimer& gameTimer = GameTimer::GetInstance();
+	float gameDeltaTime = gameTimer.GetDeltaTime();
+	transform_.rotate.x += rotation.x * gameDeltaTime;
+	transform_.rotate.y += rotation.y * gameDeltaTime;
+	transform_.rotate.z += rotation.z * gameDeltaTime;
 
 }
 
 void Transform3D::AddScale(const Vector3& Scale)
 {
-	transform_.scale.x += Scale.x;
-	transform_.scale.y += Scale.y;
-	transform_.scale.z += Scale.z;
+	//GameTimerからゲーム内デルタタイムを取得
+	GameTimer& gameTimer = GameTimer::GetInstance();
+	float gameDeltaTime = gameTimer.GetDeltaTime();
+	transform_.scale.x += Scale.x * gameDeltaTime;
+	transform_.scale.y += Scale.y * gameDeltaTime;
+	transform_.scale.z += Scale.z * gameDeltaTime;
 }
