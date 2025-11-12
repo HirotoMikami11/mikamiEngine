@@ -43,9 +43,6 @@
     <Filter Include="Engine\BaseSystem\WinApp">
       <UniqueIdentifier>{55694ab5-6cb1-493d-a885-e5f5fe1c6730}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\BaseSystem\DirectXCommon">
-      <UniqueIdentifier>{f8409849-6e81-4254-a523-bbead3e9cc50}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\OffScreenRenderer">
       <UniqueIdentifier>{8bc77280-60cd-44b8-a2d8-74b652d035e5}</UniqueIdentifier>
     </Filter>
@@ -169,9 +166,6 @@
     <Filter Include="Engine\Managers\Transition\TransitionEffect\Slide">
       <UniqueIdentifier>{d1435d44-23bc-485c-b36f-37d4ef080def}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\BaseSystem\DirectXCommon\PSOFactory">
-      <UniqueIdentifier>{e4ebb2ec-6440-411d-a771-08b37296965c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\MyMath\Random">
       <UniqueIdentifier>{5f6878ac-ebc5-4a09-929f-37da07a49d41}</UniqueIdentifier>
     </Filter>
@@ -183,6 +177,27 @@
     </Filter>
     <Filter Include="リソース ファイル\Shader\Particle">
       <UniqueIdentifier>{f3c5cc07-9e49-479f-bec5-40b9dfdeceaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Objects\Particle">
+      <UniqueIdentifier>{ed985c55-4ab9-45e6-8c1a-2d2685b4575a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Objects\Particle\Field">
+      <UniqueIdentifier>{2c90c89b-ea6b-4e86-a0ad-348cd5b5f2e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\CollisionManager">
+      <UniqueIdentifier>{affd794a-7f81-4f43-9afd-e464bd57b6bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers\Loder">
+      <UniqueIdentifier>{4588df2d-af16-45d6-a2e3-59ea5e048de6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Objects\Line\DirectXCommon">
+      <UniqueIdentifier>{f8409849-6e81-4254-a523-bbead3e9cc50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Objects\Line\DirectXCommon\PSOFactory">
+      <UniqueIdentifier>{e4ebb2ec-6440-411d-a771-08b37296965c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\GameObjects">
+      <UniqueIdentifier>{39d2f99b-c186-45a8-b11d-ef563071d073}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -205,7 +220,7 @@
       <Filter>Engine\BaseSystem\WinApp</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorHeapManager.cpp">
-      <Filter>Engine\BaseSystem\DirectXCommon</Filter>
+      <Filter>Engine\Objects\Line\DirectXCommon</Filter>
     </ClCompile>
     <ClCompile Include="Engine\OffscreenRenderer\OffscreenRenderer.cpp">
       <Filter>Engine\OffScreenRenderer</Filter>
@@ -253,7 +268,7 @@
       <Filter>Engine\Managers\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\DirectXCommon\DirectXCommon.cpp">
-      <Filter>Engine\BaseSystem\DirectXCommon</Filter>
+      <Filter>Engine\Objects\Line\DirectXCommon</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Managers\Model\ModelManager.cpp">
       <Filter>Engine\Managers\Model</Filter>
@@ -328,13 +343,13 @@
       <Filter>Engine\Objects\Line</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\DirectXCommon\PSOFactory\RootSignatureBuilder.cpp">
-      <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
+      <Filter>Engine\Objects\Line\DirectXCommon\PSOFactory</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\DirectXCommon\PSOFactory\PSODescriptor.cpp">
-      <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
+      <Filter>Engine\Objects\Line\DirectXCommon\PSOFactory</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\DirectXCommon\PSOFactory\PSOFactory.cpp">
-      <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
+      <Filter>Engine\Objects\Line\DirectXCommon\PSOFactory</Filter>
     </ClCompile>
     <ClCompile Include="Engine\MyMath\Random\Random.cpp">
       <Filter>Engine\MyMath\Random</Filter>
@@ -348,86 +363,86 @@
     <ClCompile Include="Application\Scene\DebugScenes\DebugScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\StringUtility.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Objects\Object3D\Object3DCommon.cpp">
       <Filter>Engine\Objects\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Objects\Sprite\SpriteCommon.cpp">
       <Filter>Engine\Objects\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Objects\Particle\ParticleCommon.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Objects\Particle\ParticleEmitter.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Objects\Particle\ParticleGroup.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Objects\Particle\ParticleSystem.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Objects\Particle\Field\AccelerationField.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Objects\Particle\Field\BaseField.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Objects\Particle\Field\GravityField.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_demo.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_draw.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="externals\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui_tables.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_widgets.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp">
+      <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Managers\ResourceLoader\ResourceLoader.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Particle\ParticleSystem.cpp">
+      <Filter>Engine\Objects\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Particle\ParticleGroup.cpp">
+      <Filter>Engine\Objects\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Particle\ParticleEmitter.cpp">
+      <Filter>Engine\Objects\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Particle\ParticleCommon.cpp">
+      <Filter>Engine\Objects\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Particle\Field\AccelerationField.cpp">
+      <Filter>Engine\Objects\Particle\Field</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Particle\Field\BaseField.cpp">
+      <Filter>Engine\Objects\Particle\Field</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Particle\Field\GravityField.cpp">
+      <Filter>Engine\Objects\Particle\Field</Filter>
     </ClCompile>
     <ClCompile Include="Application\CollisionManager\CollisionManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\TitleScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameOverScene.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Application\CollisionManager</Filter>
     </ClCompile>
     <ClCompile Include="Application\Scene\GameClearScene.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\GameOverScene.cpp">
+      <Filter>Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\GameScene.cpp">
+      <Filter>Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Application\Scene\SelectScene.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\TitleScene.cpp">
+      <Filter>Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\ResourceLoader\ResourceLoader.cpp">
+      <Filter>Engine\Managers\Loder</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.cpp">
+      <Filter>Engine\Objects\Line\DirectXCommon</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Objects\Line\DebugDrawLineSystem.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Engine\Objects\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utility\StringUtility.cpp">
+      <Filter>Engine\BaseSystem</Filter>
     </ClCompile>
     <ClCompile Include="Application\GameObjects\Player.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Application\GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -494,7 +509,7 @@
       <Filter>Engine\BaseSystem</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorHeapManager.h">
-      <Filter>Engine\BaseSystem\DirectXCommon</Filter>
+      <Filter>Engine\Objects\Line\DirectXCommon</Filter>
     </ClInclude>
     <ClInclude Include="Engine\OffscreenRenderer\OffscreenRenderer.h">
       <Filter>Engine\OffScreenRenderer</Filter>
@@ -548,7 +563,7 @@
       <Filter>Engine\Managers\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\DirectXCommon\DirectXCommon.h">
-      <Filter>Engine\BaseSystem\DirectXCommon</Filter>
+      <Filter>Engine\Objects\Line\DirectXCommon</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Managers\Model\ModelManager.h">
       <Filter>Engine\Managers\Model</Filter>
@@ -632,13 +647,13 @@
       <Filter>Engine\Objects\Line</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\DirectXCommon\PSOFactory\RootSignatureBuilder.h">
-      <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
+      <Filter>Engine\Objects\Line\DirectXCommon\PSOFactory</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\DirectXCommon\PSOFactory\PSODescriptor.h">
-      <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
+      <Filter>Engine\Objects\Line\DirectXCommon\PSOFactory</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\DirectXCommon\PSOFactory\PSOFactory.h">
-      <Filter>Engine\BaseSystem\DirectXCommon\PSOFactory</Filter>
+      <Filter>Engine\Objects\Line\DirectXCommon\PSOFactory</Filter>
     </ClInclude>
     <ClInclude Include="Engine\MyMath\Random\Random.h">
       <Filter>Engine\MyMath\Random</Filter>
@@ -655,101 +670,101 @@
     <ClInclude Include="Engine\Core\Logger\LeakChecker.h">
       <Filter>Engine\BaseSystem\Logger</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Structures.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Utility\StringUtility.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Objects\Object3D\Object3DCommon.h">
       <Filter>Engine\Objects\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Objects\Sprite\SpriteCommon.h">
       <Filter>Engine\Objects\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\Particle\ParticleCommon.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Objects\Particle\ParticleState.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Objects\Particle\ParticleEmitter.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Objects\Particle\ParticleGroup.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Objects\Particle\ParticleSystem.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Objects\Particle\Field\AccelerationField.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Objects\Particle\Field\BaseField.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Objects\Particle\Field\GravityField.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="externals\imgui\imconfig.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui_impl_win32.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui_internal.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imstb_rectpack.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imstb_textedit.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imstb_truetype.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\ResourceLoader\ResourceLoader.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Engine\Objects\Particle\Field\AccelerationField.h">
+      <Filter>Engine\Objects\Particle\Field</Filter>
     </ClInclude>
-    <ClInclude Include="Application\CollisionManager\CollisionConfig.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Engine\Objects\Particle\Field\BaseField.h">
+      <Filter>Engine\Objects\Particle\Field</Filter>
     </ClInclude>
-    <ClInclude Include="Application\CollisionManager\CollisionManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Engine\Objects\Particle\Field\GravityField.h">
+      <Filter>Engine\Objects\Particle\Field</Filter>
     </ClInclude>
     <ClInclude Include="Application\CollisionManager\Collider.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>Application\CollisionManager</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\GameScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Application\CollisionManager\CollisionConfig.h">
+      <Filter>Application\CollisionManager</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\TitleScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameOverScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameClearScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Application\CollisionManager\CollisionManager.h">
+      <Filter>Application\CollisionManager</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\SelectScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\GameOverScene.h">
+      <Filter>Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\GameClearScene.h">
+      <Filter>Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\GameScene.h">
+      <Filter>Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\TitleScene.h">
+      <Filter>Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\ResourceLoader\ResourceLoader.h">
+      <Filter>Engine\Managers\Loder</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\Structures.h">
+      <Filter>Engine\BaseSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utility\StringUtility.h">
+      <Filter>Engine\BaseSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Particle\ParticleGroup.h">
+      <Filter>Engine\Objects\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Particle\ParticleState.h">
+      <Filter>Engine\Objects\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Particle\ParticleSystem.h">
+      <Filter>Engine\Objects\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Particle\ParticleEmitter.h">
+      <Filter>Engine\Objects\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Particle\ParticleCommon.h">
+      <Filter>Engine\Objects\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.h">
+      <Filter>Engine\Objects\Line\DirectXCommon</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Objects\Line\DebugDrawLineSystem.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>Engine\Objects\Line</Filter>
     </ClInclude>
     <ClInclude Include="Application\GameObjects\Player.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>Application\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
