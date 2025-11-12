@@ -20,7 +20,6 @@ void GameScene::ConfigureOffscreenEffects()
 
 	// 全てのエフェクトを無効化
 	offscreenRenderer_->DisableAllEffects();
-	// 必要に応じてここでエフェクトを有効化
 }
 
 void GameScene::Initialize() {

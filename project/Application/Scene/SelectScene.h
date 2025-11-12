@@ -3,7 +3,7 @@
 
 #include "BaseScene.h"
 
-#include "CollisionManager/CollisionManager.h"
+#include "CollisionManager.h"
 
 /// <summary>
 /// セレクトシーン
