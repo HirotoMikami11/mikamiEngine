@@ -74,6 +74,7 @@ public:
 
 
 	void SetColor(const Vector4& color, size_t index = 0) { materials_.GetMaterial(index).SetColor(color); }
+	void SetColor(const uint32_t& color, size_t index = 0) { materials_.GetMaterial(index).SetColor(Uint32ToColorVector(color)); }
 	void SetLightingMode(LightingMode mode, size_t index = 0) { materials_.GetMaterial(index).SetLightingMode(mode); }
 	// 全マテリアルに同じ設定を適用
 	void SetAllMaterialsColor(const Vector4& color, LightingMode mode = LightingMode::HalfLambert) { materials_.SetAllMaterials(color, mode); }

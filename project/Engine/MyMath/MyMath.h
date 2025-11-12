@@ -309,7 +309,7 @@ namespace MyMath {
 		float w;
 	};
 
-
+	Vector4 Uint32ToColorVector(uint32_t color);
 
 	///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//
 

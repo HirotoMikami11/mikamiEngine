@@ -1,18 +1,19 @@
 #pragma once
-#include "Collider.h"	//衝突判定
-#include "CollisionConfig.h"	//衝突属性のフラグを定義する
-class Player : public Collider
+#include "Object3D.h"
+#include "DirectXCommon.h"
+
+class Ground
 {
 public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Player();
+	Ground();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Player();
+	~Ground();
 
 	/// <summary>
 	/// 初期化
@@ -34,20 +35,9 @@ public:
 	void Draw(const Light& directionalLight);
 
 	/// <summary>
-	/// UI描画（レティクル描画）
-	/// </summary>
-	void DrawUI();
-
-	/// <summary>
 	/// ImGui
 	/// </summary>
 	void ImGui();
-
-	/// <summary>
-	/// 衝突時に呼ばれる関数（オーバーライド）
-	/// </summary>
-	/// <param name="other">衝突相手のコライダー</param>
-	void OnCollision(Collider* other) override;
 
 private:
 	// ゲームオブジェクト

@@ -2,8 +2,9 @@
 #include <memory>
 
 #include "BaseScene.h"
-
 #include "CollisionManager.h"
+
+#include "GameObjects/Ground.h"
 
 /// <summary>
 /// ゲームシーン
@@ -48,6 +49,8 @@ private:
 	// ゲームオブジェクト
 	std::unique_ptr<Sphere> sphere_;
 	std::unique_ptr<GridLine> gridLine_;
+	std::unique_ptr<Ground> ground_;
+
 
 	// ライティング
 	Light directionalLight_;

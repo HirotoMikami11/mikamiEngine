@@ -64,10 +64,12 @@ void ResourceLoader::RegisterAllResources() {
 		{"", "", "plane", true, MeshType::PLANE},
 
 		// OBJモデル
+		{"resources/Model/Cube", "Cube.obj", "cube", false},
 		{"resources/Model/MultiMesh", "multiMesh.obj", "model_MultiMesh", false},
 		{"resources/Model/MultiMaterial", "multiMaterial.obj", "model_MultiMaterial", false},
 		{"resources/Model/Goldfish", "Mesh_Goldfish.obj", "modelfish", false},
 		{"resources/Model/terrain", "terrain.obj", "model_terrain", false},
+
 
 		// モデルはここに追加
 		// {"resources/Model/NewModel", "newModel.obj", "model_New", false},

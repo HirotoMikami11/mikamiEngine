@@ -434,6 +434,17 @@ namespace MyMath {
 
 	}
 
+
+	Vector4 Uint32ToColorVector(uint32_t color)
+	{
+		float r = ((color >> 24) & 0xFF) / 255.0f;
+		float g = ((color >> 16) & 0xFF) / 255.0f;
+		float b = ((color >> 8) & 0xFF) / 255.0f;
+		float a = (color & 0xFF) / 255.0f;
+
+		return { r, g, b, a };
+	}
+
 	///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//
 
 	///																		///
@@ -441,7 +452,6 @@ namespace MyMath {
 	///																		///
 
 	///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//
-
 
 
 	Matrix3x3 Matrix3x3Add(Matrix3x3 matrix1, Matrix3x3 matrix2) {

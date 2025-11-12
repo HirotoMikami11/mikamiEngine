@@ -444,6 +444,9 @@
     <ClCompile Include="Application\GameObjects\Player.cpp">
       <Filter>Application\GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Application\GameObjects\Ground.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -766,6 +769,9 @@
     <ClInclude Include="Application\GameObjects\Player.h">
       <Filter>Application\GameObjects</Filter>
     </ClInclude>
+    <ClInclude Include="Application\GameObjects\Ground.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli">
@@ -800,6 +806,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="externals\imgui\LICENSE.txt" />
+    <Text Include="externals\imgui\LICENSE.txt">
+      <Filter>imgui</Filter>
+    </Text>
   </ItemGroup>
 </Project>

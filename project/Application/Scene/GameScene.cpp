@@ -66,6 +66,11 @@ void GameScene::InitializeGameObjects() {
 	sphere_->Initialize(directXCommon_, "sphere", "monsterBall");
 	sphere_->SetTransform(transformSphere);
 
+	ground_ = std::make_unique<Ground>();
+	ground_->Initialize(directXCommon_, { 0.0f,-0.51f,0.0f });
+
+
+
 	///*-----------------------------------------------------------------------*///
 	///								グリッド線									///
 	///*-----------------------------------------------------------------------*///
@@ -103,6 +108,10 @@ void GameScene::UpdateGameObjects() {
 	// 球体の更新
 	sphere_->Update(viewProjectionMatrix);
 
+	ground_->Update(viewProjectionMatrix);
+
+
+
 #pragma region 衝突判定
 
 	// 衝突マネージャーのリストをクリアする
@@ -132,6 +141,8 @@ void GameScene::DrawOffscreen() {
 	/// 
 	// 球体の描画
 	sphere_->Draw(directionalLight_);
+
+	ground_->Draw(directionalLight_);
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -165,6 +176,10 @@ void GameScene::ImGui() {
 	ImGui::Spacing();
 	ImGui::Text("Sphere");
 	sphere_->ImGui();
+
+	ImGui::Spacing();
+	ImGui::Text("Ground");
+	ground_->ImGui();
 
 	ImGui::Spacing();
 	ImGui::Text("Grid Line");
