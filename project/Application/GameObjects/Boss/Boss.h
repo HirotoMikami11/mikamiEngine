@@ -108,6 +108,14 @@ private:
 	void SetPartsHP();
 
 	/// <summary>
+	/// 2つのパーツ間の距離を計算（スケールを考慮）
+	/// </summary>
+	/// <param name="part1">前のパーツ</param>
+	/// <param name="part2">次のパーツ</param>
+	/// <returns>2つのパーツ間の距離</returns>
+	float CalculateDistanceBetweenParts(BaseParts* part1, BaseParts* part2);
+
+	/// <summary>
 	/// Phase毎のパーツ状態を更新（衝突属性とアクティブ状態）
 	/// </summary>
 	void UpdatePartsState();
@@ -137,10 +145,11 @@ private:
 
 	// パラメータ
 	const size_t kBodyCount = 5;				// 体のパーツ数
-	float partsDistance_ = 1.5f;				// パーツ間の距離（ImGuiで変更可能）
-	float moveSpeed_ = 1.0f;					// 移動速度
+	float partsOffset_ = 0.0f;					// パーツ間のオフセット（隙間）（ImGuiで変更可能）
+	float moveSpeed_ = 2.0f;					// 移動速度
 	const float kHistoryUpdateThreshold = 0.001f;	// 履歴更新の閾値（ガタガタ防止）
-	const size_t kMaxHistorySize = 1000;		// 履歴の最大サイズ
+	const size_t kMaxHistorySize = 2048;		// 履歴の最大サイズ
+	const float kBasePartSize = 1.0f;			// 基本パーツサイズ（キューブのデフォルトサイズ）
 
 	// 前回の頭の位置（履歴更新判定用）
 	Vector3 previousHeadPosition_;

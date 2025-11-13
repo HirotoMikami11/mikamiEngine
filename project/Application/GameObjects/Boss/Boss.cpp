@@ -25,10 +25,30 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 		previousHeadPosition_ = position;
 
 		// 初期位置履歴を作成（全パーツが正しい位置に配置されるように）
-		size_t totalParts = 1 + kBodyCount + 1;  // 頭 + 体 + 尻尾
-		for (size_t i = 0; i < totalParts; ++i) {
-			Vector3 historyPosition = position;
-			historyPosition.z -= static_cast<float>(i) * partsDistance_;
+		// 各パーツのスケールに基づいて距離を計算
+		Vector3 historyPosition = position;
+		positionHistory_.push_back(historyPosition);
+
+		// 全パーツのリストを作成
+		std::vector<BaseParts*> allParts;
+		allParts.push_back(head_.get());
+		for (auto& body : bodies_) {
+			allParts.push_back(body.get());
+		}
+		if (tail_) {
+			allParts.push_back(tail_.get());
+		}
+
+		// 各パーツの初期位置を計算
+		for (size_t i = 1; i < allParts.size(); ++i) {
+			BaseParts* prevPart = allParts[i - 1];
+			BaseParts* currentPart = allParts[i];
+
+			// 前のパーツと現在のパーツの間の距離を計算
+			float distance = CalculateDistanceBetweenParts(prevPart, currentPart);
+
+			// Z軸方向に移動
+			historyPosition.z -= distance;
 			positionHistory_.push_back(historyPosition);
 		}
 
@@ -53,10 +73,11 @@ void Boss::InitializeParts() {
 	head_->Initialize(directXCommon_, Vector3{ 0.0f, 0.0f, 0.0f });
 
 	// 体パーツ（白） × 5
+	// 初期位置は後でUpdatePartsPositions()で正しく配置されるため、仮の位置を設定
 	bodies_.clear();
 	for (size_t i = 0; i < kBodyCount; ++i) {
 		auto body = std::make_unique<BodyParts>();
-		Vector3 bodyPosition = { 0.0f, 0.0f, -static_cast<float>(i + 1) * partsDistance_ };
+		Vector3 bodyPosition = { 0.0f, 0.0f, -static_cast<float>(i + 1) * (kBasePartSize + partsOffset_) };
 		body->Initialize(directXCommon_, bodyPosition);
 		body->SetBoss(this);  // Bossへの参照を設定
 		bodies_.push_back(std::move(body));
@@ -64,7 +85,7 @@ void Boss::InitializeParts() {
 
 	// 尻尾パーツ（緑）
 	tail_ = std::make_unique<TailParts>();
-	Vector3 tailPosition = { 0.0f, 0.0f, -static_cast<float>(kBodyCount + 1) * partsDistance_ };
+	Vector3 tailPosition = { 0.0f, 0.0f, -static_cast<float>(kBodyCount + 1) * (kBasePartSize + partsOffset_) };
 	tail_->Initialize(directXCommon_, tailPosition);
 	tail_->SetBoss(this);  // Bossへの参照を設定
 }
@@ -86,6 +107,21 @@ void Boss::SetHP(float hp) {
 	maxBossHP_ = hp;
 	bossHP_ = hp;
 	SetPartsHP();
+}
+
+float Boss::CalculateDistanceBetweenParts(BaseParts* part1, BaseParts* part2) {
+	if (!part1 || !part2) {
+		return kBasePartSize + partsOffset_;
+	}
+
+	// 各パーツのZ方向のサイズを取得（スケールを考慮）
+	float part1Size = part1->GetScale().z * kBasePartSize;
+	float part2Size = part2->GetScale().z * kBasePartSize;
+
+	// 2つのパーツの半径の合計 + オフセット
+	float distance = (part1Size / 2.0f) + (part2Size / 2.0f) + partsOffset_;
+
+	return distance;
 }
 
 void Boss::Update(const Matrix4x4& viewProjectionMatrix) {
@@ -145,7 +181,17 @@ void Boss::UpdatePositionHistory() {
 void Boss::UpdatePartsPositions() {
 	if (!head_ || positionHistory_.empty()) return;
 
-	// 全パーツのリストを作成
+	// 全パーツのリストを作成（頭を含む）
+	std::vector<BaseParts*> allPartsWithHead;
+	allPartsWithHead.push_back(head_.get());
+	for (auto& body : bodies_) {
+		allPartsWithHead.push_back(body.get());
+	}
+	if (tail_) {
+		allPartsWithHead.push_back(tail_.get());
+	}
+
+	// 体と尻尾のパーツのみのリスト（頭以外）
 	std::vector<BaseParts*> allParts;
 	for (auto& body : bodies_) {
 		allParts.push_back(body.get());
@@ -156,9 +202,17 @@ void Boss::UpdatePartsPositions() {
 
 	// 各パーツに対して、履歴から適切な位置を取得
 	for (size_t i = 0; i < allParts.size(); ++i) {
-		// このパーツが参照すべき履歴インデックスを計算
-		// パーツ間距離 × (インデックス + 1) 分だけ離れた位置を参照（頭の次から）
-		float targetDistance = static_cast<float>(i + 1) * partsDistance_;
+		// 前のパーツ（0番目なら頭、それ以外は前の体パーツ）
+		BaseParts* prevPart = allPartsWithHead[i];
+		BaseParts* currentPart = allParts[i];
+
+		// 前のパーツまでの累積距離を計算
+		float targetDistance = 0.0f;
+		for (size_t j = 0; j <= i; ++j) {
+			BaseParts* part1 = allPartsWithHead[j];
+			BaseParts* part2 = allPartsWithHead[j + 1];
+			targetDistance += CalculateDistanceBetweenParts(part1, part2);
+		}
 
 		// 履歴を走査して、目標距離に最も近い位置を探す
 		float accumulatedDistance = 0.0f;
@@ -182,7 +236,7 @@ void Boss::UpdatePartsPositions() {
 		}
 
 		// パーツの位置を設定
-		allParts[i]->SetPosition(targetPosition);
+		currentPart->SetPosition(targetPosition);
 	}
 }
 
@@ -375,7 +429,7 @@ void Boss::ImGui() {
 
 		// Phase情報
 		if (ImGui::CollapsingHeader("Phase", ImGuiTreeNodeFlags_DefaultOpen)) {
-			const char* phaseNames[] = { "Phase 1", "Phase 2 ", "Death" };
+			const char* phaseNames[] = { "Phase 1 (Head & Body)", "Phase 2 (Head & Tail)", "Death" };
 			int currentPhaseIndex = static_cast<int>(currentPhase_);
 			ImGui::Text("Current Phase: %s", phaseNames[currentPhaseIndex]);
 
@@ -415,12 +469,9 @@ void Boss::ImGui() {
 
 		// パラメータ設定
 		if (ImGui::CollapsingHeader("Parameters")) {
-			// パーツ間距離の調整（隙間の調整）
-			float gap = partsDistance_ - 1.0f; // キューブサイズ1.0fを引いた隙間
-			if (ImGui::DragFloat("Parts Gap", &gap, 0.01f, 0.0f, 2.0f)) {
-				partsDistance_ = 1.0f + gap; // キューブサイズ + 隙間
-			}
-			ImGui::Text("Parts Distance: %.2f", partsDistance_);
+			// パーツ間のオフセット（隙間）の調整
+			ImGui::DragFloat("Parts Offset", &partsOffset_, 0.01f, 0.0f, 5.0f);
+			ImGui::Text("(Distance between parts = Part1 Size/2 + Part2 Size/2 + Offset)");
 
 			// 移動速度
 			ImGui::DragFloat("Move Speed", &moveSpeed_, 0.1f, 0.1f, 10.0f);

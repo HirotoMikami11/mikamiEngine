@@ -19,7 +19,7 @@ void Ground::Initialize(DirectXCommon* dxCommon, const Vector3& position)
 
 	// 初期位置設定
 	Vector3Transform defaultTransform{
-		{30.0f, 1.0f, 30.0f},	// scale
+		{50.0f, 1.0f, 50.0f},	// scale
 		{0.0f, 0.0f, 0.0f},	// rotate
 		position			// translate
 	};

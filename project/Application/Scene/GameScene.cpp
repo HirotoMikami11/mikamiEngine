@@ -33,8 +33,8 @@ void GameScene::Initialize() {
 	///*-----------------------------------------------------------------------*///
 	cameraController_ = CameraController::GetInstance();
 	// 座標と回転を指定して初期化
-	Vector3 initialPosition = { 0.0f, 15.951f, -39.645f };
-	Vector3 initialRotation = { 0.4f, 0.0f, 0.0f };
+	Vector3 initialPosition = { 0.5f, 43.4f, -73.745f };
+	Vector3 initialRotation = { 0.57f, 0.0f, 0.0f };
 	cameraController_->Initialize(directXCommon_, initialPosition, initialRotation);
 	cameraController_->SetActiveCamera("normal");
 
@@ -64,7 +64,7 @@ void GameScene::InitializeGameObjects() {
 
 	///ボス
 	boss_ = std::make_unique<Boss>();
-	boss_->Initialize(directXCommon_, { 0.0f, 0.5f, 0.0f });
+	boss_->Initialize(directXCommon_, { -10.0f,1.5f, 0.0f});
 
 
 

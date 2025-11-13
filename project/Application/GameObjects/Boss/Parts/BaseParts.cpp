@@ -10,13 +10,13 @@ void BaseParts::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 
 	// トランスフォームの設定
 	Vector3Transform transform;
-	transform.scale = { 1.0f, 1.0f, 1.0f };
+	transform.scale = { 3.0f, 3.0f, 3.0f };
 	transform.rotate = { 0.0f, 0.0f, 0.0f };
 	transform.translate = position;
 	gameObject_->SetTransform(transform);
 
 	// コライダーの設定（キューブの半分のサイズ = 0.5f）
-	SetRadius(0.5f);
+	SetRadius(transform.scale.x / 2);
 }
 
 void BaseParts::Update(const Matrix4x4& viewProjectionMatrix) {
@@ -100,6 +100,10 @@ void BaseParts::SetRotationY(float rotationY) {
 	Vector3 currentRotation = GetRotation();
 	currentRotation.y = rotationY;
 	SetRotation(currentRotation);
+}
+
+Vector3 BaseParts::GetScale() const {
+	return gameObject_->GetScale();
 }
 
 void BaseParts::SetScale(const Vector3& scale) {

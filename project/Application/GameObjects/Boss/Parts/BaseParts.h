@@ -50,7 +50,8 @@ public:
 	// Y軸回転のみ設定（向き制御用）
 	void SetRotationY(float rotationY);
 
-	// スケールの設定
+	// スケールの取得・設定
+	Vector3 GetScale() const;
 	void SetScale(const Vector3& scale);
 
 	// 色の設定（派生クラスでオーバーライド）
