@@ -1,6 +1,9 @@
 #pragma once
 #include "Collider.h"	//衝突判定
 #include "CollisionConfig.h"	//衝突属性のフラグを定義する
+#include "PlayerBullet.h"	// 自機弾
+#include <list>
+#include <memory>
 
 class Player : public Collider
 {
@@ -50,6 +53,11 @@ public:
 	/// </summary>
 	Vector3 GetWorldPosition() override;
 
+	/// <summary>
+	/// 弾リストを取得
+	/// </summary>
+	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() const { return bullets_; }
+
 private:
 	/// <summary>
 	/// 移動処理（XZ平面）
@@ -61,8 +69,21 @@ private:
 	/// </summary>
 	void ProcessRotation();
 
+	/// <summary>
+	/// 弾の発射処理
+	/// </summary>
+	void ProcessFire();
+
+	/// <summary>
+	/// 寿命の尽きた弾を削除
+	/// </summary>
+	void DeleteBullets();
+
 	// ゲームオブジェクト
 	std::unique_ptr<Object3D> gameObject_;
+
+	// 弾リスト
+	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 
 	// システム参照
 	DirectXCommon* directXCommon_ = nullptr;
@@ -76,4 +97,9 @@ private:
 
 	// 回転関連
 	const float kRotationSpeed = 0.05f;	// 回転速度
+
+	// 弾発射関連
+	const float kBulletSpeed = 0.1f;	// 弾の速度
+	const int kFireInterval = 5;		// 発射間隔（フレーム）
+	int fireTimer_ = 0;					// 発射タイマー
 };

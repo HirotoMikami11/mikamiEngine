@@ -8,6 +8,7 @@ Player::Player()
 	: directXCommon_(nullptr)
 	, input_(nullptr)
 	, velocity_({ 0.0f, 0.0f, 0.0f })
+	, fireTimer_(0)
 {
 }
 
@@ -51,6 +52,9 @@ void Player::Update(const Matrix4x4& viewProjectionMatrix) {
 	// 回転処理
 	ProcessRotation();
 
+	// 弾の発射処理
+	ProcessFire();
+
 	// GameTimerからデルタタイムを取得
 	GameTimer& gameTimer = GameTimer::GetInstance();
 	float deltaTime = gameTimer.GetDeltaTime();
@@ -60,6 +64,14 @@ void Player::Update(const Matrix4x4& viewProjectionMatrix) {
 	currentPosition.x += velocity_.x * deltaTime;
 	currentPosition.z += velocity_.z * deltaTime;
 	gameObject_->SetPosition(currentPosition);
+
+	// 弾の更新
+	for (auto& bullet : bullets_) {
+		bullet->Update(viewProjectionMatrix);
+	}
+
+	// 死んだ弾を削除
+	DeleteBullets();
 
 	// 行列更新
 	gameObject_->Update(viewProjectionMatrix);
@@ -207,10 +219,69 @@ void Player::ProcessRotation() {
 	}
 }
 
+void Player::ProcessFire() {
+	// 発射タイマーを減らす
+	if (fireTimer_ > 0) {
+		fireTimer_--;
+	}
+
+	// 入力チェック：方向キーまたは右スティック
+	bool isInputting = false;
+
+	// 矢印キー入力チェック
+	if (input_->IsKeyDown(DIK_UP) || input_->IsKeyDown(DIK_DOWN) ||
+		input_->IsKeyDown(DIK_LEFT) || input_->IsKeyDown(DIK_RIGHT)) {
+		isInputting = true;
+	}
+
+	// 右スティック入力チェック
+	if (input_->IsGamePadConnected(0)) {
+		float stickX = input_->GetAnalogStick(Input::AnalogStick::RIGHT_X, 0);
+		float stickY = input_->GetAnalogStick(Input::AnalogStick::RIGHT_Y, 0);
+		// スティックが倒されているか（デッドゾーンを考慮）
+		if (std::abs(stickX) > 0.1f || std::abs(stickY) > 0.1f) {
+			isInputting = true;
+		}
+	}
+
+	// 入力があり、発射タイマーが0なら弾を発射
+	if (isInputting && fireTimer_ <= 0) {
+		// プレイヤーの位置と向きを取得
+		Vector3 position = gameObject_->GetPosition();
+		Vector3 rotation = gameObject_->GetRotation();
+
+		// 向いている方向に弾を発射
+		Vector3 velocity = {
+			std::sin(rotation.y) * kBulletSpeed,
+			0.0f,
+			std::cos(rotation.y) * kBulletSpeed
+		};
+
+		// 弾を生成
+		std::unique_ptr<PlayerBullet> bullet = std::make_unique<PlayerBullet>();
+		bullet->Initialize(directXCommon_, position, velocity);
+		bullets_.push_back(std::move(bullet));
+
+		// 発射タイマーをリセット
+		fireTimer_ = kFireInterval;
+	}
+}
+
+void Player::DeleteBullets() {
+	// 死んだ弾を削除
+	bullets_.remove_if([](const std::unique_ptr<PlayerBullet>& bullet) {
+		return bullet->IsDead();
+		});
+}
 
 void Player::Draw(const Light& directionalLight) {
 	// 球体の描画
 	gameObject_->Draw(directionalLight);
+
+	// 弾の描画
+	for (auto& bullet : bullets_) {
+		bullet->Draw(directionalLight);
+	}
 }
 
 void Player::ImGui() {
@@ -220,6 +291,10 @@ void Player::ImGui() {
 		// 衝突判定情報
 		ImGui::Text("Collision Radius: %.2f", GetRadius());
 		ImGui::Checkbox("Show Collider", &isDebugVisible_);
+
+		// 弾情報
+		ImGui::Text("Bullets Count: %zu", bullets_.size());
+		ImGui::Text("Fire Timer: %d", fireTimer_);
 
 		// ゲームオブジェクトのImGui
 		gameObject_->ImGui();

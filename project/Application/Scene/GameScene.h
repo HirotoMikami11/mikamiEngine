@@ -47,6 +47,7 @@ public:
 private:
 	void InitializeGameObjects();
 	void UpdateGameObjects();
+	void UpdateCollison();
 
 	// ゲームオブジェクト
 	std::unique_ptr<GridLine> gridLine_;

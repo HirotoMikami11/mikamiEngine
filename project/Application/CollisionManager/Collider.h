@@ -63,6 +63,10 @@ public:
 	// デバッグカラーをデフォルトにリセット
 	void ResetDebugColor() { currentDebugColor_ = defaultDebugColor_; }
 
+	// 攻撃力の取得・設定
+	float GetAttackPower() const { return attackPower_; }
+	void SetAttackPower(float power) { attackPower_ = power; }
+
 protected:
 	// 衝突半径
 	float radius_ = 1.0f; // 当たり判定用半径
@@ -71,6 +75,9 @@ protected:
 	uint32_t collisionAttribute_ = 0xffffffff;
 	// 衝突マスク(相手)
 	uint32_t collisionMask_ = 0xffffffff;
+
+	// 攻撃力
+	float attackPower_ = 0.0f;
 
 	// デバッグ表示設定
 	bool isDebugVisible_ = true;							// デバッグ表示フラグ

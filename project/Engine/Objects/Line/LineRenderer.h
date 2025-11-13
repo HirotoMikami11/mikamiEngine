@@ -30,8 +30,8 @@ struct LineData {
 /// </summary>
 class LineRenderer {
 public:
-	// 線分の最大数（KamataEngineと同じ）
-	static const uint32_t kMaxLineCount = 4096;
+	// 線分の最大数(2^15)
+	static const uint32_t kMaxLineCount = 32768;
 	// 線分の頂点数
 	static const uint32_t kVertexCountPerLine = 2;
 

@@ -98,6 +98,10 @@ void GameScene::Update() {
 
 	// ゲームオブジェクト更新
 	UpdateGameObjects();
+
+	//当たり判定の更新
+	UpdateCollison();
+
 }
 
 void GameScene::UpdateGameObjects() {
@@ -110,27 +114,32 @@ void GameScene::UpdateGameObjects() {
 	boss_->Update(viewProjectionMatrix);
 
 	ground_->Update(viewProjectionMatrix);
+}
 
-
-
-#pragma region 衝突判定
+void GameScene::UpdateCollison()
+{
 
 	// 衝突マネージャーのリストをクリアする
 	collisionManager_->ClearColliderList();
 
+	// プレイヤーの弾のリストを取得
+	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player_->GetBullets();
+
 	// Player
 	collisionManager_->AddCollider(player_.get());
+
+	// プレイヤーの弾のコライダーを追加する
+	for (const auto& bullet : playerBullets) {
+		collisionManager_->AddCollider(bullet.get());
+	}
 
 	// Bossのコライダーを追加（各パーツ）
 	auto bossColliders = boss_->GetColliders();
 	for (auto* collider : bossColliders) {
 		collisionManager_->AddCollider(collider);
 	}
-
 	// 衝突判定と応答
 	collisionManager_->Update();
-
-#pragma endregion
 
 }
 

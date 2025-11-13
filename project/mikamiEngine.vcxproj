@@ -262,6 +262,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Scene\TitleScene.cpp" />
     <ClCompile Include="Application\Scene\SelectScene.cpp" />
     <ClCompile Include="Application\GameObjects\Player.cpp" />
+    <ClCompile Include="Application\GameObjects\PlayerBullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -470,6 +471,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Timers\GameTimer.h" />
     <ClInclude Include="Application\GameObjects\Boss\State\BossState.h" />
     <ClInclude Include="Application\GameObjects\Boss\State\IdleState.h" />
+    <ClInclude Include="Application\GameObjects\PlayerBullet.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

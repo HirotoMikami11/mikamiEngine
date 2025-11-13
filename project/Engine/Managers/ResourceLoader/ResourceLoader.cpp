@@ -70,6 +70,7 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Model/Goldfish", "Mesh_Goldfish.obj", "modelfish", false},
 		{"resources/Model/terrain", "terrain.obj", "model_terrain", false},
 		{"resources/Model/Player", "Player.obj", "model_Player", false},
+		{"resources/Model/PlayerBullet", "playerBullet.obj", "playerBullet", false},
 
 
 		// モデルはここに追加
