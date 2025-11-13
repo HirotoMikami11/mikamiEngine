@@ -64,7 +64,7 @@ void GameScene::InitializeGameObjects() {
 
 	///ボス
 	boss_ = std::make_unique<Boss>();
-	boss_->Initialize(directXCommon_, { -5.0f, 1.0f, 0.0f });
+	boss_->Initialize(directXCommon_, { 0.0f, 0.5f, 0.0f });
 
 
 
@@ -118,8 +118,15 @@ void GameScene::UpdateGameObjects() {
 	// 衝突マネージャーのリストをクリアする
 	collisionManager_->ClearColliderList();
 
-	// Player, 
+	// Player
 	collisionManager_->AddCollider(player_.get());
+
+	// Bossのコライダーを追加（各パーツ）
+	auto bossColliders = boss_->GetColliders();
+	for (auto* collider : bossColliders) {
+		collisionManager_->AddCollider(collider);
+	}
+
 	// 衝突判定と応答
 	collisionManager_->Update();
 

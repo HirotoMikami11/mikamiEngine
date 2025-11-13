@@ -72,7 +72,7 @@ private:
 	Vector3 velocity_;					// 速度
 	const float kAcceleration = 0.15f;	// 加速度
 	const float kLimitRunSpeed = 5.0f;	// 最大速度
-	const float kAttenuation = 0.1f;	// 減衰率（非入力時）
+	const float kAttenuation = 0.2f;	// 減衰率（非入力時）
 
 	// 回転関連
 	const float kRotationSpeed = 0.05f;	// 回転速度

@@ -3,6 +3,7 @@
 
 /// <summary>
 /// 頭パーツ（黄色）
+/// 常にObjects属性で、ダメージを受けない
 /// </summary>
 class HeadParts : public BaseParts {
 public:
@@ -15,4 +16,14 @@ public:
 	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <param name="position">初期位置</param>
 	void Initialize(DirectXCommon* dxCommon, const Vector3& position) override;
+
+	/// <summary>
+	/// 衝突時の処理（頭はダメージを受けない）
+	/// </summary>
+	void OnCollision(Collider* other) override;
+
+	/// <summary>
+	/// ダメージ処理（頭はダメージを受けない）
+	/// </summary>
+	void TakeDamage(float damage);
 };

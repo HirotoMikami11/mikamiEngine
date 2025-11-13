@@ -10,7 +10,10 @@ void CollisionManager::Initialize() {
 }
 
 void CollisionManager::Update() {
-	// ここでは登録されたコライダーの衝突判定のみを実行
+	// まず全コライダーの色をデフォルトにリセット
+	ResetAllColliderColors();
+
+	// 衝突判定を実行（衝突したものは赤に変更される）
 	CheckAllCollision();
 }
 
@@ -22,6 +25,15 @@ void CollisionManager::AddCollider(Collider* collider) {
 
 void CollisionManager::ClearColliderList() {
 	colliders_.clear();
+}
+
+void CollisionManager::ResetAllColliderColors() {
+	// 登録されている全コライダーの色をデフォルトにリセット
+	for (Collider* collider : colliders_) {
+		if (collider) {
+			collider->ResetDebugColor();
+		}
+	}
 }
 
 void CollisionManager::CheckAllCollision() {
@@ -56,7 +68,7 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 	// コライダーAとコライダーBで衝突属性とマスクを確認
 	if ((colliderA->GetCollisionAttribute() & colliderB->GetCollisionMask()) == 0 ||
 		(colliderB->GetCollisionAttribute() & colliderA->GetCollisionMask()) == 0) {
-		// 衝突しない場合は何もしない
+		// 衝突しない場合は何もしない（色はResetAllColliderColors()でリセット済み）
 		return;
 	}
 
@@ -65,5 +77,9 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 		// コールバック関数を呼び出す（相手のコライダー情報を渡す）
 		colliderA->OnCollision(colliderB);
 		colliderB->OnCollision(colliderA);
+
+		// コライダー同士の色を衝突色（赤）に変更
+		colliderA->SetDebugColor(hitColor_);
+		colliderB->SetDebugColor(hitColor_);
 	}
 }

@@ -45,6 +45,16 @@ public:
 	/// </summary>
 	void CheckAllCollision();
 
+	/// <summary>
+	/// 衝突時の色を設定
+	/// </summary>
+	void SetHitColor(const Vector4& color) { hitColor_ = color; }
+
+	/// <summary>
+	/// 衝突時の色を取得
+	/// </summary>
+	Vector4 GetHitColor() const { return hitColor_; }
+
 private:
 	/// <summary>
 	/// コライダー２つの衝突判定と応答
@@ -53,6 +63,14 @@ private:
 	/// <param name="colliderB">コライダーB</param>
 	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
 
+	/// <summary>
+	/// 全コライダーの色をデフォルトにリセット
+	/// </summary>
+	void ResetAllColliderColors();
+
 	// コライダーのリスト
 	std::list<Collider*> colliders_;
+
+	// 衝突時の色（デフォルト: 赤）
+	Vector4 hitColor_ = { 1.0f, 0.0f, 0.0f, 1.0f };
 };

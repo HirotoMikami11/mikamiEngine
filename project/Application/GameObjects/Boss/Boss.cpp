@@ -20,12 +20,13 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	InitializeParts();
 
 	// 初期位置を設定
-	if (!parts_.empty()) {
-		parts_[0]->SetPosition(position);
+	if (head_) {
+		head_->SetPosition(position);
 		previousHeadPosition_ = position;
 
 		// 初期位置履歴を作成（全パーツが正しい位置に配置されるように）
-		for (size_t i = 0; i < parts_.size(); ++i) {
+		size_t totalParts = 1 + kBodyCount + 1;  // 頭 + 体 + 尻尾
+		for (size_t i = 0; i < totalParts; ++i) {
 			Vector3 historyPosition = position;
 			historyPosition.z -= static_cast<float>(i) * partsDistance_;
 			positionHistory_.push_back(historyPosition);
@@ -35,6 +36,12 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 		UpdatePartsPositions();
 	}
 
+	// パーツのHPを設定
+	SetPartsHP();
+
+	// Phase1の衝突属性を設定
+	UpdateCollisionAttributes();
+
 	// 初期Stateを設定（Idle）
 	currentState_ = std::make_unique<IdleState>();
 	currentState_->Initialize();
@@ -42,23 +49,43 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 
 void Boss::InitializeParts() {
 	// 頭パーツ（黄色）
-	auto head = std::make_unique<HeadParts>();
-	head->Initialize(directXCommon_, Vector3{ 0.0f, 0.0f, 0.0f });
-	parts_.push_back(std::move(head));
+	head_ = std::make_unique<HeadParts>();
+	head_->Initialize(directXCommon_, Vector3{ 0.0f, 0.0f, 0.0f });
 
 	// 体パーツ（白） × 5
+	bodies_.clear();
 	for (size_t i = 0; i < kBodyCount; ++i) {
 		auto body = std::make_unique<BodyParts>();
 		Vector3 bodyPosition = { 0.0f, 0.0f, -static_cast<float>(i + 1) * partsDistance_ };
 		body->Initialize(directXCommon_, bodyPosition);
-		parts_.push_back(std::move(body));
+		body->SetBoss(this);  // Bossへの参照を設定
+		bodies_.push_back(std::move(body));
 	}
 
 	// 尻尾パーツ（緑）
-	auto tail = std::make_unique<TailParts>();
+	tail_ = std::make_unique<TailParts>();
 	Vector3 tailPosition = { 0.0f, 0.0f, -static_cast<float>(kBodyCount + 1) * partsDistance_ };
-	tail->Initialize(directXCommon_, tailPosition);
-	parts_.push_back(std::move(tail));
+	tail_->Initialize(directXCommon_, tailPosition);
+	tail_->SetBoss(this);  // Bossへの参照を設定
+}
+
+void Boss::SetPartsHP() {
+	// 体パーツのHP: Boss HP / 5
+	float bodyHP = maxBossHP_ / static_cast<float>(kBodyCount);
+	for (auto& body : bodies_) {
+		body->SetHP(bodyHP);
+	}
+
+	// 尻尾のHP: Boss HPと同じ
+	if (tail_) {
+		tail_->SetHP(maxBossHP_);
+	}
+}
+
+void Boss::SetHP(float hp) {
+	maxBossHP_ = hp;
+	bossHP_ = hp;
+	SetPartsHP();
 }
 
 void Boss::Update(const Matrix4x4& viewProjectionMatrix) {
@@ -68,6 +95,9 @@ void Boss::Update(const Matrix4x4& viewProjectionMatrix) {
 	if (currentState_) {
 		currentState_->Update(this);
 	}
+
+	// Phase遷移チェック
+	CheckPhaseTransition();
 
 	// 位置履歴の更新
 	UpdatePositionHistory();
@@ -79,16 +109,22 @@ void Boss::Update(const Matrix4x4& viewProjectionMatrix) {
 	UpdatePartsRotations();
 
 	// 各パーツの行列更新
-	for (auto& part : parts_) {
-		part->Update(viewProjectionMatrix);
+	if (head_) {
+		head_->Update(viewProjectionMatrix);
+	}
+	for (auto& body : bodies_) {
+		body->Update(viewProjectionMatrix);
+	}
+	if (tail_) {
+		tail_->Update(viewProjectionMatrix);
 	}
 }
 
 void Boss::UpdatePositionHistory() {
-	if (parts_.empty()) return;
+	if (!head_) return;
 
 	// 現在の頭の位置を取得
-	Vector3 currentHeadPosition = parts_[0]->GetPosition();
+	Vector3 currentHeadPosition = head_->GetPosition();
 
 	// 前回の位置からの移動距離を計算
 	Vector3 movement = Subtract(currentHeadPosition, previousHeadPosition_);
@@ -107,17 +143,26 @@ void Boss::UpdatePositionHistory() {
 }
 
 void Boss::UpdatePartsPositions() {
-	if (parts_.empty() || positionHistory_.empty()) return;
+	if (!head_ || positionHistory_.empty()) return;
+
+	// 全パーツのリストを作成
+	std::vector<BaseParts*> allParts;
+	for (auto& body : bodies_) {
+		allParts.push_back(body.get());
+	}
+	if (tail_) {
+		allParts.push_back(tail_.get());
+	}
 
 	// 各パーツに対して、履歴から適切な位置を取得
-	for (size_t i = 1; i < parts_.size(); ++i) {
+	for (size_t i = 0; i < allParts.size(); ++i) {
 		// このパーツが参照すべき履歴インデックスを計算
-		// パーツ間距離 × インデックス分だけ離れた位置を参照
-		float targetDistance = static_cast<float>(i) * partsDistance_;
+		// パーツ間距離 × (インデックス + 1) 分だけ離れた位置を参照（頭の次から）
+		float targetDistance = static_cast<float>(i + 1) * partsDistance_;
 
 		// 履歴を走査して、目標距離に最も近い位置を探す
 		float accumulatedDistance = 0.0f;
-		Vector3 targetPosition = parts_[0]->GetPosition();
+		Vector3 targetPosition = head_->GetPosition();
 
 		for (size_t historyIndex = 0; historyIndex < positionHistory_.size() - 1; ++historyIndex) {
 			Vector3 currentPos = positionHistory_[historyIndex];
@@ -137,17 +182,27 @@ void Boss::UpdatePartsPositions() {
 		}
 
 		// パーツの位置を設定
-		parts_[i]->SetPosition(targetPosition);
+		allParts[i]->SetPosition(targetPosition);
 	}
 }
 
 void Boss::UpdatePartsRotations() {
-	if (parts_.size() < 2) return;
+	if (!head_) return;
+
+	// 全パーツのリストを作成（頭を含む）
+	std::vector<BaseParts*> allParts;
+	allParts.push_back(head_.get());
+	for (auto& body : bodies_) {
+		allParts.push_back(body.get());
+	}
+	if (tail_) {
+		allParts.push_back(tail_.get());
+	}
 
 	// 各パーツの向きを次のパーツ方向に設定
-	for (size_t i = 0; i < parts_.size() - 1; ++i) {
-		Vector3 currentPosition = parts_[i]->GetPosition();
-		Vector3 nextPosition = parts_[i + 1]->GetPosition();
+	for (size_t i = 0; i < allParts.size() - 1; ++i) {
+		Vector3 currentPosition = allParts[i]->GetPosition();
+		Vector3 nextPosition = allParts[i + 1]->GetPosition();
 
 		// 次のパーツへの方向ベクトルを計算
 		Vector3 direction = Subtract(nextPosition, currentPosition);
@@ -157,29 +212,162 @@ void Boss::UpdatePartsRotations() {
 		if (distance > 0.001f) {
 			// Y軸回転角度を計算（-Z方向が前方）
 			float rotationY = std::atan2(-direction.x, -direction.z);
-			parts_[i]->SetRotationY(rotationY);
+			allParts[i]->SetRotationY(rotationY);
 		}
 	}
 
 	// 最後のパーツ（尻尾）は一つ前のパーツと同じ向き
-	if (parts_.size() >= 2) {
-		Vector3 lastRotation = parts_[parts_.size() - 2]->GetRotation();
-		parts_[parts_.size() - 1]->SetRotation(lastRotation);
+	if (allParts.size() >= 2) {
+		Vector3 lastRotation = allParts[allParts.size() - 2]->GetRotation();
+		allParts[allParts.size() - 1]->SetRotation(lastRotation);
+	}
+}
+
+void Boss::CheckPhaseTransition() {
+	// 現在のPhaseと前回のPhaseが変わった場合のみ処理
+	if (currentPhase_ != previousPhase_) {
+		UpdateCollisionAttributes();
+		previousPhase_ = currentPhase_;
+	}
+
+	// Phase遷移チェック
+	if (currentPhase_ == BossPhase::Phase1 && bossHP_ <= 0.0f) {
+		TransitionToPhase2();
+	} else if (currentPhase_ == BossPhase::Phase2 && bossHP_ <= 0.0f) {
+		TransitionToDeathPhase();
+	}
+}
+
+void Boss::TransitionToPhase2() {
+	currentPhase_ = BossPhase::Phase2;
+
+	// BossのHPを全回復
+	bossHP_ = maxBossHP_;
+
+	// パーツのHPをリセット
+	SetPartsHP();
+
+	// 全パーツをアクティブに戻す
+	for (auto& body : bodies_) {
+		if (!body->IsActive()) {
+			body->SetActive(true);
+			body->SetColor(body->GetDefaultColor());
+		}
+	}
+
+	// 衝突属性を更新
+	UpdateCollisionAttributes();
+}
+
+void Boss::TransitionToDeathPhase() {
+	currentPhase_ = BossPhase::Death;
+
+	// 全パーツを非アクティブに
+	for (auto& body : bodies_) {
+		body->SetActive(false);
+	}
+	if (tail_) {
+		tail_->SetActive(false);
+	}
+}
+
+void Boss::UpdateCollisionAttributes() {
+	if (currentPhase_ == BossPhase::Phase1) {
+		// Phase1: 体がEnemy、尻尾がObjects
+		for (auto& body : bodies_) {
+			body->SetPhase1Attribute();
+		}
+		if (tail_) {
+			tail_->SetPhase1Attribute();
+		}
+	} else if (currentPhase_ == BossPhase::Phase2) {
+		// Phase2: 体がObjects、尻尾がEnemy
+		for (auto& body : bodies_) {
+			body->SetPhase2Attribute();
+		}
+		if (tail_) {
+			tail_->SetPhase2Attribute();
+		}
+	}
+}
+
+void Boss::TakeDamageFromPart(float damage) {
+	bossHP_ -= damage;
+	if (bossHP_ < 0.0f) {
+		bossHP_ = 0.0f;
 	}
 }
 
 void Boss::Draw(const Light& directionalLight) {
 	// 全パーツを描画
-	for (auto& part : parts_) {
-		part->Draw(directionalLight);
+	if (head_) {
+		head_->Draw(directionalLight);
 	}
+	for (auto& body : bodies_) {
+		body->Draw(directionalLight);
+	}
+	if (tail_) {
+		tail_->Draw(directionalLight);
+	}
+}
+
+std::vector<Collider*> Boss::GetColliders() {
+	std::vector<Collider*> colliders;
+
+	// 頭はColliderに含めない（ダメージを受けないため）
+	// if (head_) {
+	//     colliders.push_back(head_.get());
+	// }
+
+	// 体パーツ
+	for (auto& body : bodies_) {
+		colliders.push_back(body.get());
+	}
+
+	// 尻尾パーツ
+	if (tail_) {
+		colliders.push_back(tail_.get());
+	}
+
+	return colliders;
 }
 
 void Boss::ImGui() {
 #ifdef USEIMGUI
 	if (ImGui::TreeNode("Boss")) {
+		// HP情報
+		if (ImGui::CollapsingHeader("HP", ImGuiTreeNodeFlags_DefaultOpen)) {
+			ImGui::Text("Boss HP: %.1f / %.1f", bossHP_, maxBossHP_);
+			float hpPercentage = (maxBossHP_ > 0.0f) ? (bossHP_ / maxBossHP_) * 100.0f : 0.0f;
+			ImGui::ProgressBar(bossHP_ / maxBossHP_, ImVec2(0.0f, 0.0f), std::format("{:.1f}%%", hpPercentage).c_str());
+
+			// HPのリセットボタン
+			if (ImGui::Button("Reset HP")) {
+				bossHP_ = maxBossHP_;
+				SetPartsHP();
+			}
+		}
+
+		// Phase情報
+		if (ImGui::CollapsingHeader("Phase", ImGuiTreeNodeFlags_DefaultOpen)) {
+			const char* phaseNames[] = { "Phase 1", "Phase 2", "Death" };
+			int currentPhaseIndex = static_cast<int>(currentPhase_);
+			ImGui::Text("Current Phase: %s", phaseNames[currentPhaseIndex]);
+
+			// Phase強制変更ボタン（デバッグ用）
+			if (currentPhase_ == BossPhase::Phase1) {
+				if (ImGui::Button("Force Transition to Phase2")) {
+					TransitionToPhase2();
+				}
+			} else if (currentPhase_ == BossPhase::Phase2) {
+				if (ImGui::Button("Force Transition to Death")) {
+					TransitionToDeathPhase();
+				}
+			}
+		}
+
 		// State情報
-		if (ImGui::CollapsingHeader("State", ImGuiTreeNodeFlags_DefaultOpen)) {
+		if (ImGui::CollapsingHeader("State")) {
 			if (currentState_) {
 				ImGui::Text("Current State: %s", currentState_->GetStateName());
 				ImGui::Separator();
@@ -200,13 +388,6 @@ void Boss::ImGui() {
 			}
 		}
 
-		// Phase情報（将来の拡張用）
-		if (ImGui::CollapsingHeader("Phase")) {
-			const char* phaseNames[] = { "Phase 1", "Phase 2", "Phase 3" };
-			int currentPhaseIndex = static_cast<int>(currentPhase_);
-			ImGui::Text("Current Phase: %s", phaseNames[currentPhaseIndex]);
-		}
-
 		// パラメータ設定
 		if (ImGui::CollapsingHeader("Parameters")) {
 			// パーツ間距離の調整（隙間の調整）
@@ -221,25 +402,34 @@ void Boss::ImGui() {
 
 			// 履歴情報
 			ImGui::Text("Position History Size: %zu", positionHistory_.size());
+
+			// コライダー表示フラグ
+			ImGui::Checkbox("Show Colliders", &showColliders_);
+			if (head_) head_->SetDebugVisible(showColliders_);
+			for (auto& body : bodies_) body->SetDebugVisible(showColliders_);
+			if (tail_) tail_->SetDebugVisible(showColliders_);
 		}
 
 		// パーツ情報
 		if (ImGui::CollapsingHeader("Parts")) {
-			ImGui::Text("Total Parts: %zu", parts_.size());
+			size_t totalParts = 1 + kBodyCount + 1;
+			ImGui::Text("Total Parts: %zu", totalParts);
 			ImGui::Separator();
 
-			// 各パーツの情報
-			for (size_t i = 0; i < parts_.size(); ++i) {
-				std::string label;
-				if (i == 0) {
-					label = "Head (Yellow)";
-				} else if (i <= kBodyCount) {
-					label = std::format("Body {} (White)", i);
-				} else {
-					label = "Tail (Green)";
-				}
+			// 頭
+			if (head_) {
+				head_->ImGui("Head (Yellow)");
+			}
 
-				parts_[i]->ImGui(label.c_str());
+			// 体
+			for (size_t i = 0; i < bodies_.size(); ++i) {
+				std::string label = std::format("Body {} (White)", i + 1);
+				bodies_[i]->ImGui(label.c_str());
+			}
+
+			// 尻尾
+			if (tail_) {
+				tail_->ImGui("Tail (Green)");
 			}
 		}
 
@@ -256,22 +446,22 @@ void Boss::ChangeState(std::unique_ptr<BossState> newState) {
 }
 
 Vector3 Boss::GetHeadPosition() const {
-	if (!parts_.empty()) {
-		return parts_[0]->GetPosition();
+	if (head_) {
+		return head_->GetPosition();
 	}
 	return Vector3{ 0.0f, 0.0f, 0.0f };
 }
 
 void Boss::MoveHead(const Vector3& movement) {
-	if (!parts_.empty()) {
-		Vector3 currentPosition = parts_[0]->GetPosition();
+	if (head_) {
+		Vector3 currentPosition = head_->GetPosition();
 		Vector3 newPosition = Add(currentPosition, movement);
-		parts_[0]->SetPosition(newPosition);
+		head_->SetPosition(newPosition);
 	}
 }
 
 void Boss::SetHeadRotationY(float rotationY) {
-	if (!parts_.empty()) {
-		parts_[0]->SetRotationY(rotationY);
+	if (head_) {
+		head_->SetRotationY(rotationY);
 	}
 }

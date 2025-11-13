@@ -25,6 +25,11 @@ public:
 	/// </summary>
 	virtual Vector3 GetWorldPosition() = 0;
 
+	/// <summary>
+	/// デバッグ用のコライダー表示
+	/// </summary>
+	virtual void DebugLineAdd();
+
 	// 半径を取得
 	virtual float GetRadius() const { return radius_; }
 
@@ -43,7 +48,22 @@ public:
 	// 衝突マスク(相手)を設定
 	void SetCollisionMask(uint32_t mask) { collisionMask_ = mask; }
 
-private:
+	// デバッグ表示フラグの取得・設定
+	bool IsDebugVisible() const { return isDebugVisible_; }
+	void SetDebugVisible(bool visible) { isDebugVisible_ = visible; }
+
+	// デバッグカラーの取得・設定
+	Vector4 GetDebugColor() const { return currentDebugColor_; }
+	void SetDebugColor(const Vector4& color) { currentDebugColor_ = color; }
+
+	// デフォルトデバッグカラーの取得・設定
+	Vector4 GetDefaultDebugColor() const { return defaultDebugColor_; }
+	void SetDefaultDebugColor(const Vector4& color) { defaultDebugColor_ = color; }
+
+	// デバッグカラーをデフォルトにリセット
+	void ResetDebugColor() { currentDebugColor_ = defaultDebugColor_; }
+
+protected:
 	// 衝突半径
 	float radius_ = 1.0f; // 当たり判定用半径
 
@@ -52,4 +72,8 @@ private:
 	// 衝突マスク(相手)
 	uint32_t collisionMask_ = 0xffffffff;
 
+	// デバッグ表示設定
+	bool isDebugVisible_ = true;							// デバッグ表示フラグ
+	Vector4 defaultDebugColor_ = { 0.0f, 1.0f, 0.0f, 1.0f };	// デフォルトデバッグカラー（緑）
+	Vector4 currentDebugColor_ = { 0.0f, 1.0f, 0.0f, 1.0f };	// 現在のデバッグカラー
 };

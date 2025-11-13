@@ -39,6 +39,9 @@ void Player::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	SetRadius(0.5f);  // 半径を0.5fに設定
 	SetCollisionAttribute(kCollisionAttributePlayer);	// 自分の属性をPlayerに設定
 	SetCollisionMask(kCollisionAttributeEnemy);			// Enemyと衝突するように設定
+
+	// デバッグカラーを青に設定
+	SetDebugColor({ 0.0f, 0.0f, 1.0f, 1.0f });
 }
 
 void Player::Update(const Matrix4x4& viewProjectionMatrix) {
@@ -60,6 +63,13 @@ void Player::Update(const Matrix4x4& viewProjectionMatrix) {
 
 	// 行列更新
 	gameObject_->Update(viewProjectionMatrix);
+
+	// デバッグ表示が有効な場合、コライダーを描画
+#ifdef USEIMGUI
+	if (IsDebugVisible()) {
+		DebugLineAdd();
+	}
+#endif
 }
 
 void Player::ProcessMovement() {
@@ -209,6 +219,7 @@ void Player::ImGui() {
 
 		// 衝突判定情報
 		ImGui::Text("Collision Radius: %.2f", GetRadius());
+		ImGui::Checkbox("Show Collider", &isDebugVisible_);
 
 		// ゲームオブジェクトのImGui
 		gameObject_->ImGui();
@@ -219,12 +230,12 @@ void Player::ImGui() {
 
 void Player::OnCollision(Collider* other) {
 	// 衝突時の処理
-	// 例: Enemyとの衝突処理など
+	// Enemyとの衝突処理
 	uint32_t otherAttribute = other->GetCollisionAttribute();
 
 	if (otherAttribute & kCollisionAttributeEnemy) {
 		// Enemyとの衝突処理
-		// 例: ダメージを受けるなど
+		// 例: ダメージを受けるなど（今回は特に処理なし）
 	}
 }
 

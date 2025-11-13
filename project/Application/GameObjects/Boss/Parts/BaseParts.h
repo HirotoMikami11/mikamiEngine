@@ -2,13 +2,14 @@
 #include "Object3D.h"
 #include "Light.h"
 #include "MyMath.h"
+#include "Collider.h"
 
 using namespace MyMath;
 
 /// <summary>
-/// Bossのパーツ基底クラス
+/// Bossのパーツ基底クラス（HP管理と衝突判定機能付き）
 /// </summary>
-class BaseParts {
+class BaseParts : public Collider {
 public:
 	BaseParts() = default;
 	virtual ~BaseParts() = default;
@@ -56,7 +57,31 @@ public:
 	virtual void SetColor(const Vector4& color);
 	virtual void SetColor(uint32_t color);
 
+	// Colliderインターフェースの実装
+	void OnCollision(Collider* other) override;
+	Vector3 GetWorldPosition() override;
+
+	// HP管理
+	float GetHP() const { return currentHP_; }
+	float GetMaxHP() const { return maxHP_; }
+	void SetHP(float hp) { maxHP_ = hp; currentHP_ = hp; }
+	void TakeDamage(float damage);
+	bool IsActive() const { return isActive_; }
+	void SetActive(bool active);
+
+	// デフォルトカラーの保存（HP0で黒に変更するため）
+	void SetDefaultColor(const Vector4& color) { defaultColor_ = color; }
+	Vector4 GetDefaultColor() const { return defaultColor_; }
+
 protected:
 	std::unique_ptr<Object3D> gameObject_;
 	DirectXCommon* directXCommon_ = nullptr;
+
+	// HP管理
+	float maxHP_ = 100.0f;
+	float currentHP_ = 100.0f;
+	bool isActive_ = true;
+
+	// デフォルトカラー（死亡時に黒にするため保存）
+	Vector4 defaultColor_ = { 1.0f, 1.0f, 1.0f, 1.0f };
 };
