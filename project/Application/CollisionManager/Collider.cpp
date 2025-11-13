@@ -3,7 +3,7 @@
 
 void Collider::DebugLineAdd() {
 	// デバッグ表示が無効なら何もしない
-	if (!isDebugVisible_) {
+	if (!isColliderVisible_) {
 		return;
 	}
 
@@ -17,5 +17,5 @@ void Collider::DebugLineAdd() {
 	Vector3 center = GetWorldPosition();
 
 	// コライダーの球体を描画（現在のデバッグカラーを使用）
-	debugDrawLineSystem->DrawSphere(center, radius_, currentDebugColor_);
+	debugDrawLineSystem->DrawSphere(center, radius_, currentColliderColor_);
 }

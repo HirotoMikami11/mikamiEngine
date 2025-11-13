@@ -19,13 +19,13 @@ void PlayerBullet::Initialize(DirectXCommon* dxCommon, const Vector3& position, 
 
 	// トランスフォームの設定
 	Vector3Transform transform;
-	transform.scale = { 0.1f, 0.1f, 0.1f };
+	transform.scale = { 0.3f, 0.3f, 0.3f };		// スケール
 	transform.rotate = { 0.0f, 0.0f, 0.0f };
 	transform.translate = position;
 	gameObject_->SetTransform(transform);
 
 	// 弾の色を黄色に設定
-	gameObject_->SetColor(0xFFFF00FF);
+	gameObject_->SetColor(0xFF0000FF);
 
 	// 速度の方向を向くように回転
 	SetToVelocityDirection();
@@ -33,13 +33,14 @@ void PlayerBullet::Initialize(DirectXCommon* dxCommon, const Vector3& position, 
 	// 衝突判定設定
 	SetRadius(0.3f);  // Colliderの半径をセット
 
+	// 攻撃力を設定
+	SetAttackPower(10.0f);
+
 	// 衝突属性の設定
 	SetCollisionAttribute(kCollisionAttributePlayerBullet);
 	// 敵とオブジェクトに衝突
 	SetCollisionMask(kCollisionAttributeEnemy | kCollisionAttributeObjects);
 
-	// デバッグカラーを黄色に設定
-	SetDebugColor({ 1.0f, 1.0f, 0.0f, 1.0f });
 }
 
 void PlayerBullet::Update(const Matrix4x4& viewProjectionMatrix) {
@@ -57,15 +58,12 @@ void PlayerBullet::Update(const Matrix4x4& viewProjectionMatrix) {
 	// ゲームオブジェクトの更新
 	gameObject_->Update(viewProjectionMatrix);
 
-
 }
 
 void PlayerBullet::Draw(const Light& directionalLight) {
 	// デバッグ表示が有効な場合、コライダーを描画
 #ifdef USEIMGUI
-	if (IsDebugVisible()) {
-		DebugLineAdd();
-	}
+	DebugLineAdd();
 #endif
 	if (!isDead_) {
 		gameObject_->Draw(directionalLight);

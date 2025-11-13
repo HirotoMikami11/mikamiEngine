@@ -54,7 +54,6 @@ public:
 	void SetScale(const Vector3& scale);
 
 	// 色の設定（派生クラスでオーバーライド）
-	virtual void SetColor(const Vector4& color);
 	virtual void SetColor(uint32_t color);
 
 	// Colliderインターフェースの実装
@@ -65,13 +64,20 @@ public:
 	float GetHP() const { return currentHP_; }
 	float GetMaxHP() const { return maxHP_; }
 	void SetHP(float hp) { maxHP_ = hp; currentHP_ = hp; }
-	void TakeDamage(float damage);
+
+	/// <summary>
+	/// ダメージを受ける（実際に減ったHP分を返す）
+	/// </summary>
+	/// <param name="damage">受けるダメージ量</param>
+	/// <returns>実際に減少したHP量</returns>
+	float TakeDamage(float damage);
+
 	bool IsActive() const { return isActive_; }
 	void SetActive(bool active);
 
 	// デフォルトカラーの保存（HP0で黒に変更するため）
-	void SetDefaultColor(const Vector4& color) { defaultColor_ = color; }
-	Vector4 GetDefaultColor() const { return defaultColor_; }
+	void SetDefaultColor(const uint32_t& color) { defaultColor_ = color; }
+	uint32_t GetDefaultColor() const { return defaultColor_; }
 
 protected:
 	std::unique_ptr<Object3D> gameObject_;
@@ -83,5 +89,5 @@ protected:
 	bool isActive_ = true;
 
 	// デフォルトカラー（死亡時に黒にするため保存）
-	Vector4 defaultColor_ = { 1.0f, 1.0f, 1.0f, 1.0f };
+	uint32_t defaultColor_ = 0xFFFFFFFF;
 };

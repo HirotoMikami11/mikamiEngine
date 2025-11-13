@@ -61,11 +61,20 @@ void DebugDrawLineSystem::Finalize()
 
 void DebugDrawLineSystem::AddLine(const Vector3& start, const Vector3& end, const Vector4& color)
 {
-	if (!isInitialized_ || !lineRenderer_) {
+	if (!isInitialized_ ) {
 		return;
 	}
 
 	lineRenderer_->AddLine(start, end, color);
+}
+
+void DebugDrawLineSystem::AddLine(const Vector3& start, const Vector3& end, const uint32_t& color)
+{
+	if (!isInitialized_) {
+		return;
+	}
+
+	lineRenderer_->AddLine(start, end, Uint32ToColorVector(color));
 }
 
 void DebugDrawLineSystem::DrawAABB(const AABB& aabb, const Vector4& color)
@@ -95,6 +104,11 @@ void DebugDrawLineSystem::DrawAABB(const AABB& aabb, const Vector4& color)
 	AddLine(vertices[1], vertices[5], color);	// 右下手前 → 右上手前
 	AddLine(vertices[2], vertices[6], color);	// 右下奥 → 右上奥
 	AddLine(vertices[3], vertices[7], color);	// 左下奥 → 左上奥
+}
+
+void DebugDrawLineSystem::DrawAABB(const AABB& aabb, const uint32_t& color)
+{
+	DrawAABB(aabb, Uint32ToColorVector(color));
 }
 
 void DebugDrawLineSystem::DrawSphere(const Vector3& center, float radius, const Vector4& color, uint32_t subdivision)
@@ -147,53 +161,9 @@ void DebugDrawLineSystem::DrawSphere(const Vector3& center, float radius, const 
 	}
 }
 
-void DebugDrawLineSystem::DrawGrid(
-	const Vector3& center,
-	float size,
-	float interval,
-	float majorInterval,
-	const Vector4& normalColor,
-	const Vector4& majorColor)
+void DebugDrawLineSystem::DrawSphere(const Vector3& center, float radius, const uint32_t& color, uint32_t subdivision)
 {
-	if (!isInitialized_ ) {
-		return;
-	}
-
-	float halfSize = size * 0.5f;
-
-	// X方向の線（Z軸に沿って）
-	for (float x = -halfSize; x <= halfSize; x += interval) {
-		Vector4 color;
-		if (std::abs(x) < 0.001f) {
-			// Z軸は青色
-			color = { 0.0f, 0.0f, 1.0f, 1.0f };
-		} else if (std::fmod(std::abs(x), majorInterval) < 0.001f) {
-			color = majorColor;
-		} else {
-			color = normalColor;
-		}
-
-		Vector3 start = { center.x + x, center.y, center.z - halfSize };
-		Vector3 end = { center.x + x, center.y, center.z + halfSize };
-		AddLine(start, end, color);
-	}
-
-	// Z方向の線（X軸に沿って）
-	for (float z = -halfSize; z <= halfSize; z += interval) {
-		Vector4 color;
-		if (std::abs(z) < 0.001f) {
-			// X軸は赤色
-			color = { 1.0f, 0.0f, 0.0f, 1.0f };
-		} else if (std::fmod(std::abs(z), majorInterval) < 0.001f) {
-			color = majorColor;
-		} else {
-			color = normalColor;
-		}
-
-		Vector3 start = { center.x - halfSize, center.y, center.z + z };
-		Vector3 end = { center.x + halfSize, center.y, center.z + z };
-		AddLine(start, end, color);
-	}
+	DrawSphere(center, radius, Uint32ToColorVector(color));
 }
 
 void DebugDrawLineSystem::DrawCross(const Vector3& position, float size, const Vector4& color)
@@ -224,140 +194,6 @@ void DebugDrawLineSystem::DrawCross(const Vector3& position, float size, const V
 		{ position.x, position.y, position.z + halfSize },
 		color
 	);
-}
-
-void DebugDrawLineSystem::DrawCapsule(const Vector3& start, const Vector3& end, float radius, const Vector4& color, int segments)
-{
-	if (!isInitialized_ || segments < 3) {
-		return;
-	}
-
-	const float pi = std::numbers::pi_v<float>;
-
-	// カプセルの中心軸
-	Vector3 axis = Subtract(end, start);
-	float height = Length(axis);
-
-	if (height < 0.0001f) {
-		// 高さが0の場合は球体として描画
-		DrawSphere(start, radius, color, segments);
-		return;
-	}
-
-	axis = Normalize(axis);
-
-	// 軸に垂直な2つのベクトルを作成
-	Vector3 perpendicular1, perpendicular2;
-	if (std::abs(axis.y) < 0.9f) {
-		perpendicular1 = Normalize(Cross({ 0.0f, 1.0f, 0.0f }, axis));
-	} else {
-		perpendicular1 = Normalize(Cross({ 1.0f, 0.0f, 0.0f }, axis));
-	}
-	perpendicular2 = Normalize(Cross(axis, perpendicular1));
-
-	const float angleStep = (2.0f * pi) / static_cast<float>(segments);
-
-	// 円柱部分（側面の線）
-	for (int i = 0; i < segments; ++i) {
-		float angle = angleStep * i;
-
-		Vector3 offset = {
-			radius * (std::cos(angle) * perpendicular1.x + std::sin(angle) * perpendicular2.x),
-			radius * (std::cos(angle) * perpendicular1.y + std::sin(angle) * perpendicular2.y),
-			radius * (std::cos(angle) * perpendicular1.z + std::sin(angle) * perpendicular2.z)
-		};
-
-		Vector3 p1 = Add(start, offset);
-		Vector3 p2 = Add(end, offset);
-		AddLine(p1, p2, color);
-	}
-
-	// 両端の半球
-	const int hemisphereSegments = segments / 2;
-	const float latStep = (pi / 2.0f) / static_cast<float>(hemisphereSegments);
-
-	// 開始点の半球
-	for (int latIndex = 0; latIndex < hemisphereSegments; ++latIndex) {
-		float lat1 = -pi / 2.0f + latStep * latIndex;
-		float lat2 = -pi / 2.0f + latStep * (latIndex + 1);
-
-		for (int lonIndex = 0; lonIndex < segments; ++lonIndex) {
-			float lon1 = angleStep * lonIndex;
-			float lon2 = angleStep * (lonIndex + 1);
-
-			// 球面座標から直交座標へ
-			float r1 = radius * std::cos(lat1);
-			float y1 = radius * std::sin(lat1);
-			float r2 = radius * std::cos(lat2);
-			float y2 = radius * std::sin(lat2);
-
-			Vector3 localPos1 = {
-				r1 * std::cos(lon1) * perpendicular1.x + r1 * std::sin(lon1) * perpendicular2.x + y1 * axis.x,
-				r1 * std::cos(lon1) * perpendicular1.y + r1 * std::sin(lon1) * perpendicular2.y + y1 * axis.y,
-				r1 * std::cos(lon1) * perpendicular1.z + r1 * std::sin(lon1) * perpendicular2.z + y1 * axis.z
-			};
-
-			Vector3 localPos2 = {
-				r2 * std::cos(lon1) * perpendicular1.x + r2 * std::sin(lon1) * perpendicular2.x + y2 * axis.x,
-				r2 * std::cos(lon1) * perpendicular1.y + r2 * std::sin(lon1) * perpendicular2.y + y2 * axis.y,
-				r2 * std::cos(lon1) * perpendicular1.z + r2 * std::sin(lon1) * perpendicular2.z + y2 * axis.z
-			};
-
-			Vector3 localPos3 = {
-				r1 * std::cos(lon2) * perpendicular1.x + r1 * std::sin(lon2) * perpendicular2.x + y1 * axis.x,
-				r1 * std::cos(lon2) * perpendicular1.y + r1 * std::sin(lon2) * perpendicular2.y + y1 * axis.y,
-				r1 * std::cos(lon2) * perpendicular1.z + r1 * std::sin(lon2) * perpendicular2.z + y1 * axis.z
-			};
-
-			Vector3 p1 = Add(start, localPos1);
-			Vector3 p2 = Add(start, localPos2);
-			Vector3 p3 = Add(start, localPos3);
-
-			AddLine(p1, p2, color);
-			AddLine(p1, p3, color);
-		}
-	}
-
-	// 終了点の半球
-	for (int latIndex = 0; latIndex < hemisphereSegments; ++latIndex) {
-		float lat1 = latStep * latIndex;
-		float lat2 = latStep * (latIndex + 1);
-
-		for (int lonIndex = 0; lonIndex < segments; ++lonIndex) {
-			float lon1 = angleStep * lonIndex;
-			float lon2 = angleStep * (lonIndex + 1);
-
-			float r1 = radius * std::cos(lat1);
-			float y1 = radius * std::sin(lat1);
-			float r2 = radius * std::cos(lat2);
-			float y2 = radius * std::sin(lat2);
-
-			Vector3 localPos1 = {
-				r1 * std::cos(lon1) * perpendicular1.x + r1 * std::sin(lon1) * perpendicular2.x + y1 * axis.x,
-				r1 * std::cos(lon1) * perpendicular1.y + r1 * std::sin(lon1) * perpendicular2.y + y1 * axis.y,
-				r1 * std::cos(lon1) * perpendicular1.z + r1 * std::sin(lon1) * perpendicular2.z + y1 * axis.z
-			};
-
-			Vector3 localPos2 = {
-				r2 * std::cos(lon1) * perpendicular1.x + r2 * std::sin(lon1) * perpendicular2.x + y2 * axis.x,
-				r2 * std::cos(lon1) * perpendicular1.y + r2 * std::sin(lon1) * perpendicular2.y + y2 * axis.y,
-				r2 * std::cos(lon1) * perpendicular1.z + r2 * std::sin(lon1) * perpendicular2.z + y2 * axis.z
-			};
-
-			Vector3 localPos3 = {
-				r1 * std::cos(lon2) * perpendicular1.x + r1 * std::sin(lon2) * perpendicular2.x + y1 * axis.x,
-				r1 * std::cos(lon2) * perpendicular1.y + r1 * std::sin(lon2) * perpendicular2.y + y1 * axis.y,
-				r1 * std::cos(lon2) * perpendicular1.z + r1 * std::sin(lon2) * perpendicular2.z + y1 * axis.z
-			};
-
-			Vector3 p1 = Add(end, localPos1);
-			Vector3 p2 = Add(end, localPos2);
-			Vector3 p3 = Add(end, localPos3);
-
-			AddLine(p1, p2, color);
-			AddLine(p1, p3, color);
-		}
-	}
 }
 
 uint32_t DebugDrawLineSystem::GetLineCount() const

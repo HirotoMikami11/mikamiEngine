@@ -3,7 +3,7 @@
 
 /// <summary>
 /// 頭パーツ（黄色）
-/// 常にObjects属性で、ダメージを受けない
+/// 常にObjects属性で、衝突判定はあるがダメージを受けない
 /// </summary>
 class HeadParts : public BaseParts {
 public:
@@ -21,9 +21,4 @@ public:
 	/// 衝突時の処理（頭はダメージを受けない）
 	/// </summary>
 	void OnCollision(Collider* other) override;
-
-	/// <summary>
-	/// ダメージ処理（頭はダメージを受けない）
-	/// </summary>
-	void TakeDamage(float damage);
 };

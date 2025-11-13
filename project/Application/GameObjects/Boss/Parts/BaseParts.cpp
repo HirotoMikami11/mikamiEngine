@@ -10,31 +10,23 @@ void BaseParts::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 
 	// トランスフォームの設定
 	Vector3Transform transform;
-	transform.scale = { 1.0f, 1.0f, 1.0f };  // 1.0f × 1.0f × 1.0f
+	transform.scale = { 1.0f, 1.0f, 1.0f };
 	transform.rotate = { 0.0f, 0.0f, 0.0f };
 	transform.translate = position;
 	gameObject_->SetTransform(transform);
 
 	// コライダーの設定（キューブの半分のサイズ = 0.5f）
 	SetRadius(0.5f);
-
-	// デフォルトのデバッグカラー（緑）
-	SetDefaultDebugColor({ 0.0f, 1.0f, 0.0f, 1.0f });
-	SetDebugColor({ 0.0f, 1.0f, 0.0f, 1.0f });
 }
 
 void BaseParts::Update(const Matrix4x4& viewProjectionMatrix) {
 	gameObject_->Update(viewProjectionMatrix);
-
-
 }
 
 void BaseParts::Draw(const Light& directionalLight) {
 	// デバッグ表示が有効な場合、コライダーを描画
 #ifdef USEIMGUI
-	if (isDebugVisible_) {
-		DebugLineAdd();
-	}
+	DebugLineAdd();
 #endif
 
 	gameObject_->Draw(directionalLight);
@@ -54,16 +46,16 @@ void BaseParts::ImGui(const char* label) {
 		// コライダー情報
 		if (ImGui::CollapsingHeader("Collider")) {
 			ImGui::Text("Radius: %.2f", GetRadius());
-			ImGui::Checkbox("Debug Visible", &isDebugVisible_);
+			ImGui::Checkbox("Debug Visible", &isColliderVisible_);
 
 			// デフォルトカラーの編集
-			Vector4 defaultColor = GetDefaultDebugColor();
+			uint32_t defaultColor = GetDefaultColliderColor();
 			if (ImGui::ColorEdit4("Default Color", reinterpret_cast<float*>(&defaultColor))) {
-				SetDefaultDebugColor(defaultColor);
+				SetDefaultColliderColor(defaultColor);
 			}
 
 			// 現在のカラーの表示（読み取り専用）
-			Vector4 currentColor = GetDebugColor();
+			uint32_t currentColor = GetColliderColor();
 			ImGui::ColorEdit4("Current Color", reinterpret_cast<float*>(&currentColor), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoPicker);
 			ImGui::SameLine();
 			ImGui::TextDisabled("(Read Only)");
@@ -111,10 +103,6 @@ void BaseParts::SetScale(const Vector3& scale) {
 	gameObject_->SetScale(scale);
 }
 
-void BaseParts::SetColor(const Vector4& color) {
-	gameObject_->SetColor(color);
-}
-
 void BaseParts::SetColor(uint32_t color) {
 	gameObject_->SetColor(color);
 }
@@ -128,11 +116,16 @@ Vector3 BaseParts::GetWorldPosition() {
 	return GetPosition();
 }
 
-void BaseParts::TakeDamage(float damage) {
+float BaseParts::TakeDamage(float damage) {
+	// 非アクティブの場合はダメージを受けない
 	if (!isActive_) {
-		return;
+		return 0.0f;
 	}
 
+	// ダメージ前のHP
+	float previousHP = currentHP_;
+
+	// ダメージを適用
 	currentHP_ -= damage;
 
 	// HP0以下になったら非アクティブに
@@ -140,6 +133,10 @@ void BaseParts::TakeDamage(float damage) {
 		currentHP_ = 0.0f;
 		SetActive(false);
 	}
+
+	// 実際に減少したHP量を返す
+	float actualDamage = previousHP - currentHP_;
+	return actualDamage;
 }
 
 void BaseParts::SetActive(bool active) {
@@ -147,10 +144,7 @@ void BaseParts::SetActive(bool active) {
 
 	if (!isActive_) {
 		// 非アクティブになったら黒に変更
-		SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
-		// 衝突属性をObjectsに変更
-		SetCollisionAttribute(kCollisionAttributeObjects);
-		SetCollisionMask(0x00000000);  // どことも衝突しない
+		SetColor(0xFFFFFFFF);
 
 	} else {
 		// アクティブになったらデフォルトカラーに戻す

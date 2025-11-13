@@ -5,50 +5,56 @@ void BodyParts::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	// 基底クラスの初期化
 	BaseParts::Initialize(dxCommon, position);
 
-	// 白色に設定（RGBA: 0xFFFFFFFF）
+	// 白色に設定
 	SetColor(0xFFFFFFFF);
-	SetDefaultColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+	SetDefaultColor(0xFFFFFFFF);
 
 	// デフォルトはPhase1（Enemy属性）
 	SetPhase1Attribute();
 }
 
 void BodyParts::OnCollision(Collider* other) {
-	// アクティブでない場合は何もしない
+	// 非アクティブの場合はダメージを受けない
 	if (!isActive_) {
 		return;
 	}
 
-	// プレイヤーとの衝突判定
+	// 衝突相手の属性を取得
 	uint32_t otherAttribute = other->GetCollisionAttribute();
 
-	if (otherAttribute & kCollisionAttributePlayer) {
-		// プレイヤーからのダメージ
-		TakeDamage(1.0f);
+	// プレイヤーの弾との衝突
+	if (otherAttribute & kCollisionAttributePlayerBullet) {
+		// 弾の攻撃力を取得
+		float attackPower = other->GetAttackPower();
 
-		// Bossにもダメージを与える
-		if (boss_) {
-			boss_->TakeDamageFromPart(1.0f);
+		// ダメージを受けて、実際に減ったHP分を取得
+		float actualDamage = TakeDamage(attackPower);
+
+		// Bossに実際に減ったHP分のダメージを与える
+		if (boss_ && actualDamage > 0.0f) {
+			boss_->TakeDamageFromPart(actualDamage);
 		}
 	}
 }
 
 void BodyParts::SetPhase1Attribute() {
+	// 非アクティブの場合は属性を変更しない
 	if (!isActive_) {
 		return;
 	}
 
 	// Phase1: Enemy属性
 	SetCollisionAttribute(kCollisionAttributeEnemy);
-	SetCollisionMask(kCollisionAttributePlayer);  // Playerと衝突
+	SetCollisionMask(kCollisionAttributePlayer | kCollisionAttributePlayerBullet);  // プレイヤーと弾に衝突
 }
 
 void BodyParts::SetPhase2Attribute() {
+	// 非アクティブの場合は属性を変更しない
 	if (!isActive_) {
 		return;
 	}
 
 	// Phase2: Objects属性
 	SetCollisionAttribute(kCollisionAttributeObjects);
-	SetCollisionMask(0x00000000);  // どことも衝突しない
+	SetCollisionMask(kCollisionAttributePlayerBullet);  // 弾にのみ衝突
 }

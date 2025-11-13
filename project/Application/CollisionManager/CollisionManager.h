@@ -48,12 +48,12 @@ public:
 	/// <summary>
 	/// 衝突時の色を設定
 	/// </summary>
-	void SetHitColor(const Vector4& color) { hitColor_ = color; }
+	void SetHitColor(const uint32_t& color) { hitColor_ = color; }
 
 	/// <summary>
 	/// 衝突時の色を取得
 	/// </summary>
-	Vector4 GetHitColor() const { return hitColor_; }
+	uint32_t GetHitColor() const { return hitColor_; }
 
 private:
 	/// <summary>
@@ -72,5 +72,5 @@ private:
 	std::list<Collider*> colliders_;
 
 	// 衝突時の色（デフォルト: 赤）
-	Vector4 hitColor_ = { 1.0f, 0.0f, 0.0f, 1.0f };
+	uint32_t hitColor_ = 0xFF0000FF;
 };

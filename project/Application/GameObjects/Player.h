@@ -91,15 +91,17 @@ private:
 
 	// 移動関連
 	Vector3 velocity_;					// 速度
-	const float kAcceleration = 0.15f;	// 加速度
-	const float kLimitRunSpeed = 5.0f;	// 最大速度
-	const float kAttenuation = 0.2f;	// 減衰率（非入力時）
+	// 移動関連
+	float acceleration_ = 0.15f;
+	float limitRunSpeed_ = 5.0f;
+	float attenuation_ = 0.2f;
 
 	// 回転関連
-	const float kRotationSpeed = 0.05f;	// 回転速度
+	float rotationSpeed_ = 0.05f;
 
 	// 弾発射関連
-	const float kBulletSpeed = 0.1f;	// 弾の速度
-	const int kFireInterval = 5;		// 発射間隔（フレーム）
+	float bulletSpeed_ = 0.1f;
+	int fireInterval_ = 5;
+
 	int fireTimer_ = 0;					// 発射タイマー
 };

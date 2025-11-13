@@ -314,10 +314,10 @@ void Boss::Draw(const Light& directionalLight) {
 std::vector<Collider*> Boss::GetColliders() {
 	std::vector<Collider*> colliders;
 
-	// 頭はColliderに含めない（ダメージを受けないため）
-	// if (head_) {
-	//     colliders.push_back(head_.get());
-	// }
+
+	if (head_) {
+		colliders.push_back(head_.get());
+	}
 
 	// 体パーツ
 	for (auto& body : bodies_) {
@@ -405,9 +405,9 @@ void Boss::ImGui() {
 
 			// コライダー表示フラグ
 			ImGui::Checkbox("Show Colliders", &showColliders_);
-			if (head_) head_->SetDebugVisible(showColliders_);
-			for (auto& body : bodies_) body->SetDebugVisible(showColliders_);
-			if (tail_) tail_->SetDebugVisible(showColliders_);
+			if (head_) head_->SetColliderVisible(showColliders_);
+			for (auto& body : bodies_) body->SetColliderVisible(showColliders_);
+			if (tail_) tail_->SetColliderVisible(showColliders_);
 		}
 
 		// パーツ情報

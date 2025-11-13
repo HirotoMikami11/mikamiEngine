@@ -40,9 +40,6 @@ void Player::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	SetRadius(0.5f);  // 半径を0.5fに設定
 	SetCollisionAttribute(kCollisionAttributePlayer);	// 自分の属性をPlayerに設定
 	SetCollisionMask(kCollisionAttributeEnemy);			// Enemyと衝突するように設定
-
-	// デバッグカラーを青に設定
-	SetDebugColor({ 0.0f, 0.0f, 1.0f, 1.0f });
 }
 
 void Player::Update(const Matrix4x4& viewProjectionMatrix) {
@@ -78,9 +75,7 @@ void Player::Update(const Matrix4x4& viewProjectionMatrix) {
 
 	// デバッグ表示が有効な場合、コライダーを描画
 #ifdef USEIMGUI
-	if (IsDebugVisible()) {
-		DebugLineAdd();
-	}
+	DebugLineAdd();
 #endif
 }
 
@@ -122,25 +117,25 @@ void Player::ProcessMovement() {
 			// 右移動
 			if (velocity_.x < 0.0f) {
 				// 速度と逆方向に入力中は急ブレーキ
-				velocity_.x *= (1.0f - kAcceleration);
+				velocity_.x *= (1.0f - acceleration_);
 			}
-			acceleration.x += kAcceleration;
+			acceleration.x += acceleration_;
 		} else {
 			// 左移動
 			if (velocity_.x > 0.0f) {
 				// 速度と逆方向に入力中は急ブレーキ
-				velocity_.x *= (1.0f - kAcceleration);
+				velocity_.x *= (1.0f - acceleration_);
 			}
-			acceleration.x -= kAcceleration;
+			acceleration.x -= acceleration_;
 		}
 
 		// 加速減速
 		velocity_.x += acceleration.x;
 		// 最大速度制限
-		velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
+		velocity_.x = std::clamp(velocity_.x, -limitRunSpeed_, limitRunSpeed_);
 	} else {
 		// 非入力時は移動減衰をかける
-		velocity_.x *= (1.0f - kAttenuation);
+		velocity_.x *= (1.0f - attenuation_);
 	}
 
 	// Z軸（前後）の移動処理
@@ -151,25 +146,25 @@ void Player::ProcessMovement() {
 			// 前進
 			if (velocity_.z < 0.0f) {
 				// 速度と逆方向に入力中は急ブレーキ
-				velocity_.z *= (1.0f - kAcceleration);
+				velocity_.z *= (1.0f - acceleration_);
 			}
-			acceleration.z += kAcceleration;
+			acceleration.z += acceleration_;
 		} else {
 			// 後退
 			if (velocity_.z > 0.0f) {
 				// 速度と逆方向に入力中は急ブレーキ
-				velocity_.z *= (1.0f - kAcceleration);
+				velocity_.z *= (1.0f - acceleration_);
 			}
-			acceleration.z -= kAcceleration;
+			acceleration.z -= acceleration_;
 		}
 
 		// 加速減速
 		velocity_.z += acceleration.z;
 		// 最大速度制限
-		velocity_.z = std::clamp(velocity_.z, -kLimitRunSpeed, kLimitRunSpeed);
+		velocity_.z = std::clamp(velocity_.z, -limitRunSpeed_, limitRunSpeed_);
 	} else {
 		// 非入力時は移動減衰をかける
-		velocity_.z *= (1.0f - kAttenuation);
+		velocity_.z *= (1.0f - attenuation_);
 	}
 
 	// 速度が極小の場合はゼロにする（完全停止）
@@ -252,9 +247,9 @@ void Player::ProcessFire() {
 
 		// 向いている方向に弾を発射
 		Vector3 velocity = {
-			std::sin(rotation.y) * kBulletSpeed,
+			std::sin(rotation.y) * bulletSpeed_,
 			0.0f,
-			std::cos(rotation.y) * kBulletSpeed
+			std::cos(rotation.y) * bulletSpeed_
 		};
 
 		// 弾を生成
@@ -263,7 +258,7 @@ void Player::ProcessFire() {
 		bullets_.push_back(std::move(bullet));
 
 		// 発射タイマーをリセット
-		fireTimer_ = kFireInterval;
+		fireTimer_ = fireInterval_;
 	}
 }
 
@@ -288,14 +283,36 @@ void Player::ImGui() {
 #ifdef USEIMGUI
 	if (ImGui::TreeNode("Player")) {
 
-		// 衝突判定情報
-		ImGui::Text("Collision Radius: %.2f", GetRadius());
-		ImGui::Checkbox("Show Collider", &isDebugVisible_);
+		// 移動パラメータ 
+		if (ImGui::CollapsingHeader("Movement")) {
+			ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f, -10.0f, 10.0f, "%.2f");
+			ImGui::DragFloat("Acceleration", &acceleration_, 0.01f, 0.0f, 2.0f, "%.2f");
+			ImGui::DragFloat("Max Run Speed", &limitRunSpeed_, 0.1f, 0.0f, 20.0f, "%.2f");
+			ImGui::DragFloat("Attenuation", &attenuation_, 0.01f, 0.0f, 1.0f, "%.2f");
+			ImGui::TreePop();
+		}
 
-		// 弾情報
-		ImGui::Text("Bullets Count: %zu", bullets_.size());
-		ImGui::Text("Fire Timer: %d", fireTimer_);
+		// 回転パラメータ
+		if (ImGui::CollapsingHeader("Rotation")) {
+			ImGui::DragFloat("Rotation Speed", &rotationSpeed_, 0.01f, 0.0f, 1.0f, "%.2f");
+			ImGui::TreePop();
+		}
 
+		// 弾パラメータ
+		if (ImGui::CollapsingHeader("Bullet")) {
+			ImGui::DragFloat("Bullet Speed", &bulletSpeed_, 0.01f, 0.01f, 2.0f, "%.2f");
+			ImGui::DragInt("Fire Interval (frames)", &fireInterval_, 1, 1, 60);
+			ImGui::Text("Bullets Count: %zu", bullets_.size());
+			ImGui::Text("Fire Timer: %d", fireTimer_);
+			ImGui::TreePop();
+		}
+
+		// 衝突情報 
+		if (ImGui::CollapsingHeader("Collision")) {
+			ImGui::Text("Collision Radius: %.2f", GetRadius());
+			ImGui::Checkbox("Show Collider", &isColliderVisible_);
+			ImGui::TreePop();
+		}
 		// ゲームオブジェクトのImGui
 		gameObject_->ImGui();
 		ImGui::TreePop();

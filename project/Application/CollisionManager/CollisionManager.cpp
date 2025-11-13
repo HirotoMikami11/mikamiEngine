@@ -31,7 +31,7 @@ void CollisionManager::ResetAllColliderColors() {
 	// 登録されている全コライダーの色をデフォルトにリセット
 	for (Collider* collider : colliders_) {
 		if (collider) {
-			collider->ResetDebugColor();
+			collider->ResetColliderColor();
 		}
 	}
 }
@@ -79,7 +79,7 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 		colliderB->OnCollision(colliderA);
 
 		// コライダー同士の色を衝突色（赤）に変更
-		colliderA->SetDebugColor(hitColor_);
-		colliderB->SetDebugColor(hitColor_);
+		colliderA->SetColliderColor(hitColor_);
+		colliderB->SetColliderColor(hitColor_);
 	}
 }

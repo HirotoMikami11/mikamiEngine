@@ -4,24 +4,31 @@ void HeadParts::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	// 基底クラスの初期化
 	BaseParts::Initialize(dxCommon, position);
 
-	// 黄色に設定（RGBA: 0xFFFF00FF）
+	// 黄色に設定
 	SetColor(0xFFFF00FF);
-	SetDefaultColor({ 1.0f, 1.0f, 0.0f, 1.0f });
+	SetDefaultColor(0xFFFF00FF);
 
-	// 常にObjects属性（ダメージを受けない）
+	// Objects属性で、弾と衝突判定する
 	SetCollisionAttribute(kCollisionAttributeObjects);
-	SetCollisionMask(0x00000000);  // どことも衝突判定しない
+	SetCollisionMask(kCollisionAttributePlayerBullet);	// 弾と衝突判定する
 
 	// 頭はHP管理しない（無敵）
 	isActive_ = true;
 }
 
 void HeadParts::OnCollision(Collider* other) {
-	// 頭は衝突しても何もしない
-	(void)other;
-}
+	// 頭は衝突判定はあるが、ダメージは受けない
+	// 衝突相手の属性を取得
+	uint32_t otherAttribute = other->GetCollisionAttribute();
 
-void HeadParts::TakeDamage(float damage) {
-	// 頭はダメージを受けない
-	(void)damage;
+	// プレイヤーの弾との衝突
+	if (otherAttribute & kCollisionAttributePlayerBullet) {
+
+	}
+
+	// プレイヤーとの衝突
+	if (otherAttribute & kCollisionAttributePlayer) {
+
+	}
+
 }

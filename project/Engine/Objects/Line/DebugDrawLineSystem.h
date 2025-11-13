@@ -48,13 +48,15 @@ public:
 	/// 単一線分を追加
 	/// </summary>
 	void AddLine(const Vector3& start, const Vector3& end, const Vector4& color);
+	void AddLine(const Vector3& start, const Vector3& end, const uint32_t& color);
 
 	/// <summary>
 	/// AABBを描画
 	/// </summary>
 	/// <param name="aabb">AABB（ワールド座標）</param>
 	/// <param name="color">色</param>
-	void DrawAABB(const AABB& aabb, const Vector4& color = { 1.0f, 0.0f, 0.0f, 1.0f });
+	void DrawAABB(const AABB& aabb, const Vector4& color = { 0.0f, 1.0f, 0.0f, 1.0f });
+	void DrawAABB(const AABB& aabb, const uint32_t& color = 0x00FF00FF);
 
 	/// <summary>
 	/// 球体を描画
@@ -64,24 +66,7 @@ public:
 	/// <param name="color">色</param>
 	/// <param name="subdivision">分割数（デフォルト10）</param>
 	void DrawSphere(const Vector3& center, float radius, const Vector4& color = { 0.0f, 1.0f, 0.0f, 1.0f }, uint32_t subdivision = 5);
-
-	/// <summary>
-	/// グリッド線を描画（XZ平面）
-	/// </summary>
-	/// <param name="center">グリッドの中心</param>
-	/// <param name="size">グリッドサイズ</param>
-	/// <param name="interval">間隔</param>
-	/// <param name="majorInterval">主要線の間隔</param>
-	/// <param name="normalColor">通常線の色</param>
-	/// <param name="majorColor">主要線の色</param>
-	void DrawGrid(
-		const Vector3& center,
-		float size,
-		float interval,
-		float majorInterval,
-		const Vector4& normalColor = { 0.5f, 0.5f, 0.5f, 1.0f },
-		const Vector4& majorColor = { 0.0f, 0.0f, 0.0f, 1.0f }
-	);
+	void DrawSphere(const Vector3& center, float radius, const uint32_t& color = 0x00FF00FF, uint32_t subdivision = 5);
 
 	/// <summary>
 	/// 十字線を描画（位置マーカー）
@@ -90,17 +75,6 @@ public:
 	/// <param name="size">サイズ</param>
 	/// <param name="color">色</param>
 	void DrawCross(const Vector3& position, float size = 0.5f, const Vector4& color = { 1.0f, 1.0f, 0.0f, 1.0f });
-
-	/// <summary>
-	/// カプセルを描画
-	/// </summary>
-	/// <param name="start">カプセルの開始点</param>
-	/// <param name="end">カプセルの終了点</param>
-	/// <param name="radius">半径</param>
-	/// <param name="color">色</param>
-	/// <param name="segments">分割数</param>
-	void DrawCapsule(const Vector3& start, const Vector3& end, float radius, const Vector4& color = { 0.0f, 1.0f, 1.0f, 1.0f }, int segments = 16);
-
 
 	bool IsInitialized() const { return isInitialized_; }
 	uint32_t GetLineCount() const;

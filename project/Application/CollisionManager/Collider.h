@@ -48,20 +48,18 @@ public:
 	// 衝突マスク(相手)を設定
 	void SetCollisionMask(uint32_t mask) { collisionMask_ = mask; }
 
-	// デバッグ表示フラグの取得・設定
-	bool IsDebugVisible() const { return isDebugVisible_; }
-	void SetDebugVisible(bool visible) { isDebugVisible_ = visible; }
+	// 表示フラグ
+	bool IsColliderVisible() const { return isColliderVisible_; }
+	void SetColliderVisible(bool visible) { isColliderVisible_ = visible; }
 
-	// デバッグカラーの取得・設定
-	Vector4 GetDebugColor() const { return currentDebugColor_; }
-	void SetDebugColor(const Vector4& color) { currentDebugColor_ = color; }
+	//色
+	uint32_t GetColliderColor() const { return currentColliderColor_; }
+	void SetColliderColor(const uint32_t& color) { currentColliderColor_ = color; }
+	uint32_t GetDefaultColliderColor() const { return defaultColliderColor_; }
+	void SetDefaultColliderColor(const uint32_t& color) { defaultColliderColor_ = color; }
 
-	// デフォルトデバッグカラーの取得・設定
-	Vector4 GetDefaultDebugColor() const { return defaultDebugColor_; }
-	void SetDefaultDebugColor(const Vector4& color) { defaultDebugColor_ = color; }
-
-	// デバッグカラーをデフォルトにリセット
-	void ResetDebugColor() { currentDebugColor_ = defaultDebugColor_; }
+	// 色をデフォルトにリセット
+	void ResetColliderColor() { currentColliderColor_ = defaultColliderColor_; }
 
 	// 攻撃力の取得・設定
 	float GetAttackPower() const { return attackPower_; }
@@ -80,7 +78,7 @@ protected:
 	float attackPower_ = 0.0f;
 
 	// デバッグ表示設定
-	bool isDebugVisible_ = true;							// デバッグ表示フラグ
-	Vector4 defaultDebugColor_ = { 0.0f, 1.0f, 0.0f, 1.0f };	// デフォルトデバッグカラー（緑）
-	Vector4 currentDebugColor_ = { 0.0f, 1.0f, 0.0f, 1.0f };	// 現在のデバッグカラー
+	bool isColliderVisible_ = true;							// デバッグ表示フラグ
+	uint32_t defaultColliderColor_ = 0x00FF00FF;	// デフォルトデバッグカラー（緑）
+	uint32_t currentColliderColor_ = 0x00FF00FF;	// 現在のデバッグカラー
 };
