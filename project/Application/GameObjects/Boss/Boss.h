@@ -13,9 +13,9 @@
 /// Phase（フェーズ管理）
 /// </summary>
 enum class BossPhase {
-	Phase1,		// フェーズ1: 体パーツがEnemy、尻尾がObjects
-	Phase2,		// フェーズ2: 体パーツがObjects、尻尾がEnemy
-	Death,		// 死亡フェーズ
+	Phase1,		// フェーズ1: 頭と体がアクティブ
+	Phase2,		// フェーズ2: 頭と尻尾がアクティブ
+	Death,		// 死亡フェーズ: すべて非アクティブ
 };
 
 /// <summary>
@@ -108,9 +108,9 @@ private:
 	void SetPartsHP();
 
 	/// <summary>
-	/// Phase毎の衝突属性を設定
+	/// Phase毎のパーツ状態を更新（衝突属性とアクティブ状態）
 	/// </summary>
-	void UpdateCollisionAttributes();
+	void UpdatePartsState();
 
 	// パーツ（ポインタは生ポインタで管理）
 	std::unique_ptr<HeadParts> head_;

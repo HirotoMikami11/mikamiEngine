@@ -39,8 +39,8 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	// パーツのHPを設定
 	SetPartsHP();
 
-	// Phase1の衝突属性を設定
-	UpdateCollisionAttributes();
+	// Phase1のパーツ状態を設定（衝突属性とアクティブ状態）
+	UpdatePartsState();
 
 	// 初期Stateを設定（Idle）
 	currentState_ = std::make_unique<IdleState>();
@@ -226,7 +226,7 @@ void Boss::UpdatePartsRotations() {
 void Boss::CheckPhaseTransition() {
 	// 現在のPhaseと前回のPhaseが変わった場合のみ処理
 	if (currentPhase_ != previousPhase_) {
-		UpdateCollisionAttributes();
+		UpdatePartsState();
 		previousPhase_ = currentPhase_;
 	}
 
@@ -247,46 +247,71 @@ void Boss::TransitionToPhase2() {
 	// パーツのHPをリセット
 	SetPartsHP();
 
-	// 全パーツをアクティブに戻す
-	for (auto& body : bodies_) {
-		if (!body->IsActive()) {
-			body->SetActive(true);
-			body->SetColor(body->GetDefaultColor());
-		}
-	}
-
-	// 衝突属性を更新
-	UpdateCollisionAttributes();
+	// パーツ状態を更新（アクティブ状態と衝突属性）
+	UpdatePartsState();
 }
 
 void Boss::TransitionToDeathPhase() {
 	currentPhase_ = BossPhase::Death;
 
-	// 全パーツを非アクティブに
-	for (auto& body : bodies_) {
-		body->SetActive(false);
-	}
-	if (tail_) {
-		tail_->SetActive(false);
-	}
+	// パーツ状態を更新（全パーツ非アクティブ）
+	UpdatePartsState();
 }
 
-void Boss::UpdateCollisionAttributes() {
+void Boss::UpdatePartsState() {
 	if (currentPhase_ == BossPhase::Phase1) {
-		// Phase1: 体がEnemy、尻尾がObjects
+		// Phase1: 頭と体がアクティブ、尻尾が非アクティブ
+
+		// 頭は常にアクティブ（ダメージは受けない）
+		if (head_) {
+			head_->SetActive(true);
+		}
+
+		// 体をアクティブにしてEnemy属性に
 		for (auto& body : bodies_) {
+			body->SetActive(true);
 			body->SetPhase1Attribute();
 		}
+
+		// 尻尾を非アクティブに
 		if (tail_) {
-			tail_->SetPhase1Attribute();
+			tail_->SetActive(false);
+			tail_->SetPhase1Attribute();  // 属性は設定するが、非アクティブなのでダメージは受けない
 		}
+
 	} else if (currentPhase_ == BossPhase::Phase2) {
-		// Phase2: 体がObjects、尻尾がEnemy
-		for (auto& body : bodies_) {
-			body->SetPhase2Attribute();
+		// Phase2: 頭と尻尾がアクティブ、体が非アクティブ
+
+		// 頭は常にアクティブ（ダメージは受けない）
+		if (head_) {
+			head_->SetActive(true);
 		}
+
+		// 体を非アクティブに
+		for (auto& body : bodies_) {
+			body->SetActive(false);
+			body->SetPhase2Attribute();  // 属性は設定するが、非アクティブなのでダメージは受けない
+		}
+
+		// 尻尾をアクティブにしてEnemy属性に
 		if (tail_) {
+			tail_->SetActive(true);
 			tail_->SetPhase2Attribute();
+		}
+
+	} else if (currentPhase_ == BossPhase::Death) {
+		// Death: すべて非アクティブ
+
+		if (head_) {
+			head_->SetActive(false);
+		}
+
+		for (auto& body : bodies_) {
+			body->SetActive(false);
+		}
+
+		if (tail_) {
+			tail_->SetActive(false);
 		}
 	}
 }
@@ -350,7 +375,7 @@ void Boss::ImGui() {
 
 		// Phase情報
 		if (ImGui::CollapsingHeader("Phase", ImGuiTreeNodeFlags_DefaultOpen)) {
-			const char* phaseNames[] = { "Phase 1", "Phase 2", "Death" };
+			const char* phaseNames[] = { "Phase 1", "Phase 2 ", "Death" };
 			int currentPhaseIndex = static_cast<int>(currentPhase_);
 			ImGui::Text("Current Phase: %s", phaseNames[currentPhaseIndex]);
 

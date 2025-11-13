@@ -20,6 +20,9 @@ void BaseParts::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 }
 
 void BaseParts::Update(const Matrix4x4& viewProjectionMatrix) {
+	// ダメージ色タイマーの更新
+	UpdateDamageColorTimer();
+
 	gameObject_->Update(viewProjectionMatrix);
 }
 
@@ -136,6 +139,12 @@ float BaseParts::TakeDamage(float damage) {
 
 	// 実際に減少したHP量を返す
 	float actualDamage = previousHP - currentHP_;
+
+	// ダメージを受けた場合は赤色にする
+	if (actualDamage > 0.0f) {
+		SetDamageColor();
+	}
+
 	return actualDamage;
 }
 
@@ -144,10 +153,35 @@ void BaseParts::SetActive(bool active) {
 
 	if (!isActive_) {
 		// 非アクティブになったら黒に変更
-		SetColor(0xFFFFFFFF);
+		SetColor(0x000000FF);
 
 	} else {
 		// アクティブになったらデフォルトカラーに戻す
 		SetColor(defaultColor_);
+	}
+}
+
+void BaseParts::SetDamageColor() {
+	// ダメージ色（赤）に設定
+	SetColor(kDamageColor);
+	// タイマーをリセット
+	damageColorTimer_ = kDamageColorDuration;
+}
+
+void BaseParts::UpdateDamageColorTimer() {
+	// タイマーが動いている場合
+	if (damageColorTimer_ > 0) {
+		damageColorTimer_--;
+
+		// タイマーが0になったら元の色に戻す
+		if (damageColorTimer_ == 0) {
+			if (isActive_) {
+				// アクティブならデフォルトカラー
+				SetColor(defaultColor_);
+			} else {
+				// 非アクティブなら黒
+				SetColor(0x000000FF);
+			}
+		}
 	}
 }

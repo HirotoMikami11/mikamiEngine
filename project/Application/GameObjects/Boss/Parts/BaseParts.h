@@ -79,6 +79,16 @@ public:
 	void SetDefaultColor(const uint32_t& color) { defaultColor_ = color; }
 	uint32_t GetDefaultColor() const { return defaultColor_; }
 
+	/// <summary>
+	/// ダメージを受けたときの色を設定（赤色）
+	/// </summary>
+	void SetDamageColor();
+
+	/// <summary>
+	/// ダメージ色タイマーの更新
+	/// </summary>
+	void UpdateDamageColorTimer();
+
 protected:
 	std::unique_ptr<Object3D> gameObject_;
 	DirectXCommon* directXCommon_ = nullptr;
@@ -90,4 +100,9 @@ protected:
 
 	// デフォルトカラー（死亡時に黒にするため保存）
 	uint32_t defaultColor_ = 0xFFFFFFFF;
+
+	// ダメージ色表示タイマー
+	int damageColorTimer_ = 0;
+	static const int kDamageColorDuration = 1;  // ダメージ色の表示フレーム数
+	const uint32_t kDamageColor = 0xFF0000FF;   // ダメージ時の色（赤）
 };
