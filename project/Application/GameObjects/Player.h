@@ -100,7 +100,7 @@ private:
 	float rotationSpeed_ = 0.05f;
 
 	// 弾発射関連
-	float bulletSpeed_ = 0.1f;
+	float bulletSpeed_ = 0.2f;
 	int fireInterval_ = 5;
 
 	int fireTimer_ = 0;					// 発射タイマー

@@ -13,6 +13,7 @@ void BossUI::Update(float currentHP, float maxHP, const Matrix4x4& viewProjectio
 	// 全スプライトの更新
 	if (hpGaugeBar_) hpGaugeBar_->Update(viewProjectionMatrixSprite);
 	if (hpGaugeFill_) hpGaugeFill_->Update(viewProjectionMatrixSprite);
+	if (hpGaugeLight_) hpGaugeLight_->Update(viewProjectionMatrixSprite);
 
 }
 
@@ -20,15 +21,17 @@ void BossUI::Draw() {
 	// HP/ENゲージの描画
 	if (hpGaugeBar_) hpGaugeBar_->Draw();
 	if (hpGaugeFill_) hpGaugeFill_->Draw();
+	if (hpGaugeLight_) hpGaugeLight_->Draw();
 }
 
 void BossUI::InitializeGauges() {
 
+	//パラメータ
 	frameOffset_ = { 5.0f,5.0f };
 	gaugeSize_ = { 900.0f,50.0f };
 	hpGaugePosition_ = { GraphicsConfig::kClientWidth / 2 - gaugeSize_.x / 2, 50.0f };
 	gaugeFrameSize_ = gaugeSize_ + frameOffset_;
-
+	LightScrollSpeed_ = 0.005f;
 
 	// HPゲージの枠
 	hpGaugeBar_ = std::make_unique<Sprite>();
@@ -52,18 +55,40 @@ void BossUI::InitializeGauges() {
 	);
 	hpGaugeFill_->SetColor(hpNormalColor_);
 
+	hpGaugeLight_ = std::make_unique<Sprite>();
+	hpGaugeLight_->Initialize(
+		directXCommon_,
+		"gaugeLight",
+		{ hpGaugePosition_.x + 2.0f, hpGaugePosition_.y },
+		gaugeSize_,
+		{ 0.0f, 0.5f }
+	);
+
 }
 
 void BossUI::UpdateGauges(float currentHP, float maxHP)
 {
+	float hpRatio = (currentHP > 0.0f) ? currentHP / maxHP : 0.0f;
+	hpRatio = std::clamp(hpRatio, 0.0f, 1.0f); // 0～1に制限
 
 	if (hpGaugeFill_) {
-		float hpRatio = (currentHP > 0.0f) ? currentHP / maxHP : 0.0f;
-		hpRatio = std::clamp(hpRatio, 0.0f, 1.0f); // 0～1に制限
 		Vector2 currentSize = hpGaugeFill_->GetScale();
 		currentSize.x = gaugeSize_.x * hpRatio;
 		hpGaugeFill_->SetScale(currentSize);
 	}
+
+	if (hpGaugeLight_) {
+
+		Vector2 currentSize = hpGaugeLight_->GetScale();
+		currentSize.x = gaugeSize_.x * hpRatio;
+		hpGaugeLight_->SetScale(currentSize);
+
+		Vector2 uvTransform = hpGaugeLight_->GetUVTransformTranslate();
+		uvTransform.x += LightScrollSpeed_;
+		hpGaugeLight_->SetUVTransformTranslate(uvTransform);
+
+	}
+
 
 }
 
@@ -108,7 +133,7 @@ void BossUI::ImGui() {
 
 		// ゲージサイズ設定
 		if (ImGui::DragFloat2("Gauge Size", &gaugeSize_.x, 1.0f, 10.0f, 4000.0f)) {
-			SetGaugeSize(gaugeSize_,frameOffset_);
+			SetGaugeSize(gaugeSize_, frameOffset_);
 		}
 
 		if (ImGui::DragFloat2("Frame Offset", &frameOffset_.x, 0.1f, 10.0f, 50.0f)) {

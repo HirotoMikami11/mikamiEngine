@@ -45,12 +45,15 @@ private:
 	// HP/ENゲージ用スプライト
 	std::unique_ptr<Sprite> hpGaugeBar_;		 // HPゲージの枠
 	std::unique_ptr<Sprite> hpGaugeFill_;		  // HPゲージの中身
+	std::unique_ptr<Sprite> hpGaugeLight_;		  // HPゲージの中身
 
 	// ゲージ設定
 	Vector2 hpGaugePosition_;
 	Vector2 gaugeSize_;
 	Vector2 gaugeFrameSize_;
 	Vector2 frameOffset_;
+	float LightScrollSpeed_;
+	float originalLightWidth_;
 	Vector4 hpNormalColor_{ 0.0f, 1.0f, 0.0f, 1.0f };	// 緑色
 	Vector4 backgroundColor_{ 0.2f, 0.2f, 0.2f, 1.0f };	 // 暗い灰色
 

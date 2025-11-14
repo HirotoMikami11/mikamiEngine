@@ -174,7 +174,7 @@ private:
 	// パラメータ
 	const size_t kBodyCount = 5;				// 体のパーツ数
 	float partsOffset_ = 0.0f;					// パーツ間のオフセット（隙間）（ImGuiで変更可能）
-	float moveSpeed_ = 3.0f;					// 移動速度
+	float moveSpeed_ = 5.0f;					// 移動速度
 	const float kHistoryUpdateThreshold = 0.001f;	// 履歴更新の閾値（ガタガタ防止）
 	const size_t kMaxHistorySize = 2048;		// 履歴の最大サイズ
 	const float kBasePartSize = 1.0f;			// 基本パーツサイズ（キューブのデフォルトサイズ）
