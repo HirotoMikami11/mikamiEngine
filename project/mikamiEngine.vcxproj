@@ -148,6 +148,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObjects\Boss\Parts\HeadParts.cpp" />
     <ClCompile Include="Application\GameObjects\Boss\Parts\TailParts.cpp" />
     <ClCompile Include="Application\GameObjects\Boss\State\DebugMoveState.cpp" />
+    <ClCompile Include="Application\GameObjects\Boss\BossSplineMovement.cpp" />
+    <ClCompile Include="Application\GameObjects\Boss\BossSplineTrack.cpp" />
+    <ClCompile Include="Application\GameObjects\Boss\BossMoveEditor.cpp" />
+    <ClCompile Include="Application\GameObjects\Boss\BossSplineDebugger.cpp" />
+    <ClCompile Include="Engine\Utility\CSVUtility.cpp" />
     <ClCompile Include="Engine\Objects\Line\DebugDrawLineSystem.cpp" />
     <ClCompile Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.cpp" />
     <ClCompile Include="Engine\Objects\Particle\Field\BaseField.cpp" />
@@ -263,6 +268,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Scene\SelectScene.cpp" />
     <ClCompile Include="Application\GameObjects\Player.cpp" />
     <ClCompile Include="Application\GameObjects\PlayerBullet.cpp" />
+    <ClCompile Include="Application\GameObjects\Boss\State\SplineMoveState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -347,6 +353,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObjects\Boss\Parts\HeadParts.h" />
     <ClInclude Include="Application\GameObjects\Boss\Parts\TailParts.h" />
     <ClInclude Include="Application\GameObjects\Boss\State\DebugMoveState.h" />
+    <ClInclude Include="Application\GameObjects\Boss\BossSplineMovement.h" />
+    <ClInclude Include="Application\GameObjects\Boss\BossSplineTrack.h" />
+    <ClInclude Include="Application\GameObjects\Boss\BossMoveEditor.h" />
+    <ClInclude Include="Application\GameObjects\Boss\BossSplineDebugger.h" />
+    <ClInclude Include="Engine\Utility\CSVUtility.h" />
     <ClInclude Include="Engine\Objects\Line\DebugDrawLineSystem.h" />
     <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.h" />
     <ClInclude Include="Engine\Objects\Particle\Field\BaseField.h" />
@@ -472,6 +483,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObjects\Boss\State\BossState.h" />
     <ClInclude Include="Application\GameObjects\Boss\State\IdleState.h" />
     <ClInclude Include="Application\GameObjects\PlayerBullet.h" />
+    <ClInclude Include="Application\GameObjects\Boss\State\SplineMoveState.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

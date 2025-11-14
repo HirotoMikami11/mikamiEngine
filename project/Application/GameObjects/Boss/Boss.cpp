@@ -1,8 +1,12 @@
 #include "Boss.h"
+#include <format>
+
+#include "Logger.h"
 #include "State/IdleState.h"
 #include "State/DebugMoveState.h"
+#include "State/SplineMoveState.h"
 #include "Managers/ImGui/ImGuiManager.h"
-#include <format>
+
 
 Boss::Boss()
 	: directXCommon_(nullptr)
@@ -61,6 +65,18 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 
 	// Phase1のパーツ状態を設定（衝突属性とアクティブ状態）
 	UpdatePartsState();
+
+	// スプラインシステムの初期化
+	DebugDrawLineSystem* debugDrawSystem = Engine::GetInstance()->GetDebugDrawManager();
+
+	splineTrack_ = std::make_unique<BossSplineTrack>();
+	splineMovement_ = std::make_unique<BossSplineMovement>();
+	splineDebugger_ = std::make_unique<BossSplineDebugger>();
+	moveEditor_ = std::make_unique<BossMoveEditor>();
+
+	splineMovement_->Initialize(splineTrack_.get());
+	splineDebugger_->Initialize(debugDrawSystem, splineTrack_.get());
+	moveEditor_->Initialize(splineTrack_.get(), splineMovement_.get(), splineDebugger_.get());
 
 	// 初期Stateを設定（Idle）
 	currentState_ = std::make_unique<IdleState>();
@@ -154,6 +170,12 @@ void Boss::Update(const Matrix4x4& viewProjectionMatrix) {
 	if (tail_) {
 		tail_->Update(viewProjectionMatrix);
 	}
+
+	// スプラインエディタの更新
+	if (moveEditor_) {
+		moveEditor_->Update();
+	}
+
 }
 
 void Boss::UpdatePositionHistory() {
@@ -388,6 +410,11 @@ void Boss::Draw(const Light& directionalLight) {
 	if (tail_) {
 		tail_->Draw(directionalLight);
 	}
+
+	if (splineDebugger_) {
+		splineDebugger_->Draw();
+	}
+
 }
 
 std::vector<Collider*> Boss::GetColliders() {
@@ -459,7 +486,10 @@ void Boss::ImGui() {
 				if (ImGui::Button("Change to DebugMove")) {
 					ChangeState(std::make_unique<DebugMoveState>());
 				}
-
+				ImGui::SameLine();
+				if (ImGui::Button("Change to SplineMove")) {
+					ChangeState(std::make_unique<SplineMoveState>("resources/CSV_Data/BossMovePoints/SplineMoveState.csv"));
+				}
 				ImGui::Separator();
 
 				// 現在のStateのImGui
@@ -509,6 +539,15 @@ void Boss::ImGui() {
 			}
 		}
 
+		// スプラインシステム
+		if (ImGui::CollapsingHeader("Spline System")) {
+			if (moveEditor_) {
+				moveEditor_->ImGui();
+			} else {
+				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Move Editor not initialized");
+			}
+		}
+
 		ImGui::TreePop();
 	}
 #endif
@@ -539,5 +578,59 @@ void Boss::MoveHead(const Vector3& movement) {
 void Boss::SetHeadRotationY(float rotationY) {
 	if (head_) {
 		head_->SetRotationY(rotationY);
+	}
+}
+
+void Boss::SetHeadPosition(const Vector3& position) {
+	if (head_) {
+		head_->SetPosition(position);
+	}
+}
+
+void Boss::ClearPositionHistory() {
+	positionHistory_.clear();
+
+	// 現在の頭の位置を履歴の開始点として追加
+	if (head_) {
+		Vector3 headPosition = head_->GetPosition();
+		previousHeadPosition_ = headPosition;
+
+		// 各パーツのスケールに基づいて距離を計算し、初期履歴を作成
+		Vector3 historyPosition = headPosition;
+		positionHistory_.push_back(historyPosition);
+
+		// 全パーツのリストを作成
+		std::vector<BaseParts*> allParts;
+		allParts.push_back(head_.get());
+		for (auto& body : bodies_) {
+			allParts.push_back(body.get());
+		}
+		if (tail_) {
+			allParts.push_back(tail_.get());
+		}
+
+		// 各パーツの初期位置を計算
+		for (size_t i = 1; i < allParts.size(); ++i) {
+			BaseParts* prevPart = allParts[i - 1];
+			BaseParts* currentPart = allParts[i];
+
+			// 前のパーツと現在のパーツの間の距離を計算
+			float distance = CalculateDistanceBetweenParts(prevPart, currentPart);
+
+			// 現在の向きの逆方向に移動
+			Vector3 direction = { 0.0f, 0.0f, -1.0f };  // デフォルトは-Z方向
+			if (i == 1) {
+				// 頭の向きを取得
+				Vector3 headRotation = head_->GetRotation();
+				float rotY = headRotation.y;
+				direction.x = -std::sin(rotY);
+				direction.z = -std::cos(rotY);
+			}
+
+			historyPosition = Add(historyPosition, Multiply(direction, distance));
+			positionHistory_.push_back(historyPosition);
+		}
+
+		Logger::Log("Boss: Position history cleared and reinitialized\n");
 	}
 }

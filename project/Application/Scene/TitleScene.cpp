@@ -29,6 +29,7 @@ void TitleScene::Initialize() {
 	directXCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
 	debugDrawLineSystem_ = Engine::GetInstance()->GetDebugDrawManager();
+
 	///*-----------------------------------------------------------------------*///
 	///								カメラの初期化									///
 	///*-----------------------------------------------------------------------*///
@@ -89,7 +90,6 @@ void TitleScene::Update() {
 	// ゲームオブジェクト更新
 	UpdateGameObjects();
 
-
 	// ゲームシーンに移動
 	if (Input::GetInstance()->IsKeyTrigger(DIK_SPACE)) {
 		// フェードを使った遷移
@@ -124,7 +124,7 @@ void TitleScene::DrawOffscreen() {
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
 	/// 
-	
+
 	///
 	/// Line描画の一括実行
 	///
@@ -157,6 +157,7 @@ void TitleScene::ImGui() {
 	ImGui::Spacing();
 	ImGui::Text("Grid Line");
 	gridLine_->ImGui();
+
 
 	ImGui::Spacing();
 	// ライトのImGui

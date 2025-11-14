@@ -3,6 +3,7 @@
 
 #include "BaseScene.h"
 
+
 /// <summary>
 /// タイトルシーン
 /// </summary>
@@ -53,7 +54,6 @@ private:
 	// カメラ
 	CameraController* cameraController_;
 	Matrix4x4 viewProjectionMatrix;
-
 
 	// システム参照
 	DirectXCommon* directXCommon_;

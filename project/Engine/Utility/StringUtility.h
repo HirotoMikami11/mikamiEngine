@@ -9,5 +9,12 @@ public:
 
 	// wstring->string
 	static std::string ConvertString(const std::wstring& wstr);
+
+private:
+	// ユーティリティクラスのためインスタンス化禁止
+	StringUtility() = delete;
+	~StringUtility() = delete;
+	StringUtility(const StringUtility&) = delete;
+	StringUtility& operator=(const StringUtility&) = delete;
 };
 

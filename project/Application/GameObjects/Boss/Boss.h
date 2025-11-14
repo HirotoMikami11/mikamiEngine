@@ -2,12 +2,17 @@
 #include <memory>
 #include <vector>
 #include <deque>
+
 #include "Engine.h"
 #include "Parts/BaseParts.h"
 #include "Parts/HeadParts.h"
 #include "Parts/BodyParts.h"
 #include "Parts/TailParts.h"
 #include "State/BossState.h"
+#include "BossSplineTrack.h"
+#include "BossSplineMovement.h"
+#include "BossSplineDebugger.h"
+#include "BossMoveEditor.h"
 
 /// <summary>
 /// Phase（フェーズ管理）
@@ -57,6 +62,7 @@ public:
 	// 頭の位置操作（State から呼ばれる）
 	Vector3 GetHeadPosition() const;
 	void MoveHead(const Vector3& movement);
+	void SetHeadPosition(const Vector3& position);  // 追加：直接位置を設定
 	void SetHeadRotationY(float rotationY);
 
 	// 移動速度の取得
@@ -75,6 +81,17 @@ public:
 
 	// コライダーリストを取得（CollisionManagerに登録するため）
 	std::vector<Collider*> GetColliders();
+
+	// スプライントラックを取得
+	BossSplineTrack* GetSplineTrack() const { return splineTrack_.get(); }
+
+	// スプライン移動システムを取得
+	BossSplineMovement* GetSplineMovement() const { return splineMovement_.get(); }
+
+	/// <summary>
+	/// 位置履歴をクリア
+	/// </summary>
+	void ClearPositionHistory();
 
 private:
 	/// <summary>
@@ -143,10 +160,16 @@ private:
 	float maxBossHP_ = 500.0f;	// Boss全体の最大HP
 	float bossHP_ = 500.0f;		// Boss全体の現在HP
 
+	// 移動用スプラインシステム
+	std::unique_ptr<BossSplineTrack> splineTrack_;
+	std::unique_ptr<BossSplineMovement> splineMovement_;
+	std::unique_ptr<BossSplineDebugger> splineDebugger_;
+	std::unique_ptr<BossMoveEditor> moveEditor_;
+
 	// パラメータ
 	const size_t kBodyCount = 5;				// 体のパーツ数
 	float partsOffset_ = 0.0f;					// パーツ間のオフセット（隙間）（ImGuiで変更可能）
-	float moveSpeed_ = 2.0f;					// 移動速度
+	float moveSpeed_ = 3.0f;					// 移動速度
 	const float kHistoryUpdateThreshold = 0.001f;	// 履歴更新の閾値（ガタガタ防止）
 	const size_t kMaxHistorySize = 2048;		// 履歴の最大サイズ
 	const float kBasePartSize = 1.0f;			// 基本パーツサイズ（キューブのデフォルトサイズ）
