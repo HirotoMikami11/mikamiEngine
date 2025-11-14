@@ -97,7 +97,7 @@ private:
 	float t_ = 0.0f;				// 現在の進行度 (0.0 ~ 1.0)
 	bool isMoving_ = false;			// 移動中フラグ
 	bool isAtEnd_ = false;			// 終点到達フラグ
-
+	float distance_;				// 全体の距離
 	// 等間隔移動
 	bool uniformSpeedEnabled_ = true;	// 等間隔移動を使用（デフォルトON）
 };

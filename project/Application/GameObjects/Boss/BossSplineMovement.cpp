@@ -2,10 +2,12 @@
 #include "BossSplineMovement.h"
 #include "Logger.h"
 #include <format>
+#include <algorithm> // std::clamp
 
 void BossSplineMovement::Initialize(BossSplineTrack* track) {
 	track_ = track;
 	t_ = 0.0f;
+	distance_ = 0.0f;
 	isAtEnd_ = false;
 	isMoving_ = false;
 
@@ -23,41 +25,37 @@ void BossSplineMovement::Update(float deltaTime, float speed) {
 		return;
 	}
 
-	// 等間隔移動が有効で、長さテーブルが構築されている場合
 	if (uniformSpeedEnabled_ && track_->HasLengthTable() && track_->GetTotalLength() > 0.0f) {
 		// 距離ベースでの移動
-		float currentLength = t_ * track_->GetTotalLength();
-		float moveDistance = speed * deltaTime;
-		currentLength += moveDistance;
+		distance_ += speed * deltaTime;
 
 		// 終点チェック
-		if (currentLength >= track_->GetTotalLength()) {
-			currentLength = track_->GetTotalLength();
+		if (distance_ >= track_->GetTotalLength()) {
+			distance_ = track_->GetTotalLength();
 			isMoving_ = false;
 			isAtEnd_ = true;
 		}
 
-		// 進行度を更新
-		t_ = currentLength / track_->GetTotalLength();
+		// 距離からtを取得
+		t_ = track_->GetTFromLength(distance_);
 	} else {
-		// 従来の移動：tパラメータベース
-		// 速度を曲線全体の長さで正規化
+		// tパラメータベース（従来通り）
 		float totalLength = track_->GetTotalLength();
 		float normalizedSpeed = (totalLength > 0.0f) ? (speed / totalLength) : 0.01f;
-
 		t_ += normalizedSpeed * deltaTime;
-
-		// 終点チェック
 		if (t_ >= 1.0f) {
 			t_ = 1.0f;
 			isMoving_ = false;
 			isAtEnd_ = true;
 		}
+		// t_から距離も更新
+		distance_ = t_ * totalLength;
 	}
 }
 
 void BossSplineMovement::ResetPosition() {
 	t_ = 0.0f;
+	distance_ = 0.0f;
 	isMoving_ = false;
 	isAtEnd_ = false;
 
@@ -66,6 +64,11 @@ void BossSplineMovement::ResetPosition() {
 
 void BossSplineMovement::SetProgress(float progress) {
 	t_ = std::clamp(progress, 0.0f, 1.0f);
+	if (track_ && track_->GetTotalLength() > 0.0f) {
+		distance_ = t_ * track_->GetTotalLength();
+	} else {
+		distance_ = 0.0f;
+	}
 	isAtEnd_ = (t_ >= 1.0f);
 
 	Logger::Log(std::format("BossSplineMovement: Progress set to {:.2f}\n", t_));
@@ -89,8 +92,7 @@ Vector3 BossSplineMovement::GetLookAheadPosition(float lookAheadDistance) const 
 
 	if (uniformSpeedEnabled_ && track_->HasLengthTable() && track_->GetTotalLength() > 0.0f) {
 		// 等間隔移動の場合は距離ベースで先読み
-		float currentLength = t_ * track_->GetTotalLength();
-		float lookAheadLength = currentLength + (lookAheadDistance * track_->GetTotalLength());
+		float lookAheadLength = distance_ + (lookAheadDistance * track_->GetTotalLength());
 
 		// 終点を超えない
 		if (lookAheadLength >= track_->GetTotalLength()) {

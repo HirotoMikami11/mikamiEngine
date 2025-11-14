@@ -171,10 +171,10 @@ void BossMoveEditor::CreateDefaultPoints() {
 	controlPoints_.clear();
 
 	// デフォルトの4点を作成（直線的な配置）
-	controlPoints_.push_back({ 0.0f, 0.0f, 0.0f });
-	controlPoints_.push_back({ 5.0f, 2.0f, 5.0f });
-	controlPoints_.push_back({ 10.0f, 0.0f, 10.0f });
-	controlPoints_.push_back({ 15.0f, 2.0f, 15.0f });
+	controlPoints_.push_back({ 0.0f, 1.5f, 0.0f });
+	controlPoints_.push_back({ 5.0f, 1.5f, 0.0f });
+	controlPoints_.push_back({ 10.0f, 1.5f, 0.0f });
+	controlPoints_.push_back({ 15.0f, 1.5f, 0.0f });
 
 	ApplyControlPoints();
 
