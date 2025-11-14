@@ -62,6 +62,7 @@ private:
 	// カメラ
 	CameraController* cameraController_;
 	Matrix4x4 viewProjectionMatrix;
+	Matrix4x4 viewProjectionMatrixSprite;
 
 	// 衝突マネージャー
 	std::unique_ptr<CollisionManager> collisionManager_;

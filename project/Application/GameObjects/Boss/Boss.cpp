@@ -10,7 +10,6 @@
 
 Boss::Boss()
 	: directXCommon_(nullptr)
-	, viewProjectionMatrix_(MakeIdentity4x4())
 	, previousHeadPosition_({ 0.0f, 0.0f, 0.0f })
 {
 }
@@ -66,6 +65,11 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	// Phase1のパーツ状態を設定（衝突属性とアクティブ状態）
 	UpdatePartsState();
 
+	//UIクラスの初期化
+	bossUI_ = std::make_unique<BossUI>();
+	bossUI_->Initialize(directXCommon_);
+
+
 	// スプラインシステムの初期化
 	DebugDrawLineSystem* debugDrawSystem = Engine::GetInstance()->GetDebugDrawManager();
 
@@ -81,6 +85,206 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	// 初期Stateを設定（Idle）
 	currentState_ = std::make_unique<IdleState>();
 	currentState_->Initialize();
+}
+
+
+
+float Boss::CalculateDistanceBetweenParts(BaseParts* part1, BaseParts* part2) {
+	if (!part1 || !part2) {
+		return kBasePartSize + partsOffset_;
+	}
+
+	// 各パーツのZ方向のサイズを取得（スケールを考慮）
+	float part1Size = part1->GetScale().z * kBasePartSize;
+	float part2Size = part2->GetScale().z * kBasePartSize;
+
+	// 2つのパーツの半径の合計 + オフセット
+	float distance = (part1Size / 2.0f) + (part2Size / 2.0f) + partsOffset_;
+
+	return distance;
+}
+
+void Boss::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewProjectionMatirxSprite)
+{
+
+
+	// Stateの更新
+	if (currentState_) {
+		currentState_->Update(this);
+	}
+
+	// Phase遷移チェック
+	CheckPhaseTransition();
+
+	// 位置履歴の更新
+	UpdatePositionHistory();
+
+	// 各パーツの位置を更新
+	UpdatePartsPositions();
+
+	// 各パーツの向きを更新
+	UpdatePartsRotations();
+
+	// 各パーツの行列更新
+	if (head_) {
+		head_->Update(viewProjectionMatrix);
+	}
+	for (auto& body : bodies_) {
+		body->Update(viewProjectionMatrix);
+	}
+	if (tail_) {
+		tail_->Update(viewProjectionMatrix);
+	}
+
+	// UIの更新
+	bossUI_->Update(bossHP_,maxBossHP_, viewProjectionMatirxSprite);
+
+	// スプラインエディタの更新
+	if (moveEditor_) {
+		moveEditor_->Update();
+	}
+
+}
+void Boss::Draw(const Light& directionalLight) {
+	// 全パーツを描画
+	if (head_) {
+		head_->Draw(directionalLight);
+	}
+	for (auto& body : bodies_) {
+		body->Draw(directionalLight);
+	}
+	if (tail_) {
+		tail_->Draw(directionalLight);
+	}
+
+	if (splineDebugger_) {
+		splineDebugger_->Draw();
+	}
+
+}
+
+void Boss::DrawUI()
+{
+	bossUI_->Draw();
+}
+
+void Boss::ImGui() {
+#ifdef USEIMGUI
+	if (ImGui::TreeNode("Boss")) {
+		// HP情報
+		if (ImGui::CollapsingHeader("HP", ImGuiTreeNodeFlags_DefaultOpen)) {
+			ImGui::Text("Boss HP: %.1f / %.1f", bossHP_, maxBossHP_);
+			float hpPercentage = (maxBossHP_ > 0.0f) ? (bossHP_ / maxBossHP_) * 100.0f : 0.0f;
+			ImGui::ProgressBar(bossHP_ / maxBossHP_, ImVec2(0.0f, 0.0f), std::format("{:.1f}%%", hpPercentage).c_str());
+
+			// HPのリセットボタン
+			if (ImGui::Button("Reset HP")) {
+				bossHP_ = maxBossHP_;
+				SetPartsHP();
+			}
+
+			//UI情報
+			bossUI_->ImGui();
+
+		}
+
+		// Phase情報
+		if (ImGui::CollapsingHeader("Phase", ImGuiTreeNodeFlags_DefaultOpen)) {
+			const char* phaseNames[] = { "Phase 1 (Head & Body)", "Phase 2 (Head & Tail)", "Death" };
+			int currentPhaseIndex = static_cast<int>(currentPhase_);
+			ImGui::Text("Current Phase: %s", phaseNames[currentPhaseIndex]);
+
+			// Phase強制変更ボタン（デバッグ用）
+			if (currentPhase_ == BossPhase::Phase1) {
+				if (ImGui::Button("Force Transition to Phase2")) {
+					TransitionToPhase2();
+				}
+			} else if (currentPhase_ == BossPhase::Phase2) {
+				if (ImGui::Button("Force Transition to Death")) {
+					TransitionToDeathPhase();
+				}
+			}
+		}
+
+		// State情報
+		if (ImGui::CollapsingHeader("State")) {
+			if (currentState_) {
+				ImGui::Text("Current State: %s", currentState_->GetStateName());
+				ImGui::Separator();
+
+				// State切り替えボタン
+				if (ImGui::Button("Change to Idle")) {
+					ChangeState(std::make_unique<IdleState>());
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Change to DebugMove")) {
+					ChangeState(std::make_unique<DebugMoveState>());
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Change to SplineMove")) {
+					ChangeState(std::make_unique<SplineMoveState>("resources/CSV_Data/BossMovePoints/SplineMoveState.csv"));
+				}
+				ImGui::Separator();
+
+				// 現在のStateのImGui
+				currentState_->ImGui();
+			}
+		}
+
+		// パラメータ設定
+		if (ImGui::CollapsingHeader("Parameters")) {
+			// パーツ間のオフセット（隙間）の調整
+			ImGui::DragFloat("Parts Offset", &partsOffset_, 0.01f, 0.0f, 5.0f);
+			ImGui::Text("(Distance between parts = Part1 Size/2 + Part2 Size/2 + Offset)");
+
+			// 移動速度
+			ImGui::DragFloat("Move Speed", &moveSpeed_, 0.1f, 0.1f, 10.0f);
+
+			// 履歴情報
+			ImGui::Text("Position History Size: %zu", positionHistory_.size());
+
+			// コライダー表示フラグ
+			ImGui::Checkbox("Show Colliders", &showColliders_);
+			if (head_) head_->SetColliderVisible(showColliders_);
+			for (auto& body : bodies_) body->SetColliderVisible(showColliders_);
+			if (tail_) tail_->SetColliderVisible(showColliders_);
+		}
+
+		// パーツ情報
+		if (ImGui::CollapsingHeader("Parts")) {
+			size_t totalParts = 1 + kBodyCount + 1;
+			ImGui::Text("Total Parts: %zu", totalParts);
+			ImGui::Separator();
+
+			// 頭
+			if (head_) {
+				head_->ImGui("Head (Yellow)");
+			}
+
+			// 体
+			for (size_t i = 0; i < bodies_.size(); ++i) {
+				std::string label = std::format("Body {} (White)", i + 1);
+				bodies_[i]->ImGui(label.c_str());
+			}
+
+			// 尻尾
+			if (tail_) {
+				tail_->ImGui("Tail (Green)");
+			}
+		}
+
+		// スプラインシステム
+		if (ImGui::CollapsingHeader("Spline System")) {
+			if (moveEditor_) {
+				moveEditor_->ImGui();
+			} else {
+				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Move Editor not initialized");
+			}
+		}
+
+		ImGui::TreePop();
+	}
+#endif
 }
 
 void Boss::InitializeParts() {
@@ -125,58 +329,7 @@ void Boss::SetHP(float hp) {
 	SetPartsHP();
 }
 
-float Boss::CalculateDistanceBetweenParts(BaseParts* part1, BaseParts* part2) {
-	if (!part1 || !part2) {
-		return kBasePartSize + partsOffset_;
-	}
 
-	// 各パーツのZ方向のサイズを取得（スケールを考慮）
-	float part1Size = part1->GetScale().z * kBasePartSize;
-	float part2Size = part2->GetScale().z * kBasePartSize;
-
-	// 2つのパーツの半径の合計 + オフセット
-	float distance = (part1Size / 2.0f) + (part2Size / 2.0f) + partsOffset_;
-
-	return distance;
-}
-
-void Boss::Update(const Matrix4x4& viewProjectionMatrix) {
-	viewProjectionMatrix_ = viewProjectionMatrix;
-
-	// Stateの更新
-	if (currentState_) {
-		currentState_->Update(this);
-	}
-
-	// Phase遷移チェック
-	CheckPhaseTransition();
-
-	// 位置履歴の更新
-	UpdatePositionHistory();
-
-	// 各パーツの位置を更新
-	UpdatePartsPositions();
-
-	// 各パーツの向きを更新
-	UpdatePartsRotations();
-
-	// 各パーツの行列更新
-	if (head_) {
-		head_->Update(viewProjectionMatrix);
-	}
-	for (auto& body : bodies_) {
-		body->Update(viewProjectionMatrix);
-	}
-	if (tail_) {
-		tail_->Update(viewProjectionMatrix);
-	}
-
-	// スプラインエディタの更新
-	if (moveEditor_) {
-		moveEditor_->Update();
-	}
-
-}
 
 void Boss::UpdatePositionHistory() {
 	if (!head_) return;
@@ -399,23 +552,6 @@ void Boss::TakeDamageFromPart(float damage) {
 	}
 }
 
-void Boss::Draw(const Light& directionalLight) {
-	// 全パーツを描画
-	if (head_) {
-		head_->Draw(directionalLight);
-	}
-	for (auto& body : bodies_) {
-		body->Draw(directionalLight);
-	}
-	if (tail_) {
-		tail_->Draw(directionalLight);
-	}
-
-	if (splineDebugger_) {
-		splineDebugger_->Draw();
-	}
-
-}
 
 std::vector<Collider*> Boss::GetColliders() {
 	std::vector<Collider*> colliders;
@@ -438,120 +574,6 @@ std::vector<Collider*> Boss::GetColliders() {
 	return colliders;
 }
 
-void Boss::ImGui() {
-#ifdef USEIMGUI
-	if (ImGui::TreeNode("Boss")) {
-		// HP情報
-		if (ImGui::CollapsingHeader("HP", ImGuiTreeNodeFlags_DefaultOpen)) {
-			ImGui::Text("Boss HP: %.1f / %.1f", bossHP_, maxBossHP_);
-			float hpPercentage = (maxBossHP_ > 0.0f) ? (bossHP_ / maxBossHP_) * 100.0f : 0.0f;
-			ImGui::ProgressBar(bossHP_ / maxBossHP_, ImVec2(0.0f, 0.0f), std::format("{:.1f}%%", hpPercentage).c_str());
-
-			// HPのリセットボタン
-			if (ImGui::Button("Reset HP")) {
-				bossHP_ = maxBossHP_;
-				SetPartsHP();
-			}
-		}
-
-		// Phase情報
-		if (ImGui::CollapsingHeader("Phase", ImGuiTreeNodeFlags_DefaultOpen)) {
-			const char* phaseNames[] = { "Phase 1 (Head & Body)", "Phase 2 (Head & Tail)", "Death" };
-			int currentPhaseIndex = static_cast<int>(currentPhase_);
-			ImGui::Text("Current Phase: %s", phaseNames[currentPhaseIndex]);
-
-			// Phase強制変更ボタン（デバッグ用）
-			if (currentPhase_ == BossPhase::Phase1) {
-				if (ImGui::Button("Force Transition to Phase2")) {
-					TransitionToPhase2();
-				}
-			} else if (currentPhase_ == BossPhase::Phase2) {
-				if (ImGui::Button("Force Transition to Death")) {
-					TransitionToDeathPhase();
-				}
-			}
-		}
-
-		// State情報
-		if (ImGui::CollapsingHeader("State")) {
-			if (currentState_) {
-				ImGui::Text("Current State: %s", currentState_->GetStateName());
-				ImGui::Separator();
-
-				// State切り替えボタン
-				if (ImGui::Button("Change to Idle")) {
-					ChangeState(std::make_unique<IdleState>());
-				}
-				ImGui::SameLine();
-				if (ImGui::Button("Change to DebugMove")) {
-					ChangeState(std::make_unique<DebugMoveState>());
-				}
-				ImGui::SameLine();
-				if (ImGui::Button("Change to SplineMove")) {
-					ChangeState(std::make_unique<SplineMoveState>("resources/CSV_Data/BossMovePoints/SplineMoveState.csv"));
-				}
-				ImGui::Separator();
-
-				// 現在のStateのImGui
-				currentState_->ImGui();
-			}
-		}
-
-		// パラメータ設定
-		if (ImGui::CollapsingHeader("Parameters")) {
-			// パーツ間のオフセット（隙間）の調整
-			ImGui::DragFloat("Parts Offset", &partsOffset_, 0.01f, 0.0f, 5.0f);
-			ImGui::Text("(Distance between parts = Part1 Size/2 + Part2 Size/2 + Offset)");
-
-			// 移動速度
-			ImGui::DragFloat("Move Speed", &moveSpeed_, 0.1f, 0.1f, 10.0f);
-
-			// 履歴情報
-			ImGui::Text("Position History Size: %zu", positionHistory_.size());
-
-			// コライダー表示フラグ
-			ImGui::Checkbox("Show Colliders", &showColliders_);
-			if (head_) head_->SetColliderVisible(showColliders_);
-			for (auto& body : bodies_) body->SetColliderVisible(showColliders_);
-			if (tail_) tail_->SetColliderVisible(showColliders_);
-		}
-
-		// パーツ情報
-		if (ImGui::CollapsingHeader("Parts")) {
-			size_t totalParts = 1 + kBodyCount + 1;
-			ImGui::Text("Total Parts: %zu", totalParts);
-			ImGui::Separator();
-
-			// 頭
-			if (head_) {
-				head_->ImGui("Head (Yellow)");
-			}
-
-			// 体
-			for (size_t i = 0; i < bodies_.size(); ++i) {
-				std::string label = std::format("Body {} (White)", i + 1);
-				bodies_[i]->ImGui(label.c_str());
-			}
-
-			// 尻尾
-			if (tail_) {
-				tail_->ImGui("Tail (Green)");
-			}
-		}
-
-		// スプラインシステム
-		if (ImGui::CollapsingHeader("Spline System")) {
-			if (moveEditor_) {
-				moveEditor_->ImGui();
-			} else {
-				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Move Editor not initialized");
-			}
-		}
-
-		ImGui::TreePop();
-	}
-#endif
-}
 
 void Boss::ChangeState(std::unique_ptr<BossState> newState) {
 	if (newState) {

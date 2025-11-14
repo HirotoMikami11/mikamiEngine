@@ -13,6 +13,7 @@
 #include "BossSplineMovement.h"
 #include "BossSplineDebugger.h"
 #include "BossMoveEditor.h"
+#include "BossUI.h"
 
 /// <summary>
 /// Phase（フェーズ管理）
@@ -42,13 +43,18 @@ public:
 	/// 更新処理
 	/// </summary>
 	/// <param name="viewProjectionMatrix">ビュープロジェクション行列</param>
-	void Update(const Matrix4x4& viewProjectionMatrix);
+	void Update(const Matrix4x4& viewProjectionMatrix,const Matrix4x4&viewProjectionMatirxSprite);
 
 	/// <summary>
 	/// 描画処理
 	/// </summary>
 	/// <param name="directionalLight">平行光源</param>
 	void Draw(const Light& directionalLight);
+
+	/// <summary>
+	/// オフスクリーン外に描画
+	/// </summary>
+	void DrawUI();
 
 	/// <summary>
 	/// ImGui表示
@@ -152,19 +158,18 @@ private:
 	BossPhase currentPhase_ = BossPhase::Phase1;
 	BossPhase previousPhase_ = BossPhase::Phase1;
 
-	// システム参照
-	DirectXCommon* directXCommon_ = nullptr;
-	Matrix4x4 viewProjectionMatrix_;
-
-	// HP管理
-	float maxBossHP_ = 500.0f;	// Boss全体の最大HP
-	float bossHP_ = 500.0f;		// Boss全体の現在HP
+	//UI
+	std::unique_ptr<BossUI> bossUI_;
 
 	// 移動用スプラインシステム
 	std::unique_ptr<BossSplineTrack> splineTrack_;
 	std::unique_ptr<BossSplineMovement> splineMovement_;
 	std::unique_ptr<BossSplineDebugger> splineDebugger_;
 	std::unique_ptr<BossMoveEditor> moveEditor_;
+
+	// HP管理
+	float maxBossHP_ = 500.0f;	// Boss全体の最大HP
+	float bossHP_ = 500.0f;		// Boss全体の現在HP
 
 	// パラメータ
 	const size_t kBodyCount = 5;				// 体のパーツ数
@@ -179,4 +184,8 @@ private:
 
 	// デバッグ表示フラグ
 	bool showColliders_ = true;
+
+	// システム参照
+	DirectXCommon* directXCommon_ = nullptr;
+
 };

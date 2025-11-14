@@ -40,7 +40,7 @@ void Ground::Draw(const Light& directionalLight) {
 
 void Ground::ImGui()
 {
-#ifdef _DEBUG
+#ifdef USEIMGUI
 	if (gameObject_) {
 		gameObject_->ImGui();
 	}

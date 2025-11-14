@@ -21,6 +21,13 @@ void GameOverScene::ConfigureOffscreenEffects()
 	// 全てのエフェクトを無効化
 	offscreenRenderer_->DisableAllEffects();
 	// 必要に応じてここでエフェクトを有効化
+		//auto* depthFogEffect = offscreenRenderer_->GetDepthFogEffect();
+	//if (depthFogEffect) {
+	//	depthFogEffect->SetEnabled(true);
+	//	depthFogEffect->SetFogDistance(16.3f, 120.0f); // 深度フォグの距離を設定
+	//	depthFogEffect->SetFogColor({0.23f,0.23f,0.23f,1.0f});
+	//
+	//}
 }
 
 void GameOverScene::Initialize() {

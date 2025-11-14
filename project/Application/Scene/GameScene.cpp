@@ -9,6 +9,7 @@ GameScene::GameScene()
 	, offscreenRenderer_(nullptr)
 	, debugDrawLineSystem_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
+	, viewProjectionMatrixSprite{ MakeIdentity4x4() }
 {
 }
 
@@ -50,12 +51,10 @@ void GameScene::Initialize() {
 }
 
 void GameScene::InitializeGameObjects() {
-	///*-----------------------------------------------------------------------*///
-	///								プレイヤー									///
-	///*-----------------------------------------------------------------------*///
 
+	///自機
 	player_ = std::make_unique<Player>();
-	player_->Initialize(directXCommon_, { 0.0f, 0.5f, 0.0f });  // Y座標を0.5fに設定
+	player_->Initialize(directXCommon_, { 0.0f, 0.5f, 0.0f });
 
 
 	///地面
@@ -64,7 +63,7 @@ void GameScene::InitializeGameObjects() {
 
 	///ボス
 	boss_ = std::make_unique<Boss>();
-	boss_->Initialize(directXCommon_, { -10.0f,1.5f, 0.0f});
+	boss_->Initialize(directXCommon_, { -10.0f,1.5f, 0.0f });
 
 
 
@@ -107,11 +106,13 @@ void GameScene::Update() {
 void GameScene::UpdateGameObjects() {
 	// 行列更新
 	viewProjectionMatrix = cameraController_->GetViewProjectionMatrix();
+	viewProjectionMatrixSprite = cameraController_->GetViewProjectionMatrixSprite();
+
 	// 自機の更新
 	player_->Update(viewProjectionMatrix);
 
 	// ボスの更新
-	boss_->Update(viewProjectionMatrix);
+	boss_->Update(viewProjectionMatrix, viewProjectionMatrixSprite);
 
 	ground_->Update(viewProjectionMatrix);
 }
@@ -182,6 +183,8 @@ void GameScene::DrawBackBuffer() {
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンの外に描画）
 	/// 
+
+	boss_->DrawUI();
 
 }
 
