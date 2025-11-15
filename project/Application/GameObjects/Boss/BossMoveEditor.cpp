@@ -58,7 +58,6 @@ bool BossMoveEditor::LoadFromCSV(const std::string& filename) {
 	std::vector<Vector3> loadedPoints;
 
 	if (!CSVUtility::LoadVector3List(filename, loadedPoints)) {
-		Logger::Log(std::format("BossMoveEditor: Failed to load from {}\n", filename));
 		return false;
 	}
 

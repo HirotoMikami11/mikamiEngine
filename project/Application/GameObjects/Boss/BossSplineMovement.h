@@ -88,7 +88,7 @@ public:
 	/// 等間隔移動の有効/無効を設定
 	/// </summary>
 	/// <param name="enabled">有効にする場合true</param>
-	void SetUniformSpeedEnabled(bool enabled);
+	void SetUniformSpeedEnabled(bool enabled) { uniformSpeedEnabled_ = enabled; }
 
 private:
 	BossSplineTrack* track_ = nullptr;

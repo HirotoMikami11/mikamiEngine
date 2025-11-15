@@ -1,6 +1,5 @@
 #define NOMINMAX
 #include "BossSplineMovement.h"
-#include "Logger.h"
 #include <format>
 #include <algorithm> // std::clamp
 
@@ -10,8 +9,6 @@ void BossSplineMovement::Initialize(BossSplineTrack* track) {
 	distance_ = 0.0f;
 	isAtEnd_ = false;
 	isMoving_ = false;
-
-	Logger::Log("BossSplineMovement: Initialized\n");
 }
 
 void BossSplineMovement::Update(float deltaTime, float speed) {
@@ -58,8 +55,6 @@ void BossSplineMovement::ResetPosition() {
 	distance_ = 0.0f;
 	isMoving_ = false;
 	isAtEnd_ = false;
-
-	Logger::Log("BossSplineMovement: Position reset\n");
 }
 
 void BossSplineMovement::SetProgress(float progress) {
@@ -70,8 +65,6 @@ void BossSplineMovement::SetProgress(float progress) {
 		distance_ = 0.0f;
 	}
 	isAtEnd_ = (t_ >= 1.0f);
-
-	Logger::Log(std::format("BossSplineMovement: Progress set to {:.2f}\n", t_));
 }
 
 Vector3 BossSplineMovement::GetCurrentPosition() const {
@@ -126,14 +119,3 @@ Vector3 BossSplineMovement::GetForwardDirection(float lookAheadDistance) const {
 	return Normalize(direction);
 }
 
-void BossSplineMovement::SetUniformSpeedEnabled(bool enabled) {
-	uniformSpeedEnabled_ = enabled;
-
-	// 等間隔移動を有効にする場合、長さテーブルが必要
-	if (enabled && track_ && track_->IsValid() && !track_->HasLengthTable()) {
-		Logger::Log("BossSplineMovement: Uniform speed enabled, but length table not built. Building now...\n");
-		track_->BuildLengthTable();
-	}
-
-	Logger::Log(std::format("BossSplineMovement: Uniform speed {}\n", enabled ? "enabled" : "disabled"));
-}

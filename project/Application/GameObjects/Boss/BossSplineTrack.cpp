@@ -1,5 +1,4 @@
 #include "BossSplineTrack.h"
-#include "Logger.h"
 #include <algorithm>
 #include <format>
 
@@ -9,19 +8,10 @@ void BossSplineTrack::SetControlPoints(const std::vector<Vector3>& controlPoints
 	// 制御点が変更されたら長さテーブルをクリア
 	lengthTable_.clear();
 	totalLength_ = 0.0f;
-
-	// 制御点の数をログ出力
-	if (!IsValid()) {
-		Logger::Log(std::format("BossSplineTrack: Control points set, but invalid (need at least 4 points, got {})\n",
-			controlPoints_.size()));
-	} else {
-		Logger::Log(std::format("BossSplineTrack: Control points set ({} points)\n", controlPoints_.size()));
-	}
 }
 
 Vector3 BossSplineTrack::CalculatePosition(float t) const {
 	if (!IsValid()) {
-		Logger::Log("BossSplineTrack: Cannot calculate position - invalid control points\n");
 		return Vector3{ 0.0f, 0.0f, 0.0f };
 	}
 
@@ -37,7 +27,6 @@ void BossSplineTrack::BuildLengthTable(int resolution) {
 
 	if (!IsValid()) {
 		totalLength_ = 0.0f;
-		Logger::Log("BossSplineTrack: Cannot build length table - invalid control points\n");
 		return;
 	}
 
@@ -66,15 +55,11 @@ void BossSplineTrack::BuildLengthTable(int resolution) {
 	}
 
 	totalLength_ = totalLength;
-
-	Logger::Log(std::format("BossSplineTrack: Length table built (resolution={}, total length={:.2f})\n",
-		resolution, totalLength_));
 }
 
 float BossSplineTrack::GetTFromLength(float targetLength) const {
 	// 長さテーブルが空の場合
 	if (lengthTable_.empty()) {
-		Logger::Log("BossSplineTrack: Length table not built\n");
 		return 0.0f;
 	}
 

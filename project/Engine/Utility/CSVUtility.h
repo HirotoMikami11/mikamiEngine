@@ -28,6 +28,12 @@ public:
 	static bool LoadVector3List(const std::string& filepath, std::vector<Vector3>& outPoints);
 
 private:
+	// ユーティリティクラスのためインスタンス化禁止
+	CSVUtility() = delete;
+	~CSVUtility() = delete;
+	CSVUtility(const CSVUtility&) = delete;
+	CSVUtility& operator=(const CSVUtility&) = delete;
+
 	/// <summary>
 	/// 文字列をトリム（前後の空白を削除）
 	/// </summary>

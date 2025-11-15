@@ -1,7 +1,6 @@
 #include "State/SplineMoveState.h"
 #include "State/IdleState.h"
 #include "Boss.h"
-#include "Logger.h"
 #include "CSVUtility.h"
 #include "Managers/ImGui/ImGuiManager.h"
 #include <format>
@@ -16,8 +15,6 @@ SplineMoveState::SplineMoveState(const std::string& csvFilePath)
 void SplineMoveState::Initialize() {
 	isInitialized_ = false;
 	boss_ = nullptr;
-
-	Logger::Log(std::format("SplineMoveState: Initialized with CSV: {}\n", csvFilePath_));
 }
 
 void SplineMoveState::Update(Boss* boss) {
@@ -42,7 +39,6 @@ void SplineMoveState::Update(Boss* boss) {
 	BossSplineTrack* track = boss->GetSplineTrack();
 
 	if (!movement || !track || !track->IsValid()) {
-		Logger::Log("SplineMoveState: Invalid spline system\n");
 		boss->ChangeState(std::make_unique<IdleState>());
 		return;
 	}
@@ -65,7 +61,6 @@ void SplineMoveState::Update(Boss* boss) {
 
 	// 終点に到達したかチェック
 	if (movement->IsAtEnd()) {
-		Logger::Log("SplineMoveState: Reached end, transitioning to Idle\n");
 		boss->ChangeState(std::make_unique<IdleState>());
 	}
 }
@@ -118,7 +113,6 @@ void SplineMoveState::ImGui() {
 
 bool SplineMoveState::LoadAndSetup(Boss* boss) {
 	if (!boss) {
-		Logger::Log("SplineMoveState: Boss is null\n");
 		return false;
 	}
 
@@ -127,21 +121,17 @@ bool SplineMoveState::LoadAndSetup(Boss* boss) {
 	BossSplineMovement* movement = boss->GetSplineMovement();
 
 	if (!track || !movement) {
-		Logger::Log("SplineMoveState: Spline system not available\n");
 		return false;
 	}
 
 	// CSVから制御点を読み込み
 	std::vector<Vector3> controlPoints;
 	if (!CSVUtility::LoadVector3List(csvFilePath_, controlPoints)) {
-		Logger::Log(std::format("SplineMoveState: Failed to load CSV: {}\n", csvFilePath_));
 		return false;
 	}
 
 	// 制御点が4点未満の場合はエラー
 	if (controlPoints.size() < 4) {
-		Logger::Log(std::format("SplineMoveState: Invalid point count (need at least 4, got {})\n",
-			controlPoints.size()));
 		return false;
 	}
 
@@ -162,9 +152,6 @@ bool SplineMoveState::LoadAndSetup(Boss* boss) {
 
 	// 移動を開始
 	movement->StartMovement();
-
-	Logger::Log(std::format("SplineMoveState: Setup completed with {} control points\n",
-		controlPoints.size()));
 
 	return true;
 }
@@ -188,8 +175,6 @@ void SplineMoveState::WarpToStartPosition(Boss* boss) {
 	// 位置履歴をクリア
 	boss->ClearPositionHistory();
 
-	Logger::Log(std::format("SplineMoveState: Warped to start position (%.2f, %.2f, %.2f)\n",
-		startPosition.x, startPosition.y, startPosition.z));
 }
 
 void SplineMoveState::LookAtNextPoint(Boss* boss) {
@@ -210,6 +195,4 @@ void SplineMoveState::LookAtNextPoint(Boss* boss) {
 
 	// ボスの頭の向きを設定
 	boss->SetHeadRotationY(rotationY);
-
-	Logger::Log(std::format("SplineMoveState: Looking at next point (rotY: {:.2f} rad)\n", rotationY));
 }

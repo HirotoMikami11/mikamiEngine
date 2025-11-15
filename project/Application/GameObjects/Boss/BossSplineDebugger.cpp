@@ -1,12 +1,9 @@
 #include "BossSplineDebugger.h"
-#include "Logger.h"
 #include <format>
 
 void BossSplineDebugger::Initialize(DebugDrawLineSystem* debugDrawSystem, BossSplineTrack* track) {
 	debugDrawSystem_ = debugDrawSystem;
 	track_ = track;
-
-	Logger::Log("BossSplineDebugger: Initialized\n");
 }
 
 void BossSplineDebugger::Draw() {
