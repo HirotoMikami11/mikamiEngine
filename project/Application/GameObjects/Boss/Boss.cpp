@@ -5,8 +5,10 @@
 #include "State/IdleState.h"
 #include "State/DebugMoveState.h"
 #include "State/SplineMoveState.h"
+#include "State/SplineMove8WayShootState.h"
+#include "State/SplineMoveRotateShootState.h"
 #include "Managers/ImGui/ImGuiManager.h"
-
+#include "Bullet/BossBullet.h"
 
 Boss::Boss()
 	: directXCommon_(nullptr)
@@ -83,7 +85,9 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	moveEditor_->Initialize(splineTrack_.get(), splineMovement_.get(), splineDebugger_.get());
 
 	// 初期Stateを設定（Idle）
-	currentState_ = std::make_unique<IdleState>();
+	currentState_ = std::make_unique<SplineMoveRotateShootState>("resources/CSV_Data/BossMovePoints/RotateState.csv");
+
+
 	currentState_->Initialize();
 }
 
@@ -136,8 +140,12 @@ void Boss::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPr
 		tail_->Update(viewProjectionMatrix);
 	}
 
+	//弾の更新
+	UpdateBullets(viewProjectionMatrix);
+
+
 	// UIの更新
-	bossUI_->Update(bossHP_,maxBossHP_, viewProjectionMatirxSprite);
+	bossUI_->Update(bossHP_, maxBossHP_, viewProjectionMatirxSprite);
 
 	// スプラインエディタの更新
 	if (moveEditor_) {
@@ -157,6 +165,8 @@ void Boss::Draw(const Light& directionalLight) {
 		tail_->Draw(directionalLight);
 	}
 
+	DrawBullets(directionalLight);
+
 	if (splineDebugger_) {
 		splineDebugger_->Draw();
 	}
@@ -172,7 +182,7 @@ void Boss::ImGui() {
 #ifdef USEIMGUI
 	if (ImGui::TreeNode("Boss")) {
 		// HP情報
-		if (ImGui::CollapsingHeader("HP", ImGuiTreeNodeFlags_DefaultOpen)) {
+		if (ImGui::CollapsingHeader("HP")) {
 			ImGui::Text("Boss HP: %.1f / %.1f", bossHP_, maxBossHP_);
 			float hpPercentage = (maxBossHP_ > 0.0f) ? (bossHP_ / maxBossHP_) * 100.0f : 0.0f;
 			ImGui::ProgressBar(bossHP_ / maxBossHP_, ImVec2(0.0f, 0.0f), std::format("{:.1f}%%", hpPercentage).c_str());
@@ -189,7 +199,7 @@ void Boss::ImGui() {
 		}
 
 		// Phase情報
-		if (ImGui::CollapsingHeader("Phase", ImGuiTreeNodeFlags_DefaultOpen)) {
+		if (ImGui::CollapsingHeader("Phase")) {
 			const char* phaseNames[] = { "Phase 1 (Head & Body)", "Phase 2 (Head & Tail)", "Death" };
 			int currentPhaseIndex = static_cast<int>(currentPhase_);
 			ImGui::Text("Current Phase: %s", phaseNames[currentPhaseIndex]);
@@ -207,28 +217,29 @@ void Boss::ImGui() {
 		}
 
 		// State情報
-		if (ImGui::CollapsingHeader("State")) {
-			if (currentState_) {
-				ImGui::Text("Current State: %s", currentState_->GetStateName());
-				ImGui::Separator();
+		if (ImGui::CollapsingHeader("State", ImGuiTreeNodeFlags_DefaultOpen)) {
 
-				// State切り替えボタン
-				if (ImGui::Button("Change to Idle")) {
-					ChangeState(std::make_unique<IdleState>());
-				}
-				ImGui::SameLine();
-				if (ImGui::Button("Change to DebugMove")) {
-					ChangeState(std::make_unique<DebugMoveState>());
-				}
-				ImGui::SameLine();
-				if (ImGui::Button("Change to SplineMove")) {
-					ChangeState(std::make_unique<SplineMoveState>("resources/CSV_Data/BossMovePoints/SplineMoveState.csv"));
-				}
-				ImGui::Separator();
+			std::vector<std::string> stateNames = {
+				"Idle",
+				"DebugMove",
+				"SplineMove",
+				"8WayShot",
+				"RotateShot"
+			};
 
-				// 現在のStateのImGui
-				currentState_->ImGui();
+			static int stateIndex = 0;
+
+			if (MyImGui::Combo("State Select", stateIndex, stateNames)) {
+				switch (stateIndex) {
+				case 0: ChangeState(std::make_unique<IdleState>()); break;
+				case 1: ChangeState(std::make_unique<DebugMoveState>()); break;
+				case 2: ChangeState(std::make_unique<SplineMoveState>("resources/CSV_Data/BossMovePoints/SplineMoveState.csv")); break;
+				case 3: ChangeState(std::make_unique<SplineMove8WayShootState>("resources/CSV_Data/BossMovePoints/SplineMoveState.csv")); break;
+				case 4: ChangeState(std::make_unique<SplineMoveRotateShootState>("resources/CSV_Data/BossMovePoints/RotateState.csv")); break;
+				}
 			}
+			currentState_->ImGui();
+
 		}
 
 		// パラメータ設定
@@ -655,4 +666,61 @@ void Boss::ClearPositionHistory() {
 
 		Logger::Log("Boss: Position history cleared and reinitialized\n");
 	}
+}
+
+
+void Boss::FireBullet(const Vector3& position, const Vector3& velocity) {
+	// 新しい弾を作成
+	auto bullet = std::make_unique<BossBullet>();
+	bullet->Initialize(directXCommon_, position, velocity);
+	bossBullets_.push_back(std::move(bullet));
+}
+
+void Boss::UpdateBullets(const Matrix4x4& viewProjectionMatrix) {
+	// 全ての弾を更新
+	for (auto& bullet : bossBullets_) {
+		bullet->Update(viewProjectionMatrix);
+	}
+
+	// 死亡した弾を削除
+	bossBullets_.erase(
+		std::remove_if(bossBullets_.begin(), bossBullets_.end(),
+			[](const std::unique_ptr<BossBullet>& bullet) {
+				return bullet->IsDead();
+			}),
+		bossBullets_.end()
+	);
+}
+
+void Boss::DrawBullets(const Light& directionalLight) {
+	for (auto& bullet : bossBullets_) {
+		bullet->Draw(directionalLight);
+	}
+}
+
+std::vector<BaseParts*> Boss::GetActiveBodyParts() {
+	std::vector<BaseParts*> parts;
+
+	// 頭パーツ（常にActive）
+	if (head_ && head_->IsActive()) {
+		parts.push_back(head_.get());
+	}
+
+	// 体パーツ（Phase1でActive）
+	if (currentPhase_ == BossPhase::Phase1) {
+		for (auto& body : bodies_) {
+			if (body && body->IsActive()) {
+				parts.push_back(body.get());
+			}
+		}
+	}
+
+	// 尻尾パーツ（Phase2でActive）
+	if (currentPhase_ == BossPhase::Phase2) {
+		if (tail_ && tail_->IsActive()) {
+			parts.push_back(tail_.get());
+		}
+	}
+
+	return parts;
 }

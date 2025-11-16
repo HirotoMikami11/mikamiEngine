@@ -4,7 +4,7 @@
 #include <functional>
 #include "MyMath.h"
 using namespace MyMath;
-namespace myImGui {
+namespace MyImGui {
 
 	/// <summary>
 	/// 中央揃えでテキストを表示する関数
@@ -88,7 +88,14 @@ namespace myImGui {
 	/// <param name="color">フレームの色（オプション）</param>
 	void FramedSection(const char* label, const std::function<void()>& content, const Vector4* color = nullptr);
 
-
+	/// <summary>
+	/// 汎用的なコンボボックス
+	/// </summary>
+	/// <param name="label">UI ラベル</param>
+	/// <param name="currentIndex">現在選択されている index (参照渡し)</param>
+	/// <param name="items">表示する項目</param>
+	/// <returns>選択が変更されたら true</returns>
+	bool Combo(const char* label, int& currentIndex, const std::vector<std::string>& items);
 
 	/// <summary>
 	/// bool変更ボタンを作成する関数

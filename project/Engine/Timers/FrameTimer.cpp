@@ -74,7 +74,9 @@ void FrameTimer::DrawFPSStats()
 	const char* status;
 	///最初の1フレと少しの間は計算されていないので早期リターン
 	if (totalTime_ <= 1.00f) { return; }
-
+	if (fps_ <= 58.5f) {
+		color = ImVec4(0, 1, 0, 1);  // 緑
+	}
 	if (fps_ >= 55.0f) {
 		color = ImVec4(0, 1, 0, 1);  // 緑
 		status = "Excellent";

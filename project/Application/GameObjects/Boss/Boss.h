@@ -14,6 +14,7 @@
 #include "BossSplineDebugger.h"
 #include "BossMoveEditor.h"
 #include "BossUI.h"
+#include "BossBullet.h"
 
 /// <summary>
 /// Phase（フェーズ管理）
@@ -43,7 +44,7 @@ public:
 	/// 更新処理
 	/// </summary>
 	/// <param name="viewProjectionMatrix">ビュープロジェクション行列</param>
-	void Update(const Matrix4x4& viewProjectionMatrix,const Matrix4x4&viewProjectionMatirxSprite);
+	void Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewProjectionMatirxSprite);
 
 	/// <summary>
 	/// 描画処理
@@ -98,6 +99,36 @@ public:
 	/// 位置履歴をクリア
 	/// </summary>
 	void ClearPositionHistory();
+
+	// 弾発射機構
+	/// <summary>
+	/// 弾を発射
+	/// </summary>
+	/// <param name="position">発射位置</param>
+	/// <param name="velocity">弾の速度ベクトル</param>
+	void FireBullet(const Vector3& position, const Vector3& velocity);
+
+	/// <summary>
+	/// 全ての弾を更新
+	/// </summary>
+	/// <param name="viewProjectionMatrix">ビュープロジェクション行列</param>
+	void UpdateBullets(const Matrix4x4& viewProjectionMatrix);
+
+	/// <summary>
+	/// 全ての弾を描画
+	/// </summary>
+	/// <param name="directionalLight">平行光源</param>
+	void DrawBullets(const Light& directionalLight);
+
+	/// <summary>
+	/// 弾リストを取得
+	/// </summary>
+	const std::list<std::unique_ptr<BossBullet>>& GetBullets() const { return bossBullets_; }
+
+	/// <summary>
+	/// Activeな全パーツのリストを取得（State から使用）
+	/// </summary>
+	std::vector<BaseParts*> GetActiveBodyParts();
 
 private:
 	/// <summary>
@@ -170,6 +201,9 @@ private:
 	// HP管理
 	float maxBossHP_ = 500.0f;	// Boss全体の最大HP
 	float bossHP_ = 500.0f;		// Boss全体の現在HP
+
+	// 弾管理
+	std::list<std::unique_ptr<BossBullet>> bossBullets_;
 
 	// パラメータ
 	const size_t kBodyCount = 5;				// 体のパーツ数

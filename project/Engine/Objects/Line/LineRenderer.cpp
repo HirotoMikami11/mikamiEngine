@@ -125,7 +125,6 @@ void LineRenderer::ImGui() {
 #ifdef USEIMGUI
 	if (ImGui::TreeNodeEx("Line Renderer", ImGuiTreeNodeFlags_DefaultOpen)) {
 		// 基本情報
-		ImGui::Checkbox("Visible", &isVisible_);
 		ImGui::Text("Line Count: %d / %d", GetLineCount(), kMaxLineCount);
 
 		// 使用率表示

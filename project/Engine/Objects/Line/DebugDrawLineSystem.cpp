@@ -24,6 +24,11 @@ void DebugDrawLineSystem::Initialize(DirectXCommon* dxCommon)
 	lineRenderer_->Initialize(dxCommon);
 
 	isInitialized_ = true;
+	isUse_ = false;
+#ifdef USEIMGUI
+	isUse_ = true;
+#endif
+
 	Logger::Log(Logger::GetStream(), "DebugDrawLineSystem successfully!!\n");
 }
 
@@ -39,7 +44,7 @@ void DebugDrawLineSystem::Reset()
 
 void DebugDrawLineSystem::Draw(const Matrix4x4& viewProjectionMatrix)
 {
-	if (!isInitialized_ || !lineRenderer_) {
+	if (!isInitialized_ || !lineRenderer_ || !isUse_) {
 		return;
 	}
 
@@ -61,7 +66,7 @@ void DebugDrawLineSystem::Finalize()
 
 void DebugDrawLineSystem::AddLine(const Vector3& start, const Vector3& end, const Vector4& color)
 {
-	if (!isInitialized_ ) {
+	if (!isInitialized_ || !isUse_) {
 		return;
 	}
 
@@ -70,7 +75,7 @@ void DebugDrawLineSystem::AddLine(const Vector3& start, const Vector3& end, cons
 
 void DebugDrawLineSystem::AddLine(const Vector3& start, const Vector3& end, const uint32_t& color)
 {
-	if (!isInitialized_) {
+	if (!isInitialized_ || !isUse_) {
 		return;
 	}
 
@@ -79,7 +84,7 @@ void DebugDrawLineSystem::AddLine(const Vector3& start, const Vector3& end, cons
 
 void DebugDrawLineSystem::DrawAABB(const AABB& aabb, const Vector4& color)
 {
-	if (!isInitialized_ ) {
+	if (!isInitialized_ || !isUse_) {
 		return;
 	}
 
@@ -113,7 +118,7 @@ void DebugDrawLineSystem::DrawAABB(const AABB& aabb, const uint32_t& color)
 
 void DebugDrawLineSystem::DrawSphere(const Vector3& center, float radius, const Vector4& color, uint32_t subdivision)
 {
-	if (!isInitialized_ || subdivision < 3) {
+	if (!isInitialized_ || !isUse_) {
 		return;
 	}
 
@@ -168,7 +173,7 @@ void DebugDrawLineSystem::DrawSphere(const Vector3& center, float radius, const 
 
 void DebugDrawLineSystem::DrawCross(const Vector3& position, float size, const Vector4& color)
 {
-	if (!isInitialized_) {
+	if (!isInitialized_ || !isUse_) {
 		return;
 	}
 
@@ -233,6 +238,7 @@ void DebugDrawLineSystem::ImGui()
 		ImGui::Separator();
 
 		ImGui::Text("Status: %s", isInitialized_ ? "Initialized" : "Not Initialized");
+		ImGui::Checkbox("USE", &isUse_);
 
 		// LineRendererの詳細情報
 		lineRenderer_->ImGui();

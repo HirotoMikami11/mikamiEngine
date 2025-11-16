@@ -125,19 +125,24 @@ void GameScene::UpdateCollison()
 
 	// プレイヤーの弾のリストを取得
 	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player_->GetBullets();
+	const std::list<std::unique_ptr<BossBullet>>& bossBullets = boss_->GetBullets();
 
 	// Player
 	collisionManager_->AddCollider(player_.get());
+	// Bossのコライダーを追加（各パーツ）
+	auto bossColliders = boss_->GetColliders();
+	for (auto* collider : bossColliders) {
+		collisionManager_->AddCollider(collider);
+	}
+
 
 	// プレイヤーの弾のコライダーを追加する
 	for (const auto& bullet : playerBullets) {
 		collisionManager_->AddCollider(bullet.get());
 	}
-
-	// Bossのコライダーを追加（各パーツ）
-	auto bossColliders = boss_->GetColliders();
-	for (auto* collider : bossColliders) {
-		collisionManager_->AddCollider(collider);
+	// ボスの弾のコライダーを追加する
+	for (const auto& bullet : bossBullets) {
+		collisionManager_->AddCollider(bullet.get());
 	}
 	// 衝突判定と応答
 	collisionManager_->Update();

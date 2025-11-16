@@ -251,7 +251,7 @@ void CameraController::ImGui() {
 
 	// アクティブカメラのImGui
 	if (activeCamera) {
-		myImGui::CenterText("Camera Data");
+		MyImGui::CenterText("Camera Data");
 		ImGui::Separator();
 		activeCamera->ImGui();
 	}

@@ -247,9 +247,9 @@ void Player::ProcessFire() {
 
 		// 向いている方向に弾を発射
 		Vector3 velocity = {
-			std::sin(rotation.y) * bulletSpeed_,
+			std::sinf(rotation.y) * bulletSpeed_,
 			0.0f,
-			std::cos(rotation.y) * bulletSpeed_
+			std::cosf(rotation.y) * bulletSpeed_
 		};
 
 		// 弾を生成
@@ -289,13 +289,11 @@ void Player::ImGui() {
 			ImGui::DragFloat("Acceleration", &acceleration_, 0.01f, 0.0f, 2.0f, "%.2f");
 			ImGui::DragFloat("Max Run Speed", &limitRunSpeed_, 0.1f, 0.0f, 20.0f, "%.2f");
 			ImGui::DragFloat("Attenuation", &attenuation_, 0.01f, 0.0f, 1.0f, "%.2f");
-			ImGui::TreePop();
 		}
 
 		// 回転パラメータ
 		if (ImGui::CollapsingHeader("Rotation")) {
 			ImGui::DragFloat("Rotation Speed", &rotationSpeed_, 0.01f, 0.0f, 1.0f, "%.2f");
-			ImGui::TreePop();
 		}
 
 		// 弾パラメータ
@@ -304,14 +302,12 @@ void Player::ImGui() {
 			ImGui::DragInt("Fire Interval (frames)", &fireInterval_, 1, 1, 60);
 			ImGui::Text("Bullets Count: %zu", bullets_.size());
 			ImGui::Text("Fire Timer: %d", fireTimer_);
-			ImGui::TreePop();
 		}
 
 		// 衝突情報 
 		if (ImGui::CollapsingHeader("Collision")) {
 			ImGui::Text("Collision Radius: %.2f", GetRadius());
 			ImGui::Checkbox("Show Collider", &isColliderVisible_);
-			ImGui::TreePop();
 		}
 		// ゲームオブジェクトのImGui
 		gameObject_->ImGui();

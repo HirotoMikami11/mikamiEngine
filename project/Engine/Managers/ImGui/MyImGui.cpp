@@ -1,7 +1,7 @@
 #include "MyImGui.h"
 #include "imgui.h"
 
-namespace myImGui {
+namespace MyImGui {
 
 	void CenterText(const char* text) {
 #ifdef USEIMGUI
@@ -154,6 +154,23 @@ namespace myImGui {
 		ImGui::PopStyleColor();
 #endif
 	}
+
+	bool Combo(const char* label, int& currentIndex, const std::vector<std::string>& items)
+	{
+#ifdef USEIMGUI
+		if (items.empty()) return false;
+
+		// ImGui が要求する "const char* の配列" を作成
+		std::vector<const char*> cstrItems;
+		cstrItems.reserve(items.size());
+		for (auto& s : items) {
+			cstrItems.push_back(s.c_str());
+		}
+
+		return ImGui::Combo(label, &currentIndex, cstrItems.data(), static_cast<int>(cstrItems.size()));
+#endif
+	}
+
 
 	void OnOffButton(bool& isOn, const char* text, Vector2 size)
 	{
