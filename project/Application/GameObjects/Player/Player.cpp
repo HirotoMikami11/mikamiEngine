@@ -39,7 +39,7 @@ void Player::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	// 衝突判定の設定
 	SetRadius(0.5f);  // 半径を0.5fに設定
 	SetCollisionAttribute(kCollisionAttributePlayer);	// 自分の属性をPlayerに設定
-	SetCollisionMask(kCollisionAttributeEnemy);			// Enemyと衝突するように設定
+	SetCollisionMask(kCollisionAttributeEnemyBullet);	// 敵弾と衝突するように設定
 }
 
 void Player::Update(const Matrix4x4& viewProjectionMatrix) {
@@ -204,7 +204,7 @@ void Player::ProcessRotation() {
 
 	// 回転の適用
 	if (std::abs(rotateInput.x) > 0.0f || std::abs(rotateInput.y) > 0.0f) {
-		// 「上が0.0f」になるように調整
+		// 上が0.0fになるように調整
 		float targetAngle = std::atan2(rotateInput.x, rotateInput.y);
 
 		Vector3 currentRotation = gameObject_->GetRotation();

@@ -36,7 +36,7 @@ void BossBullet::Initialize(DirectXCommon* dxCommon, const Vector3& position, co
 	SetAttackPower(15.0f);
 
 	// 衝突属性の設定
-	SetCollisionAttribute(kCollisionAttributeEnemy);
+	SetCollisionAttribute(kCollisionAttributeEnemyBullet);
 	// プレイヤーとプレイヤー弾とオブジェクトに衝突
 	SetCollisionMask(kCollisionAttributePlayer | kCollisionAttributePlayerBullet | kCollisionAttributeObjects);
 }
@@ -44,7 +44,7 @@ void BossBullet::Initialize(DirectXCommon* dxCommon, const Vector3& position, co
 void BossBullet::Update(const Matrix4x4& viewProjectionMatrix) {
 	// 座標を移動させる
 	Vector3 currentPos = gameObject_->GetPosition();
-	currentPos = Add(currentPos, velocity_);
+	currentPos = currentPos + velocity_;
 	gameObject_->SetPosition(currentPos);
 
 	// タイマーを減らす

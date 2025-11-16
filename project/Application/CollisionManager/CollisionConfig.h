@@ -21,3 +21,7 @@ const uint32_t kCollisionAttributeObjects = 0b1 << 2;	//左シフト
 // プレイヤーの弾
 // 0b00001000
 const uint32_t kCollisionAttributePlayerBullet = 0b1 << 3;	//左シフト
+
+// 敵の弾
+// 0b00010000
+const uint32_t kCollisionAttributeEnemyBullet = 0b1 << 4;	//左シフト

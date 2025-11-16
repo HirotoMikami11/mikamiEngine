@@ -33,7 +33,7 @@ void PlayerBullet::Initialize(DirectXCommon* dxCommon, const Vector3& position, 
 	SetRadius(0.3f);  // Colliderの半径をセット
 
 	// 攻撃力を設定
-	SetAttackPower(10.0f);
+	SetAttackPower(5.0f);
 
 	// 衝突属性の設定
 	SetCollisionAttribute(kCollisionAttributePlayerBullet);
@@ -44,7 +44,7 @@ void PlayerBullet::Initialize(DirectXCommon* dxCommon, const Vector3& position, 
 void PlayerBullet::Update(const Matrix4x4& viewProjectionMatrix) {
 	// 座標を移動させる
 	Vector3 currentPos = gameObject_->GetPosition();
-	currentPos = Add(currentPos, velocity_);
+	currentPos = currentPos + velocity_;
 	gameObject_->SetPosition(currentPos);
 
 	// タイマーを減らす
