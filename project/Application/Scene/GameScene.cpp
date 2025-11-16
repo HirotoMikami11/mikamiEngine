@@ -21,6 +21,14 @@ void GameScene::ConfigureOffscreenEffects()
 
 	// 全てのエフェクトを無効化
 	offscreenRenderer_->DisableAllEffects();
+
+	auto* depthFogEffect = offscreenRenderer_->GetDepthFogEffect();
+if (depthFogEffect) {
+	depthFogEffect->SetEnabled(true);
+	depthFogEffect->SetFogDistance(0.1f, 119.0f); // 深度フォグの距離を設定
+	depthFogEffect->SetFogColor({0.0f,0.0f,0.0f,1.0f});
+
+}
 }
 
 void GameScene::Initialize() {
@@ -34,7 +42,7 @@ void GameScene::Initialize() {
 	///*-----------------------------------------------------------------------*///
 	cameraController_ = CameraController::GetInstance();
 	// 座標と回転を指定して初期化
-	Vector3 initialPosition = { 0.5f, 43.4f, -73.745f };
+	Vector3 initialPosition = { 0.5f, 49.5f, -75.7f };
 	Vector3 initialRotation = { 0.57f, 0.0f, 0.0f };
 	cameraController_->Initialize(directXCommon_, initialPosition, initialRotation);
 	cameraController_->SetActiveCamera("normal");
@@ -60,6 +68,9 @@ void GameScene::InitializeGameObjects() {
 	///地面
 	ground_ = std::make_unique<Ground>();
 	ground_->Initialize(directXCommon_, { 0.0f,-0.51f,0.0f });
+
+	wall_ = std::make_unique<Wall>();
+	wall_->Initialize(directXCommon_);
 
 	///ボス
 	boss_ = std::make_unique<Boss>();
@@ -115,6 +126,7 @@ void GameScene::UpdateGameObjects() {
 	boss_->Update(viewProjectionMatrix, viewProjectionMatrixSprite);
 
 	ground_->Update(viewProjectionMatrix);
+	wall_->Update(viewProjectionMatrix);
 }
 
 void GameScene::UpdateCollison()
@@ -167,6 +179,7 @@ void GameScene::DrawOffscreen() {
 
 
 	ground_->Draw(directionalLight_);
+	wall_->Draw(directionalLight_);
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -211,6 +224,10 @@ void GameScene::ImGui() {
 	ImGui::Spacing();
 	ImGui::Text("Ground");
 	ground_->ImGui();
+
+	ImGui::Spacing();
+	ImGui::Text("Wall");
+	wall_->ImGui();
 
 	ImGui::Spacing();
 	ImGui::Text("Grid Line");

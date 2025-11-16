@@ -28,8 +28,8 @@ void BossUI::InitializeGauges() {
 
 	//パラメータ
 	frameOffset_ = { 5.0f,5.0f };
-	gaugeSize_ = { 900.0f,50.0f };
-	hpGaugePosition_ = { GraphicsConfig::kClientWidth / 2 - gaugeSize_.x / 2, 50.0f };
+	gaugeSize_ = { 900.0f,25.0f };
+	hpGaugePosition_ = { GraphicsConfig::kClientWidth / 2 - gaugeSize_.x / 2, 30.0f };
 	gaugeFrameSize_ = gaugeSize_ + frameOffset_;
 	LightScrollSpeed_ = 0.005f;
 
@@ -142,8 +142,14 @@ void BossUI::ImGui() {
 
 		// 色設定
 		ImGui::Separator();
-		ImGui::ColorEdit4("HP Normal Color", &hpNormalColor_.x);
-		ImGui::ColorEdit4("Background Color", &backgroundColor_.x);
+		if (ImGui::ColorEdit4("HP Normal Color", &hpNormalColor_.x)) {
+			hpGaugeFill_->SetColor(hpNormalColor_);
+		}
+
+		if (ImGui::ColorEdit4("Background Color", &backgroundColor_.x)) {
+			hpGaugeBar_->SetColor(backgroundColor_);
+		}
+
 		ImGui::TreePop();
 	}
 #endif

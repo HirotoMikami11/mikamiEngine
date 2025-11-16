@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "Input.h"
 #include "GameTimer.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 #include <numbers>
 
 Player::Player()
