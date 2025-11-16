@@ -72,6 +72,9 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Model/terrain", "terrain.obj", "model_terrain", false},
 		{"resources/Model/Player", "Player.obj", "model_Player", false},
 		{"resources/Model/PlayerBullet", "playerBullet.obj", "playerBullet", false},
+		{"resources/Model/FontModel", "TitleFont.obj", "titleFont", false},
+		{"resources/Model/FontModel", "GameOverFont.obj", "overFont", false},
+		{"resources/Model/FontModel", "GameClearFont.obj", "clearFont", false},
 
 
 		// モデルはここに追加

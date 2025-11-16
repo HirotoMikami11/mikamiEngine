@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "BaseScene.h"
+#include "ModelFont/ModelFont.h"
 
 
 /// <summary>
@@ -45,7 +46,8 @@ private:
 	void UpdateGameObjects();
 
 	// ゲームオブジェクト
-	std::unique_ptr<Sphere> sphere_;
+
+	std::unique_ptr<ModelFont> titleRogo_;
 	std::unique_ptr<GridLine> gridLine_;
 
 	// ライティング

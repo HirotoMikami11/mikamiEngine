@@ -34,10 +34,9 @@ void TitleScene::Initialize() {
 	///								カメラの初期化									///
 	///*-----------------------------------------------------------------------*///
 	cameraController_ = CameraController::GetInstance();
-	// 座標と回転を指定して初期化
-	Vector3 initialPosition = { 0.0f, 6.8f, -18.0f };
-	Vector3 initialRotation = { 0.4f, 0.0f, 0.0f };
-	cameraController_->Initialize(directXCommon_, initialPosition, initialRotation);
+	// 座標を指定して初期化
+	Vector3 initialPosition = { 0.0f, 0.0f, -10.0f };
+	cameraController_->Initialize(directXCommon_, initialPosition);
 	cameraController_->SetActiveCamera("normal");
 
 	// ゲームオブジェクト初期化
@@ -48,17 +47,13 @@ void TitleScene::Initialize() {
 
 void TitleScene::InitializeGameObjects() {
 	///*-----------------------------------------------------------------------*///
-	///									球体										///
+	///								フォント										///
 	///*-----------------------------------------------------------------------*///
-	Vector3Transform transformSphere{
-		{1.0f, 1.0f, 1.0f},
-		{0.0f, -std::numbers::pi_v<float>*0.5f, 0.0f},
-		{0.0f, 0.0f, 0.0f}
-	};
 
-	sphere_ = std::make_unique<Sphere>();
-	sphere_->Initialize(directXCommon_, "sphere", "monsterBall");
-	sphere_->SetTransform(transformSphere);
+	Vector3 titleRogoPos = { 0.0f,0.9f,0.0f };
+	titleRogo_ = std::make_unique<ModelFont>();
+	titleRogo_->Initialize(directXCommon_, "titleFont", titleRogoPos);
+
 
 	///*-----------------------------------------------------------------------*///
 	///								グリッド線									///
@@ -104,7 +99,7 @@ void TitleScene::UpdateGameObjects() {
 	// 行列更新
 	viewProjectionMatrix = cameraController_->GetViewProjectionMatrix();
 	// 球体の更新
-	sphere_->Update(viewProjectionMatrix);
+	titleRogo_->Update(viewProjectionMatrix);
 
 }
 
@@ -120,7 +115,7 @@ void TitleScene::DrawOffscreen() {
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	/// 
 	// 球体の描画
-	sphere_->Draw(directionalLight_);
+	titleRogo_->Draw(directionalLight_);
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -152,8 +147,8 @@ void TitleScene::ImGui() {
 	ImGui::Separator();
 
 	ImGui::Spacing();
-	ImGui::Text("Sphere");
-	sphere_->ImGui();
+	ImGui::Text("titleRogo");
+	titleRogo_->ImGui();
 
 	ImGui::Spacing();
 	ImGui::Text("Grid Line");
