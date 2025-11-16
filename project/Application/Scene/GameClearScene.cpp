@@ -1,5 +1,6 @@
 #include "GameClearScene.h"
 #include "Managers/ImGui/ImGuiManager.h" 
+#include "Managers/Transition/SceneTransitionHelper.h" 
 #include <numbers> 
 
 GameClearScene::GameClearScene()
@@ -88,6 +89,14 @@ void GameClearScene::Update() {
 
 	// ゲームオブジェクト更新
 	UpdateGameObjects();
+
+	// タイトルシーンに移動
+	if (Input::GetInstance()->IsKeyTrigger(DIK_SPACE) ||
+		Input::GetInstance()->IsGamePadButtonTrigger(Input::GamePadButton::A) ) {
+		// フェードを使った遷移
+		SceneTransitionHelper::FadeToScene("TitleScene", 1.0f);
+		return; // 以降の処理をスキップ
+	}
 }
 
 void GameClearScene::UpdateGameObjects() {

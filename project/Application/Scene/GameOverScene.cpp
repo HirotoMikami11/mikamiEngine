@@ -1,5 +1,6 @@
 #include "GameOverScene.h"
 #include "Managers/ImGui/ImGuiManager.h" 
+#include "Managers/Transition/SceneTransitionHelper.h" 
 #include <numbers> 
 
 GameOverScene::GameOverScene()
@@ -95,6 +96,15 @@ void GameOverScene::Update() {
 
 	// ゲームオブジェクト更新
 	UpdateGameObjects();
+
+
+	// タイトルシーンに移動
+	if (Input::GetInstance()->IsKeyTrigger(DIK_SPACE) ||
+		Input::GetInstance()->IsGamePadButtonTrigger(Input::GamePadButton::A)) {
+		// フェードを使った遷移
+		SceneTransitionHelper::FadeToScene("TitleScene", 1.0f);
+		return; // 以降の処理をスキップ
+	}
 }
 
 void GameOverScene::UpdateGameObjects() {
