@@ -4,7 +4,7 @@
 #include "Structures.h"
 
 /// <summary>
-/// スプライトの共通部分
+/// modelの共通部分
 /// </summary>
 class Object3DCommon
 {

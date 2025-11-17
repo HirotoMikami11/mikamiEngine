@@ -5,7 +5,7 @@ FrameTimer::FrameTimer()
 	: deltaTime_(0.0f)
 	, totalTime_(0.0f)
 	, fps_(0.0f)
-	, fpsUpdateInterval_(1.0f)  // 1秒間隔でFPS更新
+	, fpsUpdateInterval_(0.1f)  // 0.1秒間隔でFPS更新
 	, fpsTimer_(0.0f)
 	, fpsFrameCount_(0)
 {
