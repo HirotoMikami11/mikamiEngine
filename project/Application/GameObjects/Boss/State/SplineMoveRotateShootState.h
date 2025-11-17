@@ -3,47 +3,64 @@
 #include <string>
 
 /// <summary>
-/// スプライン移動 → 停止 → 頭部回転 → 弾発射 を行う State。
-/// ・スプライン上を移動し、指定位置で停止
-/// ・停止後、startAngle → endAngle を往復回転
-/// ・回転中に弾を発射（間隔指定）
-/// ・指定往復回数で終了
+/// 指定インデックスで停止し弾を発射してから再び移動するState
+/// 1. 初期化: CSVから制御点を読み込み、開始位置にワープ
+/// 2. 移動: 指定された制御点インデックスまで移動
+/// 3. 停止: 制御点位置で停止
+/// 4. 回転・発射: 角度1→停止→角度2→停止 を往復（発射は回転中のみ）
+/// 5. 移動再開: 制御点から終点まで移動
+/// 6. 完了: Idle状態へ遷移
 /// </summary>
 class SplineMoveRotateShootState : public BossState {
 public:
 
 	/// <summary>
-	/// 処理フェーズ
+	/// メインフェーズ
 	/// </summary>
 	enum class Phase {
-		Moving,     // スプライン移動中
-		Stopping,   // 停止直後（初期化）
-		Rotating,   // 頭部回転（往復あり）
-		Shooting,   // （未使用に近い）単発射撃フェーズ
-		Completed   // 完了 → Idle へ遷移
+		Initializing,    // 初期化中（制御点読み込み、ワープ）
+		MovingToStop,    // 停止位置（制御点）まで移動
+		Stopping,        // 停止処理（回転フェーズへの準備）
+		Rotating,        // 回転・発射フェーズ
+		MovingToEnd,     // 停止位置から終点まで移動
+		Completed        // 完了 → Idle へ遷移
+	};
+
+	/// <summary>
+	/// 回転フェーズのサブステート
+	/// startAngle(角度1) ←→ endAngle(角度2) を往復
+	/// </summary>
+	enum class RotatingSubPhase {
+		RotatingToEnd,       // startAngle → endAngle へ回転（発射あり）
+		IntervalAtEnd,       // endAngle で待機（発射なし）
+		RotatingToStart,     // endAngle → startAngle へ回転（発射あり）
+		IntervalAtStart,     // startAngle で待機（発射なし）
 	};
 
 	SplineMoveRotateShootState() = default;
 	~SplineMoveRotateShootState() override = default;
 
 	/// <summary>
-	/// コンストラクタ（動作パラメータ指定版）
+	/// コンストラクタ
 	/// </summary>
 	/// <param name="csvFilePath">スプライン制御点のCSVパス</param>
+	/// <param name="stopControlPointIndex">停止する制御点のインデックス（0-based）</param>
 	/// <param name="startAngle">回転開始角度（度）</param>
 	/// <param name="endAngle">回転終了角度（度）</param>
 	/// <param name="rotationSpeed">回転速度（度/フレーム）</param>
-	/// <param name="bulletSpeed">撃つ弾の速度</param>
-	/// <param name="maxRepeatCount">
-	/// 回転往復回数（開始→終了→開始で1往復）。
-	/// 実際は 端到達回数 = 往復数 * 2 で制御。
-	/// </param>
+	/// <param name="shootInterval">発射間隔（フレーム）</param>
+	/// <param name="bulletSpeed">弾の速度</param>
+	/// <param name="angleIntervalDuration">角度到達時の停止時間（フレーム）</param>
+	/// <param name="maxRepeatCount">往復回数（1往復 = 角度1→角度2→角度1）</param>
 	explicit SplineMoveRotateShootState(
 		const std::string& csvFilePath,
+		int stopControlPointIndex = 2,
 		float startAngle = -60.0f,
 		float endAngle = 60.0f,
 		float rotationSpeed = 2.0f,
+		int shootInterval = 4,
 		float bulletSpeed = 0.3f,
+		int angleIntervalDuration = 30,
 		int maxRepeatCount = 1
 	);
 
@@ -68,61 +85,111 @@ public:
 	const char* GetStateName() const override { return "SplineMoveRotateShoot"; }
 
 private:
-
 	/// <summary>
-	/// 初回のみ行う CSV からのスプラインロードとセットアップ
+	/// CSVからスプラインをロードし、初期位置にワープ
 	/// </summary>
 	bool LoadAndSetup(Boss* boss);
 
 	/// <summary>
-	/// スプライン移動フェーズ
+	/// 制御点インデックスから対応するtパラメータを計算
 	/// </summary>
-	void UpdateMovingPhase(Boss* boss);
+	/// <param name="controlPointIndex">制御点のインデックス</param>
+	/// <param name="totalControlPoints">制御点の総数</param>
+	/// <returns>対応するtパラメータ（0.0～1.0）</returns>
+	float CalculateTFromControlPointIndex(int controlPointIndex, size_t totalControlPoints) const;
+
+
+	// フェーズ別更新処理
 
 	/// <summary>
-	///停止フェーズ → 回転フェーズのセットアップ
+	/// 初期化フェーズ
+	/// </summary>
+	void UpdateInitializingPhase(Boss* boss);
+
+	/// <summary>
+	/// 停止位置まで移動フェーズ
+	/// </summary>
+	void UpdateMovingToStopPhase(Boss* boss);
+
+	/// <summary>
+	/// 停止処理フェーズ
 	/// </summary>
 	void UpdateStoppingPhase(Boss* boss);
 
 	/// <summary>
-	/// 頭部回転フェーズ（start ↔ end の往復回転）
-	/// 回転中に一定間隔で弾を発射
+	/// 回転・発射フェーズ
 	/// </summary>
 	void UpdateRotatingPhase(Boss* boss);
 
 	/// <summary>
-	///単発処理フェーズ（消す）
+	/// 終点まで移動フェーズ
 	/// </summary>
-	void UpdateShootingPhase(Boss* boss);
+	void UpdateMovingToEndPhase(Boss* boss);
+
+
+	// 回転フェーズのサブ処理
+
+	/// <summary>
+	/// startAngleからendAngleへ回転（発射あり）
+	/// </summary>
+	void UpdateRotatingToEnd(Boss* boss);
+
+	/// <summary>
+	/// endAngleで待機（発射なし）
+	/// </summary>
+	void UpdateIntervalAtEnd(Boss* boss);
+
+	/// <summary>
+	/// endAngleからstartAngleへ回転発射
+	/// </summary>
+	void UpdateRotatingToStart(Boss* boss);
+
+	/// <summary>
+	/// startAngle 待機（発射なし）
+	/// </summary>
+	void UpdateIntervalAtStart(Boss* boss);
+
 
 	/// <summary>
 	/// 頭パーツの向いている方向に弾を発射
 	/// </summary>
 	void ShootBulletFromHead(Boss* boss);
 
+	/// <summary>
+	/// 現在位置と向きを更新
+	/// </summary>
+	void UpdatePositionAndRotation(Boss* boss);
+
 private:
 
+
 	// パラメータ
+	std::string csvFilePath_;			// スプライン制御点CSVパス
+	int stopControlPointIndex_ = 2;		// 停止する制御点のインデックス
+	float startAngle_ = -60.0f;			// 回転開始角度（度）
+	float endAngle_ = 60.0f;			// 回転終了角度（度）
+	float rotationSpeed_ = 2.0f;		// 回転速度（度/フレーム）
+	int shootInterval_ = 4;				// 発射間隔（フレーム）
+	float bulletSpeed_ = 0.3f;			// 弾の速度
+	int angleIntervalDuration_ = 30;	// 角度到達時の停止時間（フレーム）
+	int maxRepeatCount_ = 2;			// 往復回数
 
-	std::string csvFilePath_;	// スプライン制御点 CSV パス
-	Phase currentPhase_ = Phase::Moving;// 現在のフェーズ
-	bool isInitialized_ = false;		// 初期化済か？
-	Boss* boss_ = nullptr;				// 所属ボス
 
-	float startAngle_;			// 回転開始角度（度）
-	float endAngle_;			// 回転終了角度（度）
-	float rotationSpeed_;		// 回転速度（度/フレーム）
-	float currentAngle_;				// 現在の角度
-	float baseRotationY_;				// 停止時の頭部角度(Y軸)
-	float bulletSpeed_;			// 弾の速度
-	float stopProgress_; // スプライン上で停止する位置（0.0〜1.0）
-	float moveProgress_;				// 移動進捗(0〜1)
-	int shootInterval_;					// 発射間隔(フレーム)
-	int shootTimer_;					// 発射タイマー
-	bool hasReachedStop_ = false;		// 停止地点に到達したか？
-	//往復回転制御
+	// 状態管理
+	Phase currentPhase_ = Phase::Initializing;
+	RotatingSubPhase rotatingSubPhase_ = RotatingSubPhase::RotatingToEnd;
 
-	int currentRepeatCount_ = 0;         // 端到達回数（往復*2）
-	int maxRepeatCount_ = 1;             // 設定往復回数
-	bool rotatingForward_ = true;        // true＝start→end、false＝end→start
+	bool isInitialized_ = false;
+	Boss* boss_ = nullptr;
+
+	// 移動制御
+	float stopProgress_ = 0.0f;			// 停止位置のprogress値
+	float currentProgress_ = 0.0f;		// 現在のprogress値
+
+	// 回転制御
+	float currentAngle_ = 0.0f;			// 現在の角度（度）
+	float baseRotationY_ = 0.0f;		// 停止時の頭部基準角度（Y軸、ラジアン）
+	int currentRepeatCount_ = 0;		// 現在の往復回数
+	int shootTimer_ = 0;				// 発射タイマー
+	int intervalTimer_ = 0;				// インターバルタイマー
 };

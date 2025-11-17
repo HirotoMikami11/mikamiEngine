@@ -49,15 +49,10 @@ void DebugScene::InitializeGameObjects() {
 	///*-----------------------------------------------------------------------*///
 	///									球体										///
 	///*-----------------------------------------------------------------------*///
-	Vector3Transform transformSphere{
-		{1.0f, 1.0f, 1.0f},
-		{0.0f, -std::numbers::pi_v<float>*0.5f, 0.0f},
-		{0.0f, 0.0f, 0.0f}
-	};
 
-	sphere_ = std::make_unique<Sphere>();
-	sphere_->Initialize(dxCommon_, "sphere", "monsterBall");
-	sphere_->SetTransform(transformSphere);
+	sphere_ = std::make_unique<DebugSphere>();
+	sphere_->Initialize(dxCommon_);
+
 
 	///*-----------------------------------------------------------------------*///
 	///								地面									///
