@@ -1,5 +1,5 @@
 #include "ModelManager.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 #include <cassert>
 #include <algorithm>
 #include <vector>
@@ -14,7 +14,7 @@ ModelManager::~ModelManager() {
 }
 
 void ModelManager::Initialize(DirectXCommon* dxCommon) {
-	dxCommon_ = dxCommon;
+	directXCommon_ = dxCommon;
 	textureManager_ = TextureManager::GetInstance();
 
 	Logger::Log(Logger::GetStream(), "ModelManager initialized !!\n");
@@ -23,7 +23,7 @@ void ModelManager::Initialize(DirectXCommon* dxCommon) {
 void ModelManager::Finalize() {
 	// 全てのモデルを解放
 	UnloadAll();
-	dxCommon_ = nullptr;
+	directXCommon_ = nullptr;
 	textureManager_ = nullptr;
 }
 
@@ -38,7 +38,7 @@ bool ModelManager::LoadModel(const std::string& directoryPath, const std::string
 	auto model = std::make_unique<Model>();
 
 	// モデルをロード
-	if (!model->LoadFromOBJ(directoryPath, filename, dxCommon_)) {
+	if (!model->LoadFromOBJ(directoryPath, filename, directXCommon_)) {
 		Logger::Log(Logger::GetStream(), std::format("Failed to load model: {} from {}\n", filename, directoryPath));
 		return false;
 	}
@@ -61,7 +61,7 @@ bool ModelManager::LoadPrimitive(MeshType meshType, const std::string& tagName) 
 	auto model = std::make_unique<Model>();
 
 	// プリミティブモデルをロード
-	if (!model->LoadFromPrimitive(meshType, dxCommon_)) {
+	if (!model->LoadFromPrimitive(meshType, directXCommon_)) {
 		Logger::Log(Logger::GetStream(), std::format("Failed to load primitive model: {}\n", Mesh::MeshTypeToString(meshType)));
 		return false;
 	}

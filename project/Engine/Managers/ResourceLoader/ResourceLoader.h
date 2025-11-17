@@ -2,9 +2,9 @@
 #include <string>
 #include <vector>
 
-#include "Managers/Texture/TextureManager.h"
-#include "Managers/Model/ModelManager.h"
-#include "Managers/Audio/AudioManager.h"
+#include "Texture/TextureManager.h"
+#include "Model/ModelManager.h"
+#include "Audio/AudioManager.h"
 #include "Logger.h"
 
 /// <summary>

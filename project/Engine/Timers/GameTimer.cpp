@@ -1,6 +1,6 @@
 #define NOMINMAX
 #include "GameTimer.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 #include <algorithm>
 
 GameTimer::GameTimer()

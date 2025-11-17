@@ -1,5 +1,5 @@
 #include "TextureManager.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 
 // シングルトンインスタンス
 TextureManager* TextureManager::GetInstance() {
@@ -12,7 +12,7 @@ TextureManager::~TextureManager() {
 }
 
 void TextureManager::Initialize(DirectXCommon* dxCommon) {
-	dxCommon_ = dxCommon;
+	directXCommon_ = dxCommon;
 
 	// 初期化できたらログを出す
 	Logger::Log(Logger::GetStream(), "Complete TextureManager initialized !!\n");
@@ -21,7 +21,7 @@ void TextureManager::Initialize(DirectXCommon* dxCommon) {
 void TextureManager::Finalize() {
 	// 全てのテクスチャを解放
 	UnloadAll();
-	dxCommon_ = nullptr;
+	directXCommon_ = nullptr;
 }
 bool TextureManager::LoadTexture(const std::string& filename, const std::string& tagName) {
 
@@ -32,7 +32,7 @@ bool TextureManager::LoadTexture(const std::string& filename, const std::string&
 	}
 
 	// DescriptorHeapManagerからSRVを割り当て
-	auto descriptorManager = dxCommon_->GetDescriptorManager();
+	auto descriptorManager = directXCommon_->GetDescriptorManager();
 	if (!descriptorManager) {
 		// DescriptorManagerが無効な場合はログを出力
 		Logger::Log(Logger::GetStream(), "DescriptorManager is null\n");
@@ -51,7 +51,7 @@ bool TextureManager::LoadTexture(const std::string& filename, const std::string&
 	// 新しいテクスチャを作成し、既に割り当てられたハンドルを使用
 	auto texture = std::make_unique<Texture>();
 	// テクスチャをロード
-	if (!texture->LoadTextureWithHandle(filename, dxCommon_, descriptorHandle)) {
+	if (!texture->LoadTextureWithHandle(filename, directXCommon_, descriptorHandle)) {
 		// ロードに失敗した場合はSRVを解放
 		descriptorManager->ReleaseSRV(descriptorHandle.index);
 		return false;
@@ -104,7 +104,7 @@ void TextureManager::UnloadTexture(const std::string& tagName) {
 	auto textureIt = textures_.find(tagName);
 	if (textureIt != textures_.end()) {
 		// テクスチャをアンロード（内部でSRVも解放される）
-		textureIt->second->Unload(dxCommon_);
+		textureIt->second->Unload(directXCommon_);
 
 		// マップから削除
 		textures_.erase(textureIt);
@@ -118,7 +118,7 @@ void TextureManager::UnloadAll() {
 	for (const auto& pair : textures_) {
 		Logger::Log(Logger::GetStream(),
 			std::format("Unloading texture: {}\n", pair.first));
-		pair.second->Unload(dxCommon_);
+		pair.second->Unload(directXCommon_);
 	}
 
 	textures_.clear();
@@ -146,7 +146,7 @@ std::vector<std::string> TextureManager::GetTextureTagList() const {
 
 
 uint32_t TextureManager::GetAvailableSRVCount() const {
-	auto descriptorManager = dxCommon_->GetDescriptorManager();
+	auto descriptorManager = directXCommon_->GetDescriptorManager();
 	if (descriptorManager) {
 		return descriptorManager->GetAvailableCount(DescriptorHeapManager::HeapType::SRV);
 	}
@@ -154,7 +154,7 @@ uint32_t TextureManager::GetAvailableSRVCount() const {
 }
 
 uint32_t TextureManager::GetUsedSRVCount() const {
-	auto descriptorManager = dxCommon_->GetDescriptorManager();
+	auto descriptorManager = directXCommon_->GetDescriptorManager();
 	if (descriptorManager) {
 		return descriptorManager->GetUsedCount(DescriptorHeapManager::HeapType::SRV);
 	}

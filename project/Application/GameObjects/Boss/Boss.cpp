@@ -7,7 +7,7 @@
 #include "State/SplineMoveState.h"
 #include "State/SplineMove8WayShootState.h"
 #include "State/SplineMoveRotateShootState.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 #include "Bullet/BossBullet.h"
 
 Boss::Boss()
@@ -283,6 +283,12 @@ void Boss::ImGui() {
 				tail_->ImGui("Tail (Green)");
 			}
 		}
+
+
+		if (ImGui::CollapsingHeader("Bullet")) {
+			ImGui::Text("bullet size: %zu", bossBullets_.size());
+		}
+
 
 		// スプラインシステム
 		if (ImGui::CollapsingHeader("Spline System")) {

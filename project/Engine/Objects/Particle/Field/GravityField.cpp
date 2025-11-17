@@ -1,5 +1,5 @@
 #include "GravityField.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 #include <cmath>
 
 void GravityField::Initialize(DirectXCommon* dxCommon)

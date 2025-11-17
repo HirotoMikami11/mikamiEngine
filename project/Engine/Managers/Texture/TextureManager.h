@@ -9,7 +9,7 @@
 
 #include "DirectXCommon.h"
 #include "Logger.h"
-#include "Managers/Texture/Texture.h"
+#include "Texture/Texture.h"
 
 class DirectXCommon;
 
@@ -117,7 +117,7 @@ private:
 	TextureManager& operator=(const TextureManager&) = delete;
 
 	//DirectXCommonへのポインタ
-	DirectXCommon* dxCommon_ = nullptr;
+	DirectXCommon* directXCommon_ = nullptr;
 
 	// テクスチャの管理用マップ（tagNameからTextureを見つける）
 	std::map<std::string, std::unique_ptr<Texture>> textures_;

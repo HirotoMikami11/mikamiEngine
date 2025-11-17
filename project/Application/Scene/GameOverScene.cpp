@@ -1,6 +1,6 @@
 #include "GameOverScene.h"
-#include "Managers/ImGui/ImGuiManager.h" 
-#include "Managers/Transition/SceneTransitionHelper.h" 
+#include "ImGui/ImGuiManager.h" 
+#include "Transition/SceneTransitionHelper.h" 
 #include <numbers> 
 
 GameOverScene::GameOverScene()

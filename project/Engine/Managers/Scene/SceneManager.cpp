@@ -1,8 +1,8 @@
 #include "SceneManager.h"
 #include <cassert>
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 #include "Logger.h"
-#include "Managers/ObjectID/ObjectIDManager.h"
+#include "ObjectID/ObjectIDManager.h"
 
 SceneManager* SceneManager::GetInstance() {
 	static SceneManager instance;

@@ -1,6 +1,6 @@
 #include "GameClearScene.h"
-#include "Managers/ImGui/ImGuiManager.h" 
-#include "Managers/Transition/SceneTransitionHelper.h" 
+#include "ImGui/ImGuiManager.h" 
+#include "Transition/SceneTransitionHelper.h" 
 #include <numbers> 
 
 GameClearScene::GameClearScene()

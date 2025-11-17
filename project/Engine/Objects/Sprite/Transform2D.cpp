@@ -1,5 +1,5 @@
 #include "Transform2D.h"
-#include "Managers/ImGui/ImGuiManager.h" 
+#include "ImGui/ImGuiManager.h" 
 
 void Transform2D::Initialize(DirectXCommon* dxCommon)
 {

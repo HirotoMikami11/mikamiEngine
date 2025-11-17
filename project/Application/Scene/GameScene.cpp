@@ -1,5 +1,6 @@
 #include "GameScene.h"
-#include "Managers/ImGui/ImGuiManager.h" 
+#include "ImGui/ImGuiManager.h" 
+#include "Transition/SceneTransitionHelper.h" 
 #include <numbers> 
 
 GameScene::GameScene()
@@ -23,12 +24,12 @@ void GameScene::ConfigureOffscreenEffects()
 	offscreenRenderer_->DisableAllEffects();
 
 	auto* depthFogEffect = offscreenRenderer_->GetDepthFogEffect();
-if (depthFogEffect) {
-	depthFogEffect->SetEnabled(true);
-	depthFogEffect->SetFogDistance(0.1f, 119.0f); // 深度フォグの距離を設定
-	depthFogEffect->SetFogColor({0.0f,0.0f,0.0f,1.0f});
+	if (depthFogEffect) {
+		depthFogEffect->SetEnabled(true);
+		depthFogEffect->SetFogDistance(0.1f, 119.0f); // 深度フォグの距離を設定
+		depthFogEffect->SetFogColor({ 0.0f,0.0f,0.0f,1.0f });
 
-}
+	}
 }
 
 void GameScene::Initialize() {
@@ -112,6 +113,22 @@ void GameScene::Update() {
 	//当たり判定の更新
 	UpdateCollison();
 
+	//クリア・デス判定
+	
+	if (boss_->GetCurrentPhase() == BossPhase::Death) {
+		// フェードを使った遷移
+		SceneTransitionHelper::FadeToScene("GameClearScene", 1.0f);
+		return; // 以降の処理をスキップ
+	}
+
+	if (!player_->GetIsAlive()) {
+		// フェードを使った遷移
+		SceneTransitionHelper::FadeToScene("GameOverScene", 1.0f);
+		return; // 以降の処理をスキップ
+	}
+
+
+
 }
 
 void GameScene::UpdateGameObjects() {
@@ -120,7 +137,7 @@ void GameScene::UpdateGameObjects() {
 	viewProjectionMatrixSprite = cameraController_->GetViewProjectionMatrixSprite();
 
 	// 自機の更新
-	player_->Update(viewProjectionMatrix);
+	player_->Update(viewProjectionMatrix, viewProjectionMatrixSprite);
 
 	// ボスの更新
 	boss_->Update(viewProjectionMatrix, viewProjectionMatrixSprite);
@@ -203,6 +220,7 @@ void GameScene::DrawBackBuffer() {
 	/// 
 
 	boss_->DrawUI();
+	player_->DrawUI();
 
 }
 

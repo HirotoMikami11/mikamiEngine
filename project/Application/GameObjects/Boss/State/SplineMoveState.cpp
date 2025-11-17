@@ -2,7 +2,7 @@
 #include "State/IdleState.h"
 #include "Boss.h"
 #include "CSVUtility.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 #include <format>
 
 SplineMoveState::SplineMoveState(const std::string& csvFilePath)

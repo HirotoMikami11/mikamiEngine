@@ -33,7 +33,7 @@ void BossBullet::Initialize(DirectXCommon* dxCommon, const Vector3& position, co
 	SetRadius(1.0f);  // Colliderの半径をセット
 
 	// 攻撃力を設定
-	SetAttackPower(15.0f);
+	SetAttackPower(5.0f);
 
 	// 衝突属性の設定
 	SetCollisionAttribute(kCollisionAttributeEnemyBullet);

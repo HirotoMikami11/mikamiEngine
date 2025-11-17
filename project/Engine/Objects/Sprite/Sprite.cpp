@@ -1,7 +1,7 @@
 #include "Sprite.h"
 #include <cassert>
 #include <cstring>
-#include "Managers/ImGui/ImGuiManager.h" 
+#include "ImGui/ImGuiManager.h" 
 
 void Sprite::Initialize(DirectXCommon* dxCommon, const std::string& textureName, const Vector2& center, const Vector2& size, const Vector2& anchor)
 {

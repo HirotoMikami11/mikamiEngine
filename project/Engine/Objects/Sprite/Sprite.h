@@ -11,8 +11,8 @@
 #include "Transform2D.h"  // Transform2D
 #include "SpriteCommon.h" //共通設定
 
-#include "Managers/Texture/TextureManager.h"
-#include "Managers/ObjectID/ObjectIDManager.h"
+#include "Texture/TextureManager.h"
+#include "ObjectID/ObjectIDManager.h"
 using namespace MyMath;
 
 
@@ -193,8 +193,8 @@ private:
 	float uvRotateZ_ = 0.0f;
 
 	//反転フラグ
-	bool isFlipX_;//左右反転
-	bool isFlipY_;//上下判定
+	bool isFlipX_ = false;//左右反転
+	bool isFlipY_ = false;//上下判定
 
 	// テクスチャ切り出し用のパラメータ
 	Vector2 texLeftTop_{ 0.0f, 0.0f };		// テクスチャ左上座標

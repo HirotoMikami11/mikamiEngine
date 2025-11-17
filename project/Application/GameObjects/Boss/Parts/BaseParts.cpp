@@ -1,5 +1,5 @@
 #include "Parts/BaseParts.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 
 void BaseParts::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	directXCommon_ = dxCommon;

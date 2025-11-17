@@ -36,13 +36,17 @@ void Player::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	// 速度の初期化
 	velocity_ = { 0.0f, 0.0f, 0.0f };
 
+	//UIクラスの初期化
+	playerUI_ = std::make_unique<PlayerUI>();
+	playerUI_->Initialize(directXCommon_);
+
 	// 衝突判定の設定
 	SetRadius(0.5f);  // 半径を0.5fに設定
 	SetCollisionAttribute(kCollisionAttributePlayer);	// 自分の属性をPlayerに設定
 	SetCollisionMask(kCollisionAttributeEnemyBullet);	// 敵弾と衝突するように設定
 }
 
-void Player::Update(const Matrix4x4& viewProjectionMatrix) {
+void Player::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewProjectionMatirxSprite) {
 	// 移動処理
 	ProcessMovement();
 
@@ -72,11 +76,26 @@ void Player::Update(const Matrix4x4& viewProjectionMatrix) {
 
 	// 行列更新
 	gameObject_->Update(viewProjectionMatrix);
+	// UIの更新
+	playerUI_->Update(HP_, maxHP_, viewProjectionMatirxSprite);
 
 	// デバッグ表示が有効な場合、コライダーを描画
 #ifdef USEIMGUI
 	DebugLineAdd();
 #endif
+}
+
+void Player::TakeDamage(float damage)
+{
+	if (!isAlive_) { return; }
+
+	//HPを減らす
+	HP_ -= damage;
+
+	//HPが０以下で死亡
+	if (HP_ <= 0) {
+		isAlive_ = false;
+	}
 }
 
 void Player::ProcessMovement() {
@@ -279,21 +298,46 @@ void Player::Draw(const Light& directionalLight) {
 	}
 }
 
+void Player::DrawUI()
+{
+	playerUI_->Draw();
+}
+
 void Player::ImGui() {
 #ifdef USEIMGUI
 	if (ImGui::TreeNode("Player")) {
 
+		// HP情報
+		if (ImGui::CollapsingHeader("HP")) {
+			ImGui::Text("Boss HP: %.1f / %.1f", HP_, maxHP_);
+			float hpPercentage = (maxHP_ > 0.0f) ? (HP_ / maxHP_) * 100.0f : 0.0f;
+			ImGui::ProgressBar(HP_ / maxHP_, ImVec2(0.0f, 0.0f), std::format("{:.1f}%%", hpPercentage).c_str());
+
+			// HPのリセットボタン
+			if (ImGui::Button("Reset HP")) {
+				HP_ = maxHP_;
+			}
+
+			// HPダメージ
+			if (ImGui::Button("Take Damage 50")) {
+				TakeDamage(50);
+			}
+			//UI情報
+			playerUI_->ImGui();
+
+		}
+
 		// 移動パラメータ 
 		if (ImGui::CollapsingHeader("Movement")) {
+			//移動
 			ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f, -10.0f, 10.0f, "%.2f");
 			ImGui::DragFloat("Acceleration", &acceleration_, 0.01f, 0.0f, 2.0f, "%.2f");
 			ImGui::DragFloat("Max Run Speed", &limitRunSpeed_, 0.1f, 0.0f, 20.0f, "%.2f");
 			ImGui::DragFloat("Attenuation", &attenuation_, 0.01f, 0.0f, 1.0f, "%.2f");
-		}
 
-		// 回転パラメータ
-		if (ImGui::CollapsingHeader("Rotation")) {
+			//回転
 			ImGui::DragFloat("Rotation Speed", &rotationSpeed_, 0.01f, 0.0f, 1.0f, "%.2f");
+
 		}
 
 		// 弾パラメータ
@@ -318,13 +362,14 @@ void Player::ImGui() {
 
 void Player::OnCollision(Collider* other) {
 	// 衝突時の処理
-	// Enemyとの衝突処理
 	uint32_t otherAttribute = other->GetCollisionAttribute();
 
-	if (otherAttribute & kCollisionAttributeEnemy) {
-		// Enemyとの衝突処理
-		// 例: ダメージを受けるなど（今回は特に処理なし）
+	//敵弾との処理
+	if (otherAttribute & kCollisionAttributeEnemyBullet) {
+		//敵弾攻撃力分のダメージを受ける
+		TakeDamage(other->GetAttackPower());
 	}
+
 }
 
 Vector3 Player::GetWorldPosition() {

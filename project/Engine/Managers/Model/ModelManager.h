@@ -4,7 +4,7 @@
 #include <memory>
 #include "DirectXCommon.h"
 #include "Model.h"
-#include "Managers/Texture/TextureManager.h"
+#include "Texture/TextureManager.h"
 #include "Logger.h"
 
 /// <summary>
@@ -84,7 +84,7 @@ private:
 	ModelManager(const ModelManager&) = delete;
 	ModelManager& operator=(const ModelManager&) = delete;
 
-	DirectXCommon* dxCommon_ = nullptr;
+	DirectXCommon* directXCommon_ = nullptr;
 	TextureManager* textureManager_ = nullptr;
 
 	// モデルの管理用マップ（tagNameからModelを見つける）

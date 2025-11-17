@@ -1,6 +1,6 @@
 #include "State/IdleState.h"
 #include "Boss.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 
 void IdleState::Initialize() {
 	// 待機状態では特に初期化処理なし

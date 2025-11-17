@@ -78,7 +78,7 @@ private:
 
 private:
 	// システム参照
-	DirectXCommon* dxCommon_ = nullptr;
+	DirectXCommon* directXCommon_ = nullptr;
 
 	// 頂点データ（大きな三角形用）
 	struct FullscreenVertex {

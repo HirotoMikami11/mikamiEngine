@@ -1,5 +1,5 @@
 #include "AccelerationField.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 
 void AccelerationField::Initialize(DirectXCommon* dxCommon)
 {

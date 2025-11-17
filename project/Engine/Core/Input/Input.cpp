@@ -6,7 +6,7 @@
 #include <cmath>
 
 #include "Input.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 #include <cassert>
 
 

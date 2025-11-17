@@ -1,8 +1,8 @@
 #include "PostProcessChain.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 
 void PostProcessChain::Initialize(DirectXCommon* dxCommon, uint32_t width, uint32_t height) {
-	dxCommon_ = dxCommon;
+	directXCommon_ = dxCommon;
 	width_ = width;
 	height_ = height;
 
@@ -13,7 +13,7 @@ void PostProcessChain::Initialize(DirectXCommon* dxCommon, uint32_t width, uint3
 
 	// エフェクト描画用OffscreenTriangle初期化（Sprite置き換え）
 	offscreenTriangle_ = std::make_unique<OffscreenTriangle>();
-	offscreenTriangle_->Initialize(dxCommon_);
+	offscreenTriangle_->Initialize(directXCommon_);
 
 	isInitialized_ = true;
 	Logger::Log(Logger::GetStream(), "PostProcessChain initialized with OffscreenTriangle!\n");
@@ -35,7 +35,7 @@ void PostProcessChain::Finalize() {
 	}
 
 	// ディスクリプタの解放
-	auto descriptorManager = dxCommon_->GetDescriptorManager();
+	auto descriptorManager = directXCommon_->GetDescriptorManager();
 	if (descriptorManager) {
 		for (int i = 0; i < 2; ++i) {
 			if (intermediateSRVHandles_[i].isValid) {
@@ -84,7 +84,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE PostProcessChain::ApplyEffects(D3D12_GPU_DESCRIPTOR_
 		return inputSRV;
 	}
 
-	auto commandList = dxCommon_->GetCommandList();
+	auto commandList = directXCommon_->GetCommandList();
 	D3D12_GPU_DESCRIPTOR_HANDLE currentInput = inputSRV;
 	int bufferIndex = 0;
 
@@ -147,7 +147,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE PostProcessChain::ApplyEffectsWithDepth(D3D12_GPU_DE
 		return inputSRV;
 	}
 
-	auto commandList = dxCommon_->GetCommandList();
+	auto commandList = directXCommon_->GetCommandList();
 	D3D12_GPU_DESCRIPTOR_HANDLE currentInput = inputSRV;
 	int bufferIndex = 0;
 
@@ -226,7 +226,7 @@ void PostProcessChain::CreateIntermediateBuffers() {
 
 	// 2つの中間バッファを作成
 	for (int i = 0; i < 2; ++i) {
-		HRESULT hr = dxCommon_->GetDevice()->CreateCommittedResource(
+		HRESULT hr = directXCommon_->GetDevice()->CreateCommittedResource(
 			&heapProperties,
 			D3D12_HEAP_FLAG_NONE,
 			&resourceDesc,
@@ -241,7 +241,7 @@ void PostProcessChain::CreateIntermediateBuffers() {
 }
 
 void PostProcessChain::CreateIntermediateSRVs() {
-	auto descriptorManager = dxCommon_->GetDescriptorManager();
+	auto descriptorManager = directXCommon_->GetDescriptorManager();
 
 	for (int i = 0; i < 2; ++i) {
 		// SRV作成（割り当て + ビュー作成を実行）
@@ -263,7 +263,7 @@ void PostProcessChain::CreateIntermediateSRVs() {
 }
 
 void PostProcessChain::CreateIntermediateRTVs() {
-	auto descriptorManager = dxCommon_->GetDescriptorManager();
+	auto descriptorManager = directXCommon_->GetDescriptorManager();
 
 	for (int i = 0; i < 2; ++i) {
 		// RTV作成（割り当て + ビュー作成を実行）

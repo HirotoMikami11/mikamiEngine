@@ -5,9 +5,9 @@
 #include "Transform3D.h"
 #include "Object3DCommon.h"
 #include "Light.h"
-#include "Managers/Texture/TextureManager.h"
-#include "Managers/Model/ModelManager.h"
-#include "Managers/ObjectID/ObjectIDManager.h"
+#include "Texture/TextureManager.h"
+#include "Model/ModelManager.h"
+#include "ObjectID/ObjectIDManager.h"
 
 /// <summary>
 /// ゲームオブジェクト - 共有モデル（メッシュ）と個別Transform、個別マテリアル

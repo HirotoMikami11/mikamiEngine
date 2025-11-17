@@ -1,6 +1,6 @@
 #include "ParticleEmitter.h"
 #include "ParticleGroup.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 
 void ParticleEmitter::Initialize(DirectXCommon* dxCommon, const std::string& targetGroupName)
 {

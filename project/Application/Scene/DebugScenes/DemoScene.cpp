@@ -1,5 +1,5 @@
 #include "DemoScene.h"
-#include "Managers/ImGui/ImGuiManager.h" 
+#include "ImGui/ImGuiManager.h" 
 #include "GameTimer.h"
 #include <numbers> 
 ///使用するフィールド

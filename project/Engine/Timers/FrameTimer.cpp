@@ -1,5 +1,5 @@
 #include "FrameTimer.h"
-#include "Managers/ImGui/ImGuiManager.h" 
+#include "ImGui/ImGuiManager.h" 
 
 FrameTimer::FrameTimer()
 	: deltaTime_(0.0f)

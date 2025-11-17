@@ -2,7 +2,7 @@
 #include "State/IdleState.h"
 #include "Boss.h"
 #include "CSVUtility.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 #include "BossSplineMovement.h"
 #include "BossSplineTrack.h"
 #include <format>
@@ -184,7 +184,7 @@ void SplineMove8WayShootState::ShootBulletsFrom8Directions(Boss* boss) {
 	// 8方向のベクトル（XZ平面、Y=0）
 	float angleStep = DegToRad(180.0f);
 	std::vector<Vector3> directions;
-	for (int i = 0; i < 8; ++i) {
+	for (int i = 0; i < 2; ++i) {
 		float angle = angleStep * i;
 		Vector3 dir = {
 			std::sin(angle) * bulletSpeed_,

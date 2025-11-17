@@ -1,5 +1,5 @@
 #include "ResourceLoader.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 
 ResourceLoader* ResourceLoader::GetInstance() {
 	static ResourceLoader instance;

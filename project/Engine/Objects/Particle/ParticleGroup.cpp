@@ -1,7 +1,7 @@
 #define NOMINMAX
 #include "ParticleGroup.h"
 #include "BaseField.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 #include "Logger.h"
 #include <algorithm>
 

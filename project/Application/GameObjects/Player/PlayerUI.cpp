@@ -1,13 +1,13 @@
-#include "BossUI.h"
+#include "PlayerUI.h"
 #include "ImGui/ImGuiManager.h"
 
-void BossUI::Initialize(DirectXCommon* dxCommon) {
+void PlayerUI::Initialize(DirectXCommon* dxCommon) {
 	directXCommon_ = dxCommon;
 	InitializeGauges();
 
 }
 
-void BossUI::Update(float currentHP, float maxHP, const Matrix4x4& viewProjectionMatrixSprite) {
+void PlayerUI::Update(float currentHP, float maxHP, const Matrix4x4& viewProjectionMatrixSprite) {
 	UpdateGauges(currentHP, maxHP);
 
 	// 全スプライトの更新
@@ -17,19 +17,19 @@ void BossUI::Update(float currentHP, float maxHP, const Matrix4x4& viewProjectio
 
 }
 
-void BossUI::Draw() {
+void PlayerUI::Draw() {
 	// HPゲージの描画
 	if (hpGaugeBar_) hpGaugeBar_->Draw();
 	if (hpGaugeFill_) hpGaugeFill_->Draw();
 	if (hpGaugeLight_) hpGaugeLight_->Draw();
 }
 
-void BossUI::InitializeGauges() {
+void PlayerUI::InitializeGauges() {
 
 	//パラメータ
 	frameOffset_ = { 5.0f,5.0f };
 	gaugeSize_ = { 900.0f,25.0f };
-	hpGaugePosition_ = { GraphicsConfig::kClientWidth / 2 - gaugeSize_.x / 2, 30.0f };
+	hpGaugePosition_ = { GraphicsConfig::kClientWidth / 2 - gaugeSize_.x / 2, 690.0f };
 	gaugeFrameSize_ = gaugeSize_ + frameOffset_;
 	LightScrollSpeed_ = 0.005f;
 
@@ -66,7 +66,7 @@ void BossUI::InitializeGauges() {
 
 }
 
-void BossUI::UpdateGauges(float currentHP, float maxHP)
+void PlayerUI::UpdateGauges(float currentHP, float maxHP)
 {
 	float hpRatio = (currentHP > 0.0f) ? currentHP / maxHP : 0.0f;
 	hpRatio = std::clamp(hpRatio, 0.0f, 1.0f); // 0～1に制限
@@ -92,7 +92,7 @@ void BossUI::UpdateGauges(float currentHP, float maxHP)
 
 }
 
-void BossUI::SetGaugePosition(const Vector2& hpPosition) {
+void PlayerUI::SetGaugePosition(const Vector2& hpPosition) {
 	hpGaugePosition_ = hpPosition;
 	// 枠の左側をoffset/2だけ左にずらす
 	Vector2 barPosition = { hpGaugePosition_.x - frameOffset_.x / 2.0f, hpGaugePosition_.y };
@@ -100,7 +100,7 @@ void BossUI::SetGaugePosition(const Vector2& hpPosition) {
 	if (hpGaugeFill_) hpGaugeFill_->SetPosition(hpGaugePosition_);
 }
 
-void BossUI::SetGaugeSize(const Vector2& size, const Vector2 frameOffset) {
+void PlayerUI::SetGaugeSize(const Vector2& size, const Vector2 frameOffset) {
 	gaugeSize_ = size;
 	frameOffset_ = frameOffset;
 	gaugeFrameSize_ = size + frameOffset;
@@ -114,7 +114,7 @@ void BossUI::SetGaugeSize(const Vector2& size, const Vector2 frameOffset) {
 }
 
 
-void BossUI::SetGaugeColors(const Vector4& hpColor, const Vector4& backgroundColor) {
+void PlayerUI::SetGaugeColors(const Vector4& hpColor, const Vector4& backgroundColor) {
 	hpNormalColor_ = hpColor;
 	backgroundColor_ = backgroundColor;
 
@@ -123,9 +123,9 @@ void BossUI::SetGaugeColors(const Vector4& hpColor, const Vector4& backgroundCol
 	if (hpGaugeFill_) hpGaugeFill_->SetColor(hpNormalColor_);
 }
 
-void BossUI::ImGui() {
+void PlayerUI::ImGui() {
 #ifdef USEIMGUI
-	if (ImGui::TreeNode("Boss UI")) {
+	if (ImGui::TreeNode("Player UI")) {
 		// ゲージ位置設定
 		if (ImGui::DragFloat2("HP Gauge Position", &hpGaugePosition_.x, 1.0f, 0.0f, 1280.0f)) {
 			SetGaugePosition(hpGaugePosition_);

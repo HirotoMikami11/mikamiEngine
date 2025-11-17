@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 #include <numbers>
 
 NormalCamera::NormalCamera()

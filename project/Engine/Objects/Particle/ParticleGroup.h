@@ -5,8 +5,8 @@
 #include "ParticleState.h"
 #include "ParticleCommon.h"
 #include "Light.h"
-#include "Managers/Texture/TextureManager.h"
-#include "Managers/Model/ModelManager.h"
+#include "Texture/TextureManager.h"
+#include "Model/ModelManager.h"
 
 
 // 前方宣言

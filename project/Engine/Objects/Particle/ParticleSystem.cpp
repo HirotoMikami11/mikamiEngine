@@ -1,5 +1,5 @@
 #include "ParticleSystem.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 #include "GameTimer.h"
 
 #include "Logger.h"

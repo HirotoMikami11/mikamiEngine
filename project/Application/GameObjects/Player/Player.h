@@ -2,6 +2,7 @@
 #include "Collider.h"	//衝突判定
 #include "CollisionConfig.h"	//衝突属性のフラグを定義する
 #include "PlayerBullet.h"	// 自機弾
+#include "PlayerUI.h"	// UI
 #include <list>
 #include <memory>
 
@@ -29,13 +30,19 @@ public:
 	/// 更新
 	/// </summary>
 	/// <param name="viewProjectionMatrix">ビュープロジェクション行列</param>
-	void Update(const Matrix4x4& viewProjectionMatrix);
+	/// <param name="viewProjectionMatrix">スプライト行列</param>
+	void Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewProjectionMatirxSprite);
 
 	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="directionalLight">平行光源</param>
 	void Draw(const Light& directionalLight);
+
+	/// <summary>
+	/// オフスクリーン外に描画
+	/// </summary>
+	void DrawUI();
 
 	/// <summary>
 	/// ImGui
@@ -58,6 +65,12 @@ public:
 	/// </summary>
 	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() const { return bullets_; }
 
+	// HP管理
+	float GetHP() const { return HP_; }
+	float GetMaxHP() const { return maxHP_; }
+	void SetHP(float hp) { HP_ = hp; }
+	void TakeDamage(float damage);
+	bool GetIsAlive() { return isAlive_; }
 private:
 	/// <summary>
 	/// 移動処理（XZ平面）
@@ -84,17 +97,18 @@ private:
 
 	// 弾リスト
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
+	//UI表示
+	std::unique_ptr<PlayerUI> playerUI_;
 
 	// システム参照
-	DirectXCommon* directXCommon_ = nullptr;
-	Input* input_ = nullptr;
+	DirectXCommon* directXCommon_;
+	Input* input_;
 
 	// 移動関連
 	Vector3 velocity_;					// 速度
-	// 移動関連
-	float acceleration_ = 0.15f;
-	float limitRunSpeed_ = 5.0f;
-	float attenuation_ = 0.2f;
+	float acceleration_ = 1.5f;
+	float limitRunSpeed_ = 7.0f;
+	float attenuation_ = 0.5f;
 
 	// 回転関連
 	float rotationSpeed_ = 0.05f;
@@ -102,6 +116,11 @@ private:
 	// 弾発射関連
 	float bulletSpeed_ = 0.2f;
 	int fireInterval_ = 5;
-
 	int fireTimer_ = 0;					// 発射タイマー
+
+	// HP管理
+	float maxHP_ = 100.0f;	// 最大HP
+	float HP_ = 100.0f;		// 現在HP
+
+	bool isAlive_ = true;
 };

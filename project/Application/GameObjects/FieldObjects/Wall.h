@@ -26,15 +26,15 @@ private:
 
 	void UpdateTransforms();
 
-	DirectXCommon* dxCommon_ = nullptr;
+	//システム参照
+	DirectXCommon* directXCommon_;
 
 	// 壁モデルサイズ（scale が 1 のときの実寸法）
-	// {長さ（X方向に対応）, 高さ, 厚み（Z方向）}
-	Vector3 modelSize = { 60.0f, 30.0f, 1.0f };
+	Vector3 modelSize ;
 
 	// 4方向の壁（前, 右, 後, 左）
 	std::array<WallObject, 4> walls_{};
 
-	// 囲みたい領域（フルサイズ）。デフォルトは modelSize.x を幅・奥行きに使う
-	Vector2 areaSize_ = { modelSize.x, modelSize.x };
+	// 囲みたい領域（フルサイズ)
+	Vector2 areaSize_ ;
 };

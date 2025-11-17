@@ -1,12 +1,12 @@
 #pragma once
 /// 				Scene							///
-#include "Managers/Scene/SceneManager.h"
+#include "Scene/SceneManager.h"
 
 
 /// 				Transitions							///
-#include "Managers/Transition/TransitionManager.h"
-#include "Managers/Transition/SceneTransitionHelper.h"
-#include "Managers/Transition/TransitionEffect/SlideEffect.h"
+#include "Transition/TransitionManager.h"
+#include "Transition/SceneTransitionHelper.h"
+#include "Transition/TransitionEffect/SlideEffect.h"
 
 /// <summary>
 /// ゲーム全体を管理するクラス

@@ -182,7 +182,7 @@ private:
 
 private:
 	//DirectXCommonへの参照
-	DirectXCommon* dxCommon_ = nullptr;
+	DirectXCommon* directXCommon_ = nullptr;
 
 	// レンダーターゲットのサイズ
 	uint32_t width_ = 0;

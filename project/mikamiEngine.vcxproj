@@ -276,6 +276,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObjects\Boss\State\SplineMoveRotateShootState.cpp" />
     <ClCompile Include="Application\GameObjects\ModelFont\ModelFont.cpp" />
     <ClCompile Include="Application\GameObjects\FieldObjects\Wall.cpp" />
+    <ClCompile Include="Application\GameObjects\Player\PlayerUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -498,6 +499,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObjects\Boss\State\SplineMoveRotateShootState.h" />
     <ClInclude Include="Application\GameObjects\ModelFont\ModelFont.h" />
     <ClInclude Include="Application\GameObjects\FieldObjects\Wall.h" />
+    <ClInclude Include="Application\GameObjects\Player\PlayerUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

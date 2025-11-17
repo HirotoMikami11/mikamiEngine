@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include "TransitionManager.h"
-#include "Managers/Scene/SceneManager.h"
+#include "Scene/SceneManager.h"
 
 /// <summary>
 /// シーン遷移を簡単に行うためのヘルパークラス

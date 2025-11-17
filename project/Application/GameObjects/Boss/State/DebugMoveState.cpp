@@ -1,7 +1,7 @@
 #include "State/DebugMoveState.h"
 #include "Boss.h"
 #include "GameTimer.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 
 void DebugMoveState::Initialize() {
 	// 初期目標座標はコンストラクタで設定済み

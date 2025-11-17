@@ -1,6 +1,6 @@
 #include "BossMoveEditor.h"
 #include "Logger.h"
-#include "Managers/ImGui/ImGuiManager.h"
+#include "ImGui/ImGuiManager.h"
 #include <format>
 #include <cstring>
 

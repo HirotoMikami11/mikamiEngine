@@ -2,20 +2,30 @@
 #include "ImGui/ImGuiManager.h"
 #include <numbers>
 
-Wall::Wall() {}
+Wall::Wall()
+	: directXCommon_(nullptr) {
+
+	// 壁モデルサイズ（scale が 1 のときの実寸法）
+	// {長さ（X方向に対応）, 高さ, 厚み（Z方向）}
+	modelSize = { 60.0f, 30.0f, 1.0f };
+
+	// 囲みたい領域（フルサイズ）。デフォルトは modelSize.x を幅・奥行きに使う
+	areaSize_ = { modelSize.x, modelSize.x };
+
+}
 Wall::~Wall() {}
 
 void Wall::Initialize(DirectXCommon* dxCommon)
 {
-	dxCommon_ = dxCommon;
+	directXCommon_ = dxCommon;
 
 	// areaSize_ はデフォルトで {modelSize.x, modelSize.x} に初期化済み
 	// 各壁モデルを初期化して transform をセットする
 	for (int i = 0; i < 4; ++i) {
 		walls_[i].obj = std::make_unique<Model3D>();
 		// モデル名/マテリアル名は既存仕様に合わせてください
-		walls_[i].obj->Initialize(dxCommon_, "wall", "white2x2");
-		
+		walls_[i].obj->Initialize(directXCommon_, "wall", "white2x2");
+
 		// SetName にインデックスを反映
 		char nameBuf[32];
 		snprintf(nameBuf, sizeof(nameBuf), "Wall[%d]", i);
@@ -50,7 +60,7 @@ void Wall::UpdateTransforms()
 	const float areaHalfX = areaSize_.x * 0.5f;
 	const float areaHalfZ = areaSize_.y * 0.5f;
 
-	// Y位置（モデルの中心が原点にある想定 -> 床 y=0 にしたい場合は modelHalfY を使う）
+	// Y位置（モデルの中心が原点にある想定 modelHalfY を使う）
 	const float yPos = modelHalfY;
 
 	// 各面の回転（前, 右, 後, 左）
@@ -61,25 +71,25 @@ void Wall::UpdateTransforms()
 		-std::numbers::pi_v<float> / 2.0f
 	};
 
-	// 前 (北, -Z)
+	// 手前 (-Z)
 	walls_[0].transform.rotate = { 0.0f, rotY[0], 0.0f };
 	walls_[0].transform.translate = { 0.0f, yPos, -(areaHalfZ + modelHalfZ) };
 	walls_[0].transform.scale = { 1.0f, 1.0f, 1.0f };
 	walls_[0].obj->SetTransform(walls_[0].transform);
 
-	// 右 (東, +X)
+	// 右 (+X)
 	walls_[1].transform.rotate = { 0.0f, rotY[1], 0.0f };
 	walls_[1].transform.translate = { (areaHalfX + modelHalfZ), yPos, 0.0f };
 	walls_[1].transform.scale = { 1.0f, 1.0f, 1.0f };
 	walls_[1].obj->SetTransform(walls_[1].transform);
 
-	// 後 (南, +Z)
+	// 奥 (+Z)
 	walls_[2].transform.rotate = { 0.0f, rotY[2], 0.0f };
 	walls_[2].transform.translate = { 0.0f, yPos, (areaHalfZ + modelHalfZ) };
 	walls_[2].transform.scale = { 1.0f, 1.0f, 1.0f };
 	walls_[2].obj->SetTransform(walls_[2].transform);
 
-	// 左 (西, -X)
+	// 左 (-X)
 	walls_[3].transform.rotate = { 0.0f, rotY[3], 0.0f };
 	walls_[3].transform.translate = { -(areaHalfX + modelHalfZ), yPos, 0.0f };
 	walls_[3].transform.scale = { 1.0f, 1.0f, 1.0f };
@@ -106,8 +116,8 @@ void Wall::Draw(const Light& light)
 void Wall::ImGui()
 {
 #ifdef USEIMGUI
-	if (ImGui::TreeNode("Player")) {
-		// areaSize の表示/編集（変更があれば再配置）
+	if (ImGui::TreeNode("Walls")) {
+		// areaSize の表示/編集
 		float ax = areaSize_.x;
 		float az = areaSize_.y;
 		bool changed = false;
@@ -115,7 +125,7 @@ void Wall::ImGui()
 		changed |= ImGui::InputFloat("Area X (width)", &ax);
 		changed |= ImGui::InputFloat("Area Z (depth)", &az);
 
-		// 参考用に modelSize も表示（編集可能であれば再配置される）
+		// modelSize
 		float mX = modelSize.x;
 		float mY = modelSize.y;
 		float mZ = modelSize.z;
@@ -131,15 +141,13 @@ void Wall::ImGui()
 			areaSize_.y = az;
 
 			// modelSize の変更に合わせて area デフォルトを変える等するならここで処理
-			// 今回は単純に transform を再計算
 			UpdateTransforms();
 		}
 
-		// オリジナルのモデル ImGui 呼び出し（各 Model3D が持つ UI）
 		for (int i = 0; i < 4; ++i) {
 			if (walls_[i].obj) walls_[i].obj->ImGui();
 		}
-	
+
 		ImGui::TreePop();
 	}
 

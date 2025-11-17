@@ -1,5 +1,5 @@
 #include "DebugScene.h"
-#include "Managers/ImGui/ImGuiManager.h" 
+#include "ImGui/ImGuiManager.h" 
 #include <numbers> 
 
 DebugScene::DebugScene()

@@ -1,8 +1,8 @@
 #include "DepthFogPostEffect.h"
-#include "Managers/ImGui/ImGuiManager.h" 
+#include "ImGui/ImGuiManager.h" 
 
 void DepthFogPostEffect::Initialize(DirectXCommon* dxCommon) {
-	dxCommon_ = dxCommon;
+	directXCommon_ = dxCommon;
 
 	// PSOを作成
 	CreatePSO();
@@ -49,7 +49,7 @@ void DepthFogPostEffect::Apply(D3D12_GPU_DESCRIPTOR_HANDLE inputSRV, D3D12_GPU_D
 		return;
 	}
 
-	auto commandList = dxCommon_->GetCommandList();
+	auto commandList = directXCommon_->GetCommandList();
 
 	// レンダーターゲットを設定
 	commandList->OMSetRenderTargets(1, &outputRTV, false, nullptr);
@@ -60,7 +60,7 @@ void DepthFogPostEffect::Apply(D3D12_GPU_DESCRIPTOR_HANDLE inputSRV, D3D12_GPU_D
 
 	// ディスクリプタヒープを設定
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = {
-		dxCommon_->GetDescriptorManager()->GetSRVHeapComPtr()
+		directXCommon_->GetDescriptorManager()->GetSRVHeapComPtr()
 	};
 	commandList->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());
 
@@ -87,7 +87,7 @@ void DepthFogPostEffect::CreatePSO() {
 		.SetPixelShader(L"resources/Shader/DepthFog/DepthFog.PS.hlsl");
 
 	// PSOFactory経由で生成
-	auto psoInfo = dxCommon_->GetPSOFactory()->CreatePSO(psoDesc, rsBuilder);
+	auto psoInfo = directXCommon_->GetPSOFactory()->CreatePSO(psoDesc, rsBuilder);
 	if (!psoInfo.IsValid()) {
 		Logger::Log(Logger::GetStream(), "DepthFogPostEffect: Failed to create PSO\n");
 		assert(false);
@@ -110,7 +110,7 @@ void DepthFogPostEffect::CreateParameterBuffer() {
 	Logger::Log(Logger::GetStream(), std::format("Aligned buffer size: {} bytes\n", alignedSize));
 
 	// パラメータバッファ作成
-	parameterBuffer_ = CreateBufferResource(dxCommon_->GetDeviceComPtr(), alignedSize);
+	parameterBuffer_ = CreateBufferResource(directXCommon_->GetDeviceComPtr(), alignedSize);
 	parameterBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&mappedParameters_));
 
 	// 初期データを設定
@@ -126,9 +126,9 @@ Microsoft::WRL::ComPtr<IDxcBlob> DepthFogPostEffect::CompileShader(
 	return DirectXCommon::CompileShader(
 		filePath,
 		profile,
-		dxCommon_->GetDxcUtils(),
-		dxCommon_->GetDxcCompiler(),
-		dxCommon_->GetIncludeHandler());
+		directXCommon_->GetDxcUtils(),
+		directXCommon_->GetDxcCompiler(),
+		directXCommon_->GetIncludeHandler());
 }
 
 void DepthFogPostEffect::UpdateParameterBuffer() {

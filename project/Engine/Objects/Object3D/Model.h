@@ -12,7 +12,7 @@
 #include "MaterialGroup.h"
 
 //マテリアルの情報をtextureManagerの送るため
-#include "Managers/Texture/TextureManager.h"
+#include "Texture/TextureManager.h"
 using namespace MyMath;
 
 /// <summary>
