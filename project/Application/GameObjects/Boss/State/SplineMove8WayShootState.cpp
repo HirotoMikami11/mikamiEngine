@@ -182,9 +182,9 @@ void SplineMove8WayShootState::ShootBulletsFrom8Directions(Boss* boss) {
 	std::vector<BaseParts*> activeParts = boss->GetActiveBodyParts();
 
 	// 8方向のベクトル（XZ平面、Y=0）
-	float angleStep = DegToRad(180.0f);
+	float angleStep = DegToRad(360.0f/ onrShootBulletNumber_);
 	std::vector<Vector3> directions;
-	for (int i = 0; i < 2; ++i) {
+	for (int i = 0; i < onrShootBulletNumber_; ++i) {
 		float angle = angleStep * i;
 		Vector3 dir = {
 			std::sin(angle) * bulletSpeed_,

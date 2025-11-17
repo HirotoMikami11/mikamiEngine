@@ -28,7 +28,7 @@ void Transform3D::UpdateMatrix(const Matrix4x4& viewProjectionMatrix)
 
 	// 法線変換用の逆転置行列を計算
 	transformData_->WorldInverseTranspose = Matrix4x4Transpose(Matrix4x4Inverse(transformData_->World));
-//	transformData_->WorldInverseTranspose = MakeIdentity4x4();
+	//transformData_->WorldInverseTranspose = MakeIdentity4x4();
 }
 
 void Transform3D::SetDefaultTransform() {

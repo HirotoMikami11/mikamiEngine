@@ -83,4 +83,6 @@ private:
 
 	// 弾の速度
 	float bulletSpeed_ = 0.2f;	// XZ平面での速度
+	//弾の同時発射数
+	int onrShootBulletNumber_ = 8;
 };
