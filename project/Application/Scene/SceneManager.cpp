@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include <cassert>
+
 #include "ImGui/ImGuiManager.h"
 #include "Logger.h"
 #include "ObjectID/ObjectIDManager.h"
@@ -198,9 +199,6 @@ void SceneManager::DrawScenesUI() {
 			ImGui::Text("(Current)");
 		} else {
 			ImGui::SameLine();
-			//ImGui::Text("(Obj: %s)",
-			//	scene->IsInitialized() ? "Yes" : "No"
-			//);
 		}
 
 		// リセットボタン

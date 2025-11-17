@@ -3,11 +3,11 @@
 #include "DebugScenes/DemoScene.h"
 #include "DebugScenes/DebugScene.h"
 //必要なシーン郡
-#include "TitleScene.h"
-#include "SelectScene.h"
-#include "GameScene.h"
-#include "GameClearScene.h"
-#include "GameOverScene.h"
+#include "GameScenes/TitleScene.h"
+#include "GameScenes/SelectScene.h"
+#include "GameScenes/GameScene.h"
+#include "GameScenes/GameClearScene.h"
+#include "GameScenes/GameOverScene.h"
 
 
 Game::Game() :

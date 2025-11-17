@@ -1,12 +1,12 @@
-// SceneManager.h
 #pragma once
 #include <memory>
 #include <unordered_map>
 #include <string>
 #include <functional>
+
 #include "BaseScene.h"
 
-/// <summary>B
+/// <summary>
 /// 純粋なシーン管理クラス
 /// トランジション処理は含まない
 /// </summary>

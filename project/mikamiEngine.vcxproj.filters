@@ -264,7 +264,7 @@
     <ClCompile Include="Application\Scene\DebugScenes\DemoScene.cpp">
       <Filter>Engine\Managers\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Managers\Scene\SceneManager.cpp">
+    <ClCompile Include="Application\Scene\SceneManager.cpp">
       <Filter>Engine\Managers\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\DirectXCommon\DirectXCommon.cpp">
@@ -324,13 +324,13 @@
     <ClCompile Include="Engine\Objects\Object3D\Transform3D.cpp">
       <Filter>Engine\Objects\GameObject\Transform</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Managers\Transition\TransitionManager.cpp">
+    <ClCompile Include="Application\Transition\TransitionManager.cpp">
       <Filter>Engine\Managers\Transition</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Managers\Transition\TransitionEffect\FadeEffect.cpp">
+    <ClCompile Include="Application\Transition\TransitionEffect\FadeEffect.cpp">
       <Filter>Engine\Managers\Transition\TransitionEffect\Fade</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Managers\Transition\TransitionEffect\SlideEffect.cpp">
+    <ClCompile Include="Application\Transition\TransitionEffect\SlideEffect.cpp">
       <Filter>Engine\Managers\Transition\TransitionEffect\Slide</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\Input\Input.cpp">
@@ -414,19 +414,19 @@
     <ClCompile Include="Application\CollisionManager\CollisionManager.cpp">
       <Filter>Application\CollisionManager</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\GameClearScene.cpp">
+    <ClCompile Include="Application\Scene\GameScenes\GameClearScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\GameOverScene.cpp">
+    <ClCompile Include="Application\Scene\GameScenes\GameOverScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\GameScene.cpp">
+    <ClCompile Include="Application\Scene\GameScenes\GameScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\SelectScene.cpp">
+    <ClCompile Include="Application\Scene\GameScenes\SelectScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\TitleScene.cpp">
+    <ClCompile Include="Application\Scene\GameScenes\TitleScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Managers\ResourceLoader\ResourceLoader.cpp">
@@ -637,7 +637,7 @@
     <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h">
       <Filter>Engine\Managers\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\Scene\SceneManager.h">
+    <ClInclude Include="Application\Scene\SceneManager.h">
       <Filter>Engine\Managers\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\DirectXCommon\DirectXCommon.h">
@@ -700,19 +700,19 @@
     <ClInclude Include="Engine\Objects\Object3D\Transform3D.h">
       <Filter>Engine\Objects\GameObject\Transform</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\Transition\SceneTransitionHelper.h">
+    <ClInclude Include="Application\Transition\SceneTransitionHelper.h">
       <Filter>Engine\Managers\Transition</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\Transition\TransitionManager.h">
+    <ClInclude Include="Application\Transition\TransitionManager.h">
       <Filter>Engine\Managers\Transition</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\Transition\TransitionEffect\BaseTransitionEffect.h">
+    <ClInclude Include="Application\Transition\TransitionEffect\BaseTransitionEffect.h">
       <Filter>Engine\Managers\Transition\TransitionEffect</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\Transition\TransitionEffect\FadeEffect.h">
+    <ClInclude Include="Application\Transition\TransitionEffect\FadeEffect.h">
       <Filter>Engine\Managers\Transition\TransitionEffect\Fade</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\Transition\TransitionEffect\SlideEffect.h">
+    <ClInclude Include="Application\Transition\TransitionEffect\SlideEffect.h">
       <Filter>Engine\Managers\Transition\TransitionEffect\Slide</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\Input\Input.h">
@@ -796,19 +796,19 @@
     <ClInclude Include="Application\CollisionManager\CollisionManager.h">
       <Filter>Application\CollisionManager</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\SelectScene.h">
+    <ClInclude Include="Application\Scene\GameScenes\SelectScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\GameOverScene.h">
+    <ClInclude Include="Application\Scene\GameScenes\GameOverScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\GameClearScene.h">
+    <ClInclude Include="Application\Scene\GameScenes\GameClearScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\GameScene.h">
+    <ClInclude Include="Application\Scene\GameScenes\GameScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\TitleScene.h">
+    <ClInclude Include="Application\Scene\GameScenes\TitleScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Managers\ResourceLoader\ResourceLoader.h">

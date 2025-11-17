@@ -1,7 +1,6 @@
 #include "TransitionManager.h"
 #include "TransitionEffect/FadeEffect.h"
 #include "Engine.h"
-#include "Logger.h"
 #include <format>
 
 TransitionManager* TransitionManager::GetInstance() {
