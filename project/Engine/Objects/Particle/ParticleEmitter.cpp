@@ -4,7 +4,7 @@
 
 void ParticleEmitter::Initialize(DirectXCommon* dxCommon, const std::string& targetGroupName)
 {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 	targetGroupName_ = targetGroupName;
 
 	// エミッタートランスフォームを初期化

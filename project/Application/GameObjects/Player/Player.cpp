@@ -5,7 +5,7 @@
 #include <numbers>
 
 Player::Player()
-	: directXCommon_(nullptr)
+	: dxCommon_(nullptr)
 	, input_(nullptr)
 	, velocity_({ 0.0f, 0.0f, 0.0f })
 	, fireTimer_(0)
@@ -16,12 +16,12 @@ Player::~Player() = default;
 
 void Player::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	// システム参照の保存
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 	input_ = Input::GetInstance();
 
 	// 球体の生成と初期化
 	gameObject_ = std::make_unique<Object3D>();
-	gameObject_->Initialize(directXCommon_, "model_Player", "white2x2");
+	gameObject_->Initialize(dxCommon_, "model_Player", "white2x2");
 
 	// トランスフォームの設定
 	Vector3Transform transform;
@@ -38,7 +38,7 @@ void Player::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 
 	//UIクラスの初期化
 	playerUI_ = std::make_unique<PlayerUI>();
-	playerUI_->Initialize(directXCommon_);
+	playerUI_->Initialize(dxCommon_);
 
 	// 衝突判定の設定
 	SetRadius(0.5f);  // 半径を0.5fに設定
@@ -273,7 +273,7 @@ void Player::ProcessFire() {
 
 		// 弾を生成
 		std::unique_ptr<PlayerBullet> bullet = std::make_unique<PlayerBullet>();
-		bullet->Initialize(directXCommon_, position, velocity);
+		bullet->Initialize(dxCommon_, position, velocity);
 		bullets_.push_back(std::move(bullet));
 
 		// 発射タイマーをリセット

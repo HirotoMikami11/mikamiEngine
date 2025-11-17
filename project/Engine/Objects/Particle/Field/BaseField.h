@@ -92,7 +92,7 @@ protected:
 	std::string name_ = "BaseField";
 
 	// システム参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 	DebugDrawLineSystem* debugDrawLineSystem_ = nullptr;
 
 };

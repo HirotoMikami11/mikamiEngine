@@ -133,7 +133,7 @@ private:
 
 private:
 	//DirectXCommon参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 	//メッシュの種類
 	MeshType meshType_ = MeshType::TRIANGLE; // デフォルトは三角形

@@ -85,7 +85,7 @@ private:
 
 private:
 	//DirectXCommon参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 	// 線分データ
 	std::vector<LineData> lineData_;

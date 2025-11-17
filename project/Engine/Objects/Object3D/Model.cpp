@@ -6,7 +6,7 @@
 
 void Model::Initialize(DirectXCommon* dxCommon, const MeshType meshType, const std::string& directoryPath, const std::string& filename)
 {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
 	//																			//
 	//								メッシュの作成									//
@@ -23,7 +23,7 @@ void Model::Initialize(DirectXCommon* dxCommon, const MeshType meshType, const s
 
 		for (const auto& modelData : modelDataList_) {
 			Mesh mesh;
-			mesh.InitializeFromData(directXCommon_, modelData);
+			mesh.InitializeFromData(dxCommon_, modelData);
 			meshes_.push_back(std::move(mesh));
 			meshMaterialIndices_.push_back(modelData.materialIndex);
 		}
@@ -41,7 +41,7 @@ void Model::Initialize(DirectXCommon* dxCommon, const MeshType meshType, const s
 
 		// MaterialGroupを初期化
 		size_t materialCount = std::max(uniqueMaterials.size(), size_t(1));
-		materialGroup_.Initialize(directXCommon_, materialCount);
+		materialGroup_.Initialize(dxCommon_, materialCount);
 
 		textureTagNames_.clear();
 		textureTagNames_.resize(materialCount);
@@ -72,7 +72,7 @@ void Model::Initialize(DirectXCommon* dxCommon, const MeshType meshType, const s
 	} else {
 		///モデル以外の場合は、パス入れないで生成
 		Mesh mesh;
-		mesh.Initialize(directXCommon_, meshType);
+		mesh.Initialize(dxCommon_, meshType);
 		meshes_.clear();
 		meshes_.push_back(std::move(mesh));
 
@@ -80,7 +80,7 @@ void Model::Initialize(DirectXCommon* dxCommon, const MeshType meshType, const s
 		objectNames_.push_back("primitive_" + Mesh::MeshTypeToString(meshType));
 
 		// プリミティブ用のシングルマテリアル
-		materialGroup_.Initialize(directXCommon_, 1);
+		materialGroup_.Initialize(dxCommon_, 1);
 
 		textureTagNames_.clear();
 		textureTagNames_.push_back("");
@@ -98,7 +98,7 @@ bool Model::LoadFromOBJ(const std::string& directoryPath, const std::string& fil
 		return true;
 	}
 
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 	filePath_ = directoryPath + "/" + filename;
 
 	// 複数オブジェクト対応でOBJファイルを読み込み
@@ -166,7 +166,7 @@ bool Model::LoadFromOBJ(const std::string& directoryPath, const std::string& fil
 }
 
 bool Model::LoadFromPrimitive(MeshType meshType,DirectXCommon* dxCommon) {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
 	// プリミティブメッシュを作成
 	Mesh mesh;

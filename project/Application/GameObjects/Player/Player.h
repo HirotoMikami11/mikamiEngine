@@ -101,7 +101,7 @@ private:
 	std::unique_ptr<PlayerUI> playerUI_;
 
 	// システム参照
-	DirectXCommon* directXCommon_;
+	DirectXCommon* dxCommon_;
 	Input* input_;
 
 	// 移動関連

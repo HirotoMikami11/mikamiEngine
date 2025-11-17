@@ -8,14 +8,14 @@ SpriteCommon* SpriteCommon::GetInstance()
 
 void SpriteCommon::Initialize(DirectXCommon* dxCommon)
 {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 }
 
 void SpriteCommon::setCommonSpriteRenderSettings(ID3D12GraphicsCommandList* commandList)
 {
 	// スプライト専用のPSOを設定
-	commandList->SetGraphicsRootSignature(directXCommon_->GetSpriteRootSignature());
-	commandList->SetPipelineState(directXCommon_->GetSpritePipelineState());
+	commandList->SetGraphicsRootSignature(dxCommon_->GetSpriteRootSignature());
+	commandList->SetPipelineState(dxCommon_->GetSpritePipelineState());
 	// プリミティブトポロジを設定
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }

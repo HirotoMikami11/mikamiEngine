@@ -27,7 +27,7 @@ private:
 	void UpdateTransforms();
 
 	//システム参照
-	DirectXCommon* directXCommon_;
+	DirectXCommon* dxCommon_;
 
 	// 壁モデルサイズ（scale が 1 のときの実寸法）
 	Vector3 modelSize ;

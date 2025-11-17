@@ -3,7 +3,7 @@
 
 void BaseField::Initialize(DirectXCommon* dxCommon)
 {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
 	// フィールドトランスフォームを初期化
 	fieldTransform_.Initialize(dxCommon);

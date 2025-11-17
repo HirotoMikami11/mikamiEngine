@@ -84,7 +84,7 @@ private:
 	ModelManager(const ModelManager&) = delete;
 	ModelManager& operator=(const ModelManager&) = delete;
 
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager_ = nullptr;
 
 	// モデルの管理用マップ（tagNameからModelを見つける）

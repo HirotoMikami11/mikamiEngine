@@ -1,7 +1,7 @@
 #include "MaterialGroup.h"
 
 void MaterialGroup::Initialize(DirectXCommon* dxCommon, size_t materialCount) {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 	ResizeMaterials(materialCount);
 }
 
@@ -15,7 +15,7 @@ void MaterialGroup::ResizeMaterials(size_t count) {
 
 	// 各マテリアルを初期化
 	for (auto& material : materials_) {
-		material.Initialize(directXCommon_);
+		material.Initialize(dxCommon_);
 		material.SetLitObjectSettings(); // デフォルトでライティング有効
 	}
 }

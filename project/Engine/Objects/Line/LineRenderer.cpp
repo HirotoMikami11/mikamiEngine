@@ -4,14 +4,14 @@
 #include <algorithm>
 
 void LineRenderer::Initialize(DirectXCommon* dxCommon) {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
 	// 最大線分数分の頂点バッファを作成（線分1本につき2頂点）
 	const size_t totalVertexCount = kMaxLineCount * kVertexCountPerLine;
 	const size_t vertexBufferSize = sizeof(LineVertex) * totalVertexCount;
 
 	// 頂点バッファ作成
-	vertexBuffer_ = CreateBufferResource(directXCommon_->GetDevice(), vertexBufferSize);
+	vertexBuffer_ = CreateBufferResource(dxCommon_->GetDevice(), vertexBufferSize);
 
 	// 頂点バッファをマップ
 	vertexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
@@ -22,7 +22,7 @@ void LineRenderer::Initialize(DirectXCommon* dxCommon) {
 	vertexBufferView_.StrideInBytes = sizeof(LineVertex);
 
 	// トランスフォームバッファ作成
-	transformBuffer_ = CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix));
+	transformBuffer_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(TransformationMatrix));
 	transformBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&transformData_));
 
 	// 線分データの初期化
@@ -61,7 +61,7 @@ void LineRenderer::Reset() {
 }
 
 void LineRenderer::Draw(const Matrix4x4& viewProjectionMatrix) {
-	if (!isInitialized_ || !directXCommon_ || !isVisible_ || IsEmpty()) {
+	if (!isInitialized_ || !dxCommon_ || !isVisible_ || IsEmpty()) {
 		return;
 	}
 
@@ -77,11 +77,11 @@ void LineRenderer::Draw(const Matrix4x4& viewProjectionMatrix) {
 		transformData_->World = MakeIdentity4x4();
 	}
 
-	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 	// 線分用のPSOを設定
-	commandList->SetGraphicsRootSignature(directXCommon_->GetLineRootSignature());
-	commandList->SetPipelineState(directXCommon_->GetLinePipelineState());
+	commandList->SetGraphicsRootSignature(dxCommon_->GetLineRootSignature());
+	commandList->SetPipelineState(dxCommon_->GetLinePipelineState());
 
 	// プリミティブトポロジを線分に設定
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);

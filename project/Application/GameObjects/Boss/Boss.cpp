@@ -11,7 +11,7 @@
 #include "Bullet/BossBullet.h"
 
 Boss::Boss()
-	: directXCommon_(nullptr)
+	: dxCommon_(nullptr)
 	, previousHeadPosition_({ 0.0f, 0.0f, 0.0f })
 {
 }
@@ -19,7 +19,7 @@ Boss::Boss()
 Boss::~Boss() = default;
 
 void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
 	// パーツの初期化
 	InitializeParts();
@@ -69,7 +69,7 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 
 	//UIクラスの初期化
 	bossUI_ = std::make_unique<BossUI>();
-	bossUI_->Initialize(directXCommon_);
+	bossUI_->Initialize(dxCommon_);
 
 
 	// スプラインシステムの初期化
@@ -307,7 +307,7 @@ void Boss::ImGui() {
 void Boss::InitializeParts() {
 	// 頭パーツ（黄色）
 	head_ = std::make_unique<HeadParts>();
-	head_->Initialize(directXCommon_, Vector3{ 0.0f, 0.0f, 0.0f });
+	head_->Initialize(dxCommon_, Vector3{ 0.0f, 0.0f, 0.0f });
 
 	// 体パーツ（白） × 5
 	// 初期位置は後でUpdatePartsPositions()で正しく配置されるため、仮の位置を設定
@@ -315,7 +315,7 @@ void Boss::InitializeParts() {
 	for (size_t i = 0; i < kBodyCount; ++i) {
 		auto body = std::make_unique<BodyParts>();
 		Vector3 bodyPosition = { 0.0f, 0.0f, -static_cast<float>(i + 1) * (kBasePartSize + partsOffset_) };
-		body->Initialize(directXCommon_, bodyPosition);
+		body->Initialize(dxCommon_, bodyPosition);
 		body->SetBoss(this);  // Bossへの参照を設定
 		bodies_.push_back(std::move(body));
 	}
@@ -323,7 +323,7 @@ void Boss::InitializeParts() {
 	// 尻尾パーツ（緑）
 	tail_ = std::make_unique<TailParts>();
 	Vector3 tailPosition = { 0.0f, 0.0f, -static_cast<float>(kBodyCount + 1) * (kBasePartSize + partsOffset_) };
-	tail_->Initialize(directXCommon_, tailPosition);
+	tail_->Initialize(dxCommon_, tailPosition);
 	tail_->SetBoss(this);  // Bossへの参照を設定
 }
 
@@ -678,7 +678,7 @@ void Boss::ClearPositionHistory() {
 void Boss::FireBullet(const Vector3& position, const Vector3& velocity) {
 	// 新しい弾を作成
 	auto bullet = std::make_unique<BossBullet>();
-	bullet->Initialize(directXCommon_, position, velocity);
+	bullet->Initialize(dxCommon_, position, velocity);
 	bossBullets_.push_back(std::move(bullet));
 }
 

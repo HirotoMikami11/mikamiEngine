@@ -70,8 +70,8 @@ public:
 		auto effect = std::make_unique<T>();
 		T* ptr = effect.get();
 
-		if (directXCommon_) {
-			effect->Initialize(directXCommon_);
+		if (dxCommon_) {
+			effect->Initialize(dxCommon_);
 		}
 
 		effects_.push_back(std::move(effect));
@@ -126,7 +126,7 @@ private:
 
 private:
 	// システム参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 	// バッファサイズ
 	uint32_t width_ = 0;

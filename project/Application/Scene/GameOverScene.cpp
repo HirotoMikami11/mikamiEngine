@@ -6,7 +6,7 @@
 GameOverScene::GameOverScene()
 	: BaseScene("GameOverScene") // シーン名を設定
 	, cameraController_(nullptr)
-	, directXCommon_(nullptr)
+	, dxCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
 	, debugDrawLineSystem_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
@@ -33,7 +33,7 @@ void GameOverScene::ConfigureOffscreenEffects()
 
 void GameOverScene::Initialize() {
 	// システム参照の取得
-	directXCommon_ = Engine::GetInstance()->GetDirectXCommon();
+	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
 	debugDrawLineSystem_ = Engine::GetInstance()->GetDebugDrawManager();
 
@@ -43,7 +43,7 @@ void GameOverScene::Initialize() {
 	cameraController_ = CameraController::GetInstance();
 	// 座標を指定して初期化
 	Vector3 initialPosition = { 0.0f, 0.0f, -10.0f };
-	cameraController_->Initialize(directXCommon_, initialPosition);
+	cameraController_->Initialize(dxCommon_, initialPosition);
 	cameraController_->SetActiveCamera("normal");
 
 	// ゲームオブジェクト初期化
@@ -59,7 +59,7 @@ void GameOverScene::InitializeGameObjects() {
 
 	Vector3 overFontPos = { 0.0f,0.9f,0.0f };
 	overFont_ = std::make_unique<ModelFont>();
-	overFont_->Initialize(directXCommon_, "overFont", overFontPos);
+	overFont_->Initialize(dxCommon_, "overFont", overFontPos);
 
 
 	///*-----------------------------------------------------------------------*///
@@ -69,7 +69,7 @@ void GameOverScene::InitializeGameObjects() {
 	// グリッド
 	gridLine_ = std::make_unique<GridLine>();
 	// 100m、1m間隔、10mごとに黒
-	gridLine_->Initialize(directXCommon_,
+	gridLine_->Initialize(dxCommon_,
 		GridLineType::XZ,			// グリッドタイプ：XZ平面
 		100.0f,						// サイズ
 		1.0f,						// 間隔
@@ -82,7 +82,7 @@ void GameOverScene::InitializeGameObjects() {
 	///*-----------------------------------------------------------------------*///
 	///									ライト									///
 	///*-----------------------------------------------------------------------*///
-	directionalLight_.Initialize(directXCommon_, Light::Type::DIRECTIONAL);
+	directionalLight_.Initialize(dxCommon_, Light::Type::DIRECTIONAL);
 }
 
 void GameOverScene::Update() {

@@ -136,5 +136,5 @@ private:
 	TransitionCallback onCompleteCallback_;
 
 	// DirectX参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 };

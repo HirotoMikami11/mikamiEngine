@@ -17,7 +17,7 @@ void DebugDrawLineSystem::Initialize(DirectXCommon* dxCommon)
 		return;
 	}
 
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
 	// LineRendererを作成・初期化
 	lineRenderer_ = std::make_unique<LineRenderer>();
@@ -58,7 +58,7 @@ void DebugDrawLineSystem::Finalize()
 		lineRenderer_.reset();
 	}
 
-	directXCommon_ = nullptr;
+	dxCommon_ = nullptr;
 	isInitialized_ = false;
 
 	Logger::Log(Logger::GetStream(), "DebugDrawLineSystem: Finalized.\n");

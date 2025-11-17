@@ -10,11 +10,11 @@ TransitionManager* TransitionManager::GetInstance() {
 }
 
 void TransitionManager::Initialize() {
-	directXCommon_ = Engine::GetInstance()->GetDirectXCommon();
+	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 
 	// デフォルトのフェードエフェクトを登録
 	auto fadeEffect = std::make_unique<FadeEffect>();
-	fadeEffect->Initialize(directXCommon_);
+	fadeEffect->Initialize(dxCommon_);
 	RegisterEffect("fade", std::move(fadeEffect));
 
 	Logger::Log(Logger::GetStream(), "TransitionManager initialized\n");

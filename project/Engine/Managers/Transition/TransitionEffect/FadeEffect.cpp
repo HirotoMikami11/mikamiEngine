@@ -6,7 +6,7 @@
 #include "Sprite.h"
 
 FadeEffect::FadeEffect()
-	: directXCommon_(nullptr)
+	: dxCommon_(nullptr)
 	, currentState_(State::None)
 	, duration_(0.0f)
 	, timer_(0.0f)
@@ -18,7 +18,7 @@ FadeEffect::FadeEffect()
 FadeEffect::~FadeEffect() = default;
 
 void FadeEffect::Initialize(DirectXCommon* directXCommon) {
-	directXCommon_ = directXCommon;
+	dxCommon_ = directXCommon;
 
 	// 画面サイズ取得
 	float screenWidth = GraphicsConfig::kClientWidth;
@@ -29,7 +29,7 @@ void FadeEffect::Initialize(DirectXCommon* directXCommon) {
 	Vector2 size = { screenWidth, screenHeight };
 
 	fadeSprite_ = std::make_unique<Sprite>();
-	fadeSprite_->Initialize(directXCommon_, "white", position, size);
+	fadeSprite_->Initialize(dxCommon_, "white", position, size);
 
 	// 初期状態は完全に透明
 	fadeSprite_->SetColor({ fadeColor_.x, fadeColor_.y, fadeColor_.z, 0.0f });

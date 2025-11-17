@@ -96,7 +96,7 @@ private:
 	std::unique_ptr<LineRenderer> lineRenderer_;
 
 	// DirectXCommon参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 	// 状態フラグ
 	bool isInitialized_ = false;

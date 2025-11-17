@@ -2,7 +2,7 @@
 #include "ImGui/ImGuiManager.h" 
 
 void VignettePostEffect::Initialize(DirectXCommon* dxCommon) {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
 	// PSOを作成
 	CreatePSO();
@@ -44,7 +44,7 @@ void VignettePostEffect::Apply(D3D12_GPU_DESCRIPTOR_HANDLE inputSRV, D3D12_CPU_D
 		return;
 	}
 
-	auto commandList = directXCommon_->GetCommandList();
+	auto commandList = dxCommon_->GetCommandList();
 
 	// レンダーターゲットを設定
 	commandList->OMSetRenderTargets(1, &outputRTV, false, nullptr);
@@ -55,7 +55,7 @@ void VignettePostEffect::Apply(D3D12_GPU_DESCRIPTOR_HANDLE inputSRV, D3D12_CPU_D
 
 	// ディスクリプタヒープを設定
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = {
-		directXCommon_->GetDescriptorManager()->GetSRVHeapComPtr()
+		dxCommon_->GetDescriptorManager()->GetSRVHeapComPtr()
 	};
 	commandList->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());
 
@@ -79,7 +79,7 @@ void VignettePostEffect::CreatePSO() {
 		.SetPixelShader(L"resources/Shader/Vignette/Vignette.PS.hlsl");
 
 	// PSOFactory経由で生成
-	auto psoInfo = directXCommon_->GetPSOFactory()->CreatePSO(psoDesc, rsBuilder);
+	auto psoInfo = dxCommon_->GetPSOFactory()->CreatePSO(psoDesc, rsBuilder);
 	if (!psoInfo.IsValid()) {
 		Logger::Log(Logger::GetStream(), "VignettePostEffect: Failed to create PSO\n");
 		assert(false);
@@ -101,7 +101,7 @@ void VignettePostEffect::CreateParameterBuffer() {
 	Logger::Log(Logger::GetStream(), std::format("Aligned buffer size: {} bytes\n", alignedSize));
 
 	// パラメータバッファ作成
-	parameterBuffer_ = CreateBufferResource(directXCommon_->GetDeviceComPtr(), alignedSize);
+	parameterBuffer_ = CreateBufferResource(dxCommon_->GetDeviceComPtr(), alignedSize);
 	parameterBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&mappedParameters_));
 
 	// 初期データを設定
@@ -117,9 +117,9 @@ Microsoft::WRL::ComPtr<IDxcBlob> VignettePostEffect::CompileShader(
 	return DirectXCommon::CompileShader(
 		filePath,
 		profile,
-		directXCommon_->GetDxcUtils(),
-		directXCommon_->GetDxcCompiler(),
-		directXCommon_->GetIncludeHandler());
+		dxCommon_->GetDxcUtils(),
+		dxCommon_->GetDxcCompiler(),
+		dxCommon_->GetIncludeHandler());
 }
 
 void VignettePostEffect::UpdateParameterBuffer() {

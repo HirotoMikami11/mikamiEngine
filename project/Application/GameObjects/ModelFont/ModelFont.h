@@ -43,6 +43,6 @@ private:
 	// ゲームオブジェクト
 	std::unique_ptr<Object3D> gameObject_;
 	// システム参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 };
 

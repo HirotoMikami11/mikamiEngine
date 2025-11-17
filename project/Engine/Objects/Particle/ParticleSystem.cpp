@@ -12,7 +12,7 @@ ParticleSystem* ParticleSystem::GetInstance()
 
 void ParticleSystem::Initialize(DirectXCommon* dxCommon)
 {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 	billboardMatrix_ = MakeIdentity4x4();
 
 	Logger::Log(Logger::GetStream(), "ParticleSystem: Initialized\n");
@@ -148,7 +148,7 @@ bool ParticleSystem::CreateGroup(const std::string& groupName, const std::string
 
 	// 新しいグループを作成
 	auto group = std::make_unique<ParticleGroup>();
-	group->Initialize(directXCommon_, modelTag, maxParticles, textureName, useBillboard);
+	group->Initialize(dxCommon_, modelTag, maxParticles, textureName, useBillboard);
 	group->SetName(groupName);
 
 	// グループを登録
@@ -198,7 +198,7 @@ ParticleEmitter* ParticleSystem::CreateEmitter(const std::string& emitterName, c
 
 	// 新しいエミッターを作成
 	auto emitter = std::make_unique<ParticleEmitter>();
-	emitter->Initialize(directXCommon_, targetGroupName);
+	emitter->Initialize(dxCommon_, targetGroupName);
 	emitter->SetName(emitterName);
 
 	// エミッターを登録

@@ -66,5 +66,5 @@ protected:
 	bool isDead_ = false;
 
 	// システム参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 };

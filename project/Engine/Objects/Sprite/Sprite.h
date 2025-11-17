@@ -169,7 +169,7 @@ private:
 
 
 	// 基本情報
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager_ = TextureManager::GetInstance();
 	SpriteCommon* spriteCommon_ = SpriteCommon::GetInstance();
 

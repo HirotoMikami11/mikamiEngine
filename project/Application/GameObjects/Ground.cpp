@@ -10,7 +10,7 @@ Ground::~Ground()
 
 void Ground::Initialize(DirectXCommon* dxCommon, const Vector3& position)
 {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
 	// ゲームオブジェクト（3Dモデル）の初期化
 	gameObject_ = std::make_unique<Model3D>();

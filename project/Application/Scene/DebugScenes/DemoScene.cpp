@@ -11,7 +11,7 @@ DemoScene::DemoScene()
 	: BaseScene("DemoScene") // シーン名を設定
 	, cameraController_(nullptr)
 	, particleSystem_(nullptr)
-	, directXCommon_(nullptr)
+	, dxCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
 	, debugDrawLineSystem_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
@@ -47,7 +47,7 @@ void DemoScene::ConfigureOffscreenEffects()
 
 void DemoScene::Initialize() {
 	// システム参照の取得
-	directXCommon_ = Engine::GetInstance()->GetDirectXCommon();
+	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
 	debugDrawLineSystem_ = Engine::GetInstance()->GetDebugDrawManager();
 
@@ -58,7 +58,7 @@ void DemoScene::Initialize() {
 	// 座標と回転を指定して初期化
 	Vector3 initialPosition = { 0.0f, 6.8f, -18.0f };
 	Vector3 initialRotation = { 0.4f, 0.0f, 0.0f };
-	cameraController_->Initialize(directXCommon_, initialPosition, initialRotation);
+	cameraController_->Initialize(dxCommon_, initialPosition, initialRotation);
 	cameraController_->SetActiveCamera("normal");
 
 	// ゲームオブジェクト初期化
@@ -79,7 +79,7 @@ void DemoScene::InitializeGameObjects() {
 	};
 
 	sphere_ = std::make_unique<Sphere>();
-	sphere_->Initialize(directXCommon_, "sphere", "monsterBall");
+	sphere_->Initialize(dxCommon_, "sphere", "monsterBall");
 	sphere_->SetTransform(transformSphere);
 
 	///*-----------------------------------------------------------------------*///
@@ -92,7 +92,7 @@ void DemoScene::InitializeGameObjects() {
 	};
 
 	plane_ = std::make_unique<Plane>();
-	plane_->Initialize(directXCommon_, "plane", "uvChecker");
+	plane_->Initialize(dxCommon_, "plane", "uvChecker");
 	plane_->SetTransform(transformPlane);
 
 	///*-----------------------------------------------------------------------*///
@@ -105,7 +105,7 @@ void DemoScene::InitializeGameObjects() {
 	};
 
 	modelMultiMesh_ = std::make_unique<Model3D>();
-	modelMultiMesh_->Initialize(directXCommon_, "model_MultiMesh");
+	modelMultiMesh_->Initialize(dxCommon_, "model_MultiMesh");
 	modelMultiMesh_->SetTransform(transformMultiMesh);
 
 	///*-----------------------------------------------------------------------*///
@@ -118,7 +118,7 @@ void DemoScene::InitializeGameObjects() {
 	};
 
 	modelMultiMaterial_ = std::make_unique<Model3D>();
-	modelMultiMaterial_->Initialize(directXCommon_, "model_MultiMaterial");
+	modelMultiMaterial_->Initialize(dxCommon_, "model_MultiMaterial");
 	modelMultiMaterial_->SetTransform(transformMultiMaterial);
 
 	///*-----------------------------------------------------------------------*///
@@ -128,7 +128,7 @@ void DemoScene::InitializeGameObjects() {
 	// グリッド
 	gridLine_ = std::make_unique<GridLine>();
 	// 100m、1m間隔、10mごとに黒
-	gridLine_->Initialize(directXCommon_,
+	gridLine_->Initialize(dxCommon_,
 		GridLineType::XZ,			// グリッドタイプ：XZ平面
 		100.0f,						// サイズ
 		1.0f,						// 間隔
@@ -144,7 +144,7 @@ void DemoScene::InitializeGameObjects() {
 #pragma region パーティクル
 	// ParticleSystemシングルトンを取得
 	particleSystem_ = ParticleSystem::GetInstance();
-	particleSystem_->Initialize(directXCommon_);
+	particleSystem_->Initialize(dxCommon_);
 
 	///パーティクルグループを作成
 
@@ -272,12 +272,12 @@ void DemoScene::InitializeGameObjects() {
 	///								矩形Sprite									///
 	///*-----------------------------------------------------------------------*///
 	sprite_ = std::make_unique<Sprite>();
-	sprite_->Initialize(directXCommon_, "uvChecker", { 50, 50 }, { 100, 100 });
+	sprite_->Initialize(dxCommon_, "uvChecker", { 50, 50 }, { 100, 100 });
 
 	///*-----------------------------------------------------------------------*///
 	///									ライト									///
 	///*-----------------------------------------------------------------------*///
-	directionalLight_.Initialize(directXCommon_, Light::Type::DIRECTIONAL);
+	directionalLight_.Initialize(dxCommon_, Light::Type::DIRECTIONAL);
 }
 
 void DemoScene::Update() {

@@ -117,7 +117,7 @@ private:
 	TextureManager& operator=(const TextureManager&) = delete;
 
 	//DirectXCommonへのポインタ
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 	// テクスチャの管理用マップ（tagNameからTextureを見つける）
 	std::map<std::string, std::unique_ptr<Texture>> textures_;

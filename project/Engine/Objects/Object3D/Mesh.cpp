@@ -2,7 +2,7 @@
 #include<numbers>
 void Mesh::Initialize(DirectXCommon* dxCommon, MeshType meshType)
 {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 	meshType_ = meshType;
 
 	// メッシュタイプに応じて対応するcreate関数を呼び出す
@@ -34,7 +34,7 @@ void Mesh::Initialize(DirectXCommon* dxCommon, MeshType meshType)
 
 void Mesh::InitializeFromData(DirectXCommon* dxCommon, const ModelData& modelData)
 {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 	meshType_ = MeshType::MODEL_OBJ;
 
 	// データからモデルを作成
@@ -247,7 +247,7 @@ void Mesh::CreateVertexBuffer()
 	//							VertexResourceの作成								//
 	//																			//
 	// 頂点バッファを作成
-	vertexBuffer_ = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * vertices_.size());
+	vertexBuffer_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(VertexData) * vertices_.size());
 
 	//																			//
 	//						Resourceにデータを書き込む								//
@@ -280,7 +280,7 @@ void Mesh::CreateIndexBuffer()
 	//																			//
 
 	// インデックスバッファを作成
-	indexBuffer_ = CreateBufferResource(directXCommon_->GetDevice(), sizeof(uint32_t) * indices_.size());
+	indexBuffer_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(uint32_t) * indices_.size());
 
 	//																			//
 	//						Resourceにデータを書き込む								//

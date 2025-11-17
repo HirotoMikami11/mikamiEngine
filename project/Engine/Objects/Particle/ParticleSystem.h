@@ -110,7 +110,7 @@ public:
 
 		// 新しいフィールドを作成
 		auto field = std::make_unique<FieldType>();
-		field->Initialize(directXCommon_);
+		field->Initialize(dxCommon_);
 		field->SetName(fieldName);
 
 		// フィールドを登録
@@ -172,6 +172,6 @@ private:
 	Matrix4x4 billboardMatrix_;
 
 	// システム参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 	CameraController* cameraController_ = CameraController::GetInstance();
 };

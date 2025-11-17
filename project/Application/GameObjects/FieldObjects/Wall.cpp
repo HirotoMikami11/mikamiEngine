@@ -3,7 +3,7 @@
 #include <numbers>
 
 Wall::Wall()
-	: directXCommon_(nullptr) {
+	: dxCommon_(nullptr) {
 
 	// 壁モデルサイズ（scale が 1 のときの実寸法）
 	// {長さ（X方向に対応）, 高さ, 厚み（Z方向）}
@@ -17,14 +17,14 @@ Wall::~Wall() {}
 
 void Wall::Initialize(DirectXCommon* dxCommon)
 {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
 	// areaSize_ はデフォルトで {modelSize.x, modelSize.x} に初期化済み
 	// 各壁モデルを初期化して transform をセットする
 	for (int i = 0; i < 4; ++i) {
 		walls_[i].obj = std::make_unique<Model3D>();
 		// モデル名/マテリアル名は既存仕様に合わせてください
-		walls_[i].obj->Initialize(directXCommon_, "wall", "white2x2");
+		walls_[i].obj->Initialize(dxCommon_, "wall", "white2x2");
 
 		// SetName にインデックスを反映
 		char nameBuf[32];

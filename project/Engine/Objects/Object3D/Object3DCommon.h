@@ -36,7 +36,7 @@ private:
 	Object3DCommon& operator=(const Object3DCommon&) = delete;
 
 	// 基本情報
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 
 };

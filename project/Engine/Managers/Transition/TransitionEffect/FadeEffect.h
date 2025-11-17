@@ -35,7 +35,7 @@ public:
 
 private:
 	std::unique_ptr<Sprite> fadeSprite_;
-	DirectXCommon* directXCommon_;
+	DirectXCommon* dxCommon_;
 
 	State currentState_;
 	float duration_;

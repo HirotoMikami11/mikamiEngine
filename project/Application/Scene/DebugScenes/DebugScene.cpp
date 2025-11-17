@@ -5,7 +5,7 @@
 DebugScene::DebugScene()
 	: BaseScene("DebugScene") // シーン名を設定
 	, cameraController_(nullptr)
-	, directXCommon_(nullptr)
+	, dxCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
 	, debugDrawLineSystem_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
@@ -25,7 +25,7 @@ void DebugScene::ConfigureOffscreenEffects()
 
 void DebugScene::Initialize() {
 	// システム参照の取得
-	directXCommon_ = Engine::GetInstance()->GetDirectXCommon();
+	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
 	debugDrawLineSystem_ = Engine::GetInstance()->GetDebugDrawManager();
 
@@ -36,7 +36,7 @@ void DebugScene::Initialize() {
 	// 座標と回転を指定して初期化
 	Vector3 initialPosition = { 0.0f, 6.8f, -18.0f };
 	Vector3 initialRotation = { 0.4f, 0.0f, 0.0f };
-	cameraController_->Initialize(directXCommon_, initialPosition, initialRotation);
+	cameraController_->Initialize(dxCommon_, initialPosition, initialRotation);
 	cameraController_->SetActiveCamera("normal");
 
 	// ゲームオブジェクト初期化
@@ -56,7 +56,7 @@ void DebugScene::InitializeGameObjects() {
 	};
 
 	sphere_ = std::make_unique<Sphere>();
-	sphere_->Initialize(directXCommon_, "sphere", "monsterBall");
+	sphere_->Initialize(dxCommon_, "sphere", "monsterBall");
 	sphere_->SetTransform(transformSphere);
 
 	///*-----------------------------------------------------------------------*///
@@ -69,7 +69,7 @@ void DebugScene::InitializeGameObjects() {
 	};
 
 	terrain_ = std::make_unique<Model3D>();
-	terrain_->Initialize(directXCommon_, "model_terrain");
+	terrain_->Initialize(dxCommon_, "model_terrain");
 	terrain_->SetTransform(transformTerrain);
 
 	///*-----------------------------------------------------------------------*///
@@ -79,7 +79,7 @@ void DebugScene::InitializeGameObjects() {
 	// グリッド
 	gridLine_ = std::make_unique<GridLine>();
 	// 100m、1m間隔、10mごとに黒
-	gridLine_->Initialize(directXCommon_,
+	gridLine_->Initialize(dxCommon_,
 		GridLineType::XZ,			// グリッドタイプ：XZ平面
 		100.0f,						// サイズ
 		1.0f,						// 間隔
@@ -92,7 +92,7 @@ void DebugScene::InitializeGameObjects() {
 	///*-----------------------------------------------------------------------*///
 	///									ライト									///
 	///*-----------------------------------------------------------------------*///
-	directionalLight_.Initialize(directXCommon_, Light::Type::DIRECTIONAL);
+	directionalLight_.Initialize(dxCommon_, Light::Type::DIRECTIONAL);
 }
 
 void DebugScene::Update() {

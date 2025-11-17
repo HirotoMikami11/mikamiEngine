@@ -57,7 +57,7 @@ public:
 
 private:
 	// DirectXCommon参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 	// 3Dカメラ用のトランスフォーム
 	Vector3Transform cameraTransform_;

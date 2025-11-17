@@ -2,7 +2,7 @@
 #include "ImGui/ImGuiManager.h"
 
 void BossUI::Initialize(DirectXCommon* dxCommon) {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 	InitializeGauges();
 
 }
@@ -36,7 +36,7 @@ void BossUI::InitializeGauges() {
 	// HPゲージの枠
 	hpGaugeBar_ = std::make_unique<Sprite>();
 	hpGaugeBar_->Initialize(
-		directXCommon_,
+		dxCommon_,
 		"white",
 		hpGaugePosition_,
 		gaugeFrameSize_,
@@ -47,7 +47,7 @@ void BossUI::InitializeGauges() {
 	// HPゲージの中身
 	hpGaugeFill_ = std::make_unique<Sprite>();
 	hpGaugeFill_->Initialize(
-		directXCommon_,
+		dxCommon_,
 		"white",
 		{ hpGaugePosition_.x + 2.0f, hpGaugePosition_.y },
 		gaugeSize_,
@@ -57,7 +57,7 @@ void BossUI::InitializeGauges() {
 
 	hpGaugeLight_ = std::make_unique<Sprite>();
 	hpGaugeLight_->Initialize(
-		directXCommon_,
+		dxCommon_,
 		"gaugeLight",
 		{ hpGaugePosition_.x + 2.0f, hpGaugePosition_.y },
 		gaugeSize_,

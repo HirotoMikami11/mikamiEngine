@@ -76,7 +76,7 @@ public:
 
 	// ゲッター
 	WinApp* GetWinApp() const { return winApp_.get(); }
-	DirectXCommon* GetDirectXCommon() const { return directXCommon_.get(); }
+	DirectXCommon* GetDirectXCommon() const { return dxCommon_.get(); }
 	OffscreenRenderer* GetOffscreenRenderer() const { return offscreenRenderer_.get(); }
 	DebugDrawLineSystem* GetDebugDrawManager() const { return debugDrawManager_; }
 	GameTimer* GetGameTimer() const { return gameTimer_; }  // ← 追加
@@ -104,7 +104,7 @@ private:
 
 	// 基盤システム
 	std::unique_ptr<WinApp> winApp_;
-	std::unique_ptr<DirectXCommon> directXCommon_;
+	std::unique_ptr<DirectXCommon> dxCommon_;
 
 	// オフスクリーン
 	std::unique_ptr<OffscreenRenderer> offscreenRenderer_;

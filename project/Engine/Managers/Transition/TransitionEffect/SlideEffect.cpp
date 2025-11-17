@@ -8,7 +8,7 @@
 
 
 SlideEffect::SlideEffect(Direction direction)
-	: directXCommon_(nullptr)
+	: dxCommon_(nullptr)
 	, currentState_(State::None)
 	, duration_(0.0f)
 	, timer_(0.0f)
@@ -20,7 +20,7 @@ SlideEffect::SlideEffect(Direction direction)
 SlideEffect::~SlideEffect() = default;
 
 void SlideEffect::Initialize(DirectXCommon* directXCommon) {
-	directXCommon_ = directXCommon;
+	dxCommon_ = directXCommon;
 
 	// 画面サイズ取得
 	float screenWidth = GraphicsConfig::kClientWidth;
@@ -31,7 +31,7 @@ void SlideEffect::Initialize(DirectXCommon* directXCommon) {
 	Vector2 size = { screenWidth, screenHeight };
 
 	slideSprite_ = std::make_unique<Sprite>();
-	slideSprite_->Initialize(directXCommon_, "white", position, size);
+	slideSprite_->Initialize(dxCommon_, "white", position, size);
 	slideSprite_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f }); // 黒色
 
 	// 方向に応じた開始・終了位置を設定

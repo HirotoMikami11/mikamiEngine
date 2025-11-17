@@ -94,7 +94,7 @@ private:
 	void DrawYZGrid();
 
 	// システム参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 	DebugDrawLineSystem* debugDrawLineSystem_ = nullptr;
 
 	// 基本情報

@@ -6,7 +6,7 @@
 GameScene::GameScene()
 	: BaseScene("GameScene") // シーン名を設定
 	, cameraController_(nullptr)
-	, directXCommon_(nullptr)
+	, dxCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
 	, debugDrawLineSystem_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
@@ -34,7 +34,7 @@ void GameScene::ConfigureOffscreenEffects()
 
 void GameScene::Initialize() {
 	// システム参照の取得
-	directXCommon_ = Engine::GetInstance()->GetDirectXCommon();
+	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
 	debugDrawLineSystem_ = Engine::GetInstance()->GetDebugDrawManager();
 
@@ -45,7 +45,7 @@ void GameScene::Initialize() {
 	// 座標と回転を指定して初期化
 	Vector3 initialPosition = { 0.5f, 49.5f, -75.7f };
 	Vector3 initialRotation = { 0.57f, 0.0f, 0.0f };
-	cameraController_->Initialize(directXCommon_, initialPosition, initialRotation);
+	cameraController_->Initialize(dxCommon_, initialPosition, initialRotation);
 	cameraController_->SetActiveCamera("normal");
 
 	// 衝突マネージャーの生成
@@ -63,19 +63,19 @@ void GameScene::InitializeGameObjects() {
 
 	///自機
 	player_ = std::make_unique<Player>();
-	player_->Initialize(directXCommon_, { 0.0f, 0.5f, 0.0f });
+	player_->Initialize(dxCommon_, { 0.0f, 0.5f, 0.0f });
 
 
 	///地面
 	ground_ = std::make_unique<Ground>();
-	ground_->Initialize(directXCommon_, { 0.0f,-0.51f,0.0f });
+	ground_->Initialize(dxCommon_, { 0.0f,-0.51f,0.0f });
 
 	wall_ = std::make_unique<Wall>();
-	wall_->Initialize(directXCommon_);
+	wall_->Initialize(dxCommon_);
 
 	///ボス
 	boss_ = std::make_unique<Boss>();
-	boss_->Initialize(directXCommon_, { -10.0f,1.5f, 0.0f });
+	boss_->Initialize(dxCommon_, { -10.0f,1.5f, 0.0f });
 
 
 
@@ -87,7 +87,7 @@ void GameScene::InitializeGameObjects() {
 	// グリッド
 	gridLine_ = std::make_unique<GridLine>();
 	// 100m、1m間隔、10mごとに黒
-	gridLine_->Initialize(directXCommon_,
+	gridLine_->Initialize(dxCommon_,
 		GridLineType::XZ,			// グリッドタイプ：XZ平面
 		100.0f,						// サイズ
 		1.0f,						// 間隔
@@ -100,7 +100,7 @@ void GameScene::InitializeGameObjects() {
 	///*-----------------------------------------------------------------------*///
 	///									ライト									///
 	///*-----------------------------------------------------------------------*///
-	directionalLight_.Initialize(directXCommon_, Light::Type::DIRECTIONAL);
+	directionalLight_.Initialize(dxCommon_, Light::Type::DIRECTIONAL);
 }
 
 void GameScene::Update() {

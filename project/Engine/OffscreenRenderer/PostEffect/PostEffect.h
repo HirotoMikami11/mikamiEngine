@@ -83,7 +83,7 @@ public:
 	virtual const std::string& GetName() const = 0;
 
 protected:
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 	bool isEnabled_ = false;
 	std::string name_ = "Unknown Effect";
 };

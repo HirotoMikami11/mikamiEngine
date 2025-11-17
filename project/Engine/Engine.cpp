@@ -26,8 +26,8 @@ void Engine::InitializeBase(const std::wstring& title) {
 	Logger::Initialize();
 
 	// DirectX初期化
-	directXCommon_ = std::make_unique<DirectXCommon>();
-	directXCommon_->Initialize(winApp_.get());
+	dxCommon_ = std::make_unique<DirectXCommon>();
+	dxCommon_->Initialize(winApp_.get());
 }
 
 void Engine::InitializeManagers() {
@@ -45,11 +45,11 @@ void Engine::InitializeManagers() {
 
 	// テクスチャマネージャー初期化
 	textureManager_ = TextureManager::GetInstance();
-	textureManager_->Initialize(directXCommon_.get());
+	textureManager_->Initialize(dxCommon_.get());
 
 	// モデルマネージャー初期化
 	modelManager_ = ModelManager::GetInstance();
-	modelManager_->Initialize(directXCommon_.get());
+	modelManager_->Initialize(dxCommon_.get());
 
 	// オーディオマネージャー初期化
 	audioManager_ = AudioManager::GetInstance();
@@ -60,28 +60,28 @@ void Engine::InitializeManagers() {
 	resourceLoader_->Initialize();
 
 	// スプライトの共通部分を初期化
-	SpriteCommon::GetInstance()->Initialize(directXCommon_.get());
+	SpriteCommon::GetInstance()->Initialize(dxCommon_.get());
 
 	// オブジェクト3Dの共通部分を初期化
-	Object3DCommon::GetInstance()->Initialize(directXCommon_.get());
+	Object3DCommon::GetInstance()->Initialize(dxCommon_.get());
 
 	// パーティクルの共通部分を初期化
-	ParticleCommon::GetInstance()->Initialize(directXCommon_.get());
+	ParticleCommon::GetInstance()->Initialize(dxCommon_.get());
 
 	// カメラコントローラー取得
 	cameraController_ = CameraController::GetInstance();
 
 	// ImGui初期化
 	imguiManager_ = ImGuiManager::GetInstance();
-	imguiManager_->Initialize(winApp_.get(), directXCommon_.get());
+	imguiManager_->Initialize(winApp_.get(), dxCommon_.get());
 
 	// オフスクリーンレンダラー初期化
 	offscreenRenderer_ = std::make_unique<OffscreenRenderer>();
-	offscreenRenderer_->Initialize(directXCommon_.get());
+	offscreenRenderer_->Initialize(dxCommon_.get());
 
 	// DebugDrawLineSystem初期化
 	debugDrawManager_ = DebugDrawLineSystem::GetInstance();
-	debugDrawManager_->Initialize(directXCommon_.get());
+	debugDrawManager_->Initialize(dxCommon_.get());
 }
 
 
@@ -113,7 +113,7 @@ void Engine::StartDrawOffscreen() {
 	imguiManager_->End();
 
 	// フレーム開始
-	directXCommon_->BeginFrame();
+	dxCommon_->BeginFrame();
 
 	// デバッグ描画のリセット（前フレームの線分をクリア）
 	if (debugDrawManager_) {
@@ -133,7 +133,7 @@ void Engine::EndDrawOffscreen() {
 void Engine::StartDrawBackBuffer() {
 
 	// 通常描画の描画準備（バックバッファ描画開始）
-	directXCommon_->PreDraw();
+	dxCommon_->PreDraw();
 
 	// オフスクリーンの画面の実態描画
 	offscreenRenderer_->DrawOffscreenTexture();
@@ -142,13 +142,13 @@ void Engine::StartDrawBackBuffer() {
 
 void Engine::EndDrawBackBuffer() {
 	// ImGuiの画面への描画
-	imguiManager_->Draw(directXCommon_->GetCommandList());
+	imguiManager_->Draw(dxCommon_->GetCommandList());
 
 	// 通常描画の終わり
-	directXCommon_->PostDraw();
+	dxCommon_->PostDraw();
 
 	// 描画そのもののEndFrame
-	directXCommon_->EndFrame();
+	dxCommon_->EndFrame();
 
 
 }
@@ -207,9 +207,9 @@ void Engine::Finalize() {
 	}
 
 	// DirectX終了処理
-	if (directXCommon_) {
-		directXCommon_->Finalize();
-		directXCommon_.reset();
+	if (dxCommon_) {
+		dxCommon_->Finalize();
+		dxCommon_.reset();
 	}
 
 	// COM終了処理

@@ -4,7 +4,7 @@
 #include "CameraController.h"
 
 void Object3D::Initialize(DirectXCommon* dxCommon, const std::string& modelTag, const std::string& textureName) {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 	modelTag_ = modelTag;
 	textureName_ = textureName;
 
@@ -37,7 +37,7 @@ void Object3D::Draw(const Light& directionalLight) {
 		return;
 	}
 
-	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 	object3DCommon_->setCommonRenderSettings(commandList);
 
 	// ライトを設定
@@ -259,7 +259,7 @@ void Object3D::SetModel(const std::string& modelTag, const std::string& textureN
 
 	// 個別マテリアルを初期化（モデルからコピー）
 	size_t materialCount = sharedModel_->GetMaterialCount();
-	materials_.Initialize(directXCommon_, materialCount);
+	materials_.Initialize(dxCommon_, materialCount);
 
 	// モデルのマテリアル設定をコピー
 	for (size_t i = 0; i < materialCount; ++i) {

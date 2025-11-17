@@ -155,7 +155,7 @@ public:
 
 private:
 	//DirectXCommon参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 	// マテリアルグループ（モデルのマテリアルを全て管理）
 	MaterialGroup materialGroup_;

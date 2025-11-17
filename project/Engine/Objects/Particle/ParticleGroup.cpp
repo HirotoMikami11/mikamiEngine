@@ -8,7 +8,7 @@
 void ParticleGroup::Initialize(DirectXCommon* dxCommon, const std::string& modelTag,
 	uint32_t maxParticles, const std::string& textureName, bool useBillboard)
 {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 	modelTag_ = modelTag;
 	textureName_ = textureName;
 	maxParticles_ = maxParticles;
@@ -29,7 +29,7 @@ void ParticleGroup::Initialize(DirectXCommon* dxCommon, const std::string& model
 void ParticleGroup::CreateTransformBuffer() {
 	// トランスフォーム用のリソースを作成
 	transformResource_ = CreateBufferResource(
-		directXCommon_->GetDevice(),
+		dxCommon_->GetDevice(),
 		sizeof(ParticleForGPU) * maxParticles_
 	);
 
@@ -43,7 +43,7 @@ void ParticleGroup::CreateTransformBuffer() {
 		instancingData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
-	auto descriptorManager = directXCommon_->GetDescriptorManager();
+	auto descriptorManager = dxCommon_->GetDescriptorManager();
 
 	// 構造化バッファ用のSRVを作成
 	srvHandle_ = descriptorManager->CreateSRVForStructuredBuffer(
@@ -189,7 +189,7 @@ void ParticleGroup::Draw(const Light& directionalLight)
 		return;
 	}
 
-	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 	particleCommon_->setCommonRenderSettings(commandList);
 
 	// 全メッシュを描画
@@ -314,7 +314,7 @@ void ParticleGroup::SetModel(const std::string& modelTag, const std::string& tex
 
 	// 個別マテリアルを初期化（モデルからコピー）
 	size_t materialCount = sharedModel_->GetMaterialCount();
-	materials_.Initialize(directXCommon_, materialCount);
+	materials_.Initialize(dxCommon_, materialCount);
 
 	// モデルのマテリアル設定をコピー
 	for (size_t i = 0; i < materialCount; ++i) {

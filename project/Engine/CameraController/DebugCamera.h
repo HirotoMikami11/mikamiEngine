@@ -69,7 +69,7 @@ public:
 
 private:
 	// DirectXCommon参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 	/// <summary>
 	/// 初期座標・回転を指定してデフォルト値を設定

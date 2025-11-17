@@ -8,14 +8,14 @@ Object3DCommon* Object3DCommon::GetInstance()
 
 void Object3DCommon::Initialize(DirectXCommon* dxCommon)
 {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 }
 
 void Object3DCommon::setCommonRenderSettings(ID3D12GraphicsCommandList* commandList)
 {
 	// 3Dオブジェクト専用のPSOを設定
-	commandList->SetGraphicsRootSignature(directXCommon_->GetRootSignature());
-	commandList->SetPipelineState(directXCommon_->GetPipelineState());
+	commandList->SetGraphicsRootSignature(dxCommon_->GetRootSignature());
+	commandList->SetPipelineState(dxCommon_->GetPipelineState());
 	// プリミティブトポロジを設定
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }

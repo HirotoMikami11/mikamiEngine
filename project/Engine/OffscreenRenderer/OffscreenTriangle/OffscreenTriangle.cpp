@@ -3,7 +3,7 @@
 #include <cassert>
 
 void OffscreenTriangle::Initialize(DirectXCommon* dxCommon) {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
 	// 大きな三角形の頂点データを作成
 	CreateFullscreenTriangle();
@@ -16,7 +16,7 @@ void OffscreenTriangle::Initialize(DirectXCommon* dxCommon) {
 
 void OffscreenTriangle::Finalize() {
 	// 特に解放処理は不要（ComPtrが自動的に解放）
-	directXCommon_ = nullptr;
+	dxCommon_ = nullptr;
 	Logger::Log(Logger::GetStream(), "OffscreenTriangle finalized.\n");
 }
 
@@ -30,7 +30,7 @@ void OffscreenTriangle::DrawWithCustomPSO(
 		return;
 	}
 
-	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 	// 外部で指定されたPSOを設定
 	commandList->SetGraphicsRootSignature(rootSignature);
@@ -66,7 +66,7 @@ void OffscreenTriangle::DrawWithCustomPSOAndDepth(
 		return;
 	}
 
-	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 	// 外部で指定されたPSOを設定
 	commandList->SetGraphicsRootSignature(rootSignature);
@@ -96,7 +96,7 @@ void OffscreenTriangle::Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureHandle) {
 		return;
 	}
 
-	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 	// デフォルトのオフスクリーンPSOを使用
 	// TODO：この部分は後でOffscreenRendererから適切なPSOを取得するように修正予定
@@ -127,7 +127,7 @@ void OffscreenTriangle::CreateFullscreenTriangle() {
 
 void OffscreenTriangle::CreateVertexBuffer() {
 	// 頂点バッファを作成
-	vertexBuffer_ = CreateBufferResource(directXCommon_->GetDeviceComPtr(), sizeof(FullscreenVertex) * vertices_.size());
+	vertexBuffer_ = CreateBufferResource(dxCommon_->GetDeviceComPtr(), sizeof(FullscreenVertex) * vertices_.size());
 
 	// 頂点データをマップしてコピー
 	FullscreenVertex* vertexData = nullptr;

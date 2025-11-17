@@ -71,7 +71,7 @@ private:
 
 
 	// システム参照
-	DirectXCommon* directXCommon_;
+	DirectXCommon* dxCommon_;
 	OffscreenRenderer* offscreenRenderer_;
 	DebugDrawLineSystem* debugDrawLineSystem_;
 };

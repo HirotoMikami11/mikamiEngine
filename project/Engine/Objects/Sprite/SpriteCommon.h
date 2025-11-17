@@ -36,7 +36,7 @@ private:
 	SpriteCommon& operator=(const SpriteCommon&) = delete;
 
 	// 基本情報
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 
 };

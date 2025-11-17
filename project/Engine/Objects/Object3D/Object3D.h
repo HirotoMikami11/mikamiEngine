@@ -104,7 +104,7 @@ protected:
 	std::string textureName_ = "";
 
 	// システム参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager_ = TextureManager::GetInstance();
 	ModelManager* modelManager_ = ModelManager::GetInstance();
 	Object3DCommon* object3DCommon_ = Object3DCommon::GetInstance();

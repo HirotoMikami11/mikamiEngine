@@ -3,7 +3,7 @@
 #include <numbers>
 
 NormalCamera::NormalCamera()
-	: directXCommon_(nullptr)
+	: dxCommon_(nullptr)
 	, cameraTransform_{}
 	, cameraMatrix_{}
 	, viewProjectionMatrix_{}
@@ -25,7 +25,7 @@ NormalCamera::~NormalCamera() {
 
 void NormalCamera::Initialize(DirectXCommon* dxCommon, const Vector3& position, const Vector3& rotation) {
 	// DirectXCommonを保存
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
 	// 初期値を保存
 	initialPosition_ = position;
@@ -34,7 +34,7 @@ void NormalCamera::Initialize(DirectXCommon* dxCommon, const Vector3& position, 
 	SetDefaultCamera(position, rotation);
 
 	// CameraForGPU用のリソースを作成
-	cameraForGPUResource_ = CreateBufferResource(directXCommon_->GetDevice(), sizeof(CameraForGPU));
+	cameraForGPUResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(CameraForGPU));
 	cameraForGPUResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPUData_));
 
 	// 初期化

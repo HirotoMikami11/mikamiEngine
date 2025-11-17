@@ -12,7 +12,7 @@ void GridLine::Initialize(
 	const Vector4& normalColor,
 	const Vector4& majorColor)
 {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
 	// DebugDrawLineSystemを取得
 	debugDrawLineSystem_ = DebugDrawLineSystem::GetInstance();

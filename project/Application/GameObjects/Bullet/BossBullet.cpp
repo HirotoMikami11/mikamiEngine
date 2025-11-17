@@ -7,14 +7,14 @@ BossBullet::BossBullet()
 BossBullet::~BossBullet() = default;
 
 void BossBullet::Initialize(DirectXCommon* dxCommon, const Vector3& position, const Vector3& velocity) {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 	velocity_ = velocity;
 	deathTimer_ = kLifeTime;
 	isDead_ = false;
 
 	// ゲームオブジェクト（球体）の初期化
 	gameObject_ = std::make_unique<Object3D>();
-	gameObject_->Initialize(directXCommon_, "playerBullet", "white2x2");
+	gameObject_->Initialize(dxCommon_, "playerBullet", "white2x2");
 
 	// トランスフォームの設定
 	Vector3Transform transform;

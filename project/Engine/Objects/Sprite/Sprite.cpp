@@ -5,7 +5,7 @@
 
 void Sprite::Initialize(DirectXCommon* dxCommon, const std::string& textureName, const Vector2& center, const Vector2& size, const Vector2& anchor)
 {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 	textureName_ = textureName;
 	anchor_ = anchor;
 
@@ -37,7 +37,7 @@ void Sprite::Initialize(DirectXCommon* dxCommon, const std::string& textureName,
 
 void Sprite::Initialize(DirectXCommon* dxCommon, const Vector2& center, const Vector2& size, const Vector2& anchor)
 {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 	textureName_ = "white";
 	anchor_ = anchor;
 
@@ -78,7 +78,7 @@ void Sprite::Update(const Matrix4x4& viewProjectionMatrix)
 void Sprite::Draw()
 {
 	// 通常のUI用スプライト描画処理
-	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 	// スプライト専用のPSOを設定
 	spriteCommon_->setCommonSpriteRenderSettings(commandList);
@@ -316,7 +316,7 @@ void Sprite::CreateSpriteMesh()
 void Sprite::CreateBuffers()
 {
 	// 頂点バッファを作成
-	vertexBuffer_ = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * vertices_.size());
+	vertexBuffer_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(VertexData) * vertices_.size());
 	VertexData* vertexData = nullptr;
 	vertexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	std::memcpy(vertexData, vertices_.data(), sizeof(VertexData) * vertices_.size());
@@ -327,7 +327,7 @@ void Sprite::CreateBuffers()
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 	// インデックスバッファを作成
-	indexBuffer_ = CreateBufferResource(directXCommon_->GetDevice(), sizeof(uint32_t) * indices_.size());
+	indexBuffer_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(uint32_t) * indices_.size());
 	uint32_t* indexData = nullptr;
 	indexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
 	std::memcpy(indexData, indices_.data(), sizeof(uint32_t) * indices_.size());
@@ -338,7 +338,7 @@ void Sprite::CreateBuffers()
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
 	// SpriteMaterialリソースを作成
-	materialResource_ = CreateBufferResource(directXCommon_->GetDevice(), sizeof(SpriteMaterial));
+	materialResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(SpriteMaterial));
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 
 	// SpriteMaterial初期化

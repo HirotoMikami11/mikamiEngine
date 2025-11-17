@@ -141,7 +141,7 @@ private:
 	bool useBillboard_ = true;
 
 	// システム参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager_ = TextureManager::GetInstance();
 	ModelManager* modelManager_ = ModelManager::GetInstance();
 	ParticleCommon* particleCommon_ = ParticleCommon::GetInstance();

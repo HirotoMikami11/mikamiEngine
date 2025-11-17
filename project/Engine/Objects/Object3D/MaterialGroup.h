@@ -67,5 +67,5 @@ public:
 
 private:
 	std::vector<Material> materials_;
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 };

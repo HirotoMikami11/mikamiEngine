@@ -92,7 +92,7 @@ public:
 
 protected:
 	std::unique_ptr<Object3D> gameObject_;
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 	// HP管理
 	float maxHP_ = 100.0f;

@@ -28,7 +28,7 @@ DebugCamera::~DebugCamera() {
 }
 void DebugCamera::Initialize(DirectXCommon* dxCommon, const Vector3& position, const Vector3& rotation) {
 	// DirectXCommonを保存
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
 	input_ = Input::GetInstance();
 	// 初期値を保存
@@ -37,7 +37,7 @@ void DebugCamera::Initialize(DirectXCommon* dxCommon, const Vector3& position, c
 	SetDefaultCamera(position, rotation);
 
 	// CameraForGPU用のリソースを作成
-	cameraForGPUResource_ = CreateBufferResource(directXCommon_->GetDevice(), sizeof(CameraForGPU));
+	cameraForGPUResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(CameraForGPU));
 	cameraForGPUResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPUData_));
 
 	// 初期化

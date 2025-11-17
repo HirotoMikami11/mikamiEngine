@@ -2,11 +2,11 @@
 #include "ImGui/ImGuiManager.h"
 
 void BaseParts::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
 	// キューブオブジェクトの生成
 	gameObject_ = std::make_unique<Object3D>();
-	gameObject_->Initialize(directXCommon_, "cube", "white2x2");
+	gameObject_->Initialize(dxCommon_, "cube", "white2x2");
 
 	// トランスフォームの設定
 	Vector3Transform transform;

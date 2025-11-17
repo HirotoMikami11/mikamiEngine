@@ -36,7 +36,7 @@ public:
 
 private:
 	std::unique_ptr<Sprite> slideSprite_;
-	DirectXCommon* directXCommon_;
+	DirectXCommon* dxCommon_;
 
 	State currentState_;
 	float duration_;

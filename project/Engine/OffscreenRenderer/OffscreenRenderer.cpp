@@ -2,7 +2,7 @@
 #include "ImGui/ImGuiManager.h" 
 
 void OffscreenRenderer::Initialize(DirectXCommon* dxCommon, uint32_t width, uint32_t height) {
-	directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 	width_ = width;
 	height_ = height;
 
@@ -34,7 +34,7 @@ void OffscreenRenderer::Initialize(DirectXCommon* dxCommon, uint32_t width, uint
 
 	// ポストプロセスチェーンを初期化
 	postProcessChain_ = std::make_unique<PostProcessChain>();
-	postProcessChain_->Initialize(directXCommon_, width_, height_);
+	postProcessChain_->Initialize(dxCommon_, width_, height_);
 
 	///
 	///ここにエフェクトを追加していく
@@ -91,7 +91,7 @@ void OffscreenRenderer::Finalize() {
 	}
 
 	// DescriptorHeapManagerからディスクリプタを解放
-	auto descriptorManager = directXCommon_->GetDescriptorManager();
+	auto descriptorManager = dxCommon_->GetDescriptorManager();
 	if (descriptorManager) {
 		if (rtvHandle_.isValid) {
 			descriptorManager->ReleaseRTV(rtvHandle_.index);
@@ -118,7 +118,7 @@ void OffscreenRenderer::Update(float deltaTime) {
 }
 
 void OffscreenRenderer::PreDraw() {
-	auto commandList = directXCommon_->GetCommandList();
+	auto commandList = dxCommon_->GetCommandList();
 
 	// カラーバリア構造体を毎回新しく作成（メンバ変数の使い回しを避ける）
 	D3D12_RESOURCE_BARRIER preDrawBarrier{};
@@ -163,17 +163,17 @@ void OffscreenRenderer::PreDraw() {
 	commandList->RSSetScissorRects(1, &scissorRect_);
 
 	// 描画用のデスクリプタヒープを設定
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = { directXCommon_->GetDescriptorManager()->GetSRVHeapComPtr() };
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = { dxCommon_->GetDescriptorManager()->GetSRVHeapComPtr() };
 	commandList->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());
 
 	// 通常の描画設定を適用（既存のPSOを使用）
-	commandList->SetGraphicsRootSignature(directXCommon_->GetRootSignature());
-	commandList->SetPipelineState(directXCommon_->GetPipelineState());
+	commandList->SetGraphicsRootSignature(dxCommon_->GetRootSignature());
+	commandList->SetPipelineState(dxCommon_->GetPipelineState());
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void OffscreenRenderer::PostDraw() {
-	auto commandList = directXCommon_->GetCommandList();
+	auto commandList = dxCommon_->GetCommandList();
 
 	// カラーバリア構造体を毎回新しく作成（メンバ変数の使い回しを避ける）
 	D3D12_RESOURCE_BARRIER postDrawBarrier{};
@@ -219,7 +219,7 @@ void OffscreenRenderer::DrawOffscreenTexture() {
 		return;
 	}
 
-	auto commandList = directXCommon_->GetCommandList();
+	auto commandList = dxCommon_->GetCommandList();
 
 	// ポストプロセスチェーンを適用（深度テクスチャも渡す）
 	D3D12_GPU_DESCRIPTOR_HANDLE finalTexture = srvHandle_.gpuHandle;
@@ -230,16 +230,16 @@ void OffscreenRenderer::DrawOffscreenTexture() {
 
 	// PostProcessChain実行後に描画状態を完全にリセット
 	// バックバッファのレンダーターゲットを再設定
-	UINT backBufferIndex = directXCommon_->GetSwapChain()->GetCurrentBackBufferIndex();
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = directXCommon_->GetRTVHandle(backBufferIndex);
+	UINT backBufferIndex = dxCommon_->GetSwapChain()->GetCurrentBackBufferIndex();
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = dxCommon_->GetRTVHandle(backBufferIndex);
 	/// オフスクリーンの外にも3DObjectが描画できるようにレンダーターゲットに深度も入れておく
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = directXCommon_->GetDescriptorManager()->GetCPUHandle(
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dxCommon_->GetDescriptorManager()->GetCPUHandle(
 		DescriptorHeapManager::HeapType::DSV, GraphicsConfig::kMainDSVIndex);
 	commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 
 	// ディスクリプタヒープを再設定
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = {
-		directXCommon_->GetDescriptorManager()->GetSRVHeapComPtr()
+		dxCommon_->GetDescriptorManager()->GetSRVHeapComPtr()
 	};
 	commandList->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());
 
@@ -251,15 +251,15 @@ void OffscreenRenderer::DrawOffscreenTexture() {
 	);
 
 	// オフスクリーン用PSOから通常描画用PSOに戻す
-	commandList->SetGraphicsRootSignature(directXCommon_->GetRootSignature());
-	commandList->SetPipelineState(directXCommon_->GetPipelineState());
+	commandList->SetGraphicsRootSignature(dxCommon_->GetRootSignature());
+	commandList->SetPipelineState(dxCommon_->GetPipelineState());
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void OffscreenRenderer::InitializeOffscreenTriangle() {
 	// オフスクリーン描画用OffscreenTriangleを作成（Sprite置き換え）
 	offscreenTriangle_ = std::make_unique<OffscreenTriangle>();
-	offscreenTriangle_->Initialize(directXCommon_);
+	offscreenTriangle_->Initialize(dxCommon_);
 
 	Logger::Log(Logger::GetStream(), "Complete initialize offscreen triangle (replacing sprite)!!\n");
 }
@@ -289,7 +289,7 @@ void OffscreenRenderer::CreateRenderTargetTexture() {
 	clearValue.Color[3] = clearColor_[3];
 
 	// 初期状態をPIXEL_SHADER_RESOURCEに変更（バリアとの整合性のため）
-	HRESULT hr = directXCommon_->GetDevice()->CreateCommittedResource(
+	HRESULT hr = dxCommon_->GetDevice()->CreateCommittedResource(
 		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc,
@@ -320,7 +320,7 @@ void OffscreenRenderer::CreateDepthStencilTexture() {
 	depthClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;  // DSV用フォーマット
 
 	// 初期状態をDEPTH_WRITEに変更（書き込み準備状態で作成）
-	HRESULT hr = directXCommon_->GetDevice()->CreateCommittedResource(
+	HRESULT hr = dxCommon_->GetDevice()->CreateCommittedResource(
 		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc,
@@ -333,7 +333,7 @@ void OffscreenRenderer::CreateDepthStencilTexture() {
 }
 
 void OffscreenRenderer::CreateRTV() {
-	auto descriptorManager = directXCommon_->GetDescriptorManager();
+	auto descriptorManager = dxCommon_->GetDescriptorManager();
 
 	// RTV作成（割り当て + ビュー作成を実行）
 	rtvHandle_ = descriptorManager->CreateRTVForTexture2D(
@@ -348,7 +348,7 @@ void OffscreenRenderer::CreateRTV() {
 }
 
 void OffscreenRenderer::CreateDSV() {
-	auto descriptorManager = directXCommon_->GetDescriptorManager();
+	auto descriptorManager = dxCommon_->GetDescriptorManager();
 
 	// DSV作成（割り当て + ビュー作成を実行）
 	dsvHandle_ = descriptorManager->CreateDSVForTexture2D(
@@ -363,7 +363,7 @@ void OffscreenRenderer::CreateDSV() {
 }
 
 void OffscreenRenderer::CreateSRV() {
-	auto descriptorManager = directXCommon_->GetDescriptorManager();
+	auto descriptorManager = dxCommon_->GetDescriptorManager();
 
 	// SRV作成（割り当て + ビュー作成を実行）
 	srvHandle_ = descriptorManager->CreateSRVForTexture2D(
@@ -379,7 +379,7 @@ void OffscreenRenderer::CreateSRV() {
 }
 
 void OffscreenRenderer::CreateDepthSRV() {
-	auto descriptorManager = directXCommon_->GetDescriptorManager();
+	auto descriptorManager = dxCommon_->GetDescriptorManager();
 
 	// 深度テクスチャ用のSRV作成
 	// 深度テクスチャは特殊なフォーマットを使用
@@ -408,7 +408,7 @@ void OffscreenRenderer::CreatePSO() {
 		.SetBlendMode(BlendMode::AlphaBlend);// アルファブレンドを有効化
 
 	// PSOFactory経由で生成
-	auto psoInfo = directXCommon_->GetPSOFactory()->CreatePSO(psoDesc, rsBuilder);
+	auto psoInfo = dxCommon_->GetPSOFactory()->CreatePSO(psoDesc, rsBuilder);
 	if (!psoInfo.IsValid()) {
 		Logger::Log(Logger::GetStream(), "OffscreenRenderer: Failed to create PSO\n");
 		assert(false);

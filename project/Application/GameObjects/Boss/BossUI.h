@@ -40,7 +40,7 @@ public:
 
 private:
 	// システム参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 	// HP/ENゲージ用スプライト
 	std::unique_ptr<Sprite> hpGaugeBar_;		 // HPゲージの枠

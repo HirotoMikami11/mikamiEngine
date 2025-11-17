@@ -220,6 +220,6 @@ private:
 	bool showColliders_ = true;
 
 	// システム参照
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 };

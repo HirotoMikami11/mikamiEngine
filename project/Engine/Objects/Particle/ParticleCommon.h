@@ -36,7 +36,7 @@ private:
 	ParticleCommon& operator=(const ParticleCommon&) = delete;
 
 	// 基本情報
-	DirectXCommon* directXCommon_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
 
 
 };
