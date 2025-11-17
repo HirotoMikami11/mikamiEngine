@@ -127,7 +127,7 @@ private:
 	char csvFilePathBuffer_[256] = "resources/CSV_Data/BossMovePoints/SplineMoveState.csv";
 
 	// 新規制御点の座標
-	Vector3 newPointPosition_ = { 0.0f, 0.0f, 0.0f };
+	Vector3 newPointPosition_ = { 0.0f, 1.5f, 0.0f };
 
 	// 変更フラグ
 	bool isDirty_ = false;
