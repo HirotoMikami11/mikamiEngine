@@ -53,7 +53,9 @@ void GameClearScene::InitializeGameObjects() {
 	Vector3 clearPos = { 0.0f,0.9f,0.0f };
 	clearFont_ = std::make_unique<ModelFont>();
 	clearFont_->Initialize(dxCommon_, "clearFont", clearPos);
-
+	Vector3 pressAPos = { 0.0f, -2.04f, 4.5f };
+	pressA_ = std::make_unique<ModelFont>();
+	pressA_->Initialize(dxCommon_, "pressAFont", pressAPos);
 
 	///*-----------------------------------------------------------------------*///
 	///								グリッド線									///
@@ -86,8 +88,9 @@ void GameClearScene::Update() {
 	UpdateGameObjects();
 
 	// タイトルシーンに移動
-	if (Input::GetInstance()->IsKeyTrigger(DIK_SPACE) ||
-		Input::GetInstance()->IsGamePadButtonTrigger(Input::GamePadButton::A) ) {
+	if (!TransitionManager::GetInstance()->IsTransitioning() &&
+		Input::GetInstance()->IsKeyTrigger(DIK_SPACE) ||
+		Input::GetInstance()->IsGamePadButtonTrigger(Input::GamePadButton::A)) {
 		// フェードを使った遷移
 		SceneTransitionHelper::FadeToScene("TitleScene", 1.0f);
 		return; // 以降の処理をスキップ
@@ -99,6 +102,7 @@ void GameClearScene::UpdateGameObjects() {
 	viewProjectionMatrix = cameraController_->GetViewProjectionMatrix();
 	// 球体の更新
 	clearFont_->Update(viewProjectionMatrix);
+	pressA_->Update(viewProjectionMatrix);
 
 
 }
@@ -116,6 +120,7 @@ void GameClearScene::DrawOffscreen() {
 	/// 
 	// 球体の描画
 	clearFont_->Draw(directionalLight_);
+	pressA_->Draw(directionalLight_);
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -149,6 +154,7 @@ void GameClearScene::ImGui() {
 	ImGui::Spacing();
 	ImGui::Text("clearFont");
 	clearFont_->ImGui();
+	pressA_->ImGui();
 
 	ImGui::Spacing();
 	ImGui::Text("Grid Line");

@@ -99,7 +99,8 @@ void SelectScene::Update() {
 	UpdateGameObjects();
 
 	// ゲームシーンに移動
-	if (Input::GetInstance()->IsKeyTrigger(DIK_SPACE) ||
+	if (!TransitionManager::GetInstance()->IsTransitioning() && 
+		Input::GetInstance()->IsKeyTrigger(DIK_SPACE) ||
 		Input::GetInstance()->IsGamePadButtonTrigger(Input::GamePadButton::A)) {
 		// フェードを使った遷移
 		SceneTransitionHelper::FadeToScene("GameScene", 1.0f);

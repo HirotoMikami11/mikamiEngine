@@ -50,10 +50,13 @@ void TitleScene::InitializeGameObjects() {
 	///								フォント										///
 	///*-----------------------------------------------------------------------*///
 
-	Vector3 titleRogoPos = { 0.0f,0.9f,0.0f };
+	Vector3 titleRogoPos = { 0.0f,0.8f,-1.74f };
 	titleRogo_ = std::make_unique<ModelFont>();
 	titleRogo_->Initialize(dxCommon_, "titleFont", titleRogoPos);
 
+	Vector3 pressAPos = { 0.0f,-2.04f,4.5f };
+	pressA_ = std::make_unique<ModelFont>();
+	pressA_->Initialize(dxCommon_, "pressAFont", pressAPos);
 
 	///*-----------------------------------------------------------------------*///
 	///								グリッド線									///
@@ -86,7 +89,8 @@ void TitleScene::Update() {
 	UpdateGameObjects();
 
 	// ゲームシーンに移動
-	if (Input::GetInstance()->IsKeyTrigger(DIK_SPACE) ||
+	if (!TransitionManager::GetInstance()->IsTransitioning() &&
+		Input::GetInstance()->IsKeyTrigger(DIK_SPACE) ||
 		Input::GetInstance()->IsGamePadButtonTrigger(Input::GamePadButton::A)) {
 		// フェードを使った遷移
 		SceneTransitionHelper::FadeToScene("GameScene", 1.0f);
@@ -100,6 +104,7 @@ void TitleScene::UpdateGameObjects() {
 	viewProjectionMatrix = cameraController_->GetViewProjectionMatrix();
 	// 球体の更新
 	titleRogo_->Update(viewProjectionMatrix);
+	pressA_->Update(viewProjectionMatrix);
 
 }
 
@@ -116,6 +121,7 @@ void TitleScene::DrawOffscreen() {
 	/// 
 	// 球体の描画
 	titleRogo_->Draw(directionalLight_);
+	pressA_->Draw(directionalLight_);
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -149,6 +155,7 @@ void TitleScene::ImGui() {
 	ImGui::Spacing();
 	ImGui::Text("titleRogo");
 	titleRogo_->ImGui();
+	pressA_->ImGui();
 
 	ImGui::Spacing();
 	ImGui::Text("Grid Line");

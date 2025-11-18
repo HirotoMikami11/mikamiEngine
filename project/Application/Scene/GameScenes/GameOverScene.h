@@ -12,7 +12,6 @@ public:
 	GameOverScene();
 	~GameOverScene() override;
 
-
 	/// <summary>
 	/// シーンに入った時のオフスクリーン設定
 	/// </summary>
@@ -46,6 +45,7 @@ private:
 
 	// ゲームオブジェクト
 	std::unique_ptr<ModelFont> overFont_;
+	std::unique_ptr<ModelFont> pressA_;
 	std::unique_ptr<GridLine> gridLine_;
 
 	// ライティング
@@ -54,7 +54,6 @@ private:
 	// カメラ
 	CameraController* cameraController_;
 	Matrix4x4 viewProjectionMatrix;
-
 
 	// システム参照
 	DirectXCommon* dxCommon_;

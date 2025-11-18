@@ -48,6 +48,7 @@ private:
 	// ゲームオブジェクト
 
 	std::unique_ptr<ModelFont> titleRogo_;
+	std::unique_ptr<ModelFont> pressA_;
 	std::unique_ptr<GridLine> gridLine_;
 
 	// ライティング

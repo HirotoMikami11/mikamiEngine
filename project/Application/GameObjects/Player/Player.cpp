@@ -64,6 +64,10 @@ void Player::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& view
 	Vector3 currentPosition = gameObject_->GetPosition();
 	currentPosition.x += velocity_.x * deltaTime;
 	currentPosition.z += velocity_.z * deltaTime;
+
+	currentPosition.x = std::clamp(currentPosition.x, (-limitArea_.x / 2) + gameObject_->GetTransform().GetScale().x, (limitArea_.x / 2) - gameObject_->GetTransform().GetScale().x);
+	currentPosition.z = std::clamp(currentPosition.z, (-limitArea_.y / 2) + gameObject_->GetTransform().GetScale().z, (limitArea_.y / 2) - gameObject_->GetTransform().GetScale().z);
+
 	gameObject_->SetPosition(currentPosition);
 
 	// 弾の更新

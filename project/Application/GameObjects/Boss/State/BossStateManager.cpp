@@ -20,8 +20,8 @@ void BossStateManager::Initialize() {
 
 	// デフォルトの遷移候補を設定
 	std::vector<StateTransitionCandidate> defaultCandidates = {
-		{ BossStateType::SplineMove, 2.0f },
-		{ BossStateType::SplineMove8WayShoot, 3.0f },
+	//	{ BossStateType::SplineMove, 2.0f },
+		{ BossStateType::SplineMove8WayShoot, 2.0f },
 		{ BossStateType::SplineMoveRotateShoot, 2.0f },
 	};
 	SetTransitionCandidates(defaultCandidates);

@@ -109,6 +109,8 @@ private:
 	float acceleration_ = 1.5f;
 	float limitRunSpeed_ = 7.0f;
 	float attenuation_ = 0.5f;
+	Vector2 limitArea_ = { 60.0f,60.0f };
+
 
 	// 回転関連
 	float rotationSpeed_ = 0.05f;
