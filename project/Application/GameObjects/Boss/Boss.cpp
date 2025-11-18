@@ -84,10 +84,12 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	splineDebugger_->Initialize(debugDrawSystem, splineTrack_.get());
 	moveEditor_->Initialize(splineTrack_.get(), splineMovement_.get(), splineDebugger_.get());
 
-	// 初期Stateを設定（Idle）
-	currentState_ = std::make_unique<SplineMoveRotateShootState>("resources/CSV_Data/BossMovePoints/RotateState.csv");
+	// StateManagerの初期化
+	stateManager_ = std::make_unique<BossStateManager>();
+	stateManager_->Initialize();
 
-
+	// 初期Stateを設定（RotateShootState）
+	currentState_ = std::make_unique<SplineMoveRotateShootState>("resources/CSV/BossMove/RotateState.csv");
 	currentState_->Initialize();
 }
 
@@ -115,6 +117,13 @@ void Boss::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPr
 	// Stateの更新
 	if (currentState_) {
 		currentState_->Update(this);
+	}
+
+	// AI有効時、IdleStateなら自動的に次のStateへ遷移
+	if (stateManager_ && stateManager_->IsAIEnabled()) {
+		if (currentState_ && strcmp(currentState_->GetStateName(), "Idle") == 0) {
+			stateManager_->TransitionToRandomState(this);
+		}
 	}
 
 	// Phase遷移チェック
@@ -233,12 +242,17 @@ void Boss::ImGui() {
 				switch (stateIndex) {
 				case 0: ChangeState(std::make_unique<IdleState>()); break;
 				case 1: ChangeState(std::make_unique<DebugMoveState>()); break;
-				case 2: ChangeState(std::make_unique<SplineMoveState>("resources/CSV_Data/BossMovePoints/SplineMoveState.csv")); break;
-				case 3: ChangeState(std::make_unique<SplineMove8WayShootState>("resources/CSV_Data/BossMovePoints/SplineMoveState.csv")); break;
-				case 4: ChangeState(std::make_unique<SplineMoveRotateShootState>("resources/CSV_Data/BossMovePoints/RotateState.csv")); break;
+				case 2: ChangeState(std::make_unique<SplineMoveState>("resources/CSV/BossMove/Move_1.csv")); break;
+				case 3: ChangeState(std::make_unique<SplineMove8WayShootState>("resources/CSV/BossMove/Move_1.csv")); break;
+				case 4: ChangeState(std::make_unique<SplineMoveRotateShootState>("resources/CSV/BossMove/RotateShoot_1.csv")); break;
 				}
 			}
 			currentState_->ImGui();
+
+			// StateManager表示
+			if (stateManager_) {
+				stateManager_->ImGui();
+			}
 
 		}
 

@@ -19,12 +19,16 @@ void SplineMove8WayShootState::Initialize() {
 	isInitialized_ = false;
 	boss_ = nullptr;
 	shootTimer_ = 0;
+
 }
 
 void SplineMove8WayShootState::Update(Boss* boss) {
 	if (!boss) {
 		return;
 	}
+	// スプライン移動システムの取得
+	BossSplineMovement* movement = boss->GetSplineMovement();
+	BossSplineTrack* track = boss->GetSplineTrack();
 
 	// 初回のみ初期化処理
 	if (!isInitialized_) {
@@ -38,9 +42,7 @@ void SplineMove8WayShootState::Update(Boss* boss) {
 		boss_ = boss;
 	}
 
-	// スプライン移動システムの取得
-	BossSplineMovement* movement = boss->GetSplineMovement();
-	BossSplineTrack* track = boss->GetSplineTrack();
+
 
 	if (!movement || !track || !track->IsValid()) {
 		boss->ChangeState(std::make_unique<IdleState>());
@@ -132,10 +134,7 @@ bool SplineMove8WayShootState::LoadAndSetup(Boss* boss) {
 	// スプライン系の取得
 	BossSplineTrack* track = boss->GetSplineTrack();
 	BossSplineMovement* movement = boss->GetSplineMovement();
-
-	if (!track || !movement) {
-		return false;
-	}
+	if (!track || !movement) {return false;}
 
 	// CSVから制御点を読み込み
 	std::vector<Vector3> controlPoints;
@@ -143,23 +142,20 @@ bool SplineMove8WayShootState::LoadAndSetup(Boss* boss) {
 		return false;
 	}
 
-	// 制御点が4点未満の場合はエラー
 	if (controlPoints.size() < 4) {
 		return false;
 	}
 
 	// Trackに制御点を設定
 	track->SetControlPoints(controlPoints);
-
-	// 長さテーブルを構築
 	track->BuildLengthTable();
-
 	// Movementをリセット
 	movement->ResetPosition();
 
 	// 最初の座標にワープ
 	Vector3 startPosition = movement->GetCurrentPosition();
 	boss->SetHeadPosition(startPosition);
+	// 履歴をクリア
 	boss->ClearPositionHistory();
 
 	// 次のポイントの方向を向く

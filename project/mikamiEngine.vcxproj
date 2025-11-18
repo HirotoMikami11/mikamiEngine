@@ -156,6 +156,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObjects\Bullet\BaseBullet.cpp" />
     <ClCompile Include="Application\GameObjects\Bullet\BossBullet.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp" />
+    <ClCompile Include="Application\GameObjects\Boss\State\BossStateManager.cpp" />
     <ClCompile Include="Engine\Utility\CSVUtility.cpp" />
     <ClCompile Include="Engine\Objects\Line\DebugDrawLineSystem.cpp" />
     <ClCompile Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.cpp" />
@@ -370,6 +371,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObjects\Bullet\BaseBullet.h" />
     <ClInclude Include="Application\GameObjects\Bullet\BossBullet.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DebugSphere.h" />
+    <ClInclude Include="Application\GameObjects\Boss\State\BossStateManager.h" />
+    <ClInclude Include="Application\GameObjects\Boss\State\BossStateConfig.h" />
     <ClInclude Include="Engine\Utility\CSVUtility.h" />
     <ClInclude Include="Engine\Objects\Line\DebugDrawLineSystem.h" />
     <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.h" />

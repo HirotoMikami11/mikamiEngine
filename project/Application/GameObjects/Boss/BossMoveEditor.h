@@ -58,14 +58,11 @@ public:
 	bool IsDirty() const { return isDirty_; }
 
 private:
-	// === ImGuiサブセクション ===
 	void ShowMainControls();
 	void ShowControlPointsList();
 	void ShowFileOperations();
 	void ShowMovementControls();
 	void ShowDebugControls();
-
-	// === 操作関数 ===
 
 	/// <summary>
 	/// 制御点を追加
@@ -123,8 +120,8 @@ private:
 	int selectedPointIndex_ = -1;
 
 	// ファイル操作
-	std::string csvFilePath_ = "resources/CSV_Data/BossMovePoints/SplineMoveState.csv";
-	char csvFilePathBuffer_[256] = "resources/CSV_Data/BossMovePoints/SplineMoveState.csv";
+	std::string csvFilePath_ = "resources/CSV/BossMove/Move_1.csv";
+	char csvFilePathBuffer_[256] = "resources/CSV/BossMove/Move_1.csv";
 
 	// 新規制御点の座標
 	Vector3 newPointPosition_ = { 0.0f, 1.5f, 0.0f };

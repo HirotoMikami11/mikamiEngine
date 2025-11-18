@@ -133,7 +133,7 @@ bool SplineMoveRotateShootState::LoadAndSetup(Boss* boss) {
 
 	BossSplineTrack* track = boss->GetSplineTrack();
 	BossSplineMovement* movement = boss->GetSplineMovement();
-	if (!track || !movement) return false;
+	if (!track || !movement) { return false; }
 
 	// CSVから制御点を読み込み
 	std::vector<Vector3> controlPoints;
@@ -158,7 +158,6 @@ bool SplineMoveRotateShootState::LoadAndSetup(Boss* boss) {
 	stopProgress_ = CalculateTFromControlPointIndex(stopControlPointIndex_, controlPoints.size());
 	// Movementを初期化
 	movement->ResetPosition();
-	movement->SetUniformSpeedEnabled(true);
 
 	// 開始位置（t=0）にワープ
 	Vector3 startPosition = movement->GetCurrentPosition();
