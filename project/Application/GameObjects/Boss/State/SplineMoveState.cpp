@@ -150,6 +150,9 @@ bool SplineMoveState::LoadAndSetup(Boss* boss) {
 	// 次のポイントの方向を向く
 	LookAtNextPoint(boss);
 
+	// 全パーツを頭の向きに合わせて一直線に整列
+	boss->AlignAllPartsInLine();
+
 	// 移動を開始
 	movement->StartMovement();
 

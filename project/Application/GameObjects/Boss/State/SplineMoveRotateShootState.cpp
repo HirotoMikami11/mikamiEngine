@@ -170,6 +170,9 @@ bool SplineMoveRotateShootState::LoadAndSetup(Boss* boss) {
 	Vector3 forwardDirection = movement->GetForwardDirection(0.05f);
 	float rotationY = std::atan2(-forwardDirection.x, -forwardDirection.z);
 	boss->SetHeadRotationY(rotationY);
+
+	// 全パーツを頭の向きに合わせて一直線に整列
+	boss->AlignAllPartsInLine();
 	return true;
 }
 

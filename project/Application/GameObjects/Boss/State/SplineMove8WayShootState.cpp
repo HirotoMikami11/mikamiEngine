@@ -7,10 +7,15 @@
 #include "BossSplineTrack.h"
 #include <format>
 
-SplineMove8WayShootState::SplineMove8WayShootState(const std::string& csvFilePath)
+SplineMove8WayShootState::SplineMove8WayShootState(const std::string& csvFilePath,
+	int shootInterval,
+	float bulletSpeed,
+	int onShootBulletNumber
+)
 	: csvFilePath_(csvFilePath)
-	, isInitialized_(false)
-	, boss_(nullptr)
+	, shootInterval_(shootInterval)
+	, bulletSpeed_(bulletSpeed)
+	, onShootBulletNumber_(onShootBulletNumber)
 	, shootTimer_(0)
 {
 }
@@ -134,7 +139,7 @@ bool SplineMove8WayShootState::LoadAndSetup(Boss* boss) {
 	// スプライン系の取得
 	BossSplineTrack* track = boss->GetSplineTrack();
 	BossSplineMovement* movement = boss->GetSplineMovement();
-	if (!track || !movement) {return false;}
+	if (!track || !movement) { return false; }
 
 	// CSVから制御点を読み込み
 	std::vector<Vector3> controlPoints;
@@ -163,6 +168,9 @@ bool SplineMove8WayShootState::LoadAndSetup(Boss* boss) {
 	float rotationY = std::atan2(-forwardDirection.x, -forwardDirection.z);
 	boss->SetHeadRotationY(rotationY);
 
+	// 全パーツを頭の向きに合わせて一直線に整列
+	boss->AlignAllPartsInLine();
+
 	// 移動を開始
 	movement->StartMovement();
 
@@ -178,9 +186,9 @@ void SplineMove8WayShootState::ShootBulletsFrom8Directions(Boss* boss) {
 	std::vector<BaseParts*> activeParts = boss->GetActiveBodyParts();
 
 	// 8方向のベクトル（XZ平面、Y=0）
-	float angleStep = DegToRad(360.0f/ onrShootBulletNumber_);
+	float angleStep = DegToRad(360.0f / onShootBulletNumber_);
 	std::vector<Vector3> directions;
-	for (int i = 0; i < onrShootBulletNumber_; ++i) {
+	for (int i = 0; i < onShootBulletNumber_; ++i) {
 		float angle = angleStep * i;
 		Vector3 dir = {
 			std::sin(angle) * bulletSpeed_,

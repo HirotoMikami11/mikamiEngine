@@ -9,7 +9,7 @@
 #include <algorithm>
 
 BossStateManager::BossStateManager()
-	: aiEnabled_(false)
+	: aiEnabled_(true)
 	, transitionCount_(0)
 {
 }
@@ -134,9 +134,13 @@ std::unique_ptr<BossState> BossStateManager::CreateState(BossStateType stateType
 		std::string selectedCSV = splineMove8WayShootConfig_.csvFilePaths[index];
 
 		// Stateを生成し、設定を適用
-		auto state = std::make_unique<SplineMove8WayShootState>(selectedCSV);
-		state->SetShootInterval(splineMove8WayShootConfig_.shootInterval);
-		state->SetBulletSpeed(splineMove8WayShootConfig_.bulletSpeed);
+		auto state = std::make_unique<SplineMove8WayShootState>(
+			selectedCSV,
+			splineMove8WayShootConfig_.shootInterval,
+			splineMove8WayShootConfig_.bulletSpeed,
+			splineMove8WayShootConfig_.onShootBulletNumber
+		);
+
 		return state;
 	}
 
@@ -227,7 +231,7 @@ void BossStateManager::ImGui() {
 			}
 			ImGui::DragInt("Shoot Interval", &splineMove8WayShootConfig_.shootInterval, 1, 10, 300);
 			ImGui::DragFloat("Bullet Speed", &splineMove8WayShootConfig_.bulletSpeed, 0.01f, 0.05f, 1.0f);
-			ImGui::DragInt("Bullet Number", &splineMove8WayShootConfig_.onrShootBulletNumber, 1, 4, 16);
+			ImGui::DragInt("Bullet Number", &splineMove8WayShootConfig_.onShootBulletNumber, 1, 1, 16);
 			ImGui::TreePop();
 		}
 

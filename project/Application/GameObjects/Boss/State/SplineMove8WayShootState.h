@@ -15,7 +15,12 @@ public:
 	/// コンストラクタ（CSVファイルパス指定）
 	/// </summary>
 	/// <param name="csvFilePath">スプライン制御点のCSVファイルパス</param>
-	explicit SplineMove8WayShootState(const std::string& csvFilePath);
+	explicit SplineMove8WayShootState(
+		const std::string& csvFilePath,
+		int shootInterval = 180,
+		float bulletSpeed = 0.2f,
+		int onShootBulletNumber = 8
+	);
 
 	/// <summary>
 	/// 状態の初期化
@@ -78,11 +83,8 @@ private:
 	Boss* boss_ = nullptr;
 
 	// 弾発射タイマー
-	int shootTimer_ = 0;
-	int shootInterval_ = 180;	// 弾発射間隔
-
-	// 弾の速度
-	float bulletSpeed_ = 0.2f;	// XZ平面での速度
-	//弾の同時発射数
-	int onrShootBulletNumber_ = 8;
+	int shootTimer_;			//今の時間
+	int shootInterval_;			// 弾発射間隔
+	float bulletSpeed_;			// XZ平面での速度
+	int onShootBulletNumber_;	//弾の同時発射数
 };

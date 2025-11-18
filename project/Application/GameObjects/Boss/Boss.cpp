@@ -683,10 +683,74 @@ void Boss::ClearPositionHistory() {
 			historyPosition = Add(historyPosition, Multiply(direction, distance));
 			positionHistory_.push_back(historyPosition);
 		}
-
-		Logger::Log("Boss: Position history cleared and reinitialized\n");
 	}
 }
+
+
+void Boss::AlignAllPartsInLine() {
+	if (!head_) {
+		return;
+	}
+
+	// 頭の位置と向きを取得
+	Vector3 headPosition = head_->GetPosition();
+	Vector3 headRotation = head_->GetRotation();
+	float headRotationY = headRotation.y;
+
+	// 頭の後ろ方向ベクトルを計算
+	// -Z方向が前方なので、180度回転させた方向が後ろ
+	Vector3 backDirection = {
+		std::sin(headRotationY),  // X成分
+		0.0f,                     // Y成分（水平に保つ）
+		std::cos(headRotationY)   // Z成分
+	};
+
+	// 全パーツのリストを作成
+	std::vector<BaseParts*> allParts;
+	allParts.push_back(head_.get());
+	for (auto& body : bodies_) {
+		allParts.push_back(body.get());
+	}
+	if (tail_) {
+		allParts.push_back(tail_.get());
+	}
+
+	// 位置履歴をクリア
+	positionHistory_.clear();
+
+	// 現在の位置から後ろ方向に配置
+	Vector3 currentPosition = headPosition;
+
+	for (size_t i = 0; i < allParts.size(); ++i) {
+		BaseParts* currentPart = allParts[i];
+
+		// 位置を設定
+		currentPart->SetPosition(currentPosition);
+
+		// 向きを設定（全て頭と同じ向き）
+		currentPart->SetRotationY(headRotationY);
+
+		// 位置履歴に追加
+		positionHistory_.push_back(currentPosition);
+
+		// 次のパーツの位置を計算（後ろ方向に移動）
+		if (i < allParts.size() - 1) {
+			BaseParts* nextPart = allParts[i + 1];
+
+			// パーツ間の距離を計算
+			float distance = CalculateDistanceBetweenParts(currentPart, nextPart);
+
+			// 後ろ方向に距離分移動
+			currentPosition.x += backDirection.x * distance;
+			currentPosition.y += backDirection.y * distance;
+			currentPosition.z += backDirection.z * distance;
+		}
+	}
+
+	// 前回の頭の位置を更新
+	previousHeadPosition_ = headPosition;
+}
+
 
 
 void Boss::FireBullet(const Vector3& position, const Vector3& velocity) {

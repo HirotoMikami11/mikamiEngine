@@ -9,8 +9,7 @@ struct SplineMove8WayShootConfig {
 	std::vector<std::string> csvFilePaths;	// CSVファイルパスのリスト
 	int shootInterval = 180;				// 弾発射間隔（フレーム）
 	float bulletSpeed = 0.2f;				// 弾の速度
-	int onrShootBulletNumber = 8;			// 同時発射数
-
+	int onShootBulletNumber = 2;			// 同時発射数
 	/// <summary>
 	/// 有効な設定かチェック
 	/// </summary>

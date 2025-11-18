@@ -102,6 +102,13 @@ public:
 	/// </summary>
 	void ClearPositionHistory();
 
+	/// <summary>
+	/// 頭の向きに合わせて、全パーツを一直線に整列させる
+	/// 頭の位置と向きを基準に、体と尻尾を後ろ方向に配置し、位置履歴も更新
+	/// </summary>
+	void AlignAllPartsInLine();
+
+
 	// 弾発射機構
 	/// <summary>
 	/// 弾を発射

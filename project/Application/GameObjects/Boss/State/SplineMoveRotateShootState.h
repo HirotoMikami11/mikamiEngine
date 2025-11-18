@@ -164,15 +164,15 @@ private:
 
 
 	// パラメータ
-	std::string csvFilePath_;			// スプライン制御点CSVパス
-	int stopControlPointIndex_ = 2;		// 停止する制御点のインデックス
-	float startAngle_ = -60.0f;			// 回転開始角度（度）
-	float endAngle_ = 60.0f;			// 回転終了角度（度）
-	float rotationSpeed_ = 2.0f;		// 回転速度（度/フレーム）
-	int shootInterval_ = 4;				// 発射間隔（フレーム）
-	float bulletSpeed_ = 0.3f;			// 弾の速度
-	int angleIntervalDuration_ = 30;	// 角度到達時の停止時間（フレーム）
-	int maxRepeatCount_ = 2;			// 往復回数
+	std::string csvFilePath_;		// スプライン制御点CSVパス
+	int stopControlPointIndex_;		// 停止する制御点のインデックス
+	float startAngle_;				// 回転開始角度（度）
+	float endAngle_;				// 回転終了角度（度）
+	float rotationSpeed_;			// 回転速度（度/フレーム）
+	int shootInterval_;				// 発射間隔（フレーム）
+	float bulletSpeed_;				// 弾の速度
+	int angleIntervalDuration_;		// 角度到達時の停止時間（フレーム）
+	int maxRepeatCount_;			// 往復回数
 
 
 	// 状態管理
