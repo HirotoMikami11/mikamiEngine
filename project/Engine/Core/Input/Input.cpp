@@ -296,6 +296,25 @@ float Input::GetAnalogStick(AnalogStick stick, int controllerIndex) const {
 	}
 }
 
+bool Input::IsUseAnalogStick(AnalogStick stick, int controllerIndex) const
+{
+	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
+		return false;
+	}
+	if (!gamePadConnected[controllerIndex]) {
+		return false;
+	}
+
+	//入力された値が0.0fでないときだけtrueを返す
+	float value = GetAnalogStick(stick, controllerIndex);
+	
+	if (value == 0.0f) {
+		return false;
+	}
+	return true;
+}
+
+
 float Input::GetLeftTrigger(int controllerIndex) const {
 	if (controllerIndex < 0 || controllerIndex >= MAX_CONTROLLERS) {
 		return 0.0f;

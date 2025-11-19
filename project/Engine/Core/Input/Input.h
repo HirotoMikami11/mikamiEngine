@@ -201,6 +201,14 @@ public:
 	float GetAnalogStick(AnalogStick stick, int controllerIndex = 0) const;
 
 	/// <summary>
+	/// アナログスティックが動かされているかどうかを判別
+	/// </summary>
+	/// <param name="stick"></param>
+	/// <param name="controllerIndex"></param>
+	/// <returns></returns>
+	bool IsUseAnalogStick(AnalogStick stick, int controllerIndex = 0) const;
+
+	/// <summary>
 	/// 左トリガーの値を取得(0.0f ~ 1.0f)
 	/// </summary>
 	/// <param name="controllerIndex">コントローラー番号(0~1)</param>

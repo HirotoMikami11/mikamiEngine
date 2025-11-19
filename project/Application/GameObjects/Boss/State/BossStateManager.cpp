@@ -20,9 +20,9 @@ void BossStateManager::Initialize() {
 
 	// デフォルトの遷移候補を設定
 	std::vector<StateTransitionCandidate> defaultCandidates = {
-	//	{ BossStateType::SplineMove, 2.0f },
-		{ BossStateType::SplineMove8WayShoot, 2.0f },
-		{ BossStateType::SplineMoveRotateShoot, 2.0f },
+		//	{ BossStateType::SplineMove, 2.0f },
+			{ BossStateType::SplineMove8WayShoot, 2.0f },
+			{ BossStateType::SplineMoveRotateShoot, 2.0f },
 	};
 	SetTransitionCandidates(defaultCandidates);
 }
@@ -180,10 +180,10 @@ void BossStateManager::ImGui() {
 	ImGui::Checkbox("AI Enabled", &aiEnabled_);
 	ImGui::Text("Transition Count: %d", transitionCount_);
 
-	ImGui::Separator();
+	ImGui::Spacing();
 
 	// 遷移候補の表示と編集
-	if (ImGui::TreeNode("Transition Candidates")) {
+	if (ImGui::CollapsingHeader("Transition Candidates")) {
 		for (size_t i = 0; i < transitionCandidates_.size(); ++i) {
 			auto& candidate = transitionCandidates_[i];
 
@@ -214,15 +214,12 @@ void BossStateManager::ImGui() {
 				transitionCandidates_.pop_back();
 			}
 		}
-
-		ImGui::TreePop();
 	}
 
-	ImGui::Separator();
+	ImGui::Spacing();
 
 	// 各Stateの設定表示
-	if (ImGui::TreeNode("State Configurations")) {
-
+	if (ImGui::CollapsingHeader("State Configurations")) {
 		// SplineMove8WayShoot設定
 		if (ImGui::TreeNode("SplineMove8WayShoot Config")) {
 			ImGui::Text("CSV Files:");
@@ -260,12 +257,11 @@ void BossStateManager::ImGui() {
 			}
 			ImGui::TreePop();
 		}
-
-		ImGui::TreePop();
 	}
 
 	// 手動遷移ボタン
 	ImGui::Separator();
+	ImGui::Spacing();
 	if (ImGui::Button("Transition to Random State (Manual)")) {
 		// このボタンはBossクラス側で処理する必要がある
 		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Use Boss::TransitionToRandomState()");

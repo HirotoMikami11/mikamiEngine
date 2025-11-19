@@ -28,29 +28,27 @@ void BossMoveEditor::Update() {
 
 void BossMoveEditor::ImGui() {
 #ifdef USEIMGUI
-	if (ImGui::TreeNode("Boss")) {
 
-		// メイン情報
-		ImGui::Text("Boss Spline Control Point Editor");
-		ImGui::Separator();
+	// メイン情報
+	ImGui::Text("Boss Spline Control Point Editor");
+	ImGui::Separator();
 
-		// サブセクション
-		ShowMainControls();
-		ImGui::Spacing();
+	// サブセクション
+	ShowMainControls();
+	ImGui::Spacing();
 
-		ShowControlPointsList();
-		ImGui::Spacing();
+	ShowControlPointsList();
+	ImGui::Spacing();
 
-		ShowFileOperations();
-		ImGui::Spacing();
+	ShowFileOperations();
+	ImGui::Spacing();
 
-		ShowMovementControls();
-		ImGui::Spacing();
+	ShowMovementControls();
+	ImGui::Spacing();
 
-		ShowDebugControls();
+	ShowDebugControls();
 
-		ImGui::TreePop();
-	}
+
 #endif
 }
 

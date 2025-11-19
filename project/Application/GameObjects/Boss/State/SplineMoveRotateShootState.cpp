@@ -81,22 +81,6 @@ void SplineMoveRotateShootState::ImGui() {
 	const char* phaseNames[] = { "Initializing", "MovingToStop", "Stopping", "Rotating", "MovingToEnd", "Completed" };
 	int phaseIndex = static_cast<int>(currentPhase_);
 	ImGui::Text("Current Phase: %s", phaseNames[phaseIndex]);
-
-	// 回転フェーズの場合、サブフェーズも表示
-	if (currentPhase_ == Phase::Rotating) {
-		const char* subPhaseNames[] = { "RotatingToEnd", "IntervalAtEnd", "RotatingToStart", "IntervalAtStart" };
-		int subPhaseIndex = static_cast<int>(rotatingSubPhase_);
-		ImGui::Text("  Sub Phase: %s", subPhaseNames[subPhaseIndex]);
-		ImGui::Text("  Current Angle: %.1f deg", currentAngle_);
-		ImGui::Text("  Repeat Count: %d / %d", currentRepeatCount_, maxRepeatCount_);
-
-		// インターバル中はタイマー表示
-		if (rotatingSubPhase_ == RotatingSubPhase::IntervalAtEnd ||
-			rotatingSubPhase_ == RotatingSubPhase::IntervalAtStart) {
-			ImGui::Text("  Interval Timer: %d / %d", intervalTimer_, angleIntervalDuration_);
-		}
-	}
-
 	ImGui::Separator();
 
 	// パラメータ表示
