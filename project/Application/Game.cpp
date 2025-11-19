@@ -72,6 +72,7 @@ void Game::RegisterTransitionEffects()
 	slideRight->Initialize(Engine::GetInstance()->GetDirectXCommon());
 	transitionManager_->RegisterEffect("slide_right", std::move(slideRight));
 
+
 }
 
 void Game::Update() {
