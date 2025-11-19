@@ -116,13 +116,13 @@ private:
 	float rotationSpeed_ = 0.05f;
 
 	// 弾発射関連
-	float bulletSpeed_ = 0.2f;
-	int fireInterval_ = 5;
+	float bulletSpeed_ = 0.6f;
+	int fireInterval_ = 6;
 	int fireTimer_ = 0;					// 発射タイマー
 
 	// HP管理
 	float maxHP_ = 100.0f;	// 最大HP
-	float HP_ = 100.0f;		// 現在HP
+	float HP_;				// 現在HP
 
 	bool isAlive_ = true;
 };

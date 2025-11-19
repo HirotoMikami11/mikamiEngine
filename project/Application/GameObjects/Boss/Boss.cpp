@@ -89,7 +89,7 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	stateManager_->Initialize();
 
 	// 初期Stateを設定（RotateShootState）
-	currentState_ = std::make_unique<SplineMoveRotateShootState>("resources/CSV/BossMove/RotateState.csv");
+	currentState_ = std::make_unique<SplineMoveRotateShootState>("resources/CSV/BossMove/RotateShoot_1.csv");
 	currentState_->Initialize();
 }
 

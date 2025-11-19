@@ -36,6 +36,9 @@ void Player::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	// 速度の初期化
 	velocity_ = { 0.0f, 0.0f, 0.0f };
 
+	//HPの初期化
+	SetHP(maxHP_);
+
 	//UIクラスの初期化
 	playerUI_ = std::make_unique<PlayerUI>();
 	playerUI_->Initialize(dxCommon_);
