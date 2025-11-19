@@ -8,7 +8,6 @@ GameClearScene::GameClearScene()
 	, cameraController_(nullptr)
 	, dxCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
-	, debugDrawLineSystem_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
 {
 }
@@ -28,7 +27,6 @@ void GameClearScene::Initialize() {
 	// システム参照の取得
 	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
-	debugDrawLineSystem_ = Engine::GetInstance()->GetDebugDrawManager();
 
 	///*-----------------------------------------------------------------------*///
 	///								カメラの初期化									///
@@ -56,23 +54,6 @@ void GameClearScene::InitializeGameObjects() {
 	Vector3 pressAPos = { 0.0f, -2.04f, 4.5f };
 	pressA_ = std::make_unique<ModelFont>();
 	pressA_->Initialize(dxCommon_, "pressAFont", pressAPos);
-
-	///*-----------------------------------------------------------------------*///
-	///								グリッド線									///
-	///*-----------------------------------------------------------------------*///
-
-	// グリッド
-	gridLine_ = std::make_unique<GridLine>();
-	// 100m、1m間隔、10mごとに黒
-	gridLine_->Initialize(dxCommon_,
-		GridLineType::XZ,			// グリッドタイプ：XZ平面
-		100.0f,						// サイズ
-		1.0f,						// 間隔
-		10.0f,						// 主要線間隔
-		{ 0.5f, 0.5f, 0.5f, 1.0f },	// 通常線：灰色
-		{ 0.0f, 0.0f, 0.0f, 1.0f }	// 主要線：黒
-	);
-	gridLine_->SetName("Main Grid");
 
 	///*-----------------------------------------------------------------------*///
 	///									ライト									///
@@ -103,22 +84,14 @@ void GameClearScene::UpdateGameObjects() {
 	// 球体の更新
 	clearFont_->Update(viewProjectionMatrix);
 	pressA_->Update(viewProjectionMatrix);
-
-
 }
 
 void GameClearScene::DrawOffscreen() {
 
 	///
-	/// グリッド線をLineSystemに追加する(実際に描画しない)
-	/// 
-	gridLine_->Draw();
-
-
-	///
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	/// 
-	// 球体の描画
+	// フォントの描画
 	clearFont_->Draw(directionalLight_);
 	pressA_->Draw(directionalLight_);
 
@@ -127,10 +100,9 @@ void GameClearScene::DrawOffscreen() {
 	/// 
 
 	///
-	/// Line描画の一括実行
+	/// デバッグ線の一括描画はEngine::EndDrawOffscreen()で自動実行される
+	/// このシーンでは呼び出し不要
 	///
-
-	debugDrawLineSystem_->Draw(viewProjectionMatrix);
 }
 
 void GameClearScene::DrawBackBuffer() {
@@ -148,17 +120,13 @@ void GameClearScene::DrawBackBuffer() {
 void GameClearScene::ImGui() {
 #ifdef USEIMGUI
 
-	ImGui::Text("Debug Scene");
+	ImGui::Text("Game Clear Scene");
 	ImGui::Separator();
 
 	ImGui::Spacing();
-	ImGui::Text("clearFont");
+	ImGui::Text("Fonts");
 	clearFont_->ImGui();
 	pressA_->ImGui();
-
-	ImGui::Spacing();
-	ImGui::Text("Grid Line");
-	gridLine_->ImGui();
 
 	ImGui::Spacing();
 	// ライトのImGui

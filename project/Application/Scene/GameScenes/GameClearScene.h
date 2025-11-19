@@ -46,7 +46,6 @@ private:
 	// ゲームオブジェクト
 	std::unique_ptr<ModelFont> clearFont_;
 	std::unique_ptr<ModelFont> pressA_;
-	std::unique_ptr<GridLine> gridLine_;
 
 	// ライティング
 	Light directionalLight_;
@@ -58,5 +57,4 @@ private:
 	// システム参照
 	DirectXCommon* dxCommon_;
 	OffscreenRenderer* offscreenRenderer_;
-	DebugDrawLineSystem* debugDrawLineSystem_;
 };

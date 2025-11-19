@@ -276,9 +276,6 @@
     <ClCompile Include="Engine\CameraController\Camera.cpp">
       <Filter>Engine\CameraController\NormalCamera</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Objects\Line\GridLine.cpp">
-      <Filter>Engine\Objects\Line</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Managers\ImGui\ImGuiManager.cpp">
       <Filter>Engine\Managers\ImGui</Filter>
     </ClCompile>
@@ -657,9 +654,6 @@
     </ClInclude>
     <ClInclude Include="Engine\CameraController\Camera.h">
       <Filter>Engine\CameraController\NormalCamera</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Objects\Line\GridLine.h">
-      <Filter>Engine\Objects\Line</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Managers\ImGui\ImGuiManager.h">
       <Filter>Engine\Managers\ImGui</Filter>

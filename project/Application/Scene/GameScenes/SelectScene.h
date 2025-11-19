@@ -2,7 +2,6 @@
 #include <memory>
 
 #include "BaseScene.h"
-
 #include "CollisionManager.h"
 
 /// <summary>
@@ -47,7 +46,6 @@ private:
 
 	// ゲームオブジェクト
 	std::unique_ptr<Sphere> sphere_;
-	std::unique_ptr<GridLine> gridLine_;
 
 	// ライティング
 	Light directionalLight_;
@@ -63,5 +61,4 @@ private:
 	// システム参照
 	DirectXCommon* dxCommon_;
 	OffscreenRenderer* offscreenRenderer_;
-	DebugDrawLineSystem* debugDrawLineSystem_;
 };

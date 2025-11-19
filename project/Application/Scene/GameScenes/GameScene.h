@@ -51,7 +51,6 @@ private:
 	void UpdateCollison();
 
 	// ゲームオブジェクト
-	std::unique_ptr<GridLine> gridLine_;
 	std::unique_ptr<Ground> ground_;
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<Boss> boss_;
@@ -72,5 +71,4 @@ private:
 	// システム参照
 	DirectXCommon* dxCommon_;
 	OffscreenRenderer* offscreenRenderer_;
-	DebugDrawLineSystem* debugDrawLineSystem_;
 };

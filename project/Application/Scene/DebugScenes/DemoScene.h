@@ -51,7 +51,6 @@ private:
 	std::unique_ptr<Model3D> modelMultiMaterial_;
 
 	std::unique_ptr<Sprite> sprite_;
-	std::unique_ptr<GridLine> gridLine_;
 
 
 	// パーティクルシステム
@@ -68,6 +67,4 @@ private:
 	// システム参照
 	DirectXCommon* dxCommon_;
 	OffscreenRenderer* offscreenRenderer_;
-	DebugDrawLineSystem* debugDrawLineSystem_;
-
 };

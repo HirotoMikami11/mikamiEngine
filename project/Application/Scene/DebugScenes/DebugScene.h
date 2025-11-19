@@ -47,7 +47,6 @@ private:
 	// ゲームオブジェクト
 	std::unique_ptr<DebugSphere> sphere_;
 	std::unique_ptr<Model3D> terrain_;
-	std::unique_ptr<GridLine> gridLine_;
 
 	// ライティング
 	Light directionalLight_;
@@ -59,5 +58,4 @@ private:
 	// システム参照
 	DirectXCommon* dxCommon_;
 	OffscreenRenderer* offscreenRenderer_;
-	DebugDrawLineSystem* debugDrawLineSystem_;
 };

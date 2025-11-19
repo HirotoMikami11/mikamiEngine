@@ -115,7 +115,7 @@ void Engine::StartDrawOffscreen() {
 	// フレーム開始
 	dxCommon_->BeginFrame();
 
-	// デバッグ描画のリセット（前フレームの線分をクリア）
+	// デバッグ描画のリセット（前フレームの線分をクリア、グリッド自動生成）
 	if (debugDrawManager_) {
 		debugDrawManager_->Reset();
 	}
@@ -125,6 +125,11 @@ void Engine::StartDrawOffscreen() {
 }
 
 void Engine::EndDrawOffscreen() {
+	// デバッグ線の一括描画（カメラコントローラーから行列取得）
+	if (debugDrawManager_ && cameraController_) {
+		debugDrawManager_->Draw(cameraController_->GetViewProjectionMatrix());
+	}
+
 	/// オフスクリーンの描画終了
 	offscreenRenderer_->PostDraw();
 }

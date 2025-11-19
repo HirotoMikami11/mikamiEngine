@@ -201,7 +201,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Objects\Object3D\Model.cpp" />
     <ClCompile Include="Engine\Objects\Object3D\Transform3D.cpp" />
     <ClCompile Include="Engine\Objects\Light\Light.cpp" />
-    <ClCompile Include="Engine\Objects\Line\GridLine.cpp" />
     <ClCompile Include="Engine\Objects\Line\LineRenderer.cpp" />
     <ClCompile Include="Engine\Objects\Sprite\Sprite.cpp" />
     <ClCompile Include="Engine\Objects\Sprite\Transform2D.cpp" />
@@ -422,7 +421,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Objects\Object3D\Model.h" />
     <ClInclude Include="Engine\Objects\Object3D\Transform3D.h" />
     <ClInclude Include="Engine\Objects\Light\Light.h" />
-    <ClInclude Include="Engine\Objects\Line\GridLine.h" />
     <ClInclude Include="Engine\Objects\Line\LineRenderer.h" />
     <ClInclude Include="Engine\Objects\Particle\ParticleState.h" />
     <ClInclude Include="Engine\Objects\Sprite\Sprite.h" />

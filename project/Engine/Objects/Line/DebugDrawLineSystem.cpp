@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "DebugDrawLineSystem.h"
 #include "ImGui/ImGuiManager.h"
 #include "Logger.h"
@@ -13,13 +14,13 @@ DebugDrawLineSystem* DebugDrawLineSystem::GetInstance()
 void DebugDrawLineSystem::Initialize(DirectXCommon* dxCommon)
 {
 	if (isInitialized_) {
-		Logger::Log(Logger::GetStream(), "DebugDrawLineSystem initialized!\n");
+		Logger::Log(Logger::GetStream(), "DebugDrawLineSystem: Already initialized!\n");
 		return;
 	}
 
 	dxCommon_ = dxCommon;
 
-	// LineRendererを作成・初期化
+	// LineRendererを取得
 	lineRenderer_ = std::make_unique<LineRenderer>();
 	lineRenderer_->Initialize(dxCommon);
 
@@ -29,7 +30,7 @@ void DebugDrawLineSystem::Initialize(DirectXCommon* dxCommon)
 	isUse_ = true;
 #endif
 
-	Logger::Log(Logger::GetStream(), "DebugDrawLineSystem successfully!!\n");
+	Logger::Log(Logger::GetStream(), "DebugDrawLineSystem: Initialized successfully!!\n");
 }
 
 void DebugDrawLineSystem::Reset()
@@ -38,8 +39,13 @@ void DebugDrawLineSystem::Reset()
 		return;
 	}
 
-	// 全ての線分をクリア
+	// LineRendererの線分をクリア
 	lineRenderer_->Reset();
+
+	// グリッドが有効なら自動生成
+	if (isGridVisible_ && isUse_) {
+		GenerateGridLines();
+	}
 }
 
 void DebugDrawLineSystem::Draw(const Matrix4x4& viewProjectionMatrix)
@@ -54,10 +60,8 @@ void DebugDrawLineSystem::Draw(const Matrix4x4& viewProjectionMatrix)
 
 void DebugDrawLineSystem::Finalize()
 {
-	if (lineRenderer_) {
-		lineRenderer_.reset();
-	}
-
+	// LineRendererはシングルトンなので解放しない
+	lineRenderer_ = nullptr;
 	dxCommon_ = nullptr;
 	isInitialized_ = false;
 
@@ -66,7 +70,7 @@ void DebugDrawLineSystem::Finalize()
 
 void DebugDrawLineSystem::AddLine(const Vector3& start, const Vector3& end, const Vector4& color)
 {
-	if (!isInitialized_ || !isUse_) {
+	if (!isInitialized_ || !isUse_ || !lineRenderer_) {
 		return;
 	}
 
@@ -75,7 +79,7 @@ void DebugDrawLineSystem::AddLine(const Vector3& start, const Vector3& end, cons
 
 void DebugDrawLineSystem::AddLine(const Vector3& start, const Vector3& end, const uint32_t& color)
 {
-	if (!isInitialized_ || !isUse_) {
+	if (!isInitialized_ || !isUse_ || !lineRenderer_) {
 		return;
 	}
 
@@ -93,22 +97,22 @@ void DebugDrawLineSystem::DrawAABB(const AABB& aabb, const Vector4& color)
 	CalculateAABBVertices(aabb, vertices);
 
 	// 底面の4本の線
-	AddLine(vertices[0], vertices[1], color);	// 左下手前 → 右下手前
-	AddLine(vertices[1], vertices[2], color);	// 右下手前 → 右下奥
-	AddLine(vertices[2], vertices[3], color);	// 右下奥 → 左下奥
-	AddLine(vertices[3], vertices[0], color);	// 左下奥 → 左下手前
+	AddLine(vertices[0], vertices[1], color);
+	AddLine(vertices[1], vertices[2], color);
+	AddLine(vertices[2], vertices[3], color);
+	AddLine(vertices[3], vertices[0], color);
 
 	// 上面の4本の線
-	AddLine(vertices[4], vertices[5], color);	// 左上手前 → 右上手前
-	AddLine(vertices[5], vertices[6], color);	// 右上手前 → 右上奥
-	AddLine(vertices[6], vertices[7], color);	// 右上奥 → 左上奥
-	AddLine(vertices[7], vertices[4], color);	// 左上奥 → 左上手前
+	AddLine(vertices[4], vertices[5], color);
+	AddLine(vertices[5], vertices[6], color);
+	AddLine(vertices[6], vertices[7], color);
+	AddLine(vertices[7], vertices[4], color);
 
 	// 縦の4本の線
-	AddLine(vertices[0], vertices[4], color);	// 左下手前 → 左上手前
-	AddLine(vertices[1], vertices[5], color);	// 右下手前 → 右上手前
-	AddLine(vertices[2], vertices[6], color);	// 右下奥 → 右上奥
-	AddLine(vertices[3], vertices[7], color);	// 左下奥 → 左上奥
+	AddLine(vertices[0], vertices[4], color);
+	AddLine(vertices[1], vertices[5], color);
+	AddLine(vertices[2], vertices[6], color);
+	AddLine(vertices[3], vertices[7], color);
 }
 
 void DebugDrawLineSystem::DrawAABB(const AABB& aabb, const uint32_t& color)
@@ -131,11 +135,11 @@ void DebugDrawLineSystem::DrawSphere(const Vector3& center, float radius, const 
 
 	// 緯度の方向に分割 -π/2 ~ π/2
 	for (uint32_t latIndex = 0; latIndex < subdivision; ++latIndex) {
-		float lat = (-pi / 2.0f) + latEvery * latIndex;  // 現在の緯度(θ)
+		float lat = (-pi / 2.0f) + latEvery * latIndex;
 
 		// 経度の方向に分割 0 ~ 2π
 		for (uint32_t lonIndex = 0; lonIndex < subdivision; ++lonIndex) {
-			float lon = lonIndex * lonEvery;  // 現在の経度(φ)
+			float lon = lonIndex * lonEvery;
 
 			// world座標系でのa,b,cを求める
 			Vector3 a = {
@@ -168,7 +172,7 @@ void DebugDrawLineSystem::DrawSphere(const Vector3& center, float radius, const 
 
 void DebugDrawLineSystem::DrawSphere(const Vector3& center, float radius, const uint32_t& color, uint32_t subdivision)
 {
-	DrawSphere(center, radius, Uint32ToColorVector(color));
+	DrawSphere(center, radius, Uint32ToColorVector(color), subdivision);
 }
 
 void DebugDrawLineSystem::DrawCross(const Vector3& position, float size, const Vector4& color)
@@ -201,6 +205,24 @@ void DebugDrawLineSystem::DrawCross(const Vector3& position, float size, const V
 	);
 }
 
+void DebugDrawLineSystem::ConfigureGrid(
+	const GridLineType& gridType,
+	float size,
+	float interval,
+	float majorInterval)
+{
+	gridType_ = gridType;
+	gridSize_ = size;
+	gridInterval_ = interval;
+	gridMajorInterval_ = majorInterval;
+}
+
+void DebugDrawLineSystem::SetGridColors(const Vector4& normalColor, const Vector4& majorColor)
+{
+	gridNormalColor_ = normalColor;
+	gridMajorColor_ = majorColor;
+}
+
 uint32_t DebugDrawLineSystem::GetLineCount() const
 {
 	if (!lineRenderer_) {
@@ -230,18 +252,181 @@ void DebugDrawLineSystem::CalculateAABBVertices(const AABB& aabb, Vector3 vertic
 	vertices[7] = { aabb.min.x, aabb.max.y, aabb.max.z };	// 7: 左上奥
 }
 
+void DebugDrawLineSystem::GenerateGridLines()
+{
+	if (!isGridVisible_ || !lineRenderer_) {
+		return;
+	}
+
+	// グリッドタイプに応じて描画
+	switch (gridType_) {
+	case GridLineType::XZ:
+		DrawXZGrid();
+		break;
+	case GridLineType::XY:
+		DrawXYGrid();
+		break;
+	case GridLineType::YZ:
+		DrawYZGrid();
+		break;
+	default:
+		Logger::Log(Logger::GetStream(), "DebugDrawLineSystem: Unknown GridLineType specified.\n");
+		return;
+	}
+}
+
+void DebugDrawLineSystem::DrawXZGrid()
+{
+	float halfSize = gridSize_ * 0.5f;
+
+	// X方向の線（Z軸に沿って）
+	for (float x = -halfSize; x <= halfSize; x += gridInterval_) {
+		Vector4 color;
+		if (std::abs(x) < 0.001f) {
+			// 原点のZ軸は青色
+			color = { 0.0f, 0.0f, 1.0f, 1.0f };
+		} else if (std::fmod(std::abs(x), gridMajorInterval_) < 0.001f) {
+			color = gridMajorColor_;
+		} else {
+			color = gridNormalColor_;
+		}
+
+		Vector3 start = { gridCenter_.x + x, gridCenter_.y, gridCenter_.z - halfSize };
+		Vector3 end = { gridCenter_.x + x, gridCenter_.y, gridCenter_.z + halfSize };
+		lineRenderer_->AddLine(start, end, color);
+	}
+
+	// Z方向の線（X軸に沿って）
+	for (float z = -halfSize; z <= halfSize; z += gridInterval_) {
+		Vector4 color;
+		if (std::abs(z) < 0.001f) {
+			// 原点のX軸は赤色
+			color = { 1.0f, 0.0f, 0.0f, 1.0f };
+		} else if (std::fmod(std::abs(z), gridMajorInterval_) < 0.001f) {
+			color = gridMajorColor_;
+		} else {
+			color = gridNormalColor_;
+		}
+
+		Vector3 start = { gridCenter_.x - halfSize, gridCenter_.y, gridCenter_.z + z };
+		Vector3 end = { gridCenter_.x + halfSize, gridCenter_.y, gridCenter_.z + z };
+		lineRenderer_->AddLine(start, end, color);
+	}
+}
+
+void DebugDrawLineSystem::DrawXYGrid()
+{
+	float halfSize = gridSize_ * 0.5f;
+
+	// X方向の線（Y軸に沿って）
+	for (float x = -halfSize; x <= halfSize; x += gridInterval_) {
+		Vector4 color;
+		if (std::abs(x) < 0.001f) {
+			// 原点のY軸は緑色
+			color = { 0.0f, 1.0f, 0.0f, 1.0f };
+		} else if (std::fmod(std::abs(x), gridMajorInterval_) < 0.001f) {
+			color = gridMajorColor_;
+		} else {
+			color = gridNormalColor_;
+		}
+
+		Vector3 start = { gridCenter_.x + x, gridCenter_.y - halfSize, gridCenter_.z };
+		Vector3 end = { gridCenter_.x + x, gridCenter_.y + halfSize, gridCenter_.z };
+		lineRenderer_->AddLine(start, end, color);
+	}
+
+	// Y方向の線（X軸に沿って）
+	for (float y = -halfSize; y <= halfSize; y += gridInterval_) {
+		Vector4 color;
+		if (std::abs(y) < 0.001f) {
+			// 原点のX軸は赤色
+			color = { 1.0f, 0.0f, 0.0f, 1.0f };
+		} else if (std::fmod(std::abs(y), gridMajorInterval_) < 0.001f) {
+			color = gridMajorColor_;
+		} else {
+			color = gridNormalColor_;
+		}
+
+		Vector3 start = { gridCenter_.x - halfSize, gridCenter_.y + y, gridCenter_.z };
+		Vector3 end = { gridCenter_.x + halfSize, gridCenter_.y + y, gridCenter_.z };
+		lineRenderer_->AddLine(start, end, color);
+	}
+}
+
+void DebugDrawLineSystem::DrawYZGrid()
+{
+	float halfSize = gridSize_ * 0.5f;
+
+	// Y方向の線（Z軸に沿って）X=0
+	for (float y = -halfSize; y <= halfSize; y += gridInterval_) {
+		Vector4 color;
+		if (std::abs(y) < 0.001f) {
+			// 原点のZ軸は青色
+			color = { 0.0f, 0.0f, 1.0f, 1.0f };
+		} else if (std::fmod(std::abs(y), gridMajorInterval_) < 0.001f) {
+			color = gridMajorColor_;
+		} else {
+			color = gridNormalColor_;
+		}
+
+		Vector3 start = { gridCenter_.x, gridCenter_.y + y, gridCenter_.z - halfSize };
+		Vector3 end = { gridCenter_.x, gridCenter_.y + y, gridCenter_.z + halfSize };
+		lineRenderer_->AddLine(start, end, color);
+	}
+
+	// Z方向の線（Y軸に沿って）X=0
+	for (float z = -halfSize; z <= halfSize; z += gridInterval_) {
+		Vector4 color;
+		if (std::abs(z) < 0.001f) {
+			// 原点のY軸は緑色
+			color = { 0.0f, 1.0f, 0.0f, 1.0f };
+		} else if (std::fmod(std::abs(z), gridMajorInterval_) < 0.001f) {
+			color = gridMajorColor_;
+		} else {
+			color = gridNormalColor_;
+		}
+
+		Vector3 start = { gridCenter_.x, gridCenter_.y - halfSize, gridCenter_.z + z };
+		Vector3 end = { gridCenter_.x, gridCenter_.y + halfSize, gridCenter_.z + z };
+		lineRenderer_->AddLine(start, end, color);
+	}
+}
+
 void DebugDrawLineSystem::ImGui()
 {
 #ifdef USEIMGUI
 	if (ImGui::CollapsingHeader("DebugDrawLine System")) {
-
 		ImGui::Separator();
 
 		ImGui::Text("Status: %s", isInitialized_ ? "Initialized" : "Not Initialized");
 		ImGui::Checkbox("USE", &isUse_);
 
+		// グリッド設定
+		if (ImGui::TreeNode("Grid Settings")) {
+			ImGui::Checkbox("Grid Visible", &isGridVisible_);
+
+			// グリッドタイプ選択
+			const char* gridTypes[] = { "XZ Plane", "XY Plane", "YZ Plane" };
+			int currentType = static_cast<int>(gridType_);
+			if (ImGui::Combo("Grid Type", &currentType, gridTypes, 3)) {
+				gridType_ = static_cast<GridLineType>(currentType);
+			}
+
+			ImGui::DragFloat("Grid Size", &gridSize_, 1.0f, 10.0f, 500.0f);
+			ImGui::DragFloat("Grid Interval", &gridInterval_, 0.1f, 0.1f, 10.0f);
+			ImGui::DragFloat("Major Interval", &gridMajorInterval_, 1.0f, 2.0f, 100.0f);
+			ImGui::DragFloat3("Grid Center", &gridCenter_.x, 0.1f);
+
+			ImGui::ColorEdit4("Normal Color", &gridNormalColor_.x);
+			ImGui::ColorEdit4("Major Color", &gridMajorColor_.x);
+
+			ImGui::TreePop();
+		}
+
 		// LineRendererの詳細情報
-		lineRenderer_->ImGui();
+		if (lineRenderer_) {
+			lineRenderer_->ImGui();
+		}
 	}
 #endif
 }

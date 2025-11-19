@@ -8,7 +8,6 @@ TitleScene::TitleScene()
 	, cameraController_(nullptr)
 	, dxCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
-	, debugDrawLineSystem_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
 {
 }
@@ -28,7 +27,6 @@ void TitleScene::Initialize() {
 	// システム参照の取得
 	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
-	debugDrawLineSystem_ = Engine::GetInstance()->GetDebugDrawManager();
 
 	///*-----------------------------------------------------------------------*///
 	///								カメラの初期化									///
@@ -38,7 +36,6 @@ void TitleScene::Initialize() {
 	Vector3 initialPosition = { 0.0f, 0.0f, -10.0f };
 	cameraController_->Initialize(dxCommon_, initialPosition);
 	cameraController_->SetActiveCamera("normal");
-
 	// ゲームオブジェクト初期化
 	InitializeGameObjects();
 	//ポストエフェクトの初期設定
@@ -57,23 +54,6 @@ void TitleScene::InitializeGameObjects() {
 	Vector3 pressAPos = { 0.0f,-2.04f,4.5f };
 	pressA_ = std::make_unique<ModelFont>();
 	pressA_->Initialize(dxCommon_, "pressAFont", pressAPos);
-
-	///*-----------------------------------------------------------------------*///
-	///								グリッド線									///
-	///*-----------------------------------------------------------------------*///
-
-	// グリッド
-	gridLine_ = std::make_unique<GridLine>();
-	// 100m、1m間隔、10mごとに黒
-	gridLine_->Initialize(dxCommon_,
-		GridLineType::XZ,			// グリッドタイプ：XZ平面
-		100.0f,						// サイズ
-		1.0f,						// 間隔
-		10.0f,						// 主要線間隔
-		{ 0.5f, 0.5f, 0.5f, 1.0f },	// 通常線：灰色
-		{ 0.0f, 0.0f, 0.0f, 1.0f }	// 主要線：黒
-	);
-	gridLine_->SetName("Main Grid");
 
 	///*-----------------------------------------------------------------------*///
 	///									ライト									///
@@ -111,12 +91,6 @@ void TitleScene::UpdateGameObjects() {
 void TitleScene::DrawOffscreen() {
 
 	///
-	/// グリッド線をLineSystemに追加する(実際に描画しない)
-	/// 
-	gridLine_->Draw();
-
-
-	///
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	/// 
 	// 球体の描画
@@ -127,11 +101,6 @@ void TitleScene::DrawOffscreen() {
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
 	/// 
 
-	///
-	/// Line描画の一括実行
-	///
-
-	debugDrawLineSystem_->Draw(viewProjectionMatrix);
 }
 
 void TitleScene::DrawBackBuffer() {
@@ -156,11 +125,6 @@ void TitleScene::ImGui() {
 	ImGui::Text("titleRogo");
 	titleRogo_->ImGui();
 	pressA_->ImGui();
-
-	ImGui::Spacing();
-	ImGui::Text("Grid Line");
-	gridLine_->ImGui();
-
 
 	ImGui::Spacing();
 	// ライトのImGui
