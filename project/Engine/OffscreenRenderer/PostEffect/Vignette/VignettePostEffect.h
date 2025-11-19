@@ -14,7 +14,6 @@ public:
 	/// </summary>
 	struct VignetteParameters {
 		Vector4 vignetteColor = { 0.0f, 0.0f, 0.0f, 1.0f };		// ビネットの色（通常は黒色）
-
 		float time = 0.0f;								// 時間（アニメーション用）
 		float vignetteStrength = 0.6f;					// ビネットの強度 (0.0f～1.0f)
 		float vignetteRadius = 0.4f;					// ビネットの半径 (0.0f～1.0f)

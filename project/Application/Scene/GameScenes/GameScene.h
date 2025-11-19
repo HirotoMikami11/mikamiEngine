@@ -69,7 +69,6 @@ private:
 	// 衝突マネージャー
 	std::unique_ptr<CollisionManager> collisionManager_;
 
-
 	// システム参照
 	DirectXCommon* dxCommon_;
 	OffscreenRenderer* offscreenRenderer_;
