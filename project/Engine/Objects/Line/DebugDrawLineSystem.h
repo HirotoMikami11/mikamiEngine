@@ -75,8 +75,8 @@ public:
 	/// <param name="radius">半径</param>
 	/// <param name="color">色</param>
 	/// <param name="subdivision">分割数（デフォルト3）</param>
-	void DrawSphere(const Vector3& center, float radius, const Vector4& color = { 0.0f, 1.0f, 0.0f, 1.0f }, uint32_t subdivision = 3);
-	void DrawSphere(const Vector3& center, float radius, const uint32_t& color = 0x00FF00FF, uint32_t subdivision = 3);
+	void DrawSphere(const Vector3& center, float radius, const Vector4& color = { 0.0f, 1.0f, 0.0f, 1.0f }, uint32_t subdivision = 16);
+	void DrawSphere(const Vector3& center, float radius, const uint32_t& color = 0x00FF00FF, uint32_t subdivision = 16);
 
 	/// <summary>
 	/// 十字線を描画（位置マーカー）

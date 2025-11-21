@@ -17,5 +17,5 @@ void Collider::DebugLineAdd() {
 	Vector3 center = GetWorldPosition();
 
 	// コライダーの球体を描画（現在のデバッグカラーを使用）
-	debugDrawLineSystem->DrawSphere(center, radius_, currentColliderColor_);
+	debugDrawLineSystem->DrawSphere(center, radius_, currentColliderColor_,3);
 }
