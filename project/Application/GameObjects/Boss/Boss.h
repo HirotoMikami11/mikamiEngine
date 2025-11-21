@@ -222,6 +222,7 @@ private:
 	const float kHistoryUpdateThreshold = 0.001f;	// 履歴更新の閾値（ガタガタ防止）
 	const size_t kMaxHistorySize = 2048;		// 履歴の最大サイズ
 	const float kBasePartSize = 1.0f;			// 基本パーツサイズ（キューブのデフォルトサイズ）
+	const size_t kBulletPoolSize = 500;			// 弾プールサイズ（追加）
 
 	// 前回の頭の位置（履歴更新判定用）
 	Vector3 previousHeadPosition_;
