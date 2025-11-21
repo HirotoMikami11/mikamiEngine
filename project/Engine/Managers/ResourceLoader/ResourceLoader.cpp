@@ -221,9 +221,8 @@ void ResourceLoader::ImGui() {
 		// ModelManagerから実際の数を取得
 		ImGui::Text("Models:   %zu", modelManager_->GetModelCount());
 
-		// AudioManagerから実際の数を取得（HasAudioがあれば実装可能）
-		// 現在AudioManagerには総数取得メソッドがないため、定義数を表示
-		ImGui::Text("Audios:   %zu (defined)", audios_.size());
+		// AudioManagerから実際Data数を取得
+		ImGui::Text("Audios:   %zu", audioManager_->GetAudioDataCount());
 
 		ImGui::Unindent();
 

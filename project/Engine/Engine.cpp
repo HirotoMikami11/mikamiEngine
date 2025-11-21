@@ -100,6 +100,9 @@ void Engine::Update() {
 	// 入力更新
 	inputManager_->Update();
 
+	// AudioManagerの更新(再生し終わったインスタンスの削除)
+	audioManager_->Update();
+
 	/// ImGuiの受付開始
 	imguiManager_->Begin();
 

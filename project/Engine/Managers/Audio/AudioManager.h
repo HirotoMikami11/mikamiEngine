@@ -4,95 +4,98 @@
 #include <map>
 #include <string>
 #include <cassert>
+#include <vector>
 
 #include "Audio/Audio.h"
 #include "Logger.h"
 
 
 /// <summary>
-/// 音声を管理する管理クラス
+/// 音声を管理する管理クラス（インスタンスベース設計）
 /// </summary>
 class AudioManager {
 public:
 	// ゲームアプリケーション全体で一つのインスタンスを使う（シングルトン）
 	static AudioManager* GetInstance();
 
-	// 初期化
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	void Initialize();
-	// 終了処理
+
+	/// <summary>
+	/// 終了処理
+	/// </summary>
 	void Finalize();
+
+	/// <summary>
+	/// 更新処理（再生完了したインスタンスのクリーンアップ）
+	/// </summary>
+	void Update();
 
 	/// <summary>
 	/// 音声データの読み込み（WAV/MP3対応）
 	/// </summary>
-	/// <param name="filename"></param>
-	/// <param name="tagName"></param>
+	/// <param name="filename">ファイルパス</param>
+	/// <param name="tagName">識別用タグ名</param>
 	void LoadAudio(const std::string& filename, const std::string& tagName);
 
 	/// <summary>
-	/// 音声の再生(ループなし)
+	/// 音声の再生（インスタンスIDを返す）
 	/// </summary>
-	/// <param name="tagName"></param>
-	void Play(const std::string& tagName);
+	/// <param name="tagName">識別用タグ名</param>
+	/// <param name="isLoop">ループ再生するか</param>
+	/// <param name="volume">音量（0.0f～1.0f、デフォルトは1.0f）</param>
+	/// <returns>インスタンスID（0は失敗）</returns>
+	int Play(const std::string& tagName, bool isLoop = false, float volume = 1.0f);
 
 	/// <summary>
-	/// 音声の再生(ループあり)
+	/// 排他的再生（同じタグの既存インスタンスを停止してから再生）
 	/// </summary>
-	/// <param name="tagName"></param>
-	void PlayLoop(const std::string& tagName);
+	/// <param name="tagName">識別用タグ名</param>
+	/// <param name="isLoop">ループ再生するか</param>
+	/// <param name="volume">音量（0.0f～1.0f、デフォルトは1.0f）</param>
+	/// <returns>インスタンスID（0は失敗）</returns>
+	int PlayOverride(const std::string& tagName, bool isLoop = false, float volume = 1.0f);
+
+	// インスタンスベースの制御（IDで指定）
+	void Pause(int instanceId);   // 一時停止
+	void Resume(int instanceId);  // 再開
+	void Stop(int instanceId);    // 停止
+	void SetLoop(int instanceId, bool loop);      // ループ設定変更
+	void SetVolume(int instanceId, float volume); // 音量設定
+
+	// タグ名ベースの制御（タグの全インスタンスに適用）
+	void PauseByTag(const std::string& tagName);   // そのタグの全インスタンスを一時停止
+	void ResumeByTag(const std::string& tagName);  // そのタグの全インスタンスを再開
+	void StopByTag(const std::string& tagName);    // そのタグの全インスタンスを停止
+	void SetLoopByTag(const std::string& tagName, bool loop);      // そのタグの全インスタンスのループ設定
+	void SetVolumeByTag(const std::string& tagName, float volume); // そのタグの全インスタンスの音量設定
+
+	// マスターボリューム制御
+	void SetMasterVolume(float volume);  // マスターボリュームの設定（0.0f～1.0f）
+	float GetMasterVolume() const { return masterVolume; }
+
+	// 一括停止
+	void StopAll();  // 全てのインスタンスを停止
+
+	// 状態確認（インスタンスベース）
+	bool HasInstance(int instanceId) const;   // インスタンスが存在するか
+	bool IsPlaying(int instanceId) const;     // インスタンスが再生中か
+	bool IsPaused(int instanceId) const;      // インスタンスが一時停止中か
+	bool IsLooping(int instanceId) const;     // インスタンスがループ再生中か
+
+	// 状態確認（タグベース）
+	bool HasAudioData(const std::string& tagName) const;  // 音声データが読み込まれているか
+	bool IsPlayingByTag(const std::string& tagName) const; // そのタグのいずれかが再生中か
+
+	// 統計情報
+	size_t GetAudioDataCount() const { return audioDataMap.size(); }     // 読み込まれている音声データの数
+	size_t GetActiveInstanceCount() const { return instanceMap.size(); } // アクティブなインスタンスの数
+	int GetInstanceCountByTag(const std::string& tagName) const;         // 特定タグのインスタンス数
 
 	/// <summary>
-	/// 音声の一時停止
-	/// </summary>
-	/// <param name="tagName"></param>
-	void Pause(const std::string& tagName);
-
-	/// <summary>
-	/// 音声の再開（一時停止位置から）
-	/// </summary>
-	/// <param name="tagName"></param>
-	void Resume(const std::string& tagName);
-
-	/// <summary>
-	/// 音声の完全停止
-	/// </summary>
-	/// <param name="tagName"></param>
-	void Stop(const std::string& tagName);
-
-	/// <summary>
-	/// ループ設定の変更
-	/// </summary>
-	/// <param name="tagName"></param>
-	/// <param name="loop"></param>
-	void SetLoop(const std::string& tagName, bool loop);
-
-	/// <summary>
-	/// 音量の設定
-	/// </summary>
-	/// <param name="tagName"></param>
-	/// <param name="volume"></param>
-	void SetVolume(const std::string& tagName, float volume);
-
-	/// <summary>
-	/// 全ての音声を停止
-	/// </summary>
-	void StopAll();
-
-	/// <summary>
-	/// 音声が読み込まれているかチェック
-	/// </summary>
-	/// <param name="tagName">識別用のタグ名</param>
-	/// <returns>存在するかどうか</returns>
-	bool HasAudio(const std::string& tagName) const;
-
-	/// <summary>
-	/// 読み込まれている音声の数を取得
-	/// </summary>
-	/// <returns>音声数</returns>
-	size_t GetAudioCount() const { return audios.size(); }
-
-	/// <summary>
-	/// ImGui
+	/// ImGui表示
 	/// </summary>
 	void ImGui();
 
@@ -106,11 +109,39 @@ private:
 	AudioManager(const AudioManager&) = delete;
 	AudioManager& operator=(const AudioManager&) = delete;
 
+	/// <summary>
+	/// 全てのインスタンスの音量を更新（マスターボリューム変更時に使用）
+	/// </summary>
+	void UpdateAllVolumes();
+
+	/// <summary>
+	/// 再生完了したインスタンスを削除
+	/// </summary>
+	void CleanupFinishedInstances();
+
+	/// <summary>
+	/// インスタンスIDを生成
+	/// </summary>
+	/// <returns>新しいインスタンスID</returns>
+	int GenerateInstanceId();
+
+	/// <summary>
+	/// タグ名からAudioDataを取得
+	/// </summary>
+	/// <param name="instanceId">インスタンスID</param>
+	/// <returns>タグ名（見つからない場合は空文字列）</returns>
+	std::string GetTagNameFromInstance(int instanceId) const;
+
 	// XAudio2のインスタンス
 	Microsoft::WRL::ComPtr<IXAudio2> xAudio2;
 	// マスターボイス
 	IXAudio2MasteringVoice* masterVoice;
-	// audio
-	std::map<std::string, Audio*> audios;
-
+	// 音声データマップ（タグ名 → AudioData）
+	std::map<std::string, AudioData*> audioDataMap;
+	// インスタンスマップ（インスタンスID → AudioInstance）
+	std::map<int, AudioInstance*> instanceMap;
+	// マスターボリューム（全体の音量）
+	float masterVolume;
+	// 次のインスタンスID
+	int nextInstanceId;
 };
