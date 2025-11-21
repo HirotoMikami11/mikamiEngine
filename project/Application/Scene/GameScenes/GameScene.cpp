@@ -92,7 +92,7 @@ void GameScene::Update() {
 	UpdateCollison();
 
 	//クリア・デス判定
-	
+
 	if (boss_->GetCurrentPhase() == BossPhase::Death) {
 		// フェードを使った遷移
 		SceneTransitionHelper::FadeToScene("GameClearScene", 1.0f);
@@ -132,7 +132,7 @@ void GameScene::UpdateCollison()
 
 	// プレイヤーの弾のリストを取得
 	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player_->GetBullets();
-	const std::list<std::unique_ptr<BossBullet>>& bossBullets = boss_->GetBullets();
+	std::vector<BossBullet*> bossBullets = boss_->GetActiveBullets();
 
 	// Player
 	collisionManager_->AddCollider(player_.get());
@@ -147,10 +147,12 @@ void GameScene::UpdateCollison()
 	for (const auto& bullet : playerBullets) {
 		collisionManager_->AddCollider(bullet.get());
 	}
-	// ボスの弾のコライダーを追加する
-	for (const auto& bullet : bossBullets) {
-		collisionManager_->AddCollider(bullet.get());
+
+	// 新: 生ポインタなので直接使用
+	for (auto* bullet : bossBullets) {
+		collisionManager_->AddCollider(bullet);
 	}
+
 	// 衝突判定と応答
 	collisionManager_->Update();
 

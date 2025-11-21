@@ -15,7 +15,7 @@
 #include "BossSplineDebugger.h"
 #include "BossMoveEditor.h"
 #include "BossUI.h"
-#include "BossBullet.h"
+#include "BossBulletPool.h "
 
 
 /// <summary>
@@ -109,13 +109,14 @@ public:
 	void AlignAllPartsInLine();
 
 
-	// 弾発射機構
+	// 弾発射機構）
 	/// <summary>
 	/// 弾を発射
 	/// </summary>
 	/// <param name="position">発射位置</param>
 	/// <param name="velocity">弾の速度ベクトル</param>
-	void FireBullet(const Vector3& position, const Vector3& velocity);
+	/// <returns>発射成功時true、プールが満杯の場合false</returns>
+	bool FireBullet(const Vector3& position, const Vector3& velocity);
 
 	/// <summary>
 	/// 全ての弾を更新
@@ -130,9 +131,9 @@ public:
 	void DrawBullets(const Light& directionalLight);
 
 	/// <summary>
-	/// 弾リストを取得
+	/// アクティブな弾のリストを取得（当たり判定用）
 	/// </summary>
-	const std::list<std::unique_ptr<BossBullet>>& GetBullets() const { return bossBullets_; }
+	std::vector<BossBullet*> GetActiveBullets() const;
 
 	/// <summary>
 	/// Activeな全パーツのリストを取得（State から使用）
@@ -213,7 +214,7 @@ private:
 	float bossHP_ = 500.0f;		// Boss全体の現在HP
 
 	// 弾管理
-	std::list<std::unique_ptr<BossBullet>> bossBullets_;
+	std::unique_ptr<BossBulletPool> bulletPool_;
 
 	// パラメータ
 	const size_t kBodyCount = 5;				// 体のパーツ数
@@ -222,7 +223,7 @@ private:
 	const float kHistoryUpdateThreshold = 0.001f;	// 履歴更新の閾値（ガタガタ防止）
 	const size_t kMaxHistorySize = 2048;		// 履歴の最大サイズ
 	const float kBasePartSize = 1.0f;			// 基本パーツサイズ（キューブのデフォルトサイズ）
-	const size_t kBulletPoolSize = 500;			// 弾プールサイズ（追加）
+	const size_t kBulletPoolSize = 500;			// 弾プールサイズ
 
 	// 前回の頭の位置（履歴更新判定用）
 	Vector3 previousHeadPosition_;

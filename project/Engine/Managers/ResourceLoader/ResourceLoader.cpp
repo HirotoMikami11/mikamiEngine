@@ -51,7 +51,7 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Texture/circle.png", "circle"},
 		{"resources/Texture/gaugeLight.png", "gaugeLight"},
 
-		// テクスチャがあればここに追加
+		// テクスチャここに追加
 		// {"resources/Texture/example.png", "example"},
 	};
 
@@ -87,10 +87,10 @@ void ResourceLoader::RegisterAllResources() {
 	///							音声の定義										///
 	///*-----------------------------------------------------------------------*///
 	audios_ = {
-		// 音声はここに追加
-		 //{"resources/Audio/Alarm01.wav", "Alarm"},
-		 //{"resources/Audio/Bgm01.mp3", "BGM"},
-		 //{"resources/Audio/Se01.mp3", "SE"},
+		// 音声ここに追加
+		 {"resources/Audio/Alarm01.wav", "Alarm"},
+		 {"resources/Audio/Bgm01.mp3", "BGM"},
+		 {"resources/Audio/Se01.mp3", "SE"},
 	};
 }
 

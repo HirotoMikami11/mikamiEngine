@@ -91,6 +91,11 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	// 初期Stateを設定（RotateShootState）
 	currentState_ = std::make_unique<SplineMoveRotateShootState>("resources/CSV/BossMove/RotateShoot_1.csv");
 	currentState_->Initialize();
+
+	//弾のプールを作成
+	bulletPool_ = std::make_unique<BossBulletPool>();
+	bulletPool_->Initialize(dxCommon_, kBulletPoolSize);
+
 }
 
 
@@ -299,10 +304,24 @@ void Boss::ImGui() {
 		}
 
 
-		if (ImGui::CollapsingHeader("Bullet")) {
-			ImGui::Text("bullet size: %zu", bossBullets_.size());
-		}
+		if (ImGui::CollapsingHeader("Bullet Pool Info")) {
+			ImGui::Text("Pool Size: %zu", bulletPool_->GetPoolSize());
+			ImGui::Text("Active Bullets: %zu", bulletPool_->GetActiveBulletCount());
 
+			float usage = static_cast<float>(bulletPool_->GetActiveBulletCount()) /
+				static_cast<float>(bulletPool_->GetPoolSize()) * 100.0f;
+			ImGui::ProgressBar(usage / 100.0f, ImVec2(0.0f, 0.0f),
+				std::format("Usage: {:.1f}%%", usage).c_str());
+
+			if (usage > 90.0f) {
+				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f),
+					"Warning: Bullet pool almost full!");
+			}
+
+			if (ImGui::Button("Reset All Bullets")) {
+				bulletPool_->ResetAll();
+			}
+		}
 
 		// スプラインシステム
 		if (ImGui::CollapsingHeader("Spline System")) {
@@ -753,33 +772,22 @@ void Boss::AlignAllPartsInLine() {
 
 
 
-void Boss::FireBullet(const Vector3& position, const Vector3& velocity) {
-	// 新しい弾を作成
-	auto bullet = std::make_unique<BossBullet>();
-	bullet->Initialize(dxCommon_, position, velocity);
-	bossBullets_.push_back(std::move(bullet));
+bool Boss::FireBullet(const Vector3& position, const Vector3& velocity) {
+	// BulletPoolから弾を取得して発射
+	return bulletPool_->FireBullet(position, velocity);
 }
 
 void Boss::UpdateBullets(const Matrix4x4& viewProjectionMatrix) {
-	// 全ての弾を更新
-	for (auto& bullet : bossBullets_) {
-		bullet->Update(viewProjectionMatrix);
-	}
-
-	// 死亡した弾を削除
-	bossBullets_.erase(
-		std::remove_if(bossBullets_.begin(), bossBullets_.end(),
-			[](const std::unique_ptr<BossBullet>& bullet) {
-				return bullet->IsDead();
-			}),
-		bossBullets_.end()
-	);
+	// BulletPoolで一括更新（死亡した弾は自動的に非アクティブ化される）
+	bulletPool_->Update(viewProjectionMatrix);
 }
 
 void Boss::DrawBullets(const Light& directionalLight) {
-	for (auto& bullet : bossBullets_) {
-		bullet->Draw(directionalLight);
-	}
+	bulletPool_->Draw(directionalLight);
+}
+
+std::vector<BossBullet*> Boss::GetActiveBullets() const {
+	return bulletPool_->GetActiveBullets();
 }
 
 std::vector<BaseParts*> Boss::GetActiveBodyParts() {

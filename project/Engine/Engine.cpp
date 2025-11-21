@@ -122,14 +122,15 @@ void Engine::StartDrawOffscreen() {
 
 	/// オフスクリーンの描画準備（3D描画用）
 	offscreenRenderer_->PreDraw();
+
 }
 
 void Engine::EndDrawOffscreen() {
-	// デバッグ線の一括描画（カメラコントローラーから行列取得）
+
+	// デバッグ線の一括描画（カメラコントローラーから行列取得）アプリ―ケーションに持っていく
 	if (debugDrawManager_ && cameraController_) {
 		debugDrawManager_->Draw(cameraController_->GetViewProjectionMatrix());
 	}
-
 	/// オフスクリーンの描画終了
 	offscreenRenderer_->PostDraw();
 }
