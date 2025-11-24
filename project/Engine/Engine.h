@@ -15,6 +15,7 @@
 #include "Model/ModelManager.h"
 #include "ResourceLoader/ResourceLoader.h"
 #include "ImGui/ImGuiManager.h" 
+#include "JsonSettings.h" 
 #include "FrameTimer.h"
 #include "GameTimer.h"
 #include "OffscreenRenderer.h"
@@ -119,6 +120,7 @@ private:
 	FrameTimer* frameTimer_;
 	GameTimer* gameTimer_;
 	DebugDrawLineSystem* debugDrawManager_;
+	JsonSettings* jsonSettings_;
 
 	// カメラコントローラー
 	CameraController* cameraController_;

@@ -1,23 +1,33 @@
 #include "Wall.h"
 #include "ImGui/ImGuiManager.h"
+#include "JsonSettings.h"
 #include <numbers>
 
 Wall::Wall()
 	: dxCommon_(nullptr) {
 
-	// 壁モデルサイズ（scale が 1 のときの実寸法）
-	// {長さ（X方向に対応）, 高さ, 厚み（Z方向）}
-	modelSize = { 60.0f, 30.0f, 1.0f };
+	//// 壁モデルサイズ（scale が 1 のときの実寸法）
+	//// {長さ（X方向に対応）, 高さ, 厚み（Z方向）}
+	//modelSize = { 60.0f, 30.0f, 1.0f };
 
-	// 囲みたい領域（フルサイズ）。デフォルトは modelSize.x を幅・奥行きに使う
-	areaSize_ = { modelSize.x, modelSize.x };
-
+	//// 囲みたい領域（フルサイズ）。デフォルトは modelSize.x を幅・奥行きに使う
+	//areaSize_ = { modelSize.x, modelSize.x };
 }
+
 Wall::~Wall() {}
 
 void Wall::Initialize(DirectXCommon* dxCommon)
 {
 	dxCommon_ = dxCommon;
+
+	// JsonSettingsのグループを作成
+	JsonSettings::GetInstance()->CreateGroup(kGroupPath_);
+
+	// デフォルト値を追加（既に存在する場合は追加されない）
+	JsonSettings::GetInstance()->AddItem(kGroupPath_, "modelSize", modelSize);
+	JsonSettings::GetInstance()->AddItem(kGroupPath_, "areaSize", areaSize_);
+
+
 
 	// areaSize_ はデフォルトで {modelSize.x, modelSize.x} に初期化済み
 	// 各壁モデルを初期化して transform をセットする
@@ -34,8 +44,41 @@ void Wall::Initialize(DirectXCommon* dxCommon)
 		// scale は固定 (1,1,1)
 		walls_[i].transform.scale = { 1.0f, 1.0f, 1.0f };
 	}
-
+	// JSONファイルから値を読み込み
+	LoadFromJson();
 	// 初回 transform 計算＆適用
+	UpdateTransforms();
+}
+
+void Wall::LoadFromJson()
+{
+	// JSONから値を読み込む（ファイルが存在しない場合はデフォルト値を使用）
+	JsonSettings* json = JsonSettings::GetInstance();
+
+	// valueでデフォルト値を指定
+	modelSize = json->GetValue<Vector3>(kGroupPath_, "modelSize").value();
+	areaSize_ = json->GetValue<Vector2>(kGroupPath_, "areaSize").value();
+
+}
+
+void Wall::SaveToJson()
+{
+	JsonSettings* json = JsonSettings::GetInstance();
+	json->SetValue(kGroupPath_, "modelSize", modelSize);
+	json->SetValue(kGroupPath_, "areaSize", areaSize_);
+	json->SaveFile(kGroupPath_);
+}
+
+void Wall::ApplyParameters()
+{
+	// JsonSettingsから現在の値を取得して適用
+	JsonSettings* json = JsonSettings::GetInstance();
+
+	// value_or()でデフォルト値を指定
+	modelSize = json->GetValue<Vector3>(kGroupPath_, "modelSize").value();
+	areaSize_ = json->GetValue<Vector2>(kGroupPath_, "areaSize").value();
+
+	// transformを再計算
 	UpdateTransforms();
 }
 
@@ -44,6 +87,9 @@ void Wall::SetAreaSize(const Vector2& areaSize)
 	// 0 や負の値は受け付けない（最低値を設定）
 	areaSize_.x = (areaSize.x > 0.0001f) ? areaSize.x : modelSize.x;
 	areaSize_.y = (areaSize.y > 0.0001f) ? areaSize.y : modelSize.x;
+
+	// JsonSettingsに反映
+	JsonSettings::GetInstance()->SetValue(kGroupPath_, "areaSize", areaSize_);
 
 	// 変更があったら transform を再計算して反映
 	UpdateTransforms();
@@ -117,39 +163,21 @@ void Wall::ImGui()
 {
 #ifdef USEIMGUI
 	if (ImGui::TreeNode("Walls")) {
-		// areaSize の表示/編集
-		float ax = areaSize_.x;
-		float az = areaSize_.y;
-		bool changed = false;
 
-		changed |= ImGui::InputFloat("Area X (width)", &ax);
-		changed |= ImGui::InputFloat("Area Z (depth)", &az);
+		// JsonSettingsから現在の値を取得
+		ApplyParameters();
 
-		// modelSize
-		float mX = modelSize.x;
-		float mY = modelSize.y;
-		float mZ = modelSize.z;
-		if (ImGui::InputFloat("Model size X (length)", &mX)) { modelSize.x = mX; changed = true; }
-		if (ImGui::InputFloat("Model size Y (height)", &mY)) { modelSize.y = mY; changed = true; }
-		if (ImGui::InputFloat("Model size Z (thickness)", &mZ)) { modelSize.z = mZ; changed = true; }
-
-		if (changed) {
-			// 入力を検証して適用
-			if (ax <= 0.0f) ax = modelSize.x;
-			if (az <= 0.0f) az = modelSize.x;
-			areaSize_.x = ax;
-			areaSize_.y = az;
-
-			// modelSize の変更に合わせて area デフォルトを変える等するならここで処理
-			UpdateTransforms();
-		}
-
+		// 各壁のImGui表示
 		for (int i = 0; i < 4; ++i) {
 			if (walls_[i].obj) walls_[i].obj->ImGui();
 		}
 
+		// 保存ボタン
+		if (ImGui::Button("Save Wall Settings")) {
+			SaveToJson();
+		}
+
 		ImGui::TreePop();
 	}
-
 #endif
 }

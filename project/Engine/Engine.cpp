@@ -59,6 +59,9 @@ void Engine::InitializeManagers() {
 	resourceLoader_ = ResourceLoader::GetInstance();
 	resourceLoader_->Initialize();
 
+	//JsonSettings初期化
+	jsonSettings_ = JsonSettings::GetInstance();
+
 	// スプライトの共通部分を初期化
 	SpriteCommon::GetInstance()->Initialize(dxCommon_.get());
 
@@ -239,6 +242,9 @@ void Engine::ImGui() {
 
 	/// ResourceLoaderのImGui（各Managerの詳細を含む）
 	resourceLoader_->ImGui();
+
+	///JsonSettingsのImGui
+	jsonSettings_->ImGui();
 
 	/// オフスクリーンレンダラー（グリッチエフェクト含む）のImGui
 	offscreenRenderer_->ImGui();
