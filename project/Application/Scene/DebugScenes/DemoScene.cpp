@@ -149,7 +149,7 @@ void DemoScene::InitializeGameObjects() {
 
 	///エミッター作成
 
-	//中央
+	//中央（新方式：方向指定発射）
 	ParticleEmitter* centerEmitter = particleSystem_->CreateEmitter(
 		"CenterEmitter",	// エミッター名
 		"CircleParticles"	// ターゲットグループ名
@@ -160,14 +160,20 @@ void DemoScene::InitializeGameObjects() {
 		centerEmitter->SetFrequency(0.2f);
 		centerEmitter->SetEmitEnabled(true);
 		centerEmitter->SetParticleLifeTimeRange(2.0f, 4.0f);
-		centerEmitter->SetParticleVelocityRange(1.5f);
+
+		// 新方式：方向指定発射（上向きに発射）
+		centerEmitter->SetUseDirectionalEmit(true);
+		centerEmitter->SetEmitDirection({ 0.0f, 1.0f, 0.0f });	// 上向き
+		centerEmitter->SetInitialSpeed(3.0f);					// 初速度
+		centerEmitter->SetSpreadAngle(20.0f);					// 20度の散らばり
+
 		// AABB発生範囲を設定
 		centerEmitter->SetSpawnAreaSize({ 0.5f, 0.5f, 0.5f });	// 1x1x1の範囲
 		// デバッグ表示を有効化
 		centerEmitter->SetShowDebugAABB(true);
 	}
 
-	//左側
+	//左側（Scale/Rotate設定あり）
 	ParticleEmitter* leftEmitter = particleSystem_->CreateEmitter(
 		"LeftEmitter",		// エミッター名
 		"CircleParticles"	// ターゲットグループ名
@@ -179,13 +185,20 @@ void DemoScene::InitializeGameObjects() {
 		leftEmitter->SetEmitEnabled(true);
 		leftEmitter->SetParticleLifeTimeRange(1.0f, 2.5f);
 		leftEmitter->SetParticleVelocityRange(2.0f);
+
+		// パーティクルのScale設定（0.5 ~ 2.0の範囲）
+		leftEmitter->SetParticleScaleRange({ 0.5f, 0.5f, 0.5f }, { 2.0f, 2.0f, 2.0f });
+
+		// パーティクルの初期Rotate設定（ランダム回転）
+		leftEmitter->SetParticleRotateRange({ 0.0f, 0.0f, 0.0f }, { 3.14159f, 3.14159f, 3.14159f });
+
 		// AABB発生範囲を設定（大きめ）
 		leftEmitter->SetSpawnAreaSize({ 1.0f, 1.0f, 1.0f });	// 2x2x2の範囲
 		// デバッグ表示を有効化
 		leftEmitter->SetShowDebugAABB(true);
 	}
 
-	//右側
+	//右側（エミッター寿命あり + 方向指定発射）
 	ParticleEmitter* rightEmitter = particleSystem_->CreateEmitter(
 		"RightEmitter",		// エミッター名
 		"SquareParticles"	// ターゲットグループ名
@@ -196,7 +209,18 @@ void DemoScene::InitializeGameObjects() {
 		rightEmitter->SetFrequency(0.3f);
 		rightEmitter->SetEmitEnabled(true);
 		rightEmitter->SetParticleLifeTimeRange(1.5f, 3.0f);
-		rightEmitter->SetParticleVelocityRange(1.0f);
+
+		// エミッター寿命設定（5秒でループ）
+		rightEmitter->SetUseEmitterLifeTime(true);
+		rightEmitter->SetEmitterLifeTime(5.0f);
+		rightEmitter->SetEmitterLifeTimeLoop(true);
+
+		// 方向指定発射（左下向きに発射）
+		rightEmitter->SetUseDirectionalEmit(true);
+		rightEmitter->SetEmitDirection({ -1.0f, -0.5f, 0.0f });	// 左下向き
+		rightEmitter->SetInitialSpeed(4.0f);
+		rightEmitter->SetSpreadAngle(15.0f);
+
 		// AABB発生範囲を設定(Y方向に長め設定)
 		AABB customArea;
 		customArea.min = { -0.3f, -0.3f, -0.3f };

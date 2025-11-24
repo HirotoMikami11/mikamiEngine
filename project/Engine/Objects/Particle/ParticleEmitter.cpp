@@ -32,6 +32,23 @@ void ParticleEmitter::Update(float deltaTime, ParticleGroup* targetGroup)
 	Matrix4x4 dummyMatrix = MakeIdentity4x4();
 	emitterTransform_.UpdateMatrix(dummyMatrix);
 
+	// エミッター寿命処理
+	if (useEmitterLifeTime_) {
+		emitterCurrentTime_ += deltaTime;
+
+		// 寿命が尽きた場合
+		if (emitterCurrentTime_ >= emitterLifeTime_) {
+			if (emitterLifeTimeLoop_) {
+				// ループする場合、時間をリセット
+				emitterCurrentTime_ = 0.0f;
+			} else {
+				// ループしない場合、発生を停止
+				isEmitting_ = false;
+				return;
+			}
+		}
+	}
+
 	// パーティクルの発生
 	if (isEmitting_) {
 		EmitParticles(deltaTime, targetGroup);
@@ -74,16 +91,62 @@ ParticleState ParticleEmitter::CreateNewParticle()
 		Random::GetInstance().GenerateFloat(spawnArea_.min.z, spawnArea_.max.z)
 	};
 
-	state.transform.scale = { 1.0f, 1.0f, 1.0f };
-	state.transform.rotate = { 0.0f, 0.0f, 0.0f };
+	// Scale設定（ランダム範囲）
+	state.transform.scale = {
+		Random::GetInstance().GenerateFloat(particleScaleMin_.x, particleScaleMax_.x),
+		Random::GetInstance().GenerateFloat(particleScaleMin_.y, particleScaleMax_.y),
+		Random::GetInstance().GenerateFloat(particleScaleMin_.z, particleScaleMax_.z)
+	};
+
+	// Rotate設定（ランダム範囲）
+	state.transform.rotate = {
+		Random::GetInstance().GenerateFloat(particleRotateMin_.x, particleRotateMax_.x),
+		Random::GetInstance().GenerateFloat(particleRotateMin_.y, particleRotateMax_.y),
+		Random::GetInstance().GenerateFloat(particleRotateMin_.z, particleRotateMax_.z)
+	};
+
+	// 位置設定
 	state.transform.translate = {
 		emitterPos.x + randomPosInAABB.x,
 		emitterPos.y + randomPosInAABB.y,
 		emitterPos.z + randomPosInAABB.z
 	};
 
-	// ランダム速度を設定
-	state.velocity = Random::GetInstance().GenerateVector3OriginOffset(velocityRange_);
+	// 速度設定（新方式 or 旧方式）
+	if (useDirectionalEmit_) {
+		// 新方式：方向指定発射
+		// 散らばり角度をラジアンに変換
+		float spreadRad = DegToRad(spreadAngle_);
+
+		// ランダムな角度オフセットを生成（-spreadRad/2 ~ +spreadRad/2）
+		float randomTheta = Random::GetInstance().GenerateFloat(-spreadRad / 2.0f, spreadRad / 2.0f);
+		float randomPhi = Random::GetInstance().GenerateFloat(0.0f, 2.0f * std::numbers::pi_v<float>);
+
+		// 散らばりベクトルを生成
+		Vector3 spread = {
+			sinf(randomTheta) * cosf(randomPhi),
+			sinf(randomTheta) * sinf(randomPhi),
+			cosf(randomTheta) - 1.0f
+		};
+
+		// 発射方向に散らばりを加える
+		Vector3 finalDirection = {
+			emitDirection_.x + spread.x,
+			emitDirection_.y + spread.y,
+			emitDirection_.z + spread.z
+		};
+
+		// 正規化して初速度をかける
+		finalDirection = Normalize(finalDirection);
+		state.velocity = {
+			finalDirection.x * initialSpeed_,
+			finalDirection.y * initialSpeed_,
+			finalDirection.z * initialSpeed_
+		};
+	} else {
+		// 旧方式：ランダム速度（互換性のため）
+		state.velocity = Random::GetInstance().GenerateVector3OriginOffset(velocityRange_);
+	}
 
 	// ランダムな色を設定
 	state.color = Random::GetInstance().GenerateRandomVector4();
@@ -148,9 +211,40 @@ void ParticleEmitter::ImGui()
 			ImGui::Separator();
 		}
 
+		// エミッター寿命設定
+		if (ImGui::CollapsingHeader("Emitter Lifetime")) {
+			ImGui::Checkbox("Use Emitter Lifetime", &useEmitterLifeTime_);
+
+			if (useEmitterLifeTime_) {
+				ImGui::DragFloat("Lifetime (sec)", &emitterLifeTime_, 0.1f, 0.1f, 60.0f);
+				ImGui::Checkbox("Loop", &emitterLifeTimeLoop_);
+
+				// 現在の経過時間表示
+				ImGui::ProgressBar(emitterCurrentTime_ / emitterLifeTime_,
+					ImVec2(-1.0f, 0.0f),
+					std::format("Time: {:.2f} / {:.2f}", emitterCurrentTime_, emitterLifeTime_).c_str());
+
+				// リセットボタン
+				if (ImGui::Button("Reset Timer")) {
+					ResetEmitterTime();
+					isEmitting_ = true;  // 発生も再開
+				}
+
+				// 生存状態表示
+				if (IsEmitterAlive()) {
+					ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Status: Alive");
+				} else {
+					ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Status: Dead");
+				}
+			}
+
+			ImGui::Separator();
+		}
+
 		// パーティクル初期設定
 		if (ImGui::CollapsingHeader("Particle Settings")) {
-			ImGui::DragFloat("Velocity Range", &velocityRange_, 0.1f, 0.0f, 10.0f);
+			// 寿命設定
+			ImGui::Text("Lifetime");
 			ImGui::DragFloat("Life Time Min", &particleLifeTimeMin_, 0.1f, 0.1f, 10.0f);
 			ImGui::DragFloat("Life Time Max", &particleLifeTimeMax_, 0.1f, 0.1f, 10.0f);
 
@@ -158,6 +252,70 @@ void ParticleEmitter::ImGui()
 			if (particleLifeTimeMin_ > particleLifeTimeMax_) {
 				particleLifeTimeMax_ = particleLifeTimeMin_;
 			}
+
+			ImGui::Separator();
+
+			// スケール設定
+			ImGui::Text("Scale Range");
+			ImGui::DragFloat3("Scale Min", &particleScaleMin_.x, 0.1f, 0.1f, 10.0f);
+			ImGui::DragFloat3("Scale Max", &particleScaleMax_.x, 0.1f, 0.1f, 10.0f);
+
+			ImGui::Separator();
+
+			// 回転設定
+			ImGui::Text("Rotation Range (Radians)");
+			ImGui::DragFloat3("Rotate Min", &particleRotateMin_.x, 0.1f, -3.14159f, 3.14159f);
+			ImGui::DragFloat3("Rotate Max", &particleRotateMax_.x, 0.1f, -3.14159f, 3.14159f);
+
+			ImGui::Separator();
+		}
+
+		// 速度設定
+		if (ImGui::CollapsingHeader("Velocity Settings")) {
+			ImGui::Checkbox("Use Directional Emit", &useDirectionalEmit_);
+
+			if (useDirectionalEmit_) {
+				// 新方式：方向指定発射
+				ImGui::Text("Directional Emit Mode");
+				ImGui::Separator();
+
+				// 発射方向
+				Vector3 dir = emitDirection_;
+				if (ImGui::DragFloat3("Emit Direction", &dir.x, 0.01f, -1.0f, 1.0f)) {
+					SetEmitDirection(dir);
+				}
+
+				// 正規化ボタン
+				if (ImGui::Button("Normalize Direction")) {
+					SetEmitDirection(emitDirection_);
+				}
+
+				// 初速度
+				ImGui::DragFloat("Initial Speed", &initialSpeed_, 0.1f, 0.0f, 20.0f);
+
+				// 散らばり角度
+				ImGui::SliderFloat("Spread Angle (deg)", &spreadAngle_, 0.0f, 180.0f);
+
+				ImGui::Separator();
+
+				// プリセットボタン
+				ImGui::Text("Direction Presets:");
+				if (ImGui::Button("Up")) SetEmitDirection({ 0.0f, 1.0f, 0.0f });
+				ImGui::SameLine();
+				if (ImGui::Button("Down")) SetEmitDirection({ 0.0f, -1.0f, 0.0f });
+				ImGui::SameLine();
+				if (ImGui::Button("Forward")) SetEmitDirection({ 0.0f, 0.0f, 1.0f });
+				ImGui::SameLine();
+				if (ImGui::Button("Back")) SetEmitDirection({ 0.0f, 0.0f, -1.0f });
+
+			} else {
+				// 旧方式：ランダム速度
+				ImGui::Text("Random Velocity Mode");
+				ImGui::Separator();
+				ImGui::DragFloat("Velocity Range", &velocityRange_, 0.1f, 0.0f, 10.0f);
+			}
+
+			ImGui::Separator();
 		}
 
 		// AABB発生範囲設定

@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <numbers>
 #include "DirectXCommon.h"
 #include "Transform3D.h"
 #include "ParticleState.h"
@@ -66,6 +67,33 @@ public:
 	}
 	void SetParticleVelocityRange(float range) { velocityRange_ = range; }
 
+	// 新方式：方向指定発射
+	void SetEmitDirection(const Vector3& direction) {
+		emitDirection_ = Normalize(direction);
+	}
+	const Vector3& GetEmitDirection() const { return emitDirection_; }
+
+	void SetInitialSpeed(float speed) { initialSpeed_ = speed; }
+	float GetInitialSpeed() const { return initialSpeed_; }
+
+	void SetSpreadAngle(float angleDegrees) { spreadAngle_ = angleDegrees; }
+	float GetSpreadAngle() const { return spreadAngle_; }
+
+	void SetUseDirectionalEmit(bool use) { useDirectionalEmit_ = use; }
+	bool IsUseDirectionalEmit() const { return useDirectionalEmit_; }
+
+	// スケール設定
+	void SetParticleScaleRange(const Vector3& min, const Vector3& max) {
+		particleScaleMin_ = min;
+		particleScaleMax_ = max;
+	}
+
+	// 回転設定
+	void SetParticleRotateRange(const Vector3& min, const Vector3& max) {
+		particleRotateMin_ = min;
+		particleRotateMax_ = max;
+	}
+
 	// 発生範囲（AABB）の設定
 	void SetSpawnArea(const AABB& aabb) { spawnArea_ = aabb; FixAABBMinMax(spawnArea_); }
 	const AABB& GetSpawnArea() const { return spawnArea_; }
@@ -92,6 +120,24 @@ public:
 	const std::string& GetTargetGroupName() const { return targetGroupName_; }
 	void SetTargetGroupName(const std::string& groupName) { targetGroupName_ = groupName; }
 
+	// エミッター寿命設定
+	void SetEmitterLifeTime(float lifeTime) { emitterLifeTime_ = lifeTime; }
+	float GetEmitterLifeTime() const { return emitterLifeTime_; }
+
+	void SetEmitterLifeTimeLoop(bool loop) { emitterLifeTimeLoop_ = loop; }
+	bool IsEmitterLifeTimeLoop() const { return emitterLifeTimeLoop_; }
+
+	float GetEmitterCurrentTime() const { return emitterCurrentTime_; }
+	bool IsEmitterAlive() const {
+		return !useEmitterLifeTime_ || emitterLifeTimeLoop_ || emitterCurrentTime_ < emitterLifeTime_;
+	}
+
+	void SetUseEmitterLifeTime(bool use) { useEmitterLifeTime_ = use; }
+	bool IsUseEmitterLifeTime() const { return useEmitterLifeTime_; }
+
+	// エミッター時間をリセット
+	void ResetEmitterTime() { emitterCurrentTime_ = 0.0f; }
+
 private:
 	/// <summary>
 	/// パーティクルを発生させる
@@ -116,7 +162,29 @@ private:
 	// パーティクル初期設定
 	float particleLifeTimeMin_ = 1.0f;		// パーティクル寿命の最小値
 	float particleLifeTimeMax_ = 3.0f;		// パーティクル寿命の最大値
-	float velocityRange_ = 1.0f;			// 初期速度の範囲
+
+	// 速度設定（新方式）
+	Vector3 emitDirection_ = { 0.0f, 1.0f, 0.0f };	// 発射方向（正規化される）
+	float initialSpeed_ = 1.0f;						// 初速度の大きさ
+	float spreadAngle_ = 30.0f;						// 散らばり角度（度数法）
+	bool useDirectionalEmit_ = false;				// 方向指定発射を使用するか
+
+	// 旧方式（互換性のため残す）
+	float velocityRange_ = 1.0f;			// 初期速度の範囲（useDirectionalEmit_=falseの時に使用）
+
+	// Scale設定
+	Vector3 particleScaleMin_ = { 1.0f, 1.0f, 1.0f };	// パーティクルスケールの最小値
+	Vector3 particleScaleMax_ = { 1.0f, 1.0f, 1.0f };	// パーティクルスケールの最大値
+
+	// Rotate設定
+	Vector3 particleRotateMin_ = { 0.0f, 0.0f, 0.0f };	// パーティクル回転の最小値
+	Vector3 particleRotateMax_ = { 0.0f, 0.0f, 0.0f };	// パーティクル回転の最大値
+
+	// エミッター寿命設定
+	float emitterLifeTime_ = 5.0f;			// エミッター寿命（秒）
+	float emitterCurrentTime_ = 0.0f;		// エミッター経過時間
+	bool emitterLifeTimeLoop_ = false;		// 寿命がループするか
+	bool useEmitterLifeTime_ = false;		// エミッター寿命を使用するか
 
 	// 発生範囲(AABBで1の範囲)
 	AABB spawnArea_ = {
