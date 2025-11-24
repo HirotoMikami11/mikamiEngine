@@ -4,8 +4,7 @@
 
 /// <summary>
 /// 重力フィールド
-/// <para>フィールド中心に向かってパーティクルを引き寄せる</para>
-/// <para>中心に到達したパーティクルは削除される</para>
+/// <para>球体範囲内のパーティクルをフィールド中心に引き寄せる</para>
 /// </summary>
 class GravityField : public BaseField
 {
@@ -24,7 +23,7 @@ public:
 	/// </summary>
 	/// <param name="particle">対象のパーティクル</param>
 	/// <param name="deltaTime">デルタタイム</param>
-	/// <returns>パーティクルが中心に到達した場合true（削除）</returns>
+	/// <returns>パーティクルを削除すべき場合true</returns>
 	bool ApplyEffect(ParticleState& particle, float deltaTime) override;
 
 	/// <summary>
@@ -42,24 +41,29 @@ public:
 	/// <summary>
 	/// フィールドタイプ名
 	/// </summary>
-	const char* GetTypeName() const override { return "Gravity Field"; }
+	const char* GetTypeName() const override { return "GravityField"; }
+
+	/// <summary>
+	/// パラメータをJSONにシリアライズ
+	/// </summary>
+	json SerializeParameters() const override;
+
+	/// <summary>
+	/// JSONからパラメータをデシリアライズ
+	/// </summary>
+	void DeserializeParameters(const json& j) override;
 
 	// 重力設定
 	void SetGravityStrength(float strength) { gravityStrength_ = strength; }
 	float GetGravityStrength() const { return gravityStrength_; }
 
-	// 効果範囲（球体）の設定
+	// 効果範囲（球体）
 	void SetEffectRadius(float radius) { effectRadius_ = radius; }
 	float GetEffectRadius() const { return effectRadius_; }
 
-	// 削除範囲の設定
+	// 削除範囲（中心に近づきすぎたパーティクルを削除）
 	void SetDeleteRadius(float radius) { deleteRadius_ = radius; }
 	float GetDeleteRadius() const { return deleteRadius_; }
-
-	/// <summary>
-	/// フィールド中心座標を取得（ワールド座標）
-	/// </summary>
-	Vector3 GetCenter() const { return fieldTransform_.GetPosition(); }
 
 protected:
 	/// <summary>
@@ -71,5 +75,5 @@ private:
 	// 重力フィールド固有のパラメータ
 	float gravityStrength_ = 5.0f;		// 重力の強さ
 	float effectRadius_ = 3.0f;			// 効果範囲（球体の半径）
-	float deleteRadius_ = 0.3f;			// 削除範囲（中心からこの距離以下で削除）
+	float deleteRadius_ = 0.3f;			// 削除範囲（中心からの距離）
 };

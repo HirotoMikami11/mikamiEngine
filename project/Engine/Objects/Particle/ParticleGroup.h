@@ -85,6 +85,7 @@ public:
 
 	// グループ情報
 	const std::string& GetName() const { return name_; }
+	const std::string& GetModelTag() const { return modelTag_; }
 	void SetName(const std::string& name) { name_ = name; }
 
 	// テクスチャ操作

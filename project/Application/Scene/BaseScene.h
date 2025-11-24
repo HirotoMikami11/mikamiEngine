@@ -8,6 +8,7 @@
 #include "Object3D.h"
 #include "CameraController.h"
 #include "ParticleSystem.h"
+#include "ParticleEditor.h"
 
 /// <summary>
 /// シーンの基底クラス

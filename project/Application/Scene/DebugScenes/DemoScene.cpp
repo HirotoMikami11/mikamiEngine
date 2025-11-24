@@ -5,12 +5,14 @@
 ///使用するフィールド
 #include "GravityField.h"
 #include "AccelerationField.h"
+#include "ParticleEditor.h"
 
 
 DemoScene::DemoScene()
 	: BaseScene("DemoScene") // シーン名を設定
 	, cameraController_(nullptr)
 	, particleSystem_(nullptr)
+	, particleEditor_(nullptr)
 	, dxCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
@@ -27,21 +29,10 @@ void DemoScene::ConfigureOffscreenEffects()
 	// 全てのエフェクトを無効化
 	offscreenRenderer_->DisableAllEffects();
 
-
-	//auto* depthFogEffect = offscreenRenderer_->GetDepthFogEffect();
-	//if (depthFogEffect) {
-	//	depthFogEffect->SetEnabled(true);
-	//	depthFogEffect->SetFogDistance(0.2f, 40.0f); // 深度フォグの距離を設定
-	//}
-	//auto* depthOfFieldEffect = offscreenRenderer_->GetDepthOfFieldEffect();
-	//if (depthOfFieldEffect) {
-	//	depthOfFieldEffect->SetEnabled(true);
-	//}
 	auto* vignetteEffect = offscreenRenderer_->GetVignetteEffect();
 	if (vignetteEffect) {
 		vignetteEffect->SetEnabled(true);
 	}
-
 }
 
 void DemoScene::Initialize() {
@@ -120,156 +111,30 @@ void DemoScene::InitializeGameObjects() {
 	modelMultiMaterial_->SetTransform(transformMultiMaterial);
 
 	///*-----------------------------------------------------------------------*///
-	///					パーティクルシステムの初期化							///
+	///			パーティクルシステム - エディタを使用した新方式				///
 	///*-----------------------------------------------------------------------*///
 #pragma region パーティクル
 	// ParticleSystemシングルトンを取得
 	particleSystem_ = ParticleSystem::GetInstance();
 	particleSystem_->Initialize(dxCommon_);
 
-	///パーティクルグループを作成
+	// ParticleEditorシングルトンを取得
+	particleEditor_ = ParticleEditor::GetInstance();
+	particleEditor_->Initialize(dxCommon_);
 
-	//円形パーティクル
-	particleSystem_->CreateGroup(
-		"CircleParticles",	// グループ名
-		"plane",			// モデル
-		400,				// 最大パーティクル数
-		"circle",			// テクスチャ
-		true				// ビルボードON
-	);
 
-	//四角形パーティクル
-	particleSystem_->CreateGroup(
-		"SquareParticles",	// グループ名
-		"plane",			// モデル
-		100,				// 最大パーティクル数
-		"uvChecker",		// テクスチャ
-		true				// ビルボードON
-	);
+	// 中央エフェクト（上向き発射 + 上昇フィールド）
+	particleEditor_->CreateInstance("CenterEffect", "Center");
 
-	///エミッター作成
+	// 左側エフェクト（ランダム速度 + 渦フィールド）
+	particleEditor_->CreateInstance("LeftEffect", "Left");
 
-	//中央（新方式：方向指定発射）
-	ParticleEmitter* centerEmitter = particleSystem_->CreateEmitter(
-		"CenterEmitter",	// エミッター名
-		"CircleParticles"	// ターゲットグループ名
-	);
-	if (centerEmitter) {
-		centerEmitter->GetTransform().SetPosition({ 0.0f, 0.0f, 0.0f });
-		centerEmitter->SetEmitCount(3);
-		centerEmitter->SetFrequency(0.2f);
-		centerEmitter->SetEmitEnabled(true);
-		centerEmitter->SetParticleLifeTimeRange(2.0f, 4.0f);
+	// 右側エフェクト（左下発射 + 重力フィールド）
+	particleEditor_->CreateInstance("RightEffect", "Right");
 
-		// 新方式：方向指定発射（上向きに発射）
-		centerEmitter->SetUseDirectionalEmit(true);
-		centerEmitter->SetEmitDirection({ 0.0f, 1.0f, 0.0f });	// 上向き
-		centerEmitter->SetInitialSpeed(3.0f);					// 初速度
-		centerEmitter->SetSpreadAngle(20.0f);					// 20度の散らばり
-
-		// AABB発生範囲を設定
-		centerEmitter->SetSpawnAreaSize({ 0.5f, 0.5f, 0.5f });	// 1x1x1の範囲
-		// デバッグ表示を有効化
-		centerEmitter->SetShowDebugAABB(true);
-	}
-
-	//左側（Scale/Rotate設定あり）
-	ParticleEmitter* leftEmitter = particleSystem_->CreateEmitter(
-		"LeftEmitter",		// エミッター名
-		"CircleParticles"	// ターゲットグループ名
-	);
-	if (leftEmitter) {
-		leftEmitter->GetTransform().SetPosition({ -5.0f, 2.0f, 0.0f });
-		leftEmitter->SetEmitCount(5);
-		leftEmitter->SetFrequency(0.5f);
-		leftEmitter->SetEmitEnabled(true);
-		leftEmitter->SetParticleLifeTimeRange(1.0f, 2.5f);
-		leftEmitter->SetParticleVelocityRange(2.0f);
-
-		// パーティクルのScale設定（0.5 ~ 2.0の範囲）
-		leftEmitter->SetParticleScaleRange({ 0.5f, 0.5f, 0.5f }, { 2.0f, 2.0f, 2.0f });
-
-		// パーティクルの初期Rotate設定（ランダム回転）
-		leftEmitter->SetParticleRotateRange({ 0.0f, 0.0f, 0.0f }, { 3.14159f, 3.14159f, 3.14159f });
-
-		// AABB発生範囲を設定（大きめ）
-		leftEmitter->SetSpawnAreaSize({ 1.0f, 1.0f, 1.0f });	// 2x2x2の範囲
-		// デバッグ表示を有効化
-		leftEmitter->SetShowDebugAABB(true);
-	}
-
-	//右側（エミッター寿命あり + 方向指定発射）
-	ParticleEmitter* rightEmitter = particleSystem_->CreateEmitter(
-		"RightEmitter",		// エミッター名
-		"SquareParticles"	// ターゲットグループ名
-	);
-	if (rightEmitter) {
-		rightEmitter->GetTransform().SetPosition({ 5.0f, 2.0f, 0.0f });
-		rightEmitter->SetEmitCount(2);
-		rightEmitter->SetFrequency(0.3f);
-		rightEmitter->SetEmitEnabled(true);
-		rightEmitter->SetParticleLifeTimeRange(1.5f, 3.0f);
-
-		// エミッター寿命設定（5秒でループ）
-		rightEmitter->SetUseEmitterLifeTime(true);
-		rightEmitter->SetEmitterLifeTime(5.0f);
-		rightEmitter->SetEmitterLifeTimeLoop(true);
-
-		// 方向指定発射（左下向きに発射）
-		rightEmitter->SetUseDirectionalEmit(true);
-		rightEmitter->SetEmitDirection({ -1.0f, -0.5f, 0.0f });	// 左下向き
-		rightEmitter->SetInitialSpeed(4.0f);
-		rightEmitter->SetSpreadAngle(15.0f);
-
-		// AABB発生範囲を設定(Y方向に長め設定)
-		AABB customArea;
-		customArea.min = { -0.3f, -0.3f, -0.3f };
-		customArea.max = { 0.3f, 2.0f, 0.3f };
-		rightEmitter->SetSpawnArea(customArea);
-		// デバッグ表示を有効化
-		rightEmitter->SetShowDebugAABB(true);
-		rightEmitter->SetDebugAABBColor({ 0.0f, 0.5f, 1.0f, 1.0f });	// 水色
-	}
-
-	///*-----------------------------------------------------------------------*///
-	///								加速度フィールド							///
-	///*-----------------------------------------------------------------------*///
-
-	// 上昇フィールド（中央）
-	auto* upwardField = particleSystem_->CreateField<AccelerationField>("UpwardField");
-	if (upwardField) {
-		upwardField->GetTransform().SetPosition({ 0.0f, 1.0f, 0.0f });
-		upwardField->SetAcceleration({ 0.0f, 2.0f, 0.0f });  // 上向きの加速度
-		upwardField->SetAreaSize({ 2.0f, 2.0f, 2.0f });  // 4x4x4の範囲
-		upwardField->SetEnabled(true);
-		upwardField->SetShowDebugVisualization(true);
-	}
-
-	// 渦フィールド（左側）
-	auto* vortexField = particleSystem_->CreateField<AccelerationField>("VortexField");
-	if (vortexField) {
-		vortexField->GetTransform().SetPosition({ -5.0f, 3.0f, 0.0f });
-		vortexField->SetAcceleration({ 1.0f, 0.5f, 0.0f });  // 右上向きの加速度
-		vortexField->SetAreaSize({ 1.5f, 1.5f, 1.5f });  // 3x3x3の範囲
-		vortexField->SetEnabled(true);
-		vortexField->SetShowDebugVisualization(true);
-	}
-
-	///*-----------------------------------------------------------------------*///
-	///								重力フィールド									///
-	///*-----------------------------------------------------------------------*///
-
-	// 重力フィールド（右側）
-	auto* gravityField = particleSystem_->CreateField<GravityField>("GravityField");
-	if (gravityField) {
-		gravityField->GetTransform().SetPosition({ 5.0f, 3.0f, 0.0f });
-		gravityField->SetGravityStrength(8.0f);		// 重力の強さ
-		gravityField->SetEffectRadius(4.0f);		// 効果範囲（球体）
-		gravityField->SetDeleteRadius(0.5f);		// 削除範囲
-		gravityField->SetEnabled(true);
-		gravityField->SetShowDebugVisualization(true);
-		gravityField->SetDebugColor({ 1.0f, 0.0f, 1.0f, 1.0f });  // マゼンタ
-	}
+	// 【補足】座標を変更したい場合は以下のようにアクセス可能
+	 auto* centerInstance = particleEditor_->GetInstance("Center");
+	 centerInstance->GetEmitter("CenterEmitter")->GetTransform().SetPosition(sphere_->GetPosition());
 
 #pragma endregion
 
@@ -401,6 +266,11 @@ void DemoScene::ImGui() {
 	ImGui::Text("Particle System");
 	// パーティクルシステム（全グループと全エミッターを表示）
 	particleSystem_->ImGui();
+
+	ImGui::Spacing();
+	ImGui::Text("Particle Editor");
+	// パーティクルエディタ
+	particleEditor_->ImGui();
 
 	ImGui::Spacing();
 	// ライトのImGui

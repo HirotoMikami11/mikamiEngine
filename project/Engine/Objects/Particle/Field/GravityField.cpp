@@ -1,6 +1,5 @@
 #include "GravityField.h"
 #include "ImGui/ImGuiManager.h"
-#include <cmath>
 
 void GravityField::Initialize(DirectXCommon* dxCommon)
 {
@@ -13,51 +12,57 @@ void GravityField::Initialize(DirectXCommon* dxCommon)
 
 bool GravityField::ApplyEffect(ParticleState& particle, float deltaTime)
 {
-	// フィールド中心座標を取得
-	Vector3 center = GetCenter();
+	// フィールドの中心位置を取得
+	Vector3 fieldCenter = fieldTransform_.GetPosition();
 
-	// パーティクルから中心へのベクトル
+	// パーティクルからフィールド中心へのベクトル
 	Vector3 toCenter = {
-		center.x - particle.transform.translate.x,
-		center.y - particle.transform.translate.y,
-		center.z - particle.transform.translate.z
+		fieldCenter.x - particle.transform.translate.x,
+		fieldCenter.y - particle.transform.translate.y,
+		fieldCenter.z - particle.transform.translate.z
 	};
 
-	// 中心からの距離を計算
+	// 距離を計算
 	float distance = Length(toCenter);
 
-	// 中心に到達したら削除
+	// 削除範囲内の場合、パーティクルを削除
 	if (distance < deleteRadius_) {
-		return true;	// パーティクルを削除
+		return true;
 	}
 
-	// 重力を適用（距離が0に近い場合は何もしない）
-	if (distance > 0.001f) {
-		// 正規化して方向ベクトルを取得
-		Vector3 direction = Normalize(toCenter);
-
-		// 重力による加速度を適用
-		particle.velocity.x += direction.x * gravityStrength_ * deltaTime;
-		particle.velocity.y += direction.y * gravityStrength_ * deltaTime;
-		particle.velocity.z += direction.z * gravityStrength_ * deltaTime;
+	// 効果範囲外の場合は何もしない
+	if (distance > effectRadius_) {
+		return false;
 	}
 
-	// パーティクルは削除しない
+	// 方向を正規化
+	Vector3 direction = Normalize(toCenter);
+
+	// 距離に応じた重力の強さ（距離の2乗に反比例）
+	float distanceFactor = 1.0f - (distance / effectRadius_);
+	float gravityForce = gravityStrength_ * distanceFactor * distanceFactor;
+
+	// 重力を速度に加算
+	particle.velocity.x += direction.x * gravityForce * deltaTime;
+	particle.velocity.y += direction.y * gravityForce * deltaTime;
+	particle.velocity.z += direction.z * gravityForce * deltaTime;
+
 	return false;
 }
 
 bool GravityField::IsInField(const Vector3& point) const
 {
-	// フィールド中心座標を取得
-	Vector3 center = fieldTransform_.GetPosition();
+	// フィールドの中心位置を取得
+	Vector3 fieldCenter = fieldTransform_.GetPosition();
 
-	// 中心からの距離を計算
-	Vector3 diff = {
-		point.x - center.x,
-		point.y - center.y,
-		point.z - center.z
+	// 点からフィールド中心までの距離を計算
+	Vector3 toCenter = {
+		fieldCenter.x - point.x,
+		fieldCenter.y - point.y,
+		fieldCenter.z - point.z
 	};
-	float distance = Length(diff);
+
+	float distance = Length(toCenter);
 
 	// 効果範囲内かチェック
 	return distance <= effectRadius_;
@@ -65,16 +70,15 @@ bool GravityField::IsInField(const Vector3& point) const
 
 void GravityField::CreateDebugShape()
 {
+	// フィールドの中心位置を取得
+	Vector3 fieldCenter = fieldTransform_.GetPosition();
 
-	// フィールド中心座標を取得
-	Vector3 center = GetCenter();
+	// 効果範囲の球体を描画
+	debugDrawLineSystem_->DrawSphere(fieldCenter, effectRadius_, debugColor_);
 
-	// 削除範囲を異なる色で表示（赤色）
-	Vector4 deleteColor = { 1.0f, 0.0f, 0.0f, 1.0f };
-
-	debugDrawLineSystem_->DrawSphere(center, effectRadius_, debugColor_);
-	debugDrawLineSystem_->DrawSphere(center, deleteRadius_, deleteColor);
-
+	// 削除範囲の球体も描画（半透明の赤）
+	Vector4 deleteColor = { 1.0f, 0.0f, 0.0f, 0.5f };
+	debugDrawLineSystem_->DrawSphere(fieldCenter, deleteRadius_, deleteColor);
 }
 
 void GravityField::ImGui()
@@ -87,17 +91,42 @@ void GravityField::ImGui()
 		// 重力フィールド固有の設定
 		if (ImGui::CollapsingHeader("Gravity Settings", ImGuiTreeNodeFlags_DefaultOpen)) {
 			ImGui::DragFloat("Gravity Strength", &gravityStrength_, 0.1f, 0.0f, 20.0f);
-			ImGui::DragFloat("Effect Radius", &effectRadius_, 0.1f, 0.1f, 50.0f);
-			ImGui::DragFloat("Delete Radius", &deleteRadius_, 0.01f, 0.01f, 2.0f);
+			ImGui::DragFloat("Effect Radius", &effectRadius_, 0.1f, 0.1f, 20.0f);
+			ImGui::DragFloat("Delete Radius", &deleteRadius_, 0.1f, 0.0f, effectRadius_);
+
+			// 削除範囲が効果範囲を超えないようにする
+			if (deleteRadius_ > effectRadius_) {
+				deleteRadius_ = effectRadius_;
+			}
 
 			ImGui::Separator();
-
-			// 中心座標の表示
-			Vector3 center = GetCenter();
-			ImGui::Text("Center: (%.2f, %.2f, %.2f)", center.x, center.y, center.z);
 		}
 
 		ImGui::TreePop();
 	}
 #endif
+}
+
+json GravityField::SerializeParameters() const
+{
+	return json{
+		{"gravityStrength", gravityStrength_},
+		{"effectRadius", effectRadius_},
+		{"deleteRadius", deleteRadius_}
+	};
+}
+
+void GravityField::DeserializeParameters(const json& j)
+{
+	if (j.contains("gravityStrength")) {
+		gravityStrength_ = j["gravityStrength"];
+	}
+
+	if (j.contains("effectRadius")) {
+		effectRadius_ = j["effectRadius"];
+	}
+
+	if (j.contains("deleteRadius")) {
+		deleteRadius_ = j["deleteRadius"];
+	}
 }

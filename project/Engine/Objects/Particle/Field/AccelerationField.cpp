@@ -139,3 +139,31 @@ void AccelerationField::ImGui()
 	}
 #endif
 }
+json AccelerationField::SerializeParameters() const
+{
+	return json{
+		{"acceleration", {acceleration_.x, acceleration_.y, acceleration_.z}},
+		{"areaMin", {area_.min.x, area_.min.y, area_.min.z}},
+		{"areaMax", {area_.max.x, area_.max.y, area_.max.z}}
+	};
+}
+
+void AccelerationField::DeserializeParameters(const json& j)
+{
+	if (j.contains("acceleration")) {
+		auto accel = j["acceleration"];
+		acceleration_ = { accel[0], accel[1], accel[2] };
+	}
+
+	if (j.contains("areaMin")) {
+		auto minVec = j["areaMin"];
+		area_.min = { minVec[0], minVec[1], minVec[2] };
+	}
+
+	if (j.contains("areaMax")) {
+		auto maxVec = j["areaMax"];
+		area_.max = { maxVec[0], maxVec[1], maxVec[2] };
+	}
+
+	FixAABBMinMax(area_);
+}

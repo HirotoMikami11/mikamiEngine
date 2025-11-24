@@ -55,6 +55,7 @@ private:
 
 	// パーティクルシステム
 	ParticleSystem* particleSystem_;
+	ParticleEditor* particleEditor_;
 
 	// ライティング
 	Light directionalLight_;

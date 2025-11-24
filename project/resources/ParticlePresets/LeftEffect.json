@@ -1,0 +1,61 @@
+{
+  "presetName": "LeftEffect",
+  "groups": [
+    {
+      "groupName": "CircleParticles",
+      "modelTag": "plane",
+      "maxParticles": 400,
+      "textureName": "circle",
+      "useBillboard": true
+    }
+  ],
+  "emitters": [
+    {
+      "emitterName": "LeftEmitter",
+      "targetGroupName": "CircleParticles",
+      "position": [-5.0, 2.0, 0.0],
+      "rotation": [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "emitCount": 5,
+      "emitFrequency": 0.5,
+      "isEmitting": true,
+      "particleLifeTimeMin": 1.0,
+      "particleLifeTimeMax": 2.5,
+      "emitDirection": [0.0, 1.0, 0.0],
+      "initialSpeed": 1.0,
+      "spreadAngle": 30.0,
+      "useDirectionalEmit": false,
+      "velocityRange": 2.0,
+      "particleScaleMin": [0.5, 0.5, 0.5],
+      "particleScaleMax": [2.0, 2.0, 2.0],
+      "particleRotateMin": [0.0, 0.0, 0.0],
+      "particleRotateMax": [3.14159, 3.14159, 3.14159],
+      "emitterLifeTime": 5.0,
+      "emitterLifeTimeLoop": false,
+      "useEmitterLifeTime": false,
+      "spawnArea": {
+        "min": [-1.0, -1.0, -1.0],
+        "max": [1.0, 1.0, 1.0]
+      },
+      "showDebugAABB": true,
+      "debugAABBColor": [1.0, 0.0, 0.0, 1.0]
+    }
+  ],
+  "fields": [
+    {
+      "fieldName": "VortexField",
+      "fieldType": "AccelerationField",
+      "position": [-5.0, 3.0, 0.0],
+      "rotation": [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "isEnabled": true,
+      "showDebugVisualization": true,
+      "debugColor": [0.0, 1.0, 0.0, 1.0],
+      "parameters": {
+        "acceleration": [1.0, 0.5, 0.0],
+        "areaMin": [-1.5, -1.5, -1.5],
+        "areaMax": [1.5, 1.5, 1.5]
+      }
+    }
+  ]
+}

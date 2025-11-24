@@ -150,6 +150,31 @@ public:
 	/// </summary>
 	size_t GetEmitterCount() const { return emitters_.size(); }
 
+	/// <summary>
+	/// エミッターを取得（ポインタ）
+	/// </summary>
+	ParticleEmitter* GetEmitter(const std::string& emitterName);
+
+	/// <summary>
+	/// フィールドを取得（ポインタ）
+	/// </summary>
+	BaseField* GetField(const std::string& fieldName);
+
+	/// <summary>
+	/// すべてのグループ名を取得
+	/// </summary>
+	std::vector<std::string> GetAllGroupNames() const;
+
+	/// <summary>
+	/// すべてのエミッター名を取得
+	/// </summary>
+	std::vector<std::string> GetAllEmitterNames() const;
+
+	/// <summary>
+	/// すべてのフィールド名を取得
+	/// </summary>
+	std::vector<std::string> GetAllFieldNames() const;
+
 private:
 	ParticleSystem() = default;
 	~ParticleSystem() = default;

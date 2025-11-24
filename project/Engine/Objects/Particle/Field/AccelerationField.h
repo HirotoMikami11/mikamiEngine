@@ -41,7 +41,17 @@ public:
 	/// <summary>
 	/// フィールドタイプ名
 	/// </summary>
-	const char* GetTypeName() const override { return "Acceleration Field"; }
+	const char* GetTypeName() const override { return "AccelerationField"; }
+
+	/// <summary>
+	/// パラメータをJSONにシリアライズ
+	/// </summary>
+	json SerializeParameters() const override;
+
+	/// <summary>
+	/// JSONからパラメータをデシリアライズ
+	/// </summary>
+	void DeserializeParameters(const json& j) override;
 
 	// 加速度設定
 	void SetAcceleration(const Vector3& accel) { acceleration_ = accel; }

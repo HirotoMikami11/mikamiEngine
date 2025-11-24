@@ -253,3 +253,50 @@ void ParticleSystem::RemoveField(const std::string& fieldName)
 			std::format("ParticleSystem: Removed field '{}'\n", fieldName));
 	}
 }
+ParticleEmitter* ParticleSystem::GetEmitter(const std::string& emitterName)
+{
+	auto it = emitters_.find(emitterName);
+	if (it != emitters_.end()) {
+		return it->second.get();
+	}
+	return nullptr;
+}
+
+BaseField* ParticleSystem::GetField(const std::string& fieldName)
+{
+	auto it = fields_.find(fieldName);
+	if (it != fields_.end()) {
+		return it->second.get();
+	}
+	return nullptr;
+}
+
+std::vector<std::string> ParticleSystem::GetAllGroupNames() const
+{
+	std::vector<std::string> names;
+	names.reserve(groups_.size());
+	for (const auto& [name, group] : groups_) {
+		names.push_back(name);
+	}
+	return names;
+}
+
+std::vector<std::string> ParticleSystem::GetAllEmitterNames() const
+{
+	std::vector<std::string> names;
+	names.reserve(emitters_.size());
+	for (const auto& [name, emitter] : emitters_) {
+		names.push_back(name);
+	}
+	return names;
+}
+
+std::vector<std::string> ParticleSystem::GetAllFieldNames() const
+{
+	std::vector<std::string> names;
+	names.reserve(fields_.size());
+	for (const auto& [name, field] : fields_) {
+		names.push_back(name);
+	}
+	return names;
+}

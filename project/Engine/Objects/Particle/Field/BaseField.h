@@ -1,11 +1,14 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <json.hpp>
 #include "DirectXCommon.h"
 #include "Transform3D.h"
 #include "ParticleState.h"
 #include "MyFunction.h"
 #include "DebugDrawLineSystem.h"
+
+using json = nlohmann::json;
 
 /// <summary>
 /// フィールドの基底クラス
@@ -74,6 +77,16 @@ public:
 
 	// フィールドタイプ名（デバッグ用）
 	virtual const char* GetTypeName() const = 0;
+
+	/// <summary>
+	/// フィールド固有のパラメータをJSONにシリアライズ
+	/// </summary>
+	virtual json SerializeParameters() const = 0;
+
+	/// <summary>
+	/// JSONからフィールド固有のパラメータをデシリアライズ
+	/// </summary>
+	virtual void DeserializeParameters(const json& j) = 0;
 
 protected:
 	/// <summary>

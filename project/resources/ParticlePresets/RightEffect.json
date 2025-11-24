@@ -1,0 +1,61 @@
+{
+  "presetName": "RightEffect",
+  "groups": [
+    {
+      "groupName": "SquareParticles",
+      "modelTag": "plane",
+      "maxParticles": 100,
+      "textureName": "uvChecker",
+      "useBillboard": true
+    }
+  ],
+  "emitters": [
+    {
+      "emitterName": "RightEmitter",
+      "targetGroupName": "SquareParticles",
+      "position": [5.0, 2.0, 0.0],
+      "rotation": [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "emitCount": 2,
+      "emitFrequency": 0.3,
+      "isEmitting": true,
+      "particleLifeTimeMin": 1.5,
+      "particleLifeTimeMax": 3.0,
+      "emitDirection": [-1.0, -0.5, 0.0],
+      "initialSpeed": 4.0,
+      "spreadAngle": 15.0,
+      "useDirectionalEmit": true,
+      "velocityRange": 1.0,
+      "particleScaleMin": [1.0, 1.0, 1.0],
+      "particleScaleMax": [1.0, 1.0, 1.0],
+      "particleRotateMin": [0.0, 0.0, 0.0],
+      "particleRotateMax": [0.0, 0.0, 0.0],
+      "emitterLifeTime": 5.0,
+      "emitterLifeTimeLoop": true,
+      "useEmitterLifeTime": true,
+      "spawnArea": {
+        "min": [-0.3, -0.3, -0.3],
+        "max": [0.3, 2.0, 0.3]
+      },
+      "showDebugAABB": true,
+      "debugAABBColor": [0.0, 0.5, 1.0, 1.0]
+    }
+  ],
+  "fields": [
+    {
+      "fieldName": "GravityField",
+      "fieldType": "GravityField",
+      "position": [5.0, 3.0, 0.0],
+      "rotation": [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "isEnabled": true,
+      "showDebugVisualization": true,
+      "debugColor": [1.0, 0.0, 1.0, 1.0],
+      "parameters": {
+        "gravityStrength": 8.0,
+        "effectRadius": 4.0,
+        "deleteRadius": 0.5
+      }
+    }
+  ]
+}

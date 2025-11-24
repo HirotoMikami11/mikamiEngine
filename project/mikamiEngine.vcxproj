@@ -283,6 +283,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObjects\ModelFont\ModelFont.cpp" />
     <ClCompile Include="Application\GameObjects\FieldObjects\Wall.cpp" />
     <ClCompile Include="Application\GameObjects\Player\PlayerUI.cpp" />
+    <ClCompile Include="Engine\Objects\Particle\ParticlePreset.cpp" />
+    <ClCompile Include="Engine\Objects\Particle\ParticlePresetInstance.cpp" />
+    <ClCompile Include="Engine\Objects\Particle\ParticleEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -520,6 +523,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Engine\Objects\Particle\ParticlePreset.h" />
+    <ClInclude Include="Engine\Objects\Particle\ParticlePresetInstance.h" />
+    <ClInclude Include="Engine\Objects\Particle\ParticleEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

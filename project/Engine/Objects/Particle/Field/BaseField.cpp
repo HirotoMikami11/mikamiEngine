@@ -22,7 +22,7 @@ void BaseField::Update(float deltaTime)
 
 void BaseField::AddLineDebug()
 {
-	if (!showDebugVisualization_ ) {
+	if (!showDebugVisualization_) {
 		return;
 	}
 
