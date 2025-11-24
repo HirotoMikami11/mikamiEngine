@@ -73,6 +73,21 @@ struct ParticleEmitterData
 	bool showDebugAABB;
 	Vector4 debugAABBColor;
 
+
+	// 寿命に応じた色(Color Over Lifetime)
+	bool enableColorOverLifetime = false;
+	Vector4 particleStartColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	Vector4 particleEndColor = { 1.0f, 1.0f, 1.0f, 0.0f };
+
+	// 寿命に応じたサイズ(Size Over Lifetime)
+	bool enableSizeOverLifetime = false;
+	Vector3 particleStartScale = { 1.0f, 1.0f, 1.0f };
+	Vector3 particleEndScale = { 1.0f, 1.0f, 1.0f };
+
+	// 回転(Rotation)
+	bool enableRotation = false;
+	Vector3 rotationSpeed = { 0.0f, 0.0f, 0.0f };
+
 	// JSON変換
 	json ToJson() const;
 	static ParticleEmitterData FromJson(const json& j);

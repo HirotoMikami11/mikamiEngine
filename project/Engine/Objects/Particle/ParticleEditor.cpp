@@ -928,6 +928,20 @@ ParticleEmitterData ParticleEditor::CreateEmitterData(ParticleEmitter* emitter) 
 	data.showDebugAABB = emitter->IsShowDebugAABB();
 	data.debugAABBColor = { 1.0f, 0.0f, 0.0f, 1.0f };
 
+	// Color Over Lifetime
+	data.enableColorOverLifetime = emitter->IsEnableColorOverLifetime();
+	data.particleStartColor = emitter->GetParticleStartColor();
+	data.particleEndColor = emitter->GetParticleEndColor();
+
+	// Size Over Lifetime
+	data.enableSizeOverLifetime = emitter->IsEnableSizeOverLifetime();
+	data.particleStartScale = emitter->GetParticleStartScale();
+	data.particleEndScale = emitter->GetParticleEndScale();
+
+	// Rotation
+	data.enableRotation = emitter->IsEnableRotation();
+	data.rotationSpeed = emitter->GetRotationSpeed();
+
 	return data;
 }
 
@@ -1177,6 +1191,26 @@ ParticlePresetInstance* ParticleEditor::CreateInstance(const std::string& preset
 			// デバッグ
 			emitter->SetShowDebugAABB(emitterData.showDebugAABB);
 			emitter->SetDebugAABBColor(emitterData.debugAABBColor);
+
+			// Color Over Lifetime
+			emitter->SetColorOverLifetime(
+				emitterData.enableColorOverLifetime,
+				emitterData.particleStartColor,
+				emitterData.particleEndColor
+			);
+
+			// Size Over Lifetime
+			emitter->SetSizeOverLifetime(
+				emitterData.enableSizeOverLifetime,
+				emitterData.particleStartScale,
+				emitterData.particleEndScale
+			);
+
+			// Rotation
+			emitter->SetRotation(
+				emitterData.enableRotation,
+				emitterData.rotationSpeed
+			);
 
 			instance->RegisterEmitter(emitterData.emitterName, uniqueName);
 		} else {

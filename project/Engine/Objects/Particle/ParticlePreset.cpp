@@ -63,7 +63,21 @@ json ParticleEmitterData::ToJson() const
 			{"max", {spawnArea.max.x, spawnArea.max.y, spawnArea.max.z}}
 		}},
 		{"showDebugAABB", showDebugAABB},
-		{"debugAABBColor", {debugAABBColor.x, debugAABBColor.y, debugAABBColor.z, debugAABBColor.w}}
+		{"debugAABBColor", {debugAABBColor.x, debugAABBColor.y, debugAABBColor.z, debugAABBColor.w}},
+
+		// Color Over Lifetime
+		{"enableColorOverLifetime", enableColorOverLifetime},
+		{"particleStartColor", {particleStartColor.x, particleStartColor.y, particleStartColor.z, particleStartColor.w}},
+		{"particleEndColor", {particleEndColor.x, particleEndColor.y, particleEndColor.z, particleEndColor.w}},
+
+		// Size Over Lifetime
+		{"enableSizeOverLifetime", enableSizeOverLifetime},
+		{"particleStartScale", {particleStartScale.x, particleStartScale.y, particleStartScale.z}},
+		{"particleEndScale", {particleEndScale.x, particleEndScale.y, particleEndScale.z}},
+
+		// Rotation
+		{"enableRotation", enableRotation},
+		{"rotationSpeed", {rotationSpeed.x, rotationSpeed.y, rotationSpeed.z}}
 	};
 }
 
@@ -124,7 +138,32 @@ ParticleEmitterData ParticleEmitterData::FromJson(const json& j)
 	data.showDebugAABB = j.value("showDebugAABB", false);
 
 	auto color = j.value("debugAABBColor", std::vector<float>{1, 0, 0, 1});
-	data.debugAABBColor = { color[0], color[1], color[2], color[3] };
+	auto debugColor = j.value("debugAABBColor", std::vector<float>{1, 0, 0, 1});
+	data.debugAABBColor = { debugColor[0], debugColor[1], debugColor[2], debugColor[3] };
+
+	// Color Over Lifetime
+	data.enableColorOverLifetime = j.value("enableColorOverLifetime", false);
+
+	auto startColor = j.value("particleStartColor", std::vector<float>{1, 1, 1, 1});
+	data.particleStartColor = { startColor[0], startColor[1], startColor[2], startColor[3] };
+
+	auto endColor = j.value("particleEndColor", std::vector<float>{1, 1, 1, 0});
+	data.particleEndColor = { endColor[0], endColor[1], endColor[2], endColor[3] };
+
+	// Size Over Lifetime
+	data.enableSizeOverLifetime = j.value("enableSizeOverLifetime", false);
+
+	auto startScale = j.value("particleStartScale", std::vector<float>{1, 1, 1});
+	data.particleStartScale = { startScale[0], startScale[1], startScale[2] };
+
+	auto endScale = j.value("particleEndScale", std::vector<float>{1, 1, 1});
+	data.particleEndScale = { endScale[0], endScale[1], endScale[2] };
+
+	// Rotation
+	data.enableRotation = j.value("enableRotation", false);
+
+	auto rotSpeed = j.value("rotationSpeed", std::vector<float>{0, 0, 0});
+	data.rotationSpeed = { rotSpeed[0], rotSpeed[1], rotSpeed[2] };
 
 	return data;
 }

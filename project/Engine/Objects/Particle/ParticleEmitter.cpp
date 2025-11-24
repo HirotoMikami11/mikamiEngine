@@ -155,6 +155,34 @@ ParticleState ParticleEmitter::CreateNewParticle()
 	state.lifeTime = Random::GetInstance().GenerateFloat(particleLifeTimeMin_, particleLifeTimeMax_);
 	state.currentTime = 0.0f;
 
+	// ========================================
+	//	時間で色変化(Color Over Lifetime)
+	// ========================================
+	if (enableColorOverLifetime_) {
+		state.useColorOverLifetime = true;
+		state.startColor = particleStartColor_;
+		state.endColor = particleEndColor_;
+		state.color = particleStartColor_;  // 初期色を設定
+	}
+
+	// ========================================
+	// 時間でサイズ変化(Size Over Lifetime)
+	// ========================================
+	if (enableSizeOverLifetime_) {
+		state.useSizeOverLifetime = true;
+		state.startScale = particleStartScale_;
+		state.endScale = particleEndScale_;
+		state.transform.scale = particleStartScale_;  // 初期スケールを設定
+	}
+
+	// ========================================
+	// 回転(Rotation)
+	// ========================================
+	if (enableRotation_) {
+		state.useRotation = true;
+		state.rotationSpeed = rotationSpeed_;
+	}
+
 	return state;
 }
 
@@ -313,6 +341,69 @@ void ParticleEmitter::ImGui()
 				ImGui::Text("Random Velocity Mode");
 				ImGui::Separator();
 				ImGui::DragFloat("Velocity Range", &velocityRange_, 0.1f, 0.0f, 10.0f);
+			}
+
+			ImGui::Separator();
+		}
+
+		// ========================================
+		// Color Over Lifetime
+		// ========================================
+		if (ImGui::CollapsingHeader("Color Over Lifetime")) {
+			ImGui::Checkbox("Enable Color Over Lifetime", &enableColorOverLifetime_);
+
+			if (enableColorOverLifetime_) {
+				ImGui::Spacing();
+				ImGui::Text("Color will transition from Start to End over particle lifetime");
+				ImGui::Separator();
+
+				ImGui::ColorEdit4("Start Color", &particleStartColor_.x);
+				ImGui::ColorEdit4("End Color", &particleEndColor_.x);
+
+				ImGui::Spacing();
+				ImGui::TextDisabled("Tip: Set End Color alpha to 0 for fade-out effect");
+			}
+
+			ImGui::Separator();
+		}
+
+		// ========================================
+		// Size Over Lifetime
+		// ========================================
+		if (ImGui::CollapsingHeader("Size Over Lifetime")) {
+			ImGui::Checkbox("Enable Size Over Lifetime", &enableSizeOverLifetime_);
+
+			if (enableSizeOverLifetime_) {
+				ImGui::Spacing();
+				ImGui::Text("Size will transition from Start to End over particle lifetime");
+				ImGui::Separator();
+
+				ImGui::DragFloat3("Start Scale", &particleStartScale_.x, 0.1f, 0.1f, 10.0f);
+				ImGui::DragFloat3("End Scale", &particleEndScale_.x, 0.1f, 0.0f, 10.0f);
+
+				ImGui::Spacing();
+				ImGui::TextDisabled("Tip: Set End Scale to (0, 0, 0) to shrink to nothing");
+			}
+
+			ImGui::Separator();
+		}
+
+		// ========================================
+		// Rotation
+		// ========================================
+		if (ImGui::CollapsingHeader("Rotation")) {
+			ImGui::Checkbox("Enable Rotation", &enableRotation_);
+
+			if (enableRotation_) {
+				ImGui::Spacing();
+				ImGui::Text("Particles will rotate continuously at specified speed");
+				ImGui::Separator();
+
+				ImGui::DragFloat3("Rotation Speed (deg/s)", &rotationSpeed_.x, 1.0f, -360.0f, 360.0f);
+
+				ImGui::Spacing();
+				ImGui::TextDisabled("Rotation speed in degrees per second");
+				ImGui::TextDisabled("X: Roll, Y: Pitch, Z: Yaw");
 			}
 
 			ImGui::Separator();

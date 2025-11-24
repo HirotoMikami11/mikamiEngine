@@ -1,0 +1,120 @@
+{
+    "emitters": [
+        {
+            "debugAABBColor": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "emitCount": 1,
+            "emitDirection": [
+                0.0,
+                1.0,
+                0.0
+            ],
+            "emitFrequency": 0.009999999776482582,
+            "emitterLifeTime": 5.0,
+            "emitterLifeTimeLoop": false,
+            "emitterName": "WalkSmoke_Emitter",
+            "enableColorOverLifetime": true,
+            "enableRotation": false,
+            "enableSizeOverLifetime": true,
+            "initialSpeed": 1.0,
+            "isEmitting": true,
+            "particleEndColor": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "particleEndScale": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "particleLifeTimeMax": 3.0,
+            "particleLifeTimeMin": 1.0,
+            "particleRotateMax": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "particleRotateMin": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "particleScaleMax": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "particleScaleMin": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "particleStartColor": [
+                0.05392158031463623,
+                0.05392158031463623,
+                0.05392158031463623,
+                1.0
+            ],
+            "particleStartScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotationSpeed": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "showDebugAABB": true,
+            "spawnArea": {
+                "max": [
+                    1.5,
+                    -0.5,
+                    1.5
+                ],
+                "min": [
+                    -1.5,
+                    -1.2999999523162842,
+                    -1.5
+                ]
+            },
+            "spreadAngle": 30.2189998626709,
+            "targetGroupName": "WalkSmoke_Particle",
+            "useDirectionalEmit": true,
+            "useEmitterLifeTime": false,
+            "velocityRange": 1.0
+        }
+    ],
+    "fields": [],
+    "groups": [
+        {
+            "groupName": "WalkSmoke_Particle",
+            "maxParticles": 201,
+            "modelTag": "plane",
+            "textureName": "circle",
+            "useBillboard": true
+        }
+    ],
+    "presetName": "WalkSmokeEffect"
+}

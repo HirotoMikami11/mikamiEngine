@@ -130,9 +130,40 @@ void ParticleGroup::UpdateParticles(float deltaTime, const std::vector<BaseField
 		particle.transform.translate.y += particle.velocity.y * deltaTime;
 		particle.transform.translate.z += particle.velocity.z * deltaTime;
 
-		// 色を透明にしていく（アルファフェード）
-		float alpha = 1.0f - (particle.currentTime / particle.lifeTime);
-		particle.color.w = alpha;
+		/// 寿命に関連した更新処理
+
+		// 寿命の進行率を計算（0.0 ~ 1.0）
+		float t = particle.currentTime / particle.lifeTime;
+
+		// Color Over Lifetime
+		if (particle.useColorOverLifetime) {
+			// 開始色から終了色へ線形補間
+			particle.color = Lerp(particle.startColor, particle.endColor, t);
+		} else {
+			//色を透明にしていく
+			float alpha = 1.0f - t;
+			particle.color.w = alpha;
+		}
+
+		// Size Over Lifetime
+		if (particle.useSizeOverLifetime) {
+			// 開始スケールから終了スケールへ線形補間
+			particle.transform.scale = Lerp(particle.startScale, particle.endScale, t);
+		}
+
+		// Rotation
+		if (particle.useRotation) {
+			// 回転速度を適用（度/秒 → ラジアン/秒に変換）
+			Vector3 rotationDelta = {
+				DegToRad(particle.rotationSpeed.x) * deltaTime,
+				DegToRad(particle.rotationSpeed.y) * deltaTime,
+				DegToRad(particle.rotationSpeed.z) * deltaTime
+			};
+
+			particle.transform.rotate.x += rotationDelta.x;
+			particle.transform.rotate.y += rotationDelta.y;
+			particle.transform.rotate.z += rotationDelta.z;
+		}
 
 		// 寿命を進める
 		particle.currentTime += deltaTime;

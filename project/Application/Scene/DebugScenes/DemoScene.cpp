@@ -131,6 +131,9 @@ void DemoScene::InitializeGameObjects() {
 	// 右側エフェクト（左下発射 + 重力フィールド）
 	particleEditor_->CreateInstance("RightEffect", "Right");
 
+	//砂煙パーティクル
+	particleEditor_->CreateInstance("WalkSmokeEffect", "Smoke1");
+
 
 #pragma endregion
 
@@ -184,9 +187,9 @@ void DemoScene::UpdateGameObjects() {
 		planePosition.x += moveSpeed * gameDeltaTime;  // 右移動
 	}
 
-	// 座標を変更したい場合は以下のようにアクセス可能
-	auto* centerInstance = particleEditor_->GetInstance("Center");
-	centerInstance->GetEmitter("CenterEmitter")->GetTransform().SetPosition(sphere_->GetPosition());
+	//// 座標を変更したい場合は以下のようにアクセス可能
+	//auto* centerInstance = particleEditor_->GetInstance("Center");
+	//centerInstance->GetEmitter("CenterEmitter")->GetTransform().SetPosition(sphere_->GetPosition());
 
 	plane_->SetPosition(planePosition);
 	plane_->Update(viewProjectionMatrix);

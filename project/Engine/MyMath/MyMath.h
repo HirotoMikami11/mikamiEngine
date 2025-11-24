@@ -320,7 +320,8 @@ namespace MyMath {
 	};
 
 	Vector4 Uint32ToColorVector(uint32_t color);
-
+	//線形補間
+	Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t);
 	///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//
 
 	///																		///
