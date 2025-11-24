@@ -111,7 +111,7 @@ void DemoScene::InitializeGameObjects() {
 	modelMultiMaterial_->SetTransform(transformMultiMaterial);
 
 	///*-----------------------------------------------------------------------*///
-	///			パーティクルシステム - エディタを使用した新方式				///
+	///			パーティクルシステム - エディタで完結！						///
 	///*-----------------------------------------------------------------------*///
 #pragma region パーティクル
 	// ParticleSystemシングルトンを取得
@@ -122,7 +122,6 @@ void DemoScene::InitializeGameObjects() {
 	particleEditor_ = ParticleEditor::GetInstance();
 	particleEditor_->Initialize(dxCommon_);
 
-
 	// 中央エフェクト（上向き発射 + 上昇フィールド）
 	particleEditor_->CreateInstance("CenterEffect", "Center");
 
@@ -132,9 +131,6 @@ void DemoScene::InitializeGameObjects() {
 	// 右側エフェクト（左下発射 + 重力フィールド）
 	particleEditor_->CreateInstance("RightEffect", "Right");
 
-	// 【補足】座標を変更したい場合は以下のようにアクセス可能
-	 auto* centerInstance = particleEditor_->GetInstance("Center");
-	 centerInstance->GetEmitter("CenterEmitter")->GetTransform().SetPosition(sphere_->GetPosition());
 
 #pragma endregion
 
@@ -263,14 +259,15 @@ void DemoScene::ImGui() {
 	modelMultiMaterial_->ImGui();
 
 	ImGui::Spacing();
-	ImGui::Text("Particle System");
-	// パーティクルシステム（全グループと全エミッターを表示）
-	particleSystem_->ImGui();
-
-	ImGui::Spacing();
-	ImGui::Text("Particle Editor");
-	// パーティクルエディタ
+	// パーティクルエディタ（統合UI）
+	ImGui::Text("Particle Editor (Integrated)");
 	particleEditor_->ImGui();
+
+	// ParticleSystemのImGuiは非表示（エディタで完結するため）
+	// 必要に応じてコメントアウトを解除
+	// ImGui::Spacing();
+	// ImGui::Text("Particle System");
+	// particleSystem_->ImGui();
 
 	ImGui::Spacing();
 	// ライトのImGui

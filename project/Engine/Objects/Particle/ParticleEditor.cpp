@@ -31,96 +31,658 @@ void ParticleEditor::Initialize(DirectXCommon* dxCommon)
 void ParticleEditor::ImGui()
 {
 #ifdef USEIMGUI
-	if (ImGui::Begin("Particle Editor", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::Text("Preset Manager");
-		ImGui::Separator();
+	if (ImGui::Begin("Particle Editor", nullptr, ImGuiWindowFlags_None)) {
+		// タブバー
+		if (ImGui::BeginTabBar("EditorTabs", ImGuiTabBarFlags_None)) {
 
-		// 利用可能なプリセット一覧
-		std::vector<std::string> presets = GetAvailablePresets();
-
-		ImGui::Text("Available Presets: %zu", presets.size());
-
-		static int selectedPreset = -1;
-		static char newPresetName[128] = "";
-
-		// プリセット選択コンボボックス
-		if (ImGui::BeginCombo("Select Preset", selectedPreset >= 0 && selectedPreset < presets.size()
-			? presets[selectedPreset].c_str() : "None")) {
-			for (int i = 0; i < presets.size(); ++i) {
-				bool isSelected = (selectedPreset == i);
-				if (ImGui::Selectable(presets[i].c_str(), isSelected)) {
-					selectedPreset = i;
-				}
-				if (isSelected) {
-					ImGui::SetItemDefaultFocus();
-				}
+			// Createタブ
+			if (ImGui::BeginTabItem("Create")) {
+				ShowCreateTab();
+				ImGui::EndTabItem();
 			}
-			ImGui::EndCombo();
-		}
 
-		ImGui::Separator();
-
-		// 新しいプリセット名入力
-		ImGui::InputText("Preset Name", newPresetName, IM_ARRAYSIZE(newPresetName));
-
-		// 保存ボタン
-		if (ImGui::Button("Save Current State", ImVec2(200, 0))) {
-			if (strlen(newPresetName) > 0) {
-				if (SaveCurrentStateAsPreset(newPresetName)) {
-					Logger::Log(Logger::GetStream(),
-						std::format("[ParticleEditor] Saved preset: {}\n", newPresetName));
-					memset(newPresetName, 0, sizeof(newPresetName));
-				}
-			} else {
-				Logger::Log(Logger::GetStream(),
-					"[ParticleEditor] Please enter a preset name\n");
+			// Editタブ
+			if (ImGui::BeginTabItem("Edit")) {
+				ShowEditTab();
+				ImGui::EndTabItem();
 			}
-		}
 
-		ImGui::Separator();
-
-		// インスタンス作成
-		static char instanceName[128] = "";
-		ImGui::InputText("Instance Name", instanceName, IM_ARRAYSIZE(instanceName));
-
-		if (ImGui::Button("Create Instance", ImVec2(200, 0))) {
-			if (selectedPreset >= 0 && selectedPreset < presets.size() && strlen(instanceName) > 0) {
-				auto* instance = CreateInstance(presets[selectedPreset], instanceName);
-				if (instance) {
-					Logger::Log(Logger::GetStream(),
-						std::format("[ParticleEditor] Created instance: {}\n", instanceName));
-					memset(instanceName, 0, sizeof(instanceName));
-				}
+			// Presetsタブ
+			if (ImGui::BeginTabItem("Presets")) {
+				ShowPresetsTab();
+				ImGui::EndTabItem();
 			}
-		}
 
-		ImGui::Separator();
-
-		// 現在のインスタンス一覧
-		ImGui::Text("Active Instances: %zu", instances_.size());
-
-		if (ImGui::TreeNode("Instance List")) {
-			for (auto& [name, instance] : instances_) {
-				ImGui::BulletText("%s", name.c_str());
-			}
-			ImGui::TreePop();
-		}
-
-		// プリセット削除ボタン
-		if (selectedPreset >= 0 && selectedPreset < presets.size()) {
-			ImGui::Separator();
-			if (ImGui::Button("Delete Selected Preset", ImVec2(200, 0))) {
-				if (DeletePreset(presets[selectedPreset])) {
-					Logger::Log(Logger::GetStream(),
-						std::format("[ParticleEditor] Deleted preset: {}\n", presets[selectedPreset]));
-					selectedPreset = -1;
-				}
-			}
+			ImGui::EndTabBar();
 		}
 	}
 	ImGui::End();
+
+	// ダイアログ表示（モーダル）
+	if (showCreateGroupDialog_) {
+		ShowCreateGroupDialog();
+	}
+	if (showCreateEmitterDialog_) {
+		ShowCreateEmitterDialog();
+	}
+	if (showCreateFieldDialog_) {
+		ShowCreateFieldDialog();
+	}
 #endif
 }
+
+// ========================================
+// Createタブ
+// ========================================
+
+void ParticleEditor::ShowCreateTab()
+{
+#ifdef USEIMGUI
+	ImGui::Text("Create New Objects");
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	// Create Group ボタン
+	if (ImGui::Button("+ Create Group", ImVec2(250, 40))) {
+		showCreateGroupDialog_ = true;
+		// ダイアログをリセット
+		strcpy_s(groupCreationData_.name, "NewGroup");
+		strcpy_s(groupCreationData_.modelTag, "plane");
+		strcpy_s(groupCreationData_.textureName, "circle");
+		groupCreationData_.maxParticles = 100;
+		groupCreationData_.useBillboard = true;
+	}
+	ImGui::Spacing();
+
+	// Create Emitter ボタン
+	if (ImGui::Button("+ Create Emitter", ImVec2(250, 40))) {
+		showCreateEmitterDialog_ = true;
+		// ダイアログをリセット
+		strcpy_s(emitterCreationData_.name, "NewEmitter");
+		emitterCreationData_.selectedGroupIndex = 0;
+	}
+	ImGui::Spacing();
+
+	// Create Field ボタン
+	if (ImGui::Button("+ Create Field", ImVec2(250, 40))) {
+		showCreateFieldDialog_ = true;
+		// ダイアログをリセット
+		strcpy_s(fieldCreationData_.name, "NewField");
+		fieldCreationData_.fieldTypeIndex = 0;
+	}
+
+	ImGui::Spacing();
+	ImGui::Separator();
+
+	// 統計情報
+	ImGui::Text("Current State:");
+	ImGui::BulletText("Groups: %zu", particleSystem_->GetGroupCount());
+	ImGui::BulletText("Emitters: %zu", particleSystem_->GetEmitterCount());
+	ImGui::BulletText("Fields: %zu", particleSystem_->GetFieldCount());
+#endif
+}
+
+void ParticleEditor::ShowCreateGroupDialog()
+{
+#ifdef USEIMGUI
+	ImGui::OpenPopup("Create Group");
+
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Create Group", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::Text("Create New Particle Group");
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		// 入力フィールド
+		ImGui::InputText("Group Name", groupCreationData_.name, 128);
+		ImGui::InputText("Model Tag", groupCreationData_.modelTag, 128);
+		ImGui::InputText("Texture", groupCreationData_.textureName, 128);
+		ImGui::SliderInt("Max Particles", &groupCreationData_.maxParticles, 10, 1000);
+		ImGui::Checkbox("Use Billboard", &groupCreationData_.useBillboard);
+
+		ImGui::Spacing();
+		ImGui::Separator();
+
+		// ボタン
+		if (ImGui::Button("Create", ImVec2(120, 0))) {
+			// グループ作成
+			bool success = particleSystem_->CreateGroup(
+				groupCreationData_.name,
+				groupCreationData_.modelTag,
+				groupCreationData_.maxParticles,
+				groupCreationData_.textureName,
+				groupCreationData_.useBillboard
+			);
+
+			if (success) {
+				Logger::Log(Logger::GetStream(),
+					std::format("[ParticleEditor] Created group: {}\n", groupCreationData_.name));
+				showCreateGroupDialog_ = false;
+				ImGui::CloseCurrentPopup();
+			} else {
+				Logger::Log(Logger::GetStream(),
+					std::format("[ParticleEditor] Failed to create group: {}\n", groupCreationData_.name));
+			}
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+			showCreateGroupDialog_ = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+#endif
+}
+
+void ParticleEditor::ShowCreateEmitterDialog()
+{
+#ifdef USEIMGUI
+	ImGui::OpenPopup("Create Emitter");
+
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Create Emitter", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::Text("Create New Particle Emitter");
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		// エミッター名
+		ImGui::InputText("Emitter Name", emitterCreationData_.name, 128);
+
+		// ターゲットグループ選択
+		std::vector<std::string> groupNames = particleSystem_->GetAllGroupNames();
+
+		if (groupNames.empty()) {
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), "No groups available!");
+			ImGui::Text("Please create a group first.");
+		} else {
+			ImGui::Text("Target Group:");
+			if (ImGui::BeginCombo("##TargetGroup",
+				emitterCreationData_.selectedGroupIndex < groupNames.size()
+				? groupNames[emitterCreationData_.selectedGroupIndex].c_str()
+				: "")) {
+
+				for (int i = 0; i < groupNames.size(); ++i) {
+					bool isSelected = (emitterCreationData_.selectedGroupIndex == i);
+					if (ImGui::Selectable(groupNames[i].c_str(), isSelected)) {
+						emitterCreationData_.selectedGroupIndex = i;
+					}
+					if (isSelected) {
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+		}
+
+		ImGui::Spacing();
+		ImGui::Separator();
+
+		// ボタン
+		bool canCreate = !groupNames.empty();
+
+		if (!canCreate) {
+			ImGui::BeginDisabled();
+		}
+
+		if (ImGui::Button("Create", ImVec2(120, 0))) {
+			if (emitterCreationData_.selectedGroupIndex < groupNames.size()) {
+				std::string targetGroup = groupNames[emitterCreationData_.selectedGroupIndex];
+
+				ParticleEmitter* emitter = particleSystem_->CreateEmitter(
+					emitterCreationData_.name,
+					targetGroup
+				);
+
+				if (emitter) {
+					Logger::Log(Logger::GetStream(),
+						std::format("[ParticleEditor] Created emitter: {} -> {}\n",
+							emitterCreationData_.name, targetGroup));
+					showCreateEmitterDialog_ = false;
+					ImGui::CloseCurrentPopup();
+				} else {
+					Logger::Log(Logger::GetStream(),
+						std::format("[ParticleEditor] Failed to create emitter: {}\n",
+							emitterCreationData_.name));
+				}
+			}
+		}
+
+		if (!canCreate) {
+			ImGui::EndDisabled();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+			showCreateEmitterDialog_ = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+#endif
+}
+
+void ParticleEditor::ShowCreateFieldDialog()
+{
+#ifdef USEIMGUI
+	ImGui::OpenPopup("Create Field");
+
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Create Field", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::Text("Create New Field");
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		// フィールド名
+		ImGui::InputText("Field Name", fieldCreationData_.name, 128);
+
+		// フィールドタイプ選択
+		ImGui::Text("Field Type:");
+		ImGui::Combo("##FieldType", &fieldCreationData_.fieldTypeIndex,
+			fieldCreationData_.fieldTypes, 2);
+
+		ImGui::Spacing();
+		ImGui::Separator();
+
+		// ボタン
+		if (ImGui::Button("Create", ImVec2(120, 0))) {
+			std::string typeName = fieldCreationData_.fieldTypes[fieldCreationData_.fieldTypeIndex];
+
+			BaseField* field = CreateFieldByTypeName(typeName, fieldCreationData_.name);
+
+			if (field) {
+				Logger::Log(Logger::GetStream(),
+					std::format("[ParticleEditor] Created field: {} ({})\n",
+						fieldCreationData_.name, typeName));
+				showCreateFieldDialog_ = false;
+				ImGui::CloseCurrentPopup();
+			} else {
+				Logger::Log(Logger::GetStream(),
+					std::format("[ParticleEditor] Failed to create field: {}\n",
+						fieldCreationData_.name));
+			}
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+			showCreateFieldDialog_ = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+#endif
+}
+// ParticleEditor.cpp - パート2: Editタブ
+
+// ========================================
+// Editタブ
+// ========================================
+
+void ParticleEditor::ShowEditTab()
+{
+#ifdef USEIMGUI
+	// 2カラムレイアウト
+	ImGui::BeginChild("ObjectListPanel", ImVec2(250, 0), true);
+	ShowObjectListPanel();
+	ImGui::EndChild();
+
+	ImGui::SameLine();
+
+	ImGui::BeginChild("EditPanel", ImVec2(0, 0), true);
+	ShowEditPanel();
+	ImGui::EndChild();
+#endif
+}
+
+void ParticleEditor::ShowObjectListPanel()
+{
+#ifdef USEIMGUI
+	ImGui::Text("Objects");
+	ImGui::Separator();
+
+	// グループリスト
+	ShowGroupList();
+
+	ImGui::Spacing();
+
+	// エミッターリスト
+	ShowEmitterList();
+
+	ImGui::Spacing();
+
+	// フィールドリスト
+	ShowFieldList();
+#endif
+}
+
+void ParticleEditor::ShowGroupList()
+{
+#ifdef USEIMGUI
+	if (ImGui::TreeNode("Groups")) {
+		std::vector<std::string> groupNames = particleSystem_->GetAllGroupNames();
+
+		if (groupNames.empty()) {
+			ImGui::TextDisabled("No groups");
+		} else {
+			for (const auto& name : groupNames) {
+				bool isSelected = (currentEditingType_ == EditingType::Group &&
+					currentEditingObject_ == name);
+
+				// Selectableでオブジェクトを選択可能に
+				if (ImGui::Selectable(name.c_str(), isSelected)) {
+					currentEditingType_ = EditingType::Group;
+					currentEditingObject_ = name;
+				}
+
+				// 右クリックメニュー
+				if (ImGui::BeginPopupContextItem()) {
+					if (ImGui::MenuItem("Delete")) {
+						particleSystem_->RemoveGroup(name);
+
+						// 削除したオブジェクトが選択中だった場合、選択解除
+						if (currentEditingObject_ == name) {
+							currentEditingType_ = EditingType::None;
+							currentEditingObject_ = "";
+						}
+
+						Logger::Log(Logger::GetStream(),
+							std::format("[ParticleEditor] Deleted group: {}\n", name));
+					}
+					ImGui::EndPopup();
+				}
+			}
+		}
+
+		ImGui::TreePop();
+	}
+#endif
+}
+
+void ParticleEditor::ShowEmitterList()
+{
+#ifdef USEIMGUI
+	if (ImGui::TreeNode("Emitters")) {
+		std::vector<std::string> emitterNames = particleSystem_->GetAllEmitterNames();
+
+		if (emitterNames.empty()) {
+			ImGui::TextDisabled("No emitters");
+		} else {
+			for (const auto& name : emitterNames) {
+				bool isSelected = (currentEditingType_ == EditingType::Emitter &&
+					currentEditingObject_ == name);
+
+				// Selectableでオブジェクトを選択可能に
+				if (ImGui::Selectable(name.c_str(), isSelected)) {
+					currentEditingType_ = EditingType::Emitter;
+					currentEditingObject_ = name;
+				}
+
+				// ターゲットグループ情報を表示
+				ParticleEmitter* emitter = particleSystem_->GetEmitter(name);
+				if (emitter) {
+					ImGui::SameLine();
+					ImGui::TextDisabled("-> %s", emitter->GetTargetGroupName().c_str());
+				}
+
+				// 右クリックメニュー
+				if (ImGui::BeginPopupContextItem()) {
+					if (ImGui::MenuItem("Delete")) {
+						particleSystem_->RemoveEmitter(name);
+
+						// 削除したオブジェクトが選択中だった場合、選択解除
+						if (currentEditingObject_ == name) {
+							currentEditingType_ = EditingType::None;
+							currentEditingObject_ = "";
+						}
+
+						Logger::Log(Logger::GetStream(),
+							std::format("[ParticleEditor] Deleted emitter: {}\n", name));
+					}
+					ImGui::EndPopup();
+				}
+			}
+		}
+
+		ImGui::TreePop();
+	}
+#endif
+}
+
+void ParticleEditor::ShowFieldList()
+{
+#ifdef USEIMGUI
+	if (ImGui::TreeNode("Fields")) {
+		std::vector<std::string> fieldNames = particleSystem_->GetAllFieldNames();
+
+		if (fieldNames.empty()) {
+			ImGui::TextDisabled("No fields");
+		} else {
+			for (const auto& name : fieldNames) {
+				bool isSelected = (currentEditingType_ == EditingType::Field &&
+					currentEditingObject_ == name);
+
+				// Selectableでオブジェクトを選択可能に
+				if (ImGui::Selectable(name.c_str(), isSelected)) {
+					currentEditingType_ = EditingType::Field;
+					currentEditingObject_ = name;
+				}
+
+				// フィールドタイプ情報を表示
+				BaseField* field = particleSystem_->GetField(name);
+				if (field) {
+					ImGui::SameLine();
+					ImGui::TextDisabled("(%s)", field->GetTypeName());
+				}
+
+				// 右クリックメニュー
+				if (ImGui::BeginPopupContextItem()) {
+					if (ImGui::MenuItem("Delete")) {
+						particleSystem_->RemoveField(name);
+
+						// 削除したオブジェクトが選択中だった場合、選択解除
+						if (currentEditingObject_ == name) {
+							currentEditingType_ = EditingType::None;
+							currentEditingObject_ = "";
+						}
+
+						Logger::Log(Logger::GetStream(),
+							std::format("[ParticleEditor] Deleted field: {}\n", name));
+					}
+					ImGui::EndPopup();
+				}
+			}
+		}
+
+		ImGui::TreePop();
+	}
+#endif
+}
+
+void ParticleEditor::ShowEditPanel()
+{
+#ifdef USEIMGUI
+	if (currentEditingType_ == EditingType::None || currentEditingObject_.empty()) {
+		ImGui::TextDisabled("Select an object to edit");
+		ImGui::Spacing();
+		ImGui::Text("Tip: Click on an object in the list");
+		ImGui::Text("or right-click to delete.");
+		return;
+	}
+
+	// 選択されたオブジェクトの編集UI
+	ImGui::Text("Editing: %s", currentEditingObject_.c_str());
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	switch (currentEditingType_) {
+	case EditingType::Group: {
+		ParticleGroup* group = particleSystem_->GetGroup(currentEditingObject_);
+		if (group) {
+			// 既存のImGui()を呼び出す
+			group->ImGui();
+		} else {
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Group not found!");
+			currentEditingType_ = EditingType::None;
+			currentEditingObject_ = "";
+		}
+		break;
+	}
+
+	case EditingType::Emitter: {
+		ParticleEmitter* emitter = particleSystem_->GetEmitter(currentEditingObject_);
+		if (emitter) {
+			// 既存のImGui()を呼び出す
+			emitter->ImGui();
+		} else {
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Emitter not found!");
+			currentEditingType_ = EditingType::None;
+			currentEditingObject_ = "";
+		}
+		break;
+	}
+
+	case EditingType::Field: {
+		BaseField* field = particleSystem_->GetField(currentEditingObject_);
+		if (field) {
+			// 既存のImGui()を呼び出す
+			field->ImGui();
+		} else {
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Field not found!");
+			currentEditingType_ = EditingType::None;
+			currentEditingObject_ = "";
+		}
+		break;
+	}
+
+	default:
+		break;
+	}
+#endif
+}
+// ParticleEditor.cpp - パート3: Presetsタブとユーティリティ
+
+// ========================================
+// Presetsタブ
+// ========================================
+
+void ParticleEditor::ShowPresetsTab()
+{
+#ifdef USEIMGUI
+	ImGui::Text("Preset Management");
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	// 利用可能なプリセット一覧
+	std::vector<std::string> presets = GetAvailablePresets();
+
+	ImGui::Text("Available Presets: %zu", presets.size());
+	ImGui::Spacing();
+
+	static int selectedPreset = -1;
+	static char newPresetName[128] = "";
+
+	// プリセット選択コンボボックス
+	if (ImGui::BeginCombo("Select Preset", selectedPreset >= 0 && selectedPreset < presets.size()
+		? presets[selectedPreset].c_str() : "None")) {
+		for (int i = 0; i < presets.size(); ++i) {
+			bool isSelected = (selectedPreset == i);
+			if (ImGui::Selectable(presets[i].c_str(), isSelected)) {
+				selectedPreset = i;
+			}
+			if (isSelected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	// 新しいプリセット名入力
+	ImGui::InputText("Preset Name", newPresetName, 128);
+	ImGui::Spacing();
+
+	// 保存ボタン
+	if (ImGui::Button("Save Current State", ImVec2(200, 0))) {
+		if (strlen(newPresetName) > 0) {
+			if (SaveCurrentStateAsPreset(newPresetName)) {
+				Logger::Log(Logger::GetStream(),
+					std::format("[ParticleEditor] Saved preset: {}\n", newPresetName));
+				memset(newPresetName, 0, sizeof(newPresetName));
+			}
+		} else {
+			Logger::Log(Logger::GetStream(),
+				"[ParticleEditor] Please enter a preset name\n");
+		}
+	}
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	// インスタンス作成
+	static char instanceName[128] = "";
+	ImGui::Text("Create Instance from Preset");
+	ImGui::InputText("Instance Name", instanceName, 128);
+
+	if (ImGui::Button("Create Instance", ImVec2(200, 0))) {
+		if (selectedPreset >= 0 && selectedPreset < presets.size() && strlen(instanceName) > 0) {
+			auto* instance = CreateInstance(presets[selectedPreset], instanceName);
+			if (instance) {
+				Logger::Log(Logger::GetStream(),
+					std::format("[ParticleEditor] Created instance: {}\n", instanceName));
+				memset(instanceName, 0, sizeof(instanceName));
+			}
+		}
+	}
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	// 現在のインスタンス一覧
+	ImGui::Text("Active Instances: %zu", instances_.size());
+
+	if (ImGui::TreeNode("Instance List")) {
+		for (auto& [name, instance] : instances_) {
+			ImGui::BulletText("%s", name.c_str());
+		}
+		ImGui::TreePop();
+	}
+
+	ImGui::Spacing();
+
+	// プリセット削除ボタン
+	if (selectedPreset >= 0 && selectedPreset < presets.size()) {
+		ImGui::Separator();
+		if (ImGui::Button("Delete Selected Preset", ImVec2(200, 0))) {
+			if (DeletePreset(presets[selectedPreset])) {
+				Logger::Log(Logger::GetStream(),
+					std::format("[ParticleEditor] Deleted preset: {}\n", presets[selectedPreset]));
+				selectedPreset = -1;
+			}
+		}
+	}
+#endif
+}
+
+// ========================================
+// ユーティリティ関数
+// ========================================
 
 std::string ParticleEditor::GetPresetFilePath(const std::string& presetName) const
 {
@@ -184,7 +746,92 @@ bool ParticleEditor::DeletePreset(const std::string& presetName)
 		return false;
 	}
 }
-// ParticleEditor.cpp の続き（パート2）
+
+ParticleGroupData ParticleEditor::CreateGroupData(ParticleGroup* group) const
+{
+	ParticleGroupData data;
+	data.groupName = group->GetName();
+	data.modelTag = group->GetModel() ? group->GetModelTag() : "";
+	data.maxParticles = group->GetMaxParticleCount();
+	data.textureName = group->GetTextureName();
+	data.useBillboard = group->UseBillboard();
+	return data;
+}
+
+ParticleEmitterData ParticleEditor::CreateEmitterData(ParticleEmitter* emitter) const
+{
+	ParticleEmitterData data;
+	data.emitterName = emitter->GetName();
+	data.targetGroupName = emitter->GetTargetGroupName();
+
+	// Transform
+	data.position = emitter->GetTransform().GetPosition();
+	data.rotation = emitter->GetTransform().GetRotation();
+	data.scale = emitter->GetTransform().GetScale();
+
+	// Emit設定
+	data.emitCount = emitter->GetEmitCount();
+	data.emitFrequency = emitter->GetFrequency();
+	data.isEmitting = emitter->IsEmitting();
+
+	// パーティクル寿命（現時点でGetterがないため、デフォルト値）
+	data.particleLifeTimeMin = 1.0f;
+	data.particleLifeTimeMax = 3.0f;
+
+	// 速度設定
+	data.emitDirection = emitter->GetEmitDirection();
+	data.initialSpeed = emitter->GetInitialSpeed();
+	data.spreadAngle = emitter->GetSpreadAngle();
+	data.useDirectionalEmit = emitter->IsUseDirectionalEmit();
+	data.velocityRange = 1.0f;
+
+	// スケール・回転（現時点でGetterがないため、デフォルト値）
+	data.particleScaleMin = { 1.0f, 1.0f, 1.0f };
+	data.particleScaleMax = { 1.0f, 1.0f, 1.0f };
+	data.particleRotateMin = { 0.0f, 0.0f, 0.0f };
+	data.particleRotateMax = { 0.0f, 0.0f, 0.0f };
+
+	// エミッター寿命
+	data.emitterLifeTime = emitter->GetEmitterLifeTime();
+	data.emitterLifeTimeLoop = emitter->IsEmitterLifeTimeLoop();
+	data.useEmitterLifeTime = emitter->IsUseEmitterLifeTime();
+
+	// 発生範囲
+	data.spawnArea = emitter->GetSpawnArea();
+
+	// デバッグ
+	data.showDebugAABB = emitter->IsShowDebugAABB();
+	data.debugAABBColor = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+	return data;
+}
+
+ParticleFieldData ParticleEditor::CreateFieldData(BaseField* field) const
+{
+	ParticleFieldData data;
+	data.fieldName = field->GetName();
+	data.fieldType = field->GetTypeName();
+
+	// Transform
+	data.position = field->GetTransform().GetPosition();
+	data.rotation = field->GetTransform().GetRotation();
+	data.scale = field->GetTransform().GetScale();
+
+	// 共通設定
+	data.isEnabled = field->IsEnabled();
+	data.showDebugVisualization = field->IsShowDebugVisualization();
+	data.debugColor = field->GetDebugColor();
+
+	// フィールド固有のパラメータ
+	data.parameters = field->SerializeParameters();
+
+	return data;
+}
+// ParticleEditor.cpp - パート4: Save/Load/Instance機能
+
+// ========================================
+// Save/Load機能
+// ========================================
 
 bool ParticleEditor::SaveCurrentStateAsPreset(const std::string& presetName)
 {
@@ -196,14 +843,7 @@ bool ParticleEditor::SaveCurrentStateAsPreset(const std::string& presetName)
 		ParticleGroup* group = particleSystem_->GetGroup(groupName);
 		if (!group) continue;
 
-		ParticleGroupData groupData;
-		groupData.groupName = groupName;
-		groupData.modelTag = group ? group->GetModelTag() : "";
-		groupData.maxParticles = group->GetMaxParticleCount();
-		groupData.textureName = group->GetTextureName();
-		groupData.useBillboard = group->UseBillboard();
-
-		preset.groups.push_back(groupData);
+		preset.groups.push_back(CreateGroupData(group));
 	}
 
 	// 全エミッターを保存
@@ -211,51 +851,7 @@ bool ParticleEditor::SaveCurrentStateAsPreset(const std::string& presetName)
 		ParticleEmitter* emitter = particleSystem_->GetEmitter(emitterName);
 		if (!emitter) continue;
 
-		ParticleEmitterData emitterData;
-		emitterData.emitterName = emitterName;
-		emitterData.targetGroupName = emitter->GetTargetGroupName();
-
-		// Transform
-		emitterData.position = emitter->GetTransform().GetPosition();
-		emitterData.rotation = emitter->GetTransform().GetRotation();
-		emitterData.scale = emitter->GetTransform().GetScale();
-
-		// Emit設定
-		emitterData.emitCount = emitter->GetEmitCount();
-		emitterData.emitFrequency = emitter->GetFrequency();
-		emitterData.isEmitting = emitter->IsEmitting();
-
-		// パーティクル寿命（GetterがないのでEmitterから直接は取得できないため、デフォルト値を使用）
-		// 注: 実際の実装では、Emitterにゲッターを追加するか、アクセス可能にする必要があります
-		emitterData.particleLifeTimeMin = 1.0f;  // TODO: Getterを追加
-		emitterData.particleLifeTimeMax = 3.0f;  // TODO: Getterを追加
-
-		// 速度設定
-		emitterData.emitDirection = emitter->GetEmitDirection();
-		emitterData.initialSpeed = emitter->GetInitialSpeed();
-		emitterData.spreadAngle = emitter->GetSpreadAngle();
-		emitterData.useDirectionalEmit = emitter->IsUseDirectionalEmit();
-		emitterData.velocityRange = 1.0f;  // TODO: Getterを追加
-
-		// スケール・回転（TODO: Getterを追加）
-		emitterData.particleScaleMin = { 1.0f, 1.0f, 1.0f };
-		emitterData.particleScaleMax = { 1.0f, 1.0f, 1.0f };
-		emitterData.particleRotateMin = { 0.0f, 0.0f, 0.0f };
-		emitterData.particleRotateMax = { 0.0f, 0.0f, 0.0f };
-
-		// エミッター寿命
-		emitterData.emitterLifeTime = emitter->GetEmitterLifeTime();
-		emitterData.emitterLifeTimeLoop = emitter->IsEmitterLifeTimeLoop();
-		emitterData.useEmitterLifeTime = emitter->IsUseEmitterLifeTime();
-
-		// 発生範囲
-		emitterData.spawnArea = emitter->GetSpawnArea();
-
-		// デバッグ
-		emitterData.showDebugAABB = emitter->IsShowDebugAABB();
-		emitterData.debugAABBColor = { 1.0f, 0.0f, 0.0f, 1.0f };  // TODO: Getterを追加
-
-		preset.emitters.push_back(emitterData);
+		preset.emitters.push_back(CreateEmitterData(emitter));
 	}
 
 	// 全フィールドを保存
@@ -263,24 +859,7 @@ bool ParticleEditor::SaveCurrentStateAsPreset(const std::string& presetName)
 		BaseField* field = particleSystem_->GetField(fieldName);
 		if (!field) continue;
 
-		ParticleFieldData fieldData;
-		fieldData.fieldName = fieldName;
-		fieldData.fieldType = field->GetTypeName();
-
-		// Transform
-		fieldData.position = field->GetTransform().GetPosition();
-		fieldData.rotation = field->GetTransform().GetRotation();
-		fieldData.scale = field->GetTransform().GetScale();
-
-		// 共通設定
-		fieldData.isEnabled = field->IsEnabled();
-		fieldData.showDebugVisualization = field->IsShowDebugVisualization();
-		fieldData.debugColor = field->GetDebugColor();
-
-		// フィールド固有のパラメータ
-		fieldData.parameters = field->SerializeParameters();
-
-		preset.fields.push_back(fieldData);
+		preset.fields.push_back(CreateFieldData(field));
 	}
 
 	// ファイルに保存
@@ -293,7 +872,10 @@ ParticlePresetData ParticleEditor::LoadPreset(const std::string& presetName)
 	std::string filePath = GetPresetFilePath(presetName);
 	return ParticlePresetData::LoadFromFile(filePath);
 }
-// ParticleEditor.cpp の続き（パート3）
+
+// ========================================
+// インスタンス作成・管理
+// ========================================
 
 ParticlePresetInstance* ParticleEditor::CreateInstance(const std::string& presetName, const std::string& instanceName)
 {
