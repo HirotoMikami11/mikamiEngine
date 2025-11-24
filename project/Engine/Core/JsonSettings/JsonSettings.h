@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <json.hpp>
+#include <optional>
 
 #include "MyMath.h"
 
@@ -15,67 +16,87 @@ using namespace MyMath;
 class JsonSettings
 {
 public:
-	// 項目
-	struct Item
-	{
-		// 項目の値
-		std::variant<int32_t, float, bool, Vector2, Vector3, Vector4> value;
-	};
+	// 項目の値の型
+	using ItemValue = std::variant<int32_t, float, bool, Vector2, Vector3, Vector4>;
 
 	// グループ
 	struct Group
 	{
-		std::unordered_map<std::string, std::any> items;
+		std::unordered_map<std::string, ItemValue> items;
 		std::unordered_map<std::string, Group> subGroups;
 	};
 
-
-	// シングルトンのインスタンスを取得
+	// シングルトン
 	static JsonSettings* GetInstance();
 
 	/// <summary>
 	/// グループの作成
 	/// </summary>
-	/// <param name="groupName">グループ名</param>
+	/// <param name="groupPath">グループパス</param>
 	void CreateGroup(const std::vector<std::string>& groupPath);
 
-	// 値の取得
-	int32_t GetIntValue(const std::vector<std::string>& groupPath, const std::string& key) const;
-	float GetFloatValue(const std::vector<std::string>& groupPath, const std::string& key) const;
-	bool GetBoolValue(const std::vector<std::string>& groupPath, const std::string& key) const;
-	Vector2 GetVector2Value(const std::vector<std::string>& groupPath, const std::string& key) const;
-	Vector3 GetVector3Value(const std::vector<std::string>& groupPath, const std::string& key) const;
-	Vector4 GetVector4Value(const std::vector<std::string>& groupPath, const std::string& key) const;
-
-	// グループ階層をたどる関数
+	/// <summary>
+	/// 階層を調べる関数
+	/// </summary>
+	/// <param name="groupPath"></param>
+	/// <returns></returns>
 	const Group* FindGroup(const std::vector<std::string>& groupPath) const;
 
-	void SetValue(const std::vector<std::string>& groupPath, const std::string& key, int32_t value);
-	void SetValue(const std::vector<std::string>& groupPath, const std::string& key, float value);
-	void SetValue(const std::vector<std::string>& groupPath, const std::string& key, bool value);
-	void SetValue(const std::vector<std::string>& groupPath, const std::string& key, const Vector2& value);
-	void SetValue(const std::vector<std::string>& groupPath, const std::string& key, const Vector3& value);
-	void SetValue(const std::vector<std::string>& groupPath, const std::string& key, const Vector4& value);
+	// 値の取得
+	template<typename T>
+	std::optional<T> GetValue(const std::vector<std::string>& groupPath, const std::string& key) const
+	{
+		const Group* group = FindGroup(groupPath);
+		if (!group) return std::nullopt;
 
-	// ネスとしたグループに対して値をセットさせる関数
+		auto itItem = group->items.find(key);
+		if (itItem == group->items.end()) return std::nullopt;
+
+		// std::variantから値を取得
+		try
+		{
+			return std::get<T>(itItem->second);
+		} catch (const std::bad_variant_access&)
+		{
+			return std::nullopt;
+		}
+	}
+
+	// 値のセット
+	template<typename T>
+	void SetValue(const std::vector<std::string>& groupPath, const std::string& key, const T& value)
+	{
+		Group& group = FindOrCreateGroup(groupPath);
+		group.items[key] = value;
+	}
+
+	// ネストしたグループに対して値をセットさせる関数
 	Group& FindOrCreateGroup(const std::vector<std::string>& groupPath);
 
-	void AddItem(const std::vector<std::string>& groupPath, const std::string& key, int32_t value);
-	void AddItem(const std::vector<std::string>& groupPath, const std::string& key, float value);
-	void AddItem(const std::vector<std::string>& groupPath, const std::string& key, bool value);
-	void AddItem(const std::vector<std::string>& groupPath, const std::string& key, const Vector2& value);
-	void AddItem(const std::vector<std::string>& groupPath, const std::string& key, const Vector3& value);
-	void AddItem(const std::vector<std::string>& groupPath, const std::string& key, const Vector4& value);
+	// 項目の追加
+	template<typename T>
+	void AddItem(const std::vector<std::string>& groupPath, const std::string& key, const T& value)
+	{
+		Group& group = FindOrCreateGroup(groupPath);
+
+		// keyが未登録なら追加
+		if (group.items.find(key) == group.items.end())
+		{
+			group.items[key] = value;
+		}
+	}
 
 	/// <summary>
 	/// 項目の削除
 	/// </summary>
+	/// <param name="groupPath"></param>
+	/// <param name="key"></param>
 	void RemoveItem(const std::vector<std::string>& groupPath, const std::string& key);
 
 	/// <summary>
-	/// 毎フレーム処理
+	/// 調整項目の設定
 	/// </summary>
-	void Update();
+	void ImGui();
 
 	// 再帰描画関数
 	void DrawGroupRecursive(const std::vector<std::string>& groupPath, Group& group);
@@ -83,12 +104,11 @@ public:
 	/// <summary>
 	/// ファイルに書き出し
 	/// </summary>
-	/// <param name="groupName">グループ</param>
-	// 階層パスを受け取り、JSONファイルの一部だけを更新する
+	/// <param name="groupPath">グループパス</param>
 	void SaveFile(const std::vector<std::string>& groupPath);
 
-	// GroupをJSON に変換する再帰関数を作る
-	json GroupToJson(const Group& group);
+	// GroupをJSON に変換する再帰関数
+	json GroupToJson(const Group& group) const;
 
 	/// <summary>
 	/// ディレクトリの全ファイル読み込み
@@ -106,17 +126,16 @@ public:
 
 private:
 
-
 	JsonSettings() = default;
 	~JsonSettings() = default;
 	JsonSettings(const JsonSettings&) = delete;
 	JsonSettings& operator=(const JsonSettings&) = delete;
 
-	// 全データ
+	// データ
 	std::map<std::string, Group> datas_;
 
 	// グローバル変数の保存先ファイルパス
-	const std::string kDirectoryPath_ = "resources/JsonSettings/";
+	static constexpr const char* kDirectoryPath_ = "resources/JsonSettings/";
 
 	// ドラッグの感度
 	int dragSensitivityInt_ = 1;

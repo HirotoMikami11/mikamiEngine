@@ -18,7 +18,6 @@ public:
 	void SetAreaSize(const Vector2& areaSize);
 
 	// JsonSettings関連
-	void LoadFromJson();
 	void SaveToJson();
 	void ApplyParameters();
 
@@ -45,4 +44,5 @@ private:
 
 	// JsonSettingsのグループパス
 	const std::vector<std::string> kGroupPath_ = { "Wall" };
+	
 };
