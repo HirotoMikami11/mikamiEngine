@@ -1,5 +1,4 @@
 #include "JsonSettings.h"
-#include "Logger.h"
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -8,7 +7,6 @@
 #include <fstream>
 #include <iostream>
 #include <windows.h>
-#include <format>
 
 JsonSettings* JsonSettings::GetInstance()
 {
@@ -17,7 +15,7 @@ JsonSettings* JsonSettings::GetInstance()
 	return &instance;
 }
 
-void JsonSettings::ImGui()
+void JsonSettings::Update()
 {
 	if (!ImGui::Begin("Global Variables", nullptr, ImGuiWindowFlags_MenuBar))
 	{
@@ -25,7 +23,7 @@ void JsonSettings::ImGui()
 		return;
 	}
 
-	if (ImGui::TreeNode("dragSensitivity"))
+	if (ImGui::TreeNode("ドラッグの感度設定"))
 	{
 		ImGui::DragFloat("感度", &dragSensitivity_, 0.01f, 0.001f, 10.0f, "%.3f");
 		ImGui::TreePop();
@@ -51,29 +49,30 @@ void JsonSettings::DrawGroupRecursive(const std::vector<std::string>& groupPath,
 
 	if (ImGui::TreeNode(groupName.c_str()))
 	{
-		// items を表示（std::variantを使用）
+		// items を表示
 		for (auto& [itemName, value] : group.items)
 		{
 			std::string label = itemName;
 
-			// std::visitを使って型ごとに処理
-			std::visit([&](auto&& val) {
-				using T = std::decay_t<decltype(val)>;
-
-				if constexpr (std::is_same_v<T, int32_t>) {
-					ImGui::DragInt(label.c_str(), &val, (float)dragSensitivity_);
-				} else if constexpr (std::is_same_v<T, float>) {
-					ImGui::DragFloat(label.c_str(), &val, dragSensitivity_);
-				} else if constexpr (std::is_same_v<T, bool>) {
-					ImGui::Checkbox(label.c_str(), &val);
-				} else if constexpr (std::is_same_v<T, Vector2>) {
-					ImGui::DragFloat2(label.c_str(), reinterpret_cast<float*>(&val), dragSensitivity_);
-				} else if constexpr (std::is_same_v<T, Vector3>) {
-					ImGui::DragFloat3(label.c_str(), reinterpret_cast<float*>(&val), dragSensitivity_);
-				} else if constexpr (std::is_same_v<T, Vector4>) {
-					ImGui::ColorEdit4(label.c_str(), reinterpret_cast<float*>(&val));
-				}
-				}, value);
+			if (value.type() == typeid(int32_t)) {
+				int32_t* ptr = std::any_cast<int32_t>(&value);
+				ImGui::DragInt(label.c_str(), ptr, (float)dragSensitivity_);
+			} else if (value.type() == typeid(float)) {
+				float* ptr = std::any_cast<float>(&value);
+				ImGui::DragFloat(label.c_str(), ptr, dragSensitivity_);
+			} else if (value.type() == typeid(bool)) {
+				bool* ptr = std::any_cast<bool>(&value);
+				ImGui::Checkbox(label.c_str(), ptr);
+			} else if (value.type() == typeid(Vector2)) {
+				Vector2* ptr = std::any_cast<Vector2>(&value);
+				ImGui::DragFloat2(label.c_str(), reinterpret_cast<float*>(ptr), dragSensitivity_);
+			} else if (value.type() == typeid(Vector3)) {
+				Vector3* ptr = std::any_cast<Vector3>(&value);
+				ImGui::DragFloat3(label.c_str(), reinterpret_cast<float*>(ptr), dragSensitivity_);
+			} else if (value.type() == typeid(Vector4)) {
+				Vector4* ptr = std::any_cast<Vector4>(&value);
+				ImGui::ColorEdit4(label.c_str(), reinterpret_cast<float*>(ptr));
+			}
 		}
 
 		ImGui::Spacing();
@@ -88,8 +87,10 @@ void JsonSettings::DrawGroupRecursive(const std::vector<std::string>& groupPath,
 		}
 
 		// セーブボタン
+		// 「Save [現在のグループ名]」ボタン -> このグループ階層だけを保存
 		if (ImGui::Button(("Save [" + groupName + "]").c_str()))
 		{
+			// 新しい階層パスで保存するSaveFileを呼び出す
 			SaveFile(groupPath);
 			std::string message = std::format("Updated group '{}' in {}.json", groupName, groupPath[0]);
 			MessageBoxA(nullptr, message.c_str(), "JsonSettings", 0);
@@ -110,6 +111,117 @@ void JsonSettings::CreateGroup(const std::vector<std::string>& groupPath)
 	}
 }
 
+int32_t JsonSettings::GetIntValue(const std::vector<std::string>& groupPath, const std::string& key) const
+{
+	const Group* group = FindGroup(groupPath);
+	assert(group != nullptr);
+
+	auto itItem = group->items.find(key);
+	assert(itItem != group->items.end());
+
+	// std::anyからint32_tにキャスト
+	try
+	{
+		return std::any_cast<int32_t>(itItem->second);
+	} catch (const std::bad_any_cast&)
+	{
+		assert(false && "Item type is not int32_t");
+		return 0; // 失敗時のデフォルト
+	}
+}
+
+float JsonSettings::GetFloatValue(const std::vector<std::string>& groupPath, const std::string& key) const
+{
+	const Group* group = FindGroup(groupPath);
+	assert(group != nullptr);
+
+	auto itItem = group->items.find(key);
+	assert(itItem != group->items.end());
+
+	try
+	{
+		return std::any_cast<float>(itItem->second);
+	} catch (const std::bad_any_cast&)
+	{
+		assert(false && "Item type is not float");
+		return 0.f;
+	}
+}
+
+bool JsonSettings::GetBoolValue(const std::vector<std::string>& groupPath, const std::string& key) const
+{
+	const Group* group = FindGroup(groupPath);
+	assert(group != nullptr);
+
+	auto itItem = group->items.find(key);
+	assert(itItem != group->items.end());
+
+	try
+	{
+		return std::any_cast<bool>(itItem->second);
+	} catch (const std::bad_any_cast&)
+	{
+		assert(false && "Item type is not bool");
+		return false;
+	}
+}
+
+Vector2 JsonSettings::GetVector2Value(const std::vector<std::string>& groupPath, const std::string& key) const
+{
+	const Group* group = FindGroup(groupPath);
+	assert(group != nullptr);
+
+	auto itItem = group->items.find(key);
+	assert(itItem != group->items.end());
+
+	try
+	{
+		return std::any_cast<Vector2>(itItem->second);
+	} catch (const std::bad_any_cast&)
+	{
+		assert(false && "Item type is not Vector2");
+		return Vector2{};
+	}
+}
+
+
+Vector3 JsonSettings::GetVector3Value(const std::vector<std::string>& groupPath, const std::string& key) const
+{
+	const Group* group = FindGroup(groupPath);
+	assert(group != nullptr);
+
+	auto itItem = group->items.find(key);
+	assert(itItem != group->items.end());
+
+	try
+	{
+		return std::any_cast<Vector3>(itItem->second);
+	} catch (const std::bad_any_cast&)
+	{
+		assert(false && "Item type is not Vector3");
+		return Vector3{};
+	}
+}
+
+
+Vector4 JsonSettings::GetVector4Value(const std::vector<std::string>& groupPath, const std::string& key) const
+{
+	const Group* group = FindGroup(groupPath);
+	assert(group != nullptr);
+
+	auto itItem = group->items.find(key);
+	assert(itItem != group->items.end());
+
+	try
+	{
+		return std::any_cast<Vector4>(itItem->second);
+	} catch (const std::bad_any_cast&)
+	{
+		assert(false && "Item type is not Vector4");
+		return Vector4{};
+	}
+}
+
 const JsonSettings::Group* JsonSettings::FindGroup(const std::vector<std::string>& groupPath) const
 {
 	if (groupPath.empty()) return nullptr;
@@ -127,6 +239,48 @@ const JsonSettings::Group* JsonSettings::FindGroup(const std::vector<std::string
 	return current;
 }
 
+void JsonSettings::SetValue(
+	const std::vector<std::string>& groupPath,
+	const std::string& key, int32_t value)
+{
+	Group& group = FindOrCreateGroup(groupPath);
+	group.items[key] = value;
+}
+
+void JsonSettings::SetValue(
+	const std::vector<std::string>& groupPath,
+	const std::string& key, float value)
+{
+	Group& group = FindOrCreateGroup(groupPath);
+	group.items[key] = value;
+}
+
+void JsonSettings::SetValue(const std::vector<std::string>& groupPath, const std::string& key, bool value)
+{
+	Group& group = FindOrCreateGroup(groupPath);
+	group.items[key] = value;
+}
+
+void JsonSettings::SetValue(const std::vector<std::string>& groupPath, const std::string& key, const Vector2& value)
+{
+	Group& group = FindOrCreateGroup(groupPath);
+	group.items[key] = value;
+}
+
+void JsonSettings::SetValue(
+	const std::vector<std::string>& groupPath,
+	const std::string& key, const Vector3& value)
+{
+	Group& group = FindOrCreateGroup(groupPath);
+	group.items[key] = value;
+}
+
+void JsonSettings::SetValue(const std::vector<std::string>& groupPath, const std::string& key, const Vector4& value)
+{
+	Group& group = FindOrCreateGroup(groupPath);
+	group.items[key] = value;
+}
+
 JsonSettings::Group& JsonSettings::FindOrCreateGroup(const std::vector<std::string>& groupPath)
 {
 	assert(!groupPath.empty());
@@ -136,6 +290,119 @@ JsonSettings::Group& JsonSettings::FindOrCreateGroup(const std::vector<std::stri
 		current = &current->subGroups[groupPath[i]];
 	}
 	return *current;
+}
+
+void JsonSettings::AddItem(const std::vector<std::string>& groupPath, const std::string& key, int32_t value)
+{
+	if (groupPath.empty()) return;
+
+	// 1階層目を取得
+	Group* current = &datas_[groupPath[0]];
+
+	// 2階層目以降
+	for (size_t i = 1; i < groupPath.size(); ++i) {
+		current = &current->subGroups[groupPath[i]];
+	}
+
+	// keyが未登録なら追加
+	if (current->items.find(key) == current->items.end())
+	{
+		current->items[key] = value;
+	}
+}
+
+void JsonSettings::AddItem(const std::vector<std::string>& groupPath, const std::string& key, float value)
+{
+	if (groupPath.empty()) return;
+
+	// 1階層目を取得
+	Group* current = &datas_[groupPath[0]];
+
+	// 2階層目以降
+	for (size_t i = 1; i < groupPath.size(); ++i) {
+		current = &current->subGroups[groupPath[i]];
+	}
+
+	// keyが未登録なら追加
+	if (current->items.find(key) == current->items.end())
+	{
+		current->items[key] = value;
+	}
+}
+
+void JsonSettings::AddItem(const std::vector<std::string>& groupPath, const std::string& key, bool value)
+{
+	if (groupPath.empty()) return;
+
+	// 1階層目を取得
+	Group* current = &datas_[groupPath[0]];
+
+	// 2階層目以降
+	for (size_t i = 1; i < groupPath.size(); ++i) {
+		current = &current->subGroups[groupPath[i]];
+	}
+
+	// keyが未登録なら追加
+	if (current->items.find(key) == current->items.end())
+	{
+		current->items[key] = value;
+	}
+}
+
+void JsonSettings::AddItem(const std::vector<std::string>& groupPath, const std::string& key, const Vector2& value)
+{
+	if (groupPath.empty()) return;
+
+	// 1階層目を取得
+	Group* current = &datas_[groupPath[0]];
+
+	// 2階層目以降
+	for (size_t i = 1; i < groupPath.size(); ++i) {
+		current = &current->subGroups[groupPath[i]];
+	}
+
+	// keyが未登録なら追加
+	if (current->items.find(key) == current->items.end())
+	{
+		current->items[key] = value;
+	}
+}
+
+void JsonSettings::AddItem(const std::vector<std::string>& groupPath, const std::string& key, const Vector3& value)
+{
+	if (groupPath.empty()) return;
+
+	// 1階層目を取得
+	Group* current = &datas_[groupPath[0]];
+
+	// 2階層目以降
+	for (size_t i = 1; i < groupPath.size(); ++i) {
+		current = &current->subGroups[groupPath[i]];
+	}
+
+	// keyが未登録なら追加
+	if (current->items.find(key) == current->items.end())
+	{
+		current->items[key] = value;
+	}
+}
+void JsonSettings::AddItem(const std::vector<std::string>& groupPath, const std::string& key, const Vector4& value)
+{
+	if (groupPath.empty()) return;
+
+	// 1階層目を取得
+	Group* current = &datas_[groupPath[0]];
+
+	// 2階層目以降
+	for (size_t i = 1; i < groupPath.size(); ++i) {
+		current = &current->subGroups[groupPath[i]];
+	}
+
+	// keyが未登録なら追加
+	if (current->items.find(key) == current->items.end())
+	{
+		current->items[key] = value;
+	}
 }
 
 void JsonSettings::RemoveItem(const std::vector<std::string>& groupPath, const std::string& key)
@@ -156,13 +423,12 @@ void JsonSettings::RemoveItem(const std::vector<std::string>& groupPath, const s
 void JsonSettings::SaveFile(const std::vector<std::string>& groupPath)
 {
 	if (groupPath.empty()) {
-		Logger::Log(Logger::GetStream(), "[JsonSettings] SaveFile: groupPath is empty\n");
-		return;
+		return; // パスが空なら何もしない
 	}
 
-	// ファイル名はパスの先頭要素から決まる
+	// ファイル名はパスの先頭要素から決まる (例: {"Player", "Stage1"} -> "Player.json")
 	const std::string& topLevelName = groupPath[0];
-	std::string filePathStr = std::string(kDirectoryPath_) + topLevelName + ".json";
+	std::string filePathStr = kDirectoryPath_ + topLevelName + ".json";
 	std::filesystem::path filePath = filePathStr;
 
 	// プログラム内のメモリから更新対象のGroupオブジェクトを見つける
@@ -171,8 +437,6 @@ void JsonSettings::SaveFile(const std::vector<std::string>& groupPath)
 		auto it = targetGroup->subGroups.find(groupPath[i]);
 		if (it == targetGroup->subGroups.end())
 		{
-			Logger::Log(Logger::GetStream(),
-				std::format("[JsonSettings] SaveFile: Group path not found in memory: {}\n", groupPath[i]));
 			assert(false && "Group path not found in memory.");
 			return;
 		}
@@ -183,11 +447,13 @@ void JsonSettings::SaveFile(const std::vector<std::string>& groupPath)
 	json rootJson;
 	std::ifstream ifs(filePath);
 	if (ifs.is_open()) {
+		// ファイルが存在すれば、その内容を読み込む
 		ifs >> rootJson;
 		ifs.close();
 	}
 
 	// JSONデータ内で、更新したい階層まで移動する
+	//    (途中の階層がなければ自動的に作られる)
 	json* currentJsonNode = &rootJson[topLevelName];
 	for (size_t i = 1; i < groupPath.size(); ++i) {
 		currentJsonNode = &(*currentJsonNode)[groupPath[i]];
@@ -199,41 +465,40 @@ void JsonSettings::SaveFile(const std::vector<std::string>& groupPath)
 	// 更新したJSONデータ全体をファイルに書き戻す
 	std::ofstream ofs(filePath);
 	if (ofs.fail()) {
-		Logger::Log(Logger::GetStream(),
-			std::format("[JsonSettings] SaveFile: Failed to open file for saving: {}\n", filePathStr));
 		MessageBoxA(nullptr, "Failed to open file for saving.", "JsonSettings", MB_OK);
 		assert(false);
 		return;
 	}
-
 	ofs << std::setw(4) << rootJson << std::endl;
 	ofs.close();
-
-	// 保存成功ログ
-	Logger::Log(Logger::GetStream(),
-		std::format("[JsonSettings] Successfully saved: {}\n", filePathStr));
 }
 
-json JsonSettings::GroupToJson(const Group& group) const
+json JsonSettings::GroupToJson(const Group& group)
 {
 	json j;
 
-	// items を JSON に変換（std::visitを使用）
+	// items を JSON に変換
 	for (const auto& [key, value] : group.items)
 	{
-		std::visit([&](auto&& val) {
-			using T = std::decay_t<decltype(val)>;
-
-			if constexpr (std::is_same_v<T, int32_t> || std::is_same_v<T, float> || std::is_same_v<T, bool>) {
-				j[key] = val;
-			} else if constexpr (std::is_same_v<T, Vector2>) {
-				j[key] = { val.x, val.y };
-			} else if constexpr (std::is_same_v<T, Vector3>) {
-				j[key] = { val.x, val.y, val.z };
-			} else if constexpr (std::is_same_v<T, Vector4>) {
-				j[key] = { val.x, val.y, val.z, val.w };
-			}
-			}, value);
+		if (value.type() == typeid(int32_t)) {
+			j[key] = std::any_cast<int32_t>(value);
+		} else if (value.type() == typeid(float)) {
+			j[key] = std::any_cast<float>(value);
+		} else if (value.type() == typeid(bool)) {
+			j[key] = std::any_cast<bool>(value);
+		} else if (value.type() == typeid(Vector2)) {
+			Vector2 v = std::any_cast<Vector2>(value);
+			j[key] = { v.x, v.y };
+		} else if (value.type() == typeid(Vector3)) {
+			Vector3 v = std::any_cast<Vector3>(value);
+			j[key] = { v.x, v.y, v.z };
+		} else if (value.type() == typeid(Vector4)) {
+			Vector4 v = std::any_cast<Vector4>(value);
+			j[key] = { v.x, v.y, v.z, v.w };
+		} else {
+			// 対応してない型は無視 or ログ
+			std::cerr << "Unsupported type in JsonSettings: " << key << std::endl;
+		}
 	}
 
 	// subGroups を再帰的に JSON に変換
@@ -261,13 +526,13 @@ void JsonSettings::LoadFiles()
 		const std::filesystem::path& filePath = entry.path();
 		if (filePath.extension() != ".json") continue;
 
-		std::string filename = filePath.stem().string();
+		std::string filename = filePath.stem().string();  // 例: "Player.stage1"
 
 		// ドットがある場合、最初のドット以降はカット
 		size_t dotPos = filename.find('.');
 		if (dotPos != std::string::npos)
 		{
-			filename = filename.substr(0, dotPos);
+			filename = filename.substr(0, dotPos);  // "Player.stage1" -> "Player"
 		}
 
 		LoadFile(filename);
@@ -276,7 +541,7 @@ void JsonSettings::LoadFiles()
 
 void JsonSettings::LoadFile(const std::string& groupName)
 {
-	std::string filePath = std::string(kDirectoryPath_) + groupName + ".json";
+	std::string filePath = kDirectoryPath_ + groupName + ".json";
 	std::ifstream ifs(filePath);
 	if (ifs.fail())
 	{

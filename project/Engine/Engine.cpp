@@ -244,7 +244,7 @@ void Engine::ImGui() {
 	resourceLoader_->ImGui();
 
 	///JsonSettingsのImGui
-	jsonSettings_->ImGui();
+	jsonSettings_->Update();
 
 	/// オフスクリーンレンダラー（グリッチエフェクト含む）のImGui
 	offscreenRenderer_->ImGui();

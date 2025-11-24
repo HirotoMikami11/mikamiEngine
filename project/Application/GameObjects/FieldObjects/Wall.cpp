@@ -22,10 +22,8 @@ void Wall::Initialize(DirectXCommon* dxCommon)
 
 	// JsonSettingsのグループを作成
 	JsonSettings::GetInstance()->CreateGroup(kGroupPath_);
-
-	// デフォルト値を追加（既に存在する場合は追加されない）
-	JsonSettings::GetInstance()->AddItem(kGroupPath_, "modelSize", modelSize);
-	JsonSettings::GetInstance()->AddItem(kGroupPath_, "areaSize", areaSize_);
+	// JSONファイルから値を読み込み
+	LoadFromJson();
 
 
 
@@ -44,8 +42,7 @@ void Wall::Initialize(DirectXCommon* dxCommon)
 		// scale は固定 (1,1,1)
 		walls_[i].transform.scale = { 1.0f, 1.0f, 1.0f };
 	}
-	// JSONファイルから値を読み込み
-	LoadFromJson();
+
 	// 初回 transform 計算＆適用
 	UpdateTransforms();
 }
@@ -55,9 +52,13 @@ void Wall::LoadFromJson()
 	// JSONから値を読み込む（ファイルが存在しない場合はデフォルト値を使用）
 	JsonSettings* json = JsonSettings::GetInstance();
 
-	// valueでデフォルト値を指定
-	modelSize = json->GetValue<Vector3>(kGroupPath_, "modelSize").value();
-	areaSize_ = json->GetValue<Vector2>(kGroupPath_, "areaSize").value();
+	json->LoadFiles();
+	// デフォルト値を追加（既に存在する場合は追加されない）
+	JsonSettings::GetInstance()->AddItem(kGroupPath_, "modelSize", modelSize);
+	JsonSettings::GetInstance()->AddItem(kGroupPath_, "areaSize", areaSize_);
+
+	modelSize = json->GetVector3Value(kGroupPath_, "modelSize");
+	areaSize_ = json->GetVector2Value(kGroupPath_, "areaSize");
 
 }
 
@@ -75,8 +76,8 @@ void Wall::ApplyParameters()
 	JsonSettings* json = JsonSettings::GetInstance();
 
 	// value_or()でデフォルト値を指定
-	modelSize = json->GetValue<Vector3>(kGroupPath_, "modelSize").value();
-	areaSize_ = json->GetValue<Vector2>(kGroupPath_, "areaSize").value();
+	modelSize = json->GetVector3Value(kGroupPath_, "modelSize");
+	areaSize_ = json->GetVector2Value(kGroupPath_, "areaSize");
 
 	// transformを再計算
 	UpdateTransforms();
