@@ -1,9 +1,7 @@
 #include "JsonSettings.h"
 #include "Logger.h"
 
-#include "externals/imgui/imgui.h"
-#include "externals/imgui/imgui_impl_dx12.h"
-#include "externals/imgui/imgui_impl_win32.h"
+#include "ImGui/ImGuiManager.h"
 
 #include <fstream>
 #include <iostream>
@@ -18,6 +16,7 @@ JsonSettings* JsonSettings::GetInstance()
 
 void JsonSettings::ImGui()
 {
+#ifdef USEIMGUI
 	if (!ImGui::Begin("Global Variables", nullptr, ImGuiWindowFlags_MenuBar))
 	{
 		ImGui::End();
@@ -39,10 +38,13 @@ void JsonSettings::ImGui()
 	}
 
 	ImGui::End();
+
+#endif 
 }
 
 void JsonSettings::DrawGroupRecursive(const std::vector<std::string>& groupPath, Group& group)
 {
+#ifdef USEIMGUI
 	// groupPathの末尾が現在のグループ名
 	const std::string& groupName = groupPath.back();
 
@@ -94,6 +96,7 @@ void JsonSettings::DrawGroupRecursive(const std::vector<std::string>& groupPath,
 
 		ImGui::TreePop();
 	}
+#endif 
 }
 
 void JsonSettings::CreateGroup(const std::vector<std::string>& groupPath)
