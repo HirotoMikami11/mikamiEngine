@@ -74,8 +74,8 @@ PSODescriptor PSODescriptor::CreateParticle()
 	PSODescriptor desc;
 
 	// パーティクル用のデフォルト設定
-	desc.SetVertexShader(L"resources/Shader/Particle/Particle_VS.hlsl", L"main")
-		.SetPixelShader(L"resources/Shader/Particle/Particle_PS.hlsl", L"main")
+	desc.SetVertexShader(L"resources/Shader/Particle/Particle.VS.hlsl", L"main")
+		.SetPixelShader(L"resources/Shader/Particle/Particle.PS.hlsl", L"main")
 		.SetBlendMode(BlendMode::Add)
 		.SetCullMode(CullMode::Back)
 		.EnableDepth(true)
@@ -83,27 +83,6 @@ PSODescriptor PSODescriptor::CreateParticle()
 		.SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 
 	// 標準的な3D頂点レイアウト
-	desc.AddInputElement({ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT })
-		.AddInputElement({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT })
-		.AddInputElement({ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT });
-
-	return desc;
-}
-
-PSODescriptor PSODescriptor::CreateParticleDepthOnly()
-{
-	PSODescriptor desc;
-
-	// パーティクル深度書き込み専用設定
-	desc.SetVertexShader(L"resources/Shader/Particle/Particle_VS.hlsl", L"main")
-		.SetPixelShader(L"resources/Shader/Particle/ParticleDepthOnly_PS.hlsl", L"main")
-		.SetBlendMode(BlendMode::None)			// カラー書き込みなし
-		.SetCullMode(CullMode::Back)
-		.EnableDepth(true)						// 深度テスト有効
-		.EnableDepthWrite(true)					// 深度書き込み有効（通常のパーティクルと異なる）
-		.SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-
-	// 標準的な3D頂点レイアウト（通常のパーティクルと同じ）
 	desc.AddInputElement({ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT })
 		.AddInputElement({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT })
 		.AddInputElement({ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT });
