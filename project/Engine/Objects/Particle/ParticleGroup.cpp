@@ -240,6 +240,42 @@ void ParticleGroup::ImGui()
 			ImGui::Separator();
 		}
 
+
+		// テクスチャ設定
+		if (ImGui::CollapsingHeader("Texture")) {
+			std::vector<std::string> textureList = textureManager_->GetTextureTagList();
+			if (!textureList.empty()) {
+				std::vector<const char*> textureNames;
+				textureNames.push_back("Default");
+
+				for (const auto& texture : textureList) {
+					textureNames.push_back(texture.c_str());
+				}
+
+				int currentIndex = 0;
+				if (!textureName_.empty()) {
+					for (size_t i = 0; i < textureList.size(); ++i) {
+						if (textureList[i] == textureName_) {
+							currentIndex = static_cast<int>(i + 1);
+							break;
+						}
+					}
+				}
+
+				if (ImGui::Combo("Custom Texture", &currentIndex, textureNames.data(), static_cast<int>(textureNames.size()))) {
+					if (currentIndex == 0) {
+						SetTexture("");
+					} else {
+						SetTexture(textureList[currentIndex - 1]);
+					}
+				}
+			} else {
+				ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "No textures loaded");
+			}
+		}
+
+
+
 		// 個別パーティクルの表示（最初の5つまで）
 		if (ImGui::CollapsingHeader("Individual Particles")) {
 			uint32_t displayCount = std::min(activeParticleCount_, 5u);
