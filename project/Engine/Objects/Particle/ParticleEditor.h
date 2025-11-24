@@ -45,6 +45,13 @@ public:
 	bool SaveCurrentStateAsPreset(const std::string& presetName);
 
 	/// <summary>
+	/// 選択されたオブジェクトのみをプリセットとして保存（フェーズ2）
+	/// </summary>
+	/// <param name="presetName">プリセット名</param>
+	/// <returns>成功したらtrue</returns>
+	bool SaveSelectedAsPreset(const std::string& presetName);
+
+	/// <summary>
 	/// プリセットからインスタンスを作成
 	/// </summary>
 	/// <param name="presetName">プリセット名</param>
@@ -82,6 +89,41 @@ public:
 	/// 利用可能なプリセット一覧を取得
 	/// </summary>
 	std::vector<std::string> GetAvailablePresets() const;
+
+	// ========================================
+	// 選択操作（フェーズ2）
+	// ========================================
+
+	/// <summary>
+	/// すべてのオブジェクトを選択
+	/// </summary>
+	void SelectAll();
+
+	/// <summary>
+	/// すべてのオブジェクトの選択を解除
+	/// </summary>
+	void DeselectAll();
+
+	/// <summary>
+	/// 選択中のオブジェクト数を取得
+	/// </summary>
+	/// <returns>選択中のオブジェクトの合計数</returns>
+	size_t GetSelectedCount() const;
+
+	/// <summary>
+	/// 特定のグループが選択されているか確認
+	/// </summary>
+	bool IsGroupSelected(const std::string& groupName) const;
+
+	/// <summary>
+	/// 特定のエミッターが選択されているか確認
+	/// </summary>
+	bool IsEmitterSelected(const std::string& emitterName) const;
+
+	/// <summary>
+	/// 特定のフィールドが選択されているか確認
+	/// </summary>
+	bool IsFieldSelected(const std::string& fieldName) const;
 
 private:
 	ParticleEditor() = default;
@@ -202,6 +244,11 @@ private:
 	enum class EditingType { None, Group, Emitter, Field };
 	EditingType currentEditingType_ = EditingType::None;
 	std::string currentEditingObject_;
+
+	// 選択状態（フェーズ2）
+	std::set<std::string> selectedGroups_;
+	std::set<std::string> selectedEmitters_;
+	std::set<std::string> selectedFields_;
 
 	// Create Group用の一時データ
 	struct GroupCreationData {

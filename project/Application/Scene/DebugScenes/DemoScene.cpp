@@ -111,7 +111,7 @@ void DemoScene::InitializeGameObjects() {
 	modelMultiMaterial_->SetTransform(transformMultiMaterial);
 
 	///*-----------------------------------------------------------------------*///
-	///			パーティクルシステム - エディタで完結！						///
+	///			パーティクルシステム - エディタ										///
 	///*-----------------------------------------------------------------------*///
 #pragma region パーティクル
 	// ParticleSystemシングルトンを取得
@@ -183,6 +183,10 @@ void DemoScene::UpdateGameObjects() {
 	if (input->IsKeyDown(DIK_D)) {
 		planePosition.x += moveSpeed * gameDeltaTime;  // 右移動
 	}
+
+	// 座標を変更したい場合は以下のようにアクセス可能
+	auto* centerInstance = particleEditor_->GetInstance("Center");
+	centerInstance->GetEmitter("CenterEmitter")->GetTransform().SetPosition(sphere_->GetPosition());
 
 	plane_->SetPosition(planePosition);
 	plane_->Update(viewProjectionMatrix);
@@ -262,12 +266,6 @@ void DemoScene::ImGui() {
 	// パーティクルエディタ（統合UI）
 	ImGui::Text("Particle Editor (Integrated)");
 	particleEditor_->ImGui();
-
-	// ParticleSystemのImGuiは非表示（エディタで完結するため）
-	// 必要に応じてコメントアウトを解除
-	// ImGui::Spacing();
-	// ImGui::Text("Particle System");
-	// particleSystem_->ImGui();
 
 	ImGui::Spacing();
 	// ライトのImGui

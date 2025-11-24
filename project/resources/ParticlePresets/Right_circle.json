@@ -1,0 +1,130 @@
+{
+    "emitters": [
+        {
+            "debugAABBColor": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "emitCount": 2,
+            "emitDirection": [
+                -0.8944271802902222,
+                -0.4472135901451111,
+                0.0
+            ],
+            "emitFrequency": 0.30000001192092896,
+            "emitterLifeTime": 5.0,
+            "emitterLifeTimeLoop": true,
+            "emitterName": "Right_RightEmitter",
+            "initialSpeed": 4.0,
+            "isEmitting": true,
+            "particleLifeTimeMax": 3.0,
+            "particleLifeTimeMin": 1.0,
+            "particleRotateMax": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "particleRotateMin": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "particleScaleMax": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "particleScaleMin": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "position": [
+                5.0,
+                2.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "showDebugAABB": true,
+            "spawnArea": {
+                "max": [
+                    0.30000001192092896,
+                    2.0,
+                    0.30000001192092896
+                ],
+                "min": [
+                    -0.30000001192092896,
+                    -0.30000001192092896,
+                    -0.30000001192092896
+                ]
+            },
+            "spreadAngle": 15.0,
+            "targetGroupName": "Right_SquareParticles",
+            "useDirectionalEmit": true,
+            "useEmitterLifeTime": true,
+            "velocityRange": 1.0
+        }
+    ],
+    "fields": [
+        {
+            "debugColor": [
+                1.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "fieldName": "Right_GravityField",
+            "fieldType": "GravityField",
+            "isEnabled": true,
+            "parameters": {
+                "deleteRadius": 0.5,
+                "effectRadius": 4.0,
+                "gravityStrength": 8.0
+            },
+            "position": [
+                5.0,
+                3.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "showDebugVisualization": true
+        }
+    ],
+    "groups": [
+        {
+            "groupName": "NewGroup",
+            "maxParticles": 100,
+            "modelTag": "plane",
+            "textureName": "circle",
+            "useBillboard": true
+        },
+        {
+            "groupName": "Right_SquareParticles",
+            "maxParticles": 100,
+            "modelTag": "plane",
+            "textureName": "uvChecker",
+            "useBillboard": true
+        }
+    ],
+    "presetName": "Right_circle"
+}

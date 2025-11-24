@@ -351,6 +351,28 @@ void ParticleEditor::ShowObjectListPanel()
 #ifdef USEIMGUI
 	ImGui::Text("Objects");
 	ImGui::Separator();
+	ImGui::Spacing();
+
+	// 選択操作ボタン（フェーズ2）
+	if (ImGui::Button("Select All", ImVec2(115, 0))) {
+		SelectAll();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Deselect All", ImVec2(115, 0))) {
+		DeselectAll();
+	}
+
+	// 選択数表示
+	size_t selectedCount = GetSelectedCount();
+	if (selectedCount > 0) {
+		ImGui::Text("Selected: %zu", selectedCount);
+	} else {
+		ImGui::TextDisabled("Selected: 0");
+	}
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
 
 	// グループリスト
 	ShowGroupList();
@@ -377,6 +399,19 @@ void ParticleEditor::ShowGroupList()
 			ImGui::TextDisabled("No groups");
 		} else {
 			for (const auto& name : groupNames) {
+				// チェックボックス（フェーズ2）
+				bool isChecked = IsGroupSelected(name);
+				if (ImGui::Checkbox(("##check_group_" + name).c_str(), &isChecked)) {
+					if (isChecked) {
+						selectedGroups_.insert(name);
+					} else {
+						selectedGroups_.erase(name);
+					}
+				}
+
+				ImGui::SameLine();
+
+				// 編集選択
 				bool isSelected = (currentEditingType_ == EditingType::Group &&
 					currentEditingObject_ == name);
 
@@ -396,6 +431,9 @@ void ParticleEditor::ShowGroupList()
 							currentEditingType_ = EditingType::None;
 							currentEditingObject_ = "";
 						}
+
+						// チェックボックスの状態もクリア
+						selectedGroups_.erase(name);
 
 						Logger::Log(Logger::GetStream(),
 							std::format("[ParticleEditor] Deleted group: {}\n", name));
@@ -420,6 +458,19 @@ void ParticleEditor::ShowEmitterList()
 			ImGui::TextDisabled("No emitters");
 		} else {
 			for (const auto& name : emitterNames) {
+				// チェックボックス（フェーズ2）
+				bool isChecked = IsEmitterSelected(name);
+				if (ImGui::Checkbox(("##check_emitter_" + name).c_str(), &isChecked)) {
+					if (isChecked) {
+						selectedEmitters_.insert(name);
+					} else {
+						selectedEmitters_.erase(name);
+					}
+				}
+
+				ImGui::SameLine();
+
+				// 編集選択
 				bool isSelected = (currentEditingType_ == EditingType::Emitter &&
 					currentEditingObject_ == name);
 
@@ -447,6 +498,9 @@ void ParticleEditor::ShowEmitterList()
 							currentEditingObject_ = "";
 						}
 
+						// チェックボックスの状態もクリア
+						selectedEmitters_.erase(name);
+
 						Logger::Log(Logger::GetStream(),
 							std::format("[ParticleEditor] Deleted emitter: {}\n", name));
 					}
@@ -470,6 +524,19 @@ void ParticleEditor::ShowFieldList()
 			ImGui::TextDisabled("No fields");
 		} else {
 			for (const auto& name : fieldNames) {
+				// チェックボックス（フェーズ2）
+				bool isChecked = IsFieldSelected(name);
+				if (ImGui::Checkbox(("##check_field_" + name).c_str(), &isChecked)) {
+					if (isChecked) {
+						selectedFields_.insert(name);
+					} else {
+						selectedFields_.erase(name);
+					}
+				}
+
+				ImGui::SameLine();
+
+				// 編集選択
 				bool isSelected = (currentEditingType_ == EditingType::Field &&
 					currentEditingObject_ == name);
 
@@ -496,6 +563,9 @@ void ParticleEditor::ShowFieldList()
 							currentEditingType_ = EditingType::None;
 							currentEditingObject_ = "";
 						}
+
+						// チェックボックスの状態もクリア
+						selectedFields_.erase(name);
 
 						Logger::Log(Logger::GetStream(),
 							std::format("[ParticleEditor] Deleted field: {}\n", name));
@@ -628,6 +698,61 @@ void ParticleEditor::ShowPresetsTab()
 			Logger::Log(Logger::GetStream(),
 				"[ParticleEditor] Please enter a preset name\n");
 		}
+	}
+
+	// 選択的保存ボタン（フェーズ2）
+	ImGui::SameLine();
+	bool hasSelection = GetSelectedCount() > 0;
+	if (!hasSelection) {
+		ImGui::BeginDisabled();
+	}
+
+	if (ImGui::Button("Save Selected", ImVec2(200, 0))) {
+		if (strlen(newPresetName) > 0) {
+			if (SaveSelectedAsPreset(newPresetName)) {
+				Logger::Log(Logger::GetStream(),
+					std::format("[ParticleEditor] Saved selected preset: {}\n", newPresetName));
+				memset(newPresetName, 0, sizeof(newPresetName));
+			}
+		} else {
+			Logger::Log(Logger::GetStream(),
+				"[ParticleEditor] Please enter a preset name\n");
+		}
+	}
+
+	if (!hasSelection) {
+		ImGui::EndDisabled();
+	}
+
+	// 選択状態の表示（フェーズ2）
+	ImGui::Spacing();
+	if (hasSelection) {
+		ImGui::TextColored(ImVec4(0.2f, 0.8f, 0.2f, 1.0f),
+			"Selected: %zu groups, %zu emitters, %zu fields",
+			selectedGroups_.size(), selectedEmitters_.size(), selectedFields_.size());
+
+		// 依存関係の警告
+		bool hasEmittersWithoutGroups = false;
+		for (const auto& emitterName : selectedEmitters_) {
+			ParticleEmitter* emitter = particleSystem_->GetEmitter(emitterName);
+			if (emitter) {
+				std::string targetGroup = emitter->GetTargetGroupName();
+				if (selectedGroups_.find(targetGroup) == selectedGroups_.end()) {
+					hasEmittersWithoutGroups = true;
+					break;
+				}
+			}
+		}
+
+		if (hasEmittersWithoutGroups) {
+			ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f),
+				"⚠ Warning: Some emitters' target groups");
+			ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f),
+				"  will be auto-added when saving.");
+		}
+	} else {
+		ImGui::TextDisabled("No objects selected.");
+		ImGui::TextDisabled("Use checkboxes in Edit tab to select.");
 	}
 
 	ImGui::Spacing();
@@ -867,6 +992,93 @@ bool ParticleEditor::SaveCurrentStateAsPreset(const std::string& presetName)
 	return preset.SaveToFile(filePath);
 }
 
+bool ParticleEditor::SaveSelectedAsPreset(const std::string& presetName)
+{
+	// 選択されているオブジェクトがない場合は警告
+	if (GetSelectedCount() == 0) {
+		Logger::Log(Logger::GetStream(),
+			"[ParticleEditor] Warning: No objects selected. Nothing to save.\n");
+		return false;
+	}
+
+	ParticlePresetData preset;
+	preset.presetName = presetName;
+
+	// 依存関係解決のために、追加したグループ名を追跡
+	std::set<std::string> includedGroups;
+
+	// ========================================
+	// ステップ1: 選択されたグループを追加
+	// ========================================
+	for (const auto& groupName : selectedGroups_) {
+		ParticleGroup* group = particleSystem_->GetGroup(groupName);
+		if (group) {
+			preset.groups.push_back(CreateGroupData(group));
+			includedGroups.insert(groupName);
+		}
+	}
+
+	// ========================================
+	// ステップ2: 選択されたエミッターを追加 + 依存関係解決
+	// ========================================
+	for (const auto& emitterName : selectedEmitters_) {
+		ParticleEmitter* emitter = particleSystem_->GetEmitter(emitterName);
+		if (!emitter) continue;
+
+		// エミッターを追加
+		preset.emitters.push_back(CreateEmitterData(emitter));
+
+		// 依存関係チェック: ターゲットグループが含まれているか？
+		std::string targetGroupName = emitter->GetTargetGroupName();
+
+		// ターゲットグループがまだ含まれていない場合、自動的に追加
+		if (includedGroups.find(targetGroupName) == includedGroups.end()) {
+			ParticleGroup* targetGroup = particleSystem_->GetGroup(targetGroupName);
+			if (targetGroup) {
+				preset.groups.push_back(CreateGroupData(targetGroup));
+				includedGroups.insert(targetGroupName);
+
+				// ログで通知
+				Logger::Log(Logger::GetStream(),
+					std::format("[ParticleEditor] Auto-added group '{}' (required by emitter '{}')\n",
+						targetGroupName, emitterName));
+			} else {
+				// ターゲットグループが存在しない（異常な状態）
+				Logger::Log(Logger::GetStream(),
+					std::format("[ParticleEditor] Warning: Emitter '{}' references non-existent group '{}'\n",
+						emitterName, targetGroupName));
+			}
+		}
+	}
+
+	// ========================================
+	// ステップ3: 選択されたフィールドを追加
+	// ========================================
+	for (const auto& fieldName : selectedFields_) {
+		BaseField* field = particleSystem_->GetField(fieldName);
+		if (field) {
+			preset.fields.push_back(CreateFieldData(field));
+		}
+	}
+
+	// ========================================
+	// ステップ4: ファイルに保存
+	// ========================================
+	std::string filePath = GetPresetFilePath(presetName);
+	bool success = preset.SaveToFile(filePath);
+
+	if (success) {
+		Logger::Log(Logger::GetStream(),
+			std::format("[ParticleEditor] Saved selected preset '{}': {} groups, {} emitters, {} fields\n",
+				presetName, preset.groups.size(), preset.emitters.size(), preset.fields.size()));
+	} else {
+		Logger::Log(Logger::GetStream(),
+			std::format("[ParticleEditor] Failed to save selected preset '{}'\n", presetName));
+	}
+
+	return success;
+}
+
 ParticlePresetData ParticleEditor::LoadPreset(const std::string& presetName)
 {
 	std::string filePath = GetPresetFilePath(presetName);
@@ -1028,4 +1240,61 @@ void ParticleEditor::DestroyInstance(const std::string& instanceName)
 		Logger::Log(Logger::GetStream(),
 			std::format("[ParticleEditor] Destroyed instance: {}\n", instanceName));
 	}
+}
+
+// ========================================
+// 選択操作（フェーズ2）
+// ========================================
+
+void ParticleEditor::SelectAll()
+{
+	// すべてのグループを選択
+	selectedGroups_.clear();
+	for (const auto& groupName : particleSystem_->GetAllGroupNames()) {
+		selectedGroups_.insert(groupName);
+	}
+
+	// すべてのエミッターを選択
+	selectedEmitters_.clear();
+	for (const auto& emitterName : particleSystem_->GetAllEmitterNames()) {
+		selectedEmitters_.insert(emitterName);
+	}
+
+	// すべてのフィールドを選択
+	selectedFields_.clear();
+	for (const auto& fieldName : particleSystem_->GetAllFieldNames()) {
+		selectedFields_.insert(fieldName);
+	}
+
+	Logger::Log(Logger::GetStream(),
+		std::format("[ParticleEditor] Selected all objects ({} total)\n", GetSelectedCount()));
+}
+
+void ParticleEditor::DeselectAll()
+{
+	selectedGroups_.clear();
+	selectedEmitters_.clear();
+	selectedFields_.clear();
+
+	Logger::Log(Logger::GetStream(), "[ParticleEditor] Deselected all objects\n");
+}
+
+size_t ParticleEditor::GetSelectedCount() const
+{
+	return selectedGroups_.size() + selectedEmitters_.size() + selectedFields_.size();
+}
+
+bool ParticleEditor::IsGroupSelected(const std::string& groupName) const
+{
+	return selectedGroups_.find(groupName) != selectedGroups_.end();
+}
+
+bool ParticleEditor::IsEmitterSelected(const std::string& emitterName) const
+{
+	return selectedEmitters_.find(emitterName) != selectedEmitters_.end();
+}
+
+bool ParticleEditor::IsFieldSelected(const std::string& fieldName) const
+{
+	return selectedFields_.find(fieldName) != selectedFields_.end();
 }
