@@ -1,8 +1,9 @@
 #pragma once
-#include "Collider.h"	//衝突判定
+#include "Collider.h"			//衝突判定
 #include "CollisionConfig.h"	//衝突属性のフラグを定義する
-#include "PlayerBullet.h"	// 自機弾
-#include "PlayerUI.h"	// UI
+#include "PlayerBullet.h"		// 自機弾
+#include "PlayerUI.h"			// UI
+#include "OffscreenRenderer/EffectFunc/DamageVignette.h"	
 #include <list>
 #include <memory>
 
@@ -99,6 +100,9 @@ private:
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 	//UI表示
 	std::unique_ptr<PlayerUI> playerUI_;
+
+	//ダメージ演出
+	std::unique_ptr<DamageVignette> damageVignette_;
 
 	// システム参照
 	DirectXCommon* dxCommon_;

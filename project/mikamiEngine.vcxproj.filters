@@ -238,6 +238,12 @@
     <Filter Include="Engine\Objects\Particle\ParticleObjects\Group">
       <UniqueIdentifier>{07a02cac-4113-442d-a47a-3331e56a1b08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\OffScreenRenderer\EffectFunc">
+      <UniqueIdentifier>{8d22e06e-bff6-482d-a557-4f282675c47b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\OffScreenRenderer\EffectFunc\DamageVignette">
+      <UniqueIdentifier>{5554fb4d-9afb-489e-91a4-b72c13488342}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -578,6 +584,9 @@
     </ClCompile>
     <ClCompile Include="Engine\Objects\Particle\ParticleGroup.cpp">
       <Filter>Engine\Objects\Particle\ParticleObjects\Group</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\EffectFunc\DamageVignette.cpp">
+      <Filter>Engine\OffScreenRenderer\EffectFunc\DamageVignette</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1002,6 +1011,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Objects\Particle\ParticleGroup.h">
       <Filter>Engine\Objects\Particle\ParticleObjects\Group</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\EffectFunc\DamageVignette.h">
+      <Filter>Engine\OffScreenRenderer\EffectFunc\DamageVignette</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

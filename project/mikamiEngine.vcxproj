@@ -161,6 +161,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp" />
     <ClCompile Include="Application\GameObjects\Boss\State\BossStateManager.cpp" />
     <ClCompile Include="Application\GameObjects\Bullet\BossBulletPool.cpp" />
+    <ClCompile Include="Engine\OffscreenRenderer\EffectFunc\DamageVignette.cpp" />
     <ClCompile Include="Engine\Core\JsonSettings\JsonSettings.cpp" />
     <ClCompile Include="Engine\Utility\CSVUtility.cpp" />
     <ClCompile Include="Engine\Objects\Line\DebugDrawLineSystem.cpp" />
@@ -381,6 +382,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObjects\Boss\State\BossStateManager.h" />
     <ClInclude Include="Application\GameObjects\Boss\State\BossStateConfig.h" />
     <ClInclude Include="Application\GameObjects\Bullet\BossBulletPool.h" />
+    <ClInclude Include="Engine\OffscreenRenderer\EffectFunc\DamageVignette.h" />
     <ClInclude Include="Engine\Core\JsonSettings\JsonSettings.h" />
     <ClInclude Include="Engine\Utility\CSVUtility.h" />
     <ClInclude Include="Engine\Objects\Line\DebugDrawLineSystem.h" />

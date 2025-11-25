@@ -43,6 +43,10 @@ void Player::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	playerUI_ = std::make_unique<PlayerUI>();
 	playerUI_->Initialize(dxCommon_);
 
+	// ダメージエフェクトの初期化
+	damageVignette_ = std::make_unique<DamageVignette>();
+	damageVignette_->Initialize();
+
 	// 衝突判定の設定
 	SetRadius(0.5f);  // 半径を0.5fに設定
 	SetCollisionAttribute(kCollisionAttributePlayer);	// 自分の属性をPlayerに設定
@@ -85,6 +89,10 @@ void Player::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& view
 	gameObject_->Update(viewProjectionMatrix);
 	// UIの更新
 	playerUI_->Update(HP_, maxHP_, viewProjectionMatirxSprite);
+	// ダメージエフェクトの更新
+	if (damageVignette_) {
+		damageVignette_->Update(deltaTime);
+	}
 
 	// デバッグ表示が有効な場合、コライダーを描画
 #ifdef USEIMGUI
@@ -98,6 +106,11 @@ void Player::TakeDamage(float damage)
 
 	//HPを減らす
 	HP_ -= damage;
+
+	// ダメージエフェクトを発動
+	if (damageVignette_) {
+		damageVignette_->TriggerDamageEffect();
+	}
 
 	//HPが０以下で死亡
 	if (HP_ <= 0) {
@@ -361,6 +374,8 @@ void Player::ImGui() {
 		if (ImGui::CollapsingHeader("Collision")) {
 			ImGui::Text("Collision Radius: %.2f", GetRadius());
 			ImGui::Checkbox("Show Collider", &isColliderVisible_);
+			damageVignette_->ImGui();
+
 		}
 		// ゲームオブジェクトのImGui
 		gameObject_->ImGui();
