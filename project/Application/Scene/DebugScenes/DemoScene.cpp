@@ -267,7 +267,7 @@ void DemoScene::ImGui() {
 
 	ImGui::Spacing();
 	// パーティクルエディタ（統合UI）
-	ImGui::Text("Particle Editor (Integrated)");
+	ImGui::Text("Particle Editor");
 	particleEditor_->ImGui();
 
 	ImGui::Spacing();
