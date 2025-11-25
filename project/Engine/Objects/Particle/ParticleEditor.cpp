@@ -1276,6 +1276,23 @@ void ParticleEditor::DestroyInstance(const std::string& instanceName)
 	}
 }
 
+void ParticleEditor::DestroyAllInstance()
+{
+
+	//全てのインスタンスを削除
+	for (auto& [name, instance] : instances_) {
+		if (instance) {
+			instance->Destroy();
+		}
+	}
+
+	//全てeraseしてからクリアする
+	instances_.clear();
+	Logger::Log(Logger::GetStream(),
+		"[ParticleEditor] Destroyed all instances.\n");
+}
+
+
 // ========================================
 // 選択操作（フェーズ2）
 // ========================================

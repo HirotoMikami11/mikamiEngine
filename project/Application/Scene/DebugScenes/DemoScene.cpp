@@ -285,4 +285,8 @@ void DemoScene::Finalize() {
 	if (particleSystem_) {
 		particleSystem_->Clear();
 	}
+	// シーン終了時にパーティクルインスタンスを全削除
+	if (particleEditor_) {
+		particleEditor_->DestroyAllInstance();
+	}
 }

@@ -73,6 +73,11 @@ public:
 	void DestroyInstance(const std::string& instanceName);
 
 	/// <summary>
+	/// 全てのインスタンスを削除　　　　　　
+	/// </summary>
+	/// <param name="instanceName"></param>
+	void DestroyAllInstance();
+	/// <summary>
 	/// プリセットを読み込み
 	/// </summary>
 	/// <param name="presetName">プリセット名</param>
