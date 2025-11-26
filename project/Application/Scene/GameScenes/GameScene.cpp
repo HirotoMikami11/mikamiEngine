@@ -8,6 +8,8 @@ GameScene::GameScene()
 	, cameraController_(nullptr)
 	, dxCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
+	, particleSystem_(nullptr)
+	, particleEditor_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
 	, viewProjectionMatrixSprite{ MakeIdentity4x4() }
 {
@@ -74,6 +76,23 @@ void GameScene::InitializeGameObjects() {
 	///ボス
 	boss_ = std::make_unique<Boss>();
 	boss_->Initialize(dxCommon_, { -10.0f,1.5f, 0.0f });
+	///*-----------------------------------------------------------------------*///
+	///			パーティクルシステム - エディタ										///
+	///*-----------------------------------------------------------------------*///
+#pragma region パーティクル
+	// ParticleSystemシングルトンを取得
+	particleSystem_ = ParticleSystem::GetInstance();
+	particleSystem_->Initialize(dxCommon_);
+
+	// ParticleEditorシングルトンを取得
+	particleEditor_ = ParticleEditor::GetInstance();
+	particleEditor_->Initialize(dxCommon_);
+
+	//砂煙パーティクル
+	particleEditor_->CreateInstance("WalkSmokeEffect", "Smoke1");
+
+
+#pragma endregion
 
 	///*-----------------------------------------------------------------------*///
 	///									ライト									///
@@ -90,6 +109,9 @@ void GameScene::Update() {
 
 	//当たり判定の更新
 	UpdateCollison();
+
+	// パーティクルシステムの更新
+	particleSystem_->Update(viewProjectionMatrix);
 
 	//クリア・デス判定
 
@@ -177,6 +199,8 @@ void GameScene::DrawOffscreen() {
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
 	/// 
 
+	// パーティクルシステムの描画（全グループ）
+	particleSystem_->Draw(directionalLight_);
 }
 
 void GameScene::DrawBackBuffer() {
@@ -218,6 +242,13 @@ void GameScene::ImGui() {
 	wall_->ImGui();
 
 	ImGui::Spacing();
+	// パーティクルエディタ（統合UI）
+	ImGui::Text("Particle Editorhanaku");
+	particleEditor_->ImGui();
+
+
+
+	ImGui::Spacing();
 	// ライトのImGui
 	ImGui::Text("Lighting");
 	directionalLight_.ImGui("DirectionalLight");
@@ -226,4 +257,14 @@ void GameScene::ImGui() {
 }
 
 void GameScene::Finalize() {
+
+		// シーン終了時にパーティクルシステムをクリア
+		if (particleSystem_) {
+			particleSystem_->Clear();
+		}
+		// シーン終了時にパーティクルインスタンスを全削除
+		if (particleEditor_) {
+			particleEditor_->DestroyAllInstance();
+		}
+	
 }

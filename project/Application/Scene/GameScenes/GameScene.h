@@ -56,6 +56,9 @@ private:
 	std::unique_ptr<Boss> boss_;
 	std::unique_ptr<Wall> wall_;
 
+	// パーティクルシステム
+	ParticleSystem* particleSystem_;
+	ParticleEditor* particleEditor_;
 
 	// ライティング
 	Light directionalLight_;
