@@ -4,54 +4,47 @@
 #include <array>
 
 /// <summary>
-/// 壁クラス
-/// 指定した領域を4面の壁で囲むオブジェクト
+/// トーチクラス
+/// 12個のトーチオブジェクトを管理し、個別に位置・角度を設定可能
 /// </summary>
-class Wall
+class Torch
 {
 public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Wall();
+	Torch();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Wall();
+	~Torch();
 
 	/// <summary>
 	/// 初期化処理
-	/// 4面の壁モデルを生成し、JsonSettingsから設定を読み込む
+	/// 12個のトーチモデルを生成し、JsonSettingsから設定を読み込む
 	/// </summary>
 	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	void Initialize(DirectXCommon* dxCommon);
 
 	/// <summary>
 	/// 更新処理
-	/// 各壁の行列を更新
+	/// 各トーチの行列を更新
 	/// </summary>
 	/// <param name="viewProjectionMatrix">ビュープロジェクション行列</param>
 	void Update(const Matrix4x4& viewProjectionMatrix);
 
 	/// <summary>
 	/// 描画処理
-	/// 4面の壁を描画（手前の壁は除く）
+	/// 12個のトーチを描画
 	/// </summary>
 	void Draw();
 
 	/// <summary>
 	/// ImGui表示
-	/// 壁のパラメータ調整とJsonSettings保存機能
+	/// トーチのパラメータ調整とJsonSettings保存機能
 	/// </summary>
 	void ImGui();
-
-	/// <summary>
-	/// 囲みたい領域のサイズを設定
-	/// 設定後、壁の位置を自動的に再計算
-	/// </summary>
-	/// <param name="areaSize">領域サイズ（X:幅, Y:奥行き）</param>
-	void SetAreaSize(const Vector2& areaSize);
 
 	/// <summary>
 	/// 現在の設定をJsonファイルに保存
@@ -65,32 +58,38 @@ public:
 
 private:
 	/// <summary>
-	/// 壁オブジェクトの構造体
-	/// 各壁のモデルとトランスフォーム情報を格納
+	/// トーチオブジェクトの構造体
+	/// 各トーチのモデルとトランスフォーム情報を格納
 	/// </summary>
-	struct WallObject {
+	struct TorchObject {
 		std::unique_ptr<Model3D> obj;
 		Vector3Transform transform;
 	};
 
 	/// <summary>
-	/// 各壁のトランスフォームを計算して更新
-	/// areaSize_とmodelSizeに基づいて4面の壁を適切に配置
+	/// 各トーチのトランスフォームを更新
 	/// </summary>
 	void UpdateTransforms();
+
 
 	// システム参照
 	DirectXCommon* dxCommon_;
 
-	// 壁モデルサイズ（scale が 1 のときの実寸法）
-	Vector3 modelSize;
+	// 12個のトーチ
+	static constexpr int kTorchCount_ = 12;
+	std::array<TorchObject, kTorchCount_> torches_;
 
-	// 4方向の壁（前, 右, 後, 左）
-	std::array<WallObject, 4> walls_;
+	// 全体のスケール（全トーチ共通）
+	Vector3 globalScale_;
+	// 全体の色（全トーチ共通）
+	Vector4 globalColor_;
 
-	// 囲みたい領域（フルサイズ)
-	Vector2 areaSize_;
+	// 各トーチの座標（個別設定）
+	std::array<Vector3, kTorchCount_> positions_;
+
+	// 各トーチの回転（個別設定）
+	std::array<Vector3, kTorchCount_> rotations_;
 
 	// JsonSettingsのグループパス
-	const std::vector<std::string> kGroupPath_ = { "Wall" };
+	const std::vector<std::string> kGroupPath_ = { "Torch" };
 };

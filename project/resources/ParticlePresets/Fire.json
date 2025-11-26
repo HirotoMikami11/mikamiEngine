@@ -1,0 +1,120 @@
+{
+    "emitters": [
+        {
+            "debugAABBColor": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "emitCount": 1,
+            "emitDirection": [
+                0.0,
+                1.0,
+                0.0
+            ],
+            "emitFrequency": 0.03999999910593033,
+            "emitterLifeTime": 5.0,
+            "emitterLifeTimeLoop": false,
+            "emitterName": "FireEmitter",
+            "enableColorOverLifetime": true,
+            "enableRotation": false,
+            "enableSizeOverLifetime": true,
+            "initialSpeed": 0.699999988079071,
+            "isEmitting": true,
+            "particleEndColor": [
+                1.0,
+                0.3592848777770996,
+                0.009803950786590576,
+                0.0
+            ],
+            "particleEndScale": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "particleLifeTimeMax": 3.0,
+            "particleLifeTimeMin": 1.0,
+            "particleRotateMax": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "particleRotateMin": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "particleScaleMax": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "particleScaleMin": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "particleStartColor": [
+                1.0,
+                0.32352936267852783,
+                0.0,
+                1.0
+            ],
+            "particleStartScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "position": [
+                -3.9000000953674316,
+                -2.799999952316284,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotationSpeed": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "showDebugAABB": true,
+            "spawnArea": {
+                "max": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "min": [
+                    -0.5,
+                    -0.5,
+                    -0.5
+                ]
+            },
+            "spreadAngle": 0.0,
+            "targetGroupName": "FireParticle",
+            "useDirectionalEmit": true,
+            "useEmitterLifeTime": false,
+            "velocityRange": 1.0
+        }
+    ],
+    "fields": [],
+    "groups": [
+        {
+            "groupName": "FireParticle",
+            "maxParticles": 402,
+            "modelTag": "plane",
+            "textureName": "circle",
+            "useBillboard": true
+        }
+    ],
+    "presetName": "Fire"
+}

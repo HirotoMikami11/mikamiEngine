@@ -28,7 +28,7 @@ struct PointLight
 struct LightingData
 {
     DirectionalLight directionalLight; // 平行光源
-    PointLight pointLights[10]; // ポイントライト（最大10個）
+    PointLight pointLights[32]; // ポイントライト（最大32個）
     int32_t numPointLights; // 有効なポイントライト数
     float32_t3 padding; // アライメント調整
 };

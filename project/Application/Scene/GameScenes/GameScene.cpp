@@ -73,6 +73,9 @@ void GameScene::InitializeGameObjects() {
 	wall_ = std::make_unique<Wall>();
 	wall_->Initialize(dxCommon_);
 
+	torch_ = std::make_unique<Torch>();
+	torch_->Initialize(dxCommon_);
+
 	///ボス
 	boss_ = std::make_unique<Boss>();
 	boss_->Initialize(dxCommon_, { -10.0f,1.5f, 0.0f });
@@ -141,6 +144,7 @@ void GameScene::UpdateGameObjects() {
 
 	ground_->Update(viewProjectionMatrix);
 	wall_->Update(viewProjectionMatrix);
+	torch_->Update(viewProjectionMatrix);
 }
 
 void GameScene::UpdateCollison()
@@ -191,6 +195,7 @@ void GameScene::DrawOffscreen() {
 
 	ground_->Draw();
 	wall_->Draw();
+	torch_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -237,6 +242,11 @@ void GameScene::ImGui() {
 	ImGui::Spacing();
 	ImGui::Text("Wall");
 	wall_->ImGui();
+
+	ImGui::Spacing();
+	ImGui::Text("Torch");
+	torch_->ImGui();
+
 
 	ImGui::Spacing();
 	// パーティクルエディタ（統合UI）

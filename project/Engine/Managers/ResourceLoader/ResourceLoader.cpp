@@ -77,6 +77,7 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Model/FontModel", "GameClearFont.obj", "clearFont", false},
 		{"resources/Model/FontModel", "PressA.obj", "pressAFont", false},
 		{"resources/Model/Wall", "Wall.obj", "wall", false},
+		{"resources/Model/torch", "torch.obj", "torch", false},
 
 
 		// モデルはここに追加

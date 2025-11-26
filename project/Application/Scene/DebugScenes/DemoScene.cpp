@@ -134,7 +134,6 @@ void DemoScene::InitializeGameObjects() {
 	//砂煙パーティクル
 	particleEditor_->CreateInstance("WalkSmokeEffect", "Smoke1");
 
-
 #pragma endregion
 
 	///*-----------------------------------------------------------------------*///

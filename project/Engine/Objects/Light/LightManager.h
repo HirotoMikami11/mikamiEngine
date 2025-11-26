@@ -15,7 +15,7 @@
 class LightManager
 {
 public:
-	static constexpr int MAX_POINT_LIGHTS = 10;
+	static constexpr int MAX_POINT_LIGHTS = 32;
 
 	// シングルトン
 	static LightManager* GetInstance();
