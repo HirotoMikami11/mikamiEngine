@@ -197,7 +197,7 @@ void GameScene::DrawOffscreen() {
 	/// 
 
 	// パーティクルシステムの描画（全グループ）
-	particleSystem_->Draw(directionalLight_);
+	particleSystem_->Draw();
 }
 
 void GameScene::DrawBackBuffer() {
