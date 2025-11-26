@@ -11,7 +11,7 @@ void SpriteCommon::Initialize(DirectXCommon* dxCommon)
 	dxCommon_ = dxCommon;
 }
 
-void SpriteCommon::setCommonSpriteRenderSettings()
+void SpriteCommon::setCommonRenderSettings()
 {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 	// スプライト専用のPSOを設定

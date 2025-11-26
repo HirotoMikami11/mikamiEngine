@@ -1,6 +1,5 @@
 #include "Object3D.h"
 #include "ImGui/ImGuiManager.h"
-#include "Object3DCommon.h"
 #include "CameraController.h"
 
 void Object3D::Initialize(DirectXCommon* dxCommon, const std::string& modelTag, const std::string& textureName) {
@@ -39,7 +38,6 @@ void Object3D::Draw() {
 
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 	object3DCommon_->setCommonRenderSettings();
-
 
 	// トランスフォームを設定
 	commandList->SetGraphicsRootConstantBufferView(1, transform_.GetResource()->GetGPUVirtualAddress());
