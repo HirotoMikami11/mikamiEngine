@@ -18,6 +18,8 @@ void Object3DCommon::setCommonRenderSettings(ID3D12GraphicsCommandList* commandL
 	commandList->SetPipelineState(dxCommon_->GetPipelineState());
 	// プリミティブトポロジを設定
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
 }
 
 

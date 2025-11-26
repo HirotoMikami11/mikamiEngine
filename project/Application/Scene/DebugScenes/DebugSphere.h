@@ -4,7 +4,6 @@
 #include "DirectXCommon.h"
 #include "MyFunction.h"
 #include "Structures.h"
-#include "Light.h"
 #include "Object3D.h"
 
 /// <summary>
@@ -19,7 +18,7 @@ public:
 
     // 更新・描画処理
     void Update(const Matrix4x4& viewProj);
-    void Draw(Light& light);
+    void Draw();
     void ImGui();
 
     // Sphere のリストを再生成
@@ -35,7 +34,7 @@ private:
     std::vector<std::unique_ptr<Sphere>> spheres_;
 
     // パラメータ
-    int sphereCount_ = 100;
+    int sphereCount_ = 10;
     int sphereCountPerRow_ = 10;
     float sphereSpacing_ = 3.0f;
     bool autoRotate_ = true;

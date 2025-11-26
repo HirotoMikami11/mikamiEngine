@@ -4,10 +4,10 @@
 #include "DebugScenes/DebugScene.h"
 //必要なシーン郡
 #include "GameScenes/TitleScene.h"
-#include "GameScenes/SelectScene.h"
-#include "GameScenes/GameScene.h"
-#include "GameScenes/GameClearScene.h"
-#include "GameScenes/GameOverScene.h"
+//#include "GameScenes/SelectScene.h"
+//#include "GameScenes/GameScene.h"
+//#include "GameScenes/GameClearScene.h"
+//#include "GameScenes/GameOverScene.h"
 
 
 Game::Game() :
@@ -25,6 +25,10 @@ void Game::Initialize() {
 	// トランジションマネージャーの初期化（エフェクト管理）
 	transitionManager_ = TransitionManager::GetInstance();
 	transitionManager_->Initialize();
+
+	// ライトマネージャーの初期化
+	lightManager_ = LightManager::GetInstance();
+	lightManager_->Initialize(Engine::GetInstance()->GetDirectXCommon());
 
 	// カスタムトランジションエフェクトを登録
 	RegisterTransitionEffects();
@@ -44,17 +48,17 @@ void Game::InitializeScenes() {
 	auto titleScene = std::make_unique<TitleScene>();
 	sceneManager_->RegisterScene("TitleScene", std::move(titleScene));
 
-	auto selectScene = std::make_unique<SelectScene>();
-	sceneManager_->RegisterScene("SelectScene", std::move(selectScene));
+	//auto selectScene = std::make_unique<SelectScene>();
+	//sceneManager_->RegisterScene("SelectScene", std::move(selectScene));
 
-	auto gameScene = std::make_unique<GameScene>();
-	sceneManager_->RegisterScene("GameScene", std::move(gameScene));
+	//auto gameScene = std::make_unique<GameScene>();
+	//sceneManager_->RegisterScene("GameScene", std::move(gameScene));
 
-	auto gameClearScene = std::make_unique<GameClearScene>();
-	sceneManager_->RegisterScene("GameClearScene", std::move(gameClearScene));
+	//auto gameClearScene = std::make_unique<GameClearScene>();
+	//sceneManager_->RegisterScene("GameClearScene", std::move(gameClearScene));
 
-	auto gameOverScene = std::make_unique<GameOverScene>();
-	sceneManager_->RegisterScene("GameOverScene", std::move(gameOverScene));
+	//auto gameOverScene = std::make_unique<GameOverScene>();
+	//sceneManager_->RegisterScene("GameOverScene", std::move(gameOverScene));
 
 	// デフォルトシーンを設定（最初に表示するシーン）
 	sceneManager_->ChangeScene("TitleScene");
@@ -82,11 +86,16 @@ void Game::Update() {
 		transitionManager_->Update(1.0f / 60.0f); //時間
 	}
 
+	// ライトマネージャーの更新
+	if (lightManager_) {
+		lightManager_->Update();
+	}
+
+
 	// シーンマネージャーの更新
 	if (sceneManager_) {
 		sceneManager_->Update();
 	}
-
 	// シーンマネージャーのImGui更新
 	if (sceneManager_) {
 		sceneManager_->ImGui();
@@ -95,6 +104,11 @@ void Game::Update() {
 	if (transitionManager_) {
 		//　TODO:imgui必要に応じて作成
 		// 	transitionManager_->ImGui();
+	}
+
+	//　ライトマネージャーのImGui
+	if (lightManager_) {
+		lightManager_->ImGui();
 	}
 }
 
@@ -117,6 +131,13 @@ void Game::DrawBackBuffer() {
 	}
 }
 
+void Game::ImGui()
+{
+
+
+
+}
+
 void Game::Finalize() {
 	// トランジションマネージャーの終了処理
 	if (transitionManager_) {
@@ -126,5 +147,9 @@ void Game::Finalize() {
 	// シーンマネージャーの終了処理
 	if (sceneManager_) {
 		sceneManager_->Finalize();
+	}
+
+	if (lightManager_) {
+		lightManager_->Finalize();
 	}
 }

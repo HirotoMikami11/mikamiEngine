@@ -44,8 +44,7 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	/// <param name="directionalLight">平行光源</param>
-	void Draw(const Light& directionalLight);
+	void Draw();
 
 	/// <summary>
 	/// ImGui用のデバッグ表示

@@ -53,11 +53,11 @@ void ParticleSystem::Update(const Matrix4x4& viewProjectionMatrix)
 	}
 }
 
-void ParticleSystem::Draw(const Light& directionalLight)
+void ParticleSystem::Draw()
 {
 	// すべてのグループを描画
 	for (auto& [groupName, group] : groups_) {
-		group->Draw(directionalLight);
+		group->Draw();
 	}
 
 #ifdef USEIMGUI

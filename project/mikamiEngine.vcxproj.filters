@@ -444,18 +444,6 @@
     <ClCompile Include="Application\CollisionManager\CollisionManager.cpp">
       <Filter>Application\Scene\CollisionManager</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\GameScenes\GameClearScene.cpp">
-      <Filter>Application\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScenes\GameOverScene.cpp">
-      <Filter>Application\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScenes\GameScene.cpp">
-      <Filter>Application\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScenes\SelectScene.cpp">
-      <Filter>Application\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Scene\GameScenes\TitleScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
@@ -546,9 +534,6 @@
     <ClCompile Include="Application\CollisionManager\Collider.cpp">
       <Filter>Application\Scene\CollisionManager</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\DebugScenes\DemoScene.cpp">
-      <Filter>Application\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Scene\SceneManager.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
@@ -563,9 +548,6 @@
     </ClCompile>
     <ClCompile Include="Engine\Utility\CSVUtility.cpp">
       <Filter>Engine\MyMath</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp">
-      <Filter>Application\GameObjects\FieldObjects\DebugShpere</Filter>
     </ClCompile>
     <ClCompile Include="Application\GameObjects\Ground.cpp">
       <Filter>Application\GameObjects\FieldObjects\Ground</Filter>
@@ -587,6 +569,21 @@
     </ClCompile>
     <ClCompile Include="Engine\OffscreenRenderer\EffectFunc\DamageVignette.cpp">
       <Filter>Engine\OffScreenRenderer\EffectFunc\DamageVignette</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Light\LightManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Light\DirectionalLight.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Light\PointLight.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\DebugScenes\DemoScene.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -850,18 +847,6 @@
     <ClInclude Include="Application\CollisionManager\CollisionManager.h">
       <Filter>Application\Scene\CollisionManager</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\GameScenes\SelectScene.h">
-      <Filter>Application\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScenes\GameOverScene.h">
-      <Filter>Application\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScenes\GameClearScene.h">
-      <Filter>Application\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScenes\GameScene.h">
-      <Filter>Application\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Application\Scene\GameScenes\TitleScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
@@ -973,9 +958,6 @@
     <ClInclude Include="Application\Scene\BaseScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h">
-      <Filter>Application\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Application\Scene\SceneManager.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
@@ -990,9 +972,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Utility\CSVUtility.h">
       <Filter>Engine\MyMath</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\DebugScenes\DebugSphere.h">
-      <Filter>Application\GameObjects\FieldObjects\DebugShpere</Filter>
     </ClInclude>
     <ClInclude Include="Application\GameObjects\Ground.h">
       <Filter>Application\GameObjects\FieldObjects\Ground</Filter>
@@ -1014,6 +993,24 @@
     </ClInclude>
     <ClInclude Include="Engine\OffscreenRenderer\EffectFunc\DamageVignette.h">
       <Filter>Engine\OffScreenRenderer\EffectFunc\DamageVignette</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Light\LightManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Light\DirectionalLight.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Light\LightBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Light\PointLight.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\DebugScenes\DebugSphere.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

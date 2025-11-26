@@ -5,6 +5,7 @@
 #include "Transform3D.h"
 #include "Object3DCommon.h"
 #include "Light.h"
+#include "LightManager.h"
 #include "Texture/TextureManager.h"
 #include "Model/ModelManager.h"
 #include "ObjectID/ObjectIDManager.h"
@@ -35,8 +36,7 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	/// <param name="directionalLight">平行光源</param>
-	virtual void Draw(const Light& directionalLight);
+	virtual void Draw();
 
 	/// <summary>
 	/// ImGui用のデバッグ表示

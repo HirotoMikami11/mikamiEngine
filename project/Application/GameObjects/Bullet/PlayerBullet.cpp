@@ -63,7 +63,7 @@ void PlayerBullet::Draw(const Light& directionalLight) {
 	DebugLineAdd();
 #endif
 	if (!isDead_) {
-		gameObject_->Draw(directionalLight);
+	gameObject_->Draw();
 	}
 }
 

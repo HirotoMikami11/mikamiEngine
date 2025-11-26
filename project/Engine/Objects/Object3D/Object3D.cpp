@@ -32,7 +32,7 @@ void Object3D::Update(const Matrix4x4& viewProjectionMatrix) {
 	materials_.UpdateAllUVTransforms();
 }
 
-void Object3D::Draw(const Light& directionalLight) {
+void Object3D::Draw() {
 	if (!sharedModel_ || !sharedModel_->IsValid()) {
 		return;
 	}
@@ -40,8 +40,9 @@ void Object3D::Draw(const Light& directionalLight) {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 	object3DCommon_->setCommonRenderSettings(commandList);
 
-	// ライトを設定
-	commandList->SetGraphicsRootConstantBufferView(3, directionalLight.GetResource()->GetGPUVirtualAddress());
+	// ライトを設定（LightManagerから取得）
+	LightManager* lightManager = LightManager::GetInstance();
+	commandList->SetGraphicsRootConstantBufferView(3, lightManager->GetLightingResource()->GetGPUVirtualAddress());
 	// カメラを設定
 	ID3D12Resource* cameraResource = CameraController::GetInstance()->GetCameraForGPUResource();
 	if (cameraResource) {

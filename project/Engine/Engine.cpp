@@ -71,6 +71,7 @@ void Engine::InitializeManagers() {
 	// パーティクルの共通部分を初期化
 	ParticleCommon::GetInstance()->Initialize(dxCommon_.get());
 
+
 	// カメラコントローラー取得
 	cameraController_ = CameraController::GetInstance();
 

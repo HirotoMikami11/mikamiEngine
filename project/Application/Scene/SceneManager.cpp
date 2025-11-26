@@ -80,7 +80,6 @@ bool SceneManager::ChangeScene(const std::string& sceneName) {
 
 	// 現在のシーンの処理（オブジェクトのみ解放）
 	if (currentScene_) {
-
 		currentScene_->Finalize();
 		// オブジェクト初期化フラグのみリセット（リソースフラグは保持）
 		currentScene_->SetInitialized(false);
@@ -88,6 +87,8 @@ bool SceneManager::ChangeScene(const std::string& sceneName) {
 
 	// シーンを変えるときにIDを全てリセット
 	ObjectIDManager::GetInstance()->ResetAllCounters();
+	// ライトを平行光源しか存在しない状態にリセット
+	LightManager::GetInstance()->ResetToDefault();
 
 	// 新しいシーンの設定
 	currentScene_ = scenes_[sceneName].get();

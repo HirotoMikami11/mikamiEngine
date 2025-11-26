@@ -146,7 +146,7 @@ void Wall::Draw(const Light& light)
 
 		if (i == 0) continue;
 
-		if (walls_[i].obj) walls_[i].obj->Draw(light);
+		if (walls_[i].obj) walls_[i].obj->Draw();
 	}
 }
 

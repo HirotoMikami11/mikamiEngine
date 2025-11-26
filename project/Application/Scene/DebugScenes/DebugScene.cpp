@@ -64,17 +64,29 @@ void DebugScene::InitializeGameObjects() {
 	terrain_ = std::make_unique<Model3D>();
 	terrain_->Initialize(dxCommon_, "model_terrain");
 	terrain_->SetTransform(transformTerrain);
+	///*-----------------------------------------------------------------------*///
+	///								ライト									///
+	///*-----------------------------------------------------------------------*///
 
-	///*-----------------------------------------------------------------------*///
-	///									ライト									///
-	///*-----------------------------------------------------------------------*///
-	directionalLight_.Initialize(dxCommon_, Light::Type::DIRECTIONAL);
+	// シーン内で平行光源を取得して編集
+	DirectionalLight& dirLight = LightManager::GetInstance()->GetDirectionalLight();
+	dirLight.SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });	// 黒い光
+
+	// ポイントライト: 青い光
+	Pointlight_ = LightManager::GetInstance()->AddPointLight(
+		{ -5.0f, 2.0f, 0.0f },			//座標
+		{ 0.3f, 0.3f, 1.0f, 1.0f },		// 青色
+		2.0f,							// 強度
+		15.0f,							// 影響範囲
+		2.0f							// 減衰率
+	);
+
 }
 
 void DebugScene::Update() {
 	// カメラ更新
 	cameraController_->Update();
-
+	
 	// ゲームオブジェクト更新
 	UpdateGameObjects();
 }
@@ -86,7 +98,8 @@ void DebugScene::UpdateGameObjects() {
 	sphere_->Update(viewProjectionMatrix);
 	// 地面の更新
 	terrain_->Update(viewProjectionMatrix);
-
+	//ライトの座標を地面に合わせる
+	Pointlight_->SetPosition(terrain_->GetPosition());
 
 }
 
@@ -96,14 +109,14 @@ void DebugScene::DrawOffscreen() {
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	/// 
 	// 球体の描画
-	sphere_->Draw(directionalLight_);
+	sphere_->Draw();
 	// 地面の描画
-	terrain_->Draw(directionalLight_);
+	terrain_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
 	/// 
-	
+
 
 }
 
@@ -132,12 +145,6 @@ void DebugScene::ImGui() {
 	ImGui::Spacing();
 	ImGui::Text("Terrain");
 	terrain_->ImGui();
-
-	ImGui::Spacing();
-	// ライトのImGui
-	ImGui::Text("Lighting");
-	directionalLight_.ImGui("DirectionalLight");
-
 #endif
 }
 

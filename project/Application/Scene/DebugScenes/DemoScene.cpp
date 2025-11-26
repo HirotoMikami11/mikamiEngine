@@ -143,10 +143,6 @@ void DemoScene::InitializeGameObjects() {
 	sprite_ = std::make_unique<Sprite>();
 	sprite_->Initialize(dxCommon_, "uvChecker", { 50, 50 }, { 100, 100 });
 
-	///*-----------------------------------------------------------------------*///
-	///									ライト									///
-	///*-----------------------------------------------------------------------*///
-	directionalLight_.Initialize(dxCommon_, Light::Type::DIRECTIONAL);
 }
 
 void DemoScene::Update() {
@@ -209,19 +205,19 @@ void DemoScene::DrawOffscreen() {
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	/// 
 	// 球体の描画
-	sphere_->Draw(directionalLight_);
+	sphere_->Draw();
 	//平面の描画
-	plane_->Draw(directionalLight_);
+	plane_->Draw();
 	//マルチメッシュモデルの描画
-	modelMultiMesh_->Draw(directionalLight_);
+	modelMultiMesh_->Draw();
 	//マルチマテリアルモデルの描画
-	modelMultiMaterial_->Draw(directionalLight_);
+	modelMultiMaterial_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
 	/// 
 	// パーティクルシステムの描画（全グループ）
-	particleSystem_->Draw(directionalLight_);
+	particleSystem_->Draw();
 
 }
 
@@ -267,14 +263,8 @@ void DemoScene::ImGui() {
 
 	ImGui::Spacing();
 	// パーティクルエディタ（統合UI）
-	ImGui::Text("Particle Editorhanaku");
+	ImGui::Text("Particle Editor");
 	particleEditor_->ImGui();
-
-	ImGui::Spacing();
-	// ライトのImGui
-	ImGui::Text("Lighting");
-	directionalLight_.ImGui("DirectionalLight");
-
 
 #endif
 }

@@ -32,7 +32,7 @@ void BaseParts::Draw(const Light& directionalLight) {
 	DebugLineAdd();
 #endif
 
-	gameObject_->Draw(directionalLight);
+gameObject_->Draw();
 }
 
 void BaseParts::ImGui(const char* label) {

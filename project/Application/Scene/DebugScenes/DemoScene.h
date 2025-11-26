@@ -58,7 +58,7 @@ private:
 	ParticleEditor* particleEditor_;
 
 	// ライティング
-	Light directionalLight_;
+
 
 	// カメラ
 	CameraController* cameraController_;

@@ -312,7 +312,7 @@ void Player::DeleteBullets() {
 
 void Player::Draw(const Light& directionalLight) {
 	// 球体の描画
-	gameObject_->Draw(directionalLight);
+gameObject_->Draw();
 
 	// 弾の描画
 	for (auto& bullet : bullets_) {

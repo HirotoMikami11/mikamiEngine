@@ -95,7 +95,7 @@ void BossBullet::Draw(const Light& directionalLight) {
 	DebugLineAdd();
 #endif
 
-	gameObject_->Draw(directionalLight);
+	gameObject_->Draw();
 }
 
 void BossBullet::OnCollision(Collider* other) {

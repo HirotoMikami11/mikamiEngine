@@ -122,6 +122,7 @@ private:
 	DebugDrawLineSystem* debugDrawManager_;
 	JsonSettings* jsonSettings_;
 
+
 	// カメラコントローラー
 	CameraController* cameraController_;
 

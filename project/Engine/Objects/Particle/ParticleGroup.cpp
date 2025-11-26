@@ -2,6 +2,7 @@
 #include "ParticleGroup.h"
 #include "BaseField.h"
 #include "ImGui/ImGuiManager.h"
+#include "LightManager.h"
 #include "Logger.h"
 #include <algorithm>
 
@@ -210,7 +211,7 @@ void ParticleGroup::UpdateParticleForGPUBuffer(const Matrix4x4& viewProjectionMa
 	}
 }
 
-void ParticleGroup::Draw(const Light& directionalLight)
+void ParticleGroup::Draw()
 {
 	if (!sharedModel_ || !sharedModel_->IsValid()) {
 		return;
@@ -249,9 +250,10 @@ void ParticleGroup::Draw(const Light& directionalLight)
 				textureManager_->GetTextureHandle(sharedModel_->GetTextureTagName(materialIndex)));
 		}
 
-		// ライトの設定
-		commandList->SetGraphicsRootConstantBufferView(3,
-			directionalLight.GetResource()->GetGPUVirtualAddress());
+
+		// ライトを設定（LightManagerから取得）
+		LightManager* lightManager = LightManager::GetInstance();
+		commandList->SetGraphicsRootConstantBufferView(3, lightManager->GetLightingResource()->GetGPUVirtualAddress());
 
 		// メッシュをバインドして描画（アクティブなパーティクル数を指定）
 		const_cast<Mesh&>(mesh).Bind(commandList);
