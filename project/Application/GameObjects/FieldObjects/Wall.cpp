@@ -140,7 +140,7 @@ void Wall::Update(const Matrix4x4& viewProjectionMatrix)
 	}
 }
 
-void Wall::Draw(const Light& light)
+void Wall::Draw()
 {
 	for (int i = 0; i < 4; ++i) {
 

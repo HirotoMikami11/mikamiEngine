@@ -57,13 +57,13 @@ void PlayerBullet::Update(const Matrix4x4& viewProjectionMatrix) {
 	gameObject_->Update(viewProjectionMatrix);
 }
 
-void PlayerBullet::Draw(const Light& directionalLight) {
+void PlayerBullet::Draw() {
 	// デバッグ表示が有効な場合、コライダーを描画
 #ifdef USEIMGUI
 	DebugLineAdd();
 #endif
 	if (!isDead_) {
-	gameObject_->Draw();
+		gameObject_->Draw();
 	}
 }
 

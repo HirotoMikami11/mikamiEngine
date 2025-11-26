@@ -33,9 +33,10 @@ void Ground::Update(const Matrix4x4& viewProjectionMatrix) {
 	gameObject_->Update(viewProjectionMatrix);
 }
 
-void Ground::Draw(const Light& directionalLight) {
+void Ground::Draw() {
 	// 地面の描画
-gameObject_->Draw();
+	gameObject_->Draw();
+
 }
 
 void Ground::ImGui()

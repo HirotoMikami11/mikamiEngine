@@ -56,10 +56,6 @@ private:
 	std::unique_ptr<Boss> boss_;
 	std::unique_ptr<Wall> wall_;
 
-
-	// ライティング
-	Light directionalLight_;
-
 	// カメラ
 	CameraController* cameraController_;
 	Matrix4x4 viewProjectionMatrix;

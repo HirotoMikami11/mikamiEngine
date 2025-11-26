@@ -75,10 +75,6 @@ void GameScene::InitializeGameObjects() {
 	boss_ = std::make_unique<Boss>();
 	boss_->Initialize(dxCommon_, { -10.0f,1.5f, 0.0f });
 
-	///*-----------------------------------------------------------------------*///
-	///									ライト									///
-	///*-----------------------------------------------------------------------*///
-	directionalLight_.Initialize(dxCommon_, Light::Type::DIRECTIONAL);
 }
 
 void GameScene::Update() {
@@ -164,14 +160,14 @@ void GameScene::DrawOffscreen() {
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	/// 
 	// 自機の描画
-	player_->Draw(directionalLight_);
+	player_->Draw();
 
 	// ボスの描画
-	boss_->Draw(directionalLight_);
+	boss_->Draw();
 
 
-	ground_->Draw(directionalLight_);
-	wall_->Draw(directionalLight_);
+	ground_->Draw();
+	wall_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -216,12 +212,6 @@ void GameScene::ImGui() {
 	ImGui::Spacing();
 	ImGui::Text("Wall");
 	wall_->ImGui();
-
-	ImGui::Spacing();
-	// ライトのImGui
-	ImGui::Text("Lighting");
-	directionalLight_.ImGui("DirectionalLight");
-
 #endif
 }
 

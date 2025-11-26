@@ -167,19 +167,19 @@ void Boss::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPr
 	}
 
 }
-void Boss::Draw(const Light& directionalLight) {
+void Boss::Draw() {
 	// 全パーツを描画
 	if (head_) {
-		head_->Draw(directionalLight);
+		head_->Draw();
 	}
 	for (auto& body : bodies_) {
-		body->Draw(directionalLight);
+		body->Draw();
 	}
 	if (tail_) {
-		tail_->Draw(directionalLight);
+		tail_->Draw();
 	}
 
-	DrawBullets(directionalLight);
+	DrawBullets();
 
 	if (splineDebugger_) {
 		splineDebugger_->Draw();
@@ -782,8 +782,8 @@ void Boss::UpdateBullets(const Matrix4x4& viewProjectionMatrix) {
 	bulletPool_->Update(viewProjectionMatrix);
 }
 
-void Boss::DrawBullets(const Light& directionalLight) {
-	bulletPool_->Draw(directionalLight);
+void Boss::DrawBullets() {
+	bulletPool_->Draw();
 }
 
 std::vector<BossBullet*> Boss::GetActiveBullets() const {

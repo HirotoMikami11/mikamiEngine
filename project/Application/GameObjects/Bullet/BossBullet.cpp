@@ -84,7 +84,7 @@ void BossBullet::Update(const Matrix4x4& viewProjectionMatrix) {
 	gameObject_->Update(viewProjectionMatrix);
 }
 
-void BossBullet::Draw(const Light& directionalLight) {
+void BossBullet::Draw() {
 	// 非アクティブなら描画しない
 	if (isDead_) {
 		return;

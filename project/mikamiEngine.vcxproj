@@ -161,6 +161,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObjects\Bullet\BossBulletPool.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\DemoScene.cpp" />
+    <ClCompile Include="Application\Scene\GameScenes\GameClearScene.cpp" />
+    <ClCompile Include="Application\Scene\GameScenes\GameOverScene.cpp" />
+    <ClCompile Include="Application\Scene\GameScenes\GameScene.cpp" />
+    <ClCompile Include="Application\Scene\GameScenes\SelectScene.cpp" />
     <ClCompile Include="Engine\Objects\Light\DirectionalLight.cpp" />
     <ClCompile Include="Engine\Objects\Light\PointLight.cpp" />
     <ClCompile Include="Engine\OffscreenRenderer\EffectFunc\DamageVignette.cpp" />
@@ -381,6 +385,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObjects\Bullet\BossBulletPool.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DebugSphere.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h" />
+    <ClInclude Include="Application\Scene\GameScenes\GameClearScene.h" />
+    <ClInclude Include="Application\Scene\GameScenes\GameOverScene.h" />
+    <ClInclude Include="Application\Scene\GameScenes\GameScene.h" />
+    <ClInclude Include="Application\Scene\GameScenes\SelectScene.h" />
     <ClInclude Include="Engine\Objects\Light\DirectionalLight.h" />
     <ClInclude Include="Engine\Objects\Light\LightBase.h" />
     <ClInclude Include="Engine\Objects\Light\PointLight.h" />

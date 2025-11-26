@@ -37,8 +37,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	/// <param name="directionalLight">平行光源</param>
-	void Draw(const Light& directionalLight);
+	void Draw();
 
 	/// <summary>
 	/// オフスクリーン外に描画

@@ -4,10 +4,10 @@
 #include "DebugScenes/DebugScene.h"
 //必要なシーン郡
 #include "GameScenes/TitleScene.h"
-//#include "GameScenes/SelectScene.h"
-//#include "GameScenes/GameScene.h"
-//#include "GameScenes/GameClearScene.h"
-//#include "GameScenes/GameOverScene.h"
+#include "GameScenes/SelectScene.h"
+#include "GameScenes/GameScene.h"
+#include "GameScenes/GameClearScene.h"
+#include "GameScenes/GameOverScene.h"
 
 
 Game::Game() :
@@ -48,17 +48,17 @@ void Game::InitializeScenes() {
 	auto titleScene = std::make_unique<TitleScene>();
 	sceneManager_->RegisterScene("TitleScene", std::move(titleScene));
 
-	//auto selectScene = std::make_unique<SelectScene>();
-	//sceneManager_->RegisterScene("SelectScene", std::move(selectScene));
+	auto selectScene = std::make_unique<SelectScene>();
+	sceneManager_->RegisterScene("SelectScene", std::move(selectScene));
 
-	//auto gameScene = std::make_unique<GameScene>();
-	//sceneManager_->RegisterScene("GameScene", std::move(gameScene));
+	auto gameScene = std::make_unique<GameScene>();
+	sceneManager_->RegisterScene("GameScene", std::move(gameScene));
 
-	//auto gameClearScene = std::make_unique<GameClearScene>();
-	//sceneManager_->RegisterScene("GameClearScene", std::move(gameClearScene));
+	auto gameClearScene = std::make_unique<GameClearScene>();
+	sceneManager_->RegisterScene("GameClearScene", std::move(gameClearScene));
 
-	//auto gameOverScene = std::make_unique<GameOverScene>();
-	//sceneManager_->RegisterScene("GameOverScene", std::move(gameOverScene));
+	auto gameOverScene = std::make_unique<GameOverScene>();
+	sceneManager_->RegisterScene("GameOverScene", std::move(gameOverScene));
 
 	// デフォルトシーンを設定（最初に表示するシーン）
 	sceneManager_->ChangeScene("TitleScene");
