@@ -19,13 +19,13 @@ void Ground::Initialize(DirectXCommon* dxCommon, const Vector3& position)
 
 	// 初期位置設定
 	Vector3Transform defaultTransform{
-		{60.0f, 1.0f, 60.0f},	// scale
+		{75.0f, 1.0f, 75.0f},	// scale
 		{0.0f, 0.0f, 0.0f},	// rotate
 		position			// translate
 	};
 	gameObject_->SetTransform(defaultTransform);
 
-	gameObject_->SetColor(0xA8A8A8FF);
+	gameObject_->SetColor(0x766F6FFF);
 }
 
 void Ground::Update(const Matrix4x4& viewProjectionMatrix) {

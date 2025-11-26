@@ -683,11 +683,12 @@ void ParticleEditor::ShowPresetsTab()
 	ImGui::Spacing();
 
 	// 新しいプリセット名入力
+	ImGui::Text("Saving Preset");
 	ImGui::InputText("Preset Name", newPresetName, 128);
 	ImGui::Spacing();
 
 	// 保存ボタン
-	if (ImGui::Button("Save Current State", ImVec2(200, 0))) {
+	if (ImGui::Button("Save All", ImVec2(200, 0))) {
 		if (strlen(newPresetName) > 0) {
 			if (SaveCurrentStateAsPreset(newPresetName)) {
 				Logger::Log(Logger::GetStream(),

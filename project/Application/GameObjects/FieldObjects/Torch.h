@@ -1,6 +1,7 @@
 #pragma once
 #include "Object3D.h"
 #include "DirectXCommon.h"
+#include "ParticleEditor.h"
 #include <array>
 
 /// <summary>
@@ -92,4 +93,5 @@ private:
 
 	// JsonSettingsのグループパス
 	const std::vector<std::string> kGroupPath_ = { "Torch" };
+	ParticlePresetInstance* particleInstance_[12];
 };

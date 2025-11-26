@@ -164,7 +164,7 @@ private:
 	bool isUse_ = false;  // 使用するか
 
 	// グリッド設定
-	bool isGridVisible_ = true;  // デフォルトで表示
+	bool isGridVisible_ = false;  // デフォルトで表示
 	GridLineType gridType_ = GridLineType::XZ;
 	Vector3 gridCenter_ = { 0.0f, 0.0f, 0.0f };
 	float gridSize_ = 100.0f;

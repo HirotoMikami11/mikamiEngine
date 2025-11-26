@@ -40,6 +40,14 @@ void DemoScene::Initialize() {
 	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
 
+	// ParticleSystemシングルトンを取得
+	particleSystem_ = ParticleSystem::GetInstance();
+	particleSystem_->Initialize(dxCommon_);
+
+	// ParticleEditorシングルトンを取得
+	particleEditor_ = ParticleEditor::GetInstance();
+	particleEditor_->Initialize(dxCommon_);
+
 	///*-----------------------------------------------------------------------*///
 	///								カメラの初期化									///
 	///*-----------------------------------------------------------------------*///
@@ -111,16 +119,10 @@ void DemoScene::InitializeGameObjects() {
 	modelMultiMaterial_->SetTransform(transformMultiMaterial);
 
 	///*-----------------------------------------------------------------------*///
-	///			パーティクルシステム - エディタ										///
+	///			パーティクル										///
 	///*-----------------------------------------------------------------------*///
 #pragma region パーティクル
-	// ParticleSystemシングルトンを取得
-	particleSystem_ = ParticleSystem::GetInstance();
-	particleSystem_->Initialize(dxCommon_);
 
-	// ParticleEditorシングルトンを取得
-	particleEditor_ = ParticleEditor::GetInstance();
-	particleEditor_->Initialize(dxCommon_);
 
 	// 中央エフェクト（上向き発射 + 上昇フィールド）
 	particleEditor_->CreateInstance("CenterEffect", "Center");
@@ -133,6 +135,7 @@ void DemoScene::InitializeGameObjects() {
 
 	//砂煙パーティクル
 	particleEditor_->CreateInstance("WalkSmokeEffect", "Smoke1");
+	particleEditor_->CreateInstance("WalkSmokeEffect", "Smoke2");
 
 #pragma endregion
 
@@ -183,8 +186,8 @@ void DemoScene::UpdateGameObjects() {
 	}
 
 	//// 座標を変更したい場合は以下のようにアクセス可能
-	//auto* centerInstance = particleEditor_->GetInstance("Center");
-	//centerInstance->GetEmitter("CenterEmitter")->GetTransform().SetPosition(sphere_->GetPosition());
+	auto* centerInstance = particleEditor_->GetInstance("Center");
+	centerInstance->GetEmitter("CenterEmitter")->GetTransform().SetPosition(sphere_->GetPosition());
 
 	plane_->SetPosition(planePosition);
 	plane_->Update(viewProjectionMatrix);

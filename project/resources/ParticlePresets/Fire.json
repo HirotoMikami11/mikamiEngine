@@ -13,7 +13,7 @@
                 1.0,
                 0.0
             ],
-            "emitFrequency": 0.03999999910593033,
+            "emitFrequency": 0.05999999865889549,
             "emitterLifeTime": 5.0,
             "emitterLifeTimeLoop": false,
             "emitterName": "FireEmitter",
@@ -86,7 +86,7 @@
                 1.0,
                 1.0
             ],
-            "showDebugAABB": true,
+            "showDebugAABB": false,
             "spawnArea": {
                 "max": [
                     0.5,
@@ -110,7 +110,7 @@
     "groups": [
         {
             "groupName": "FireParticle",
-            "maxParticles": 402,
+            "maxParticles": 400,
             "modelTag": "plane",
             "textureName": "circle",
             "useBillboard": true

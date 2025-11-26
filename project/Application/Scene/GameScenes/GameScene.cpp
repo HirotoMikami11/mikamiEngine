@@ -38,6 +38,14 @@ void GameScene::Initialize() {
 	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
 
+	// ParticleSystemシングルトンを取得
+	particleSystem_ = ParticleSystem::GetInstance();
+	particleSystem_->Initialize(dxCommon_);
+
+	// ParticleEditorシングルトンを取得
+	particleEditor_ = ParticleEditor::GetInstance();
+	particleEditor_->Initialize(dxCommon_);
+
 	///*-----------------------------------------------------------------------*///
 	///								カメラの初期化									///
 	///*-----------------------------------------------------------------------*///
@@ -80,23 +88,22 @@ void GameScene::InitializeGameObjects() {
 	boss_ = std::make_unique<Boss>();
 	boss_->Initialize(dxCommon_, { -10.0f,1.5f, 0.0f });
 	///*-----------------------------------------------------------------------*///
-	///			パーティクルシステム - エディタ										///
+	///			パーティクル										///
 	///*-----------------------------------------------------------------------*///
 #pragma region パーティクル
-	// ParticleSystemシングルトンを取得
-	particleSystem_ = ParticleSystem::GetInstance();
-	particleSystem_->Initialize(dxCommon_);
 
-	// ParticleEditorシングルトンを取得
-	particleEditor_ = ParticleEditor::GetInstance();
-	particleEditor_->Initialize(dxCommon_);
-
-	//砂煙パーティクル
-	particleEditor_->CreateInstance("WalkSmokeEffect", "Smoke1");
+	////砂煙パーティクル
+	//particleEditor_->CreateInstance("WalkSmokeEffect", "Smoke1");
 
 
 #pragma endregion
+	///*-----------------------------------------------------------------------*///
+	///								ライト									///
+	///*-----------------------------------------------------------------------*///
 
+	// シーン内で平行光源を取得して編集
+	DirectionalLight& dirLight = LightManager::GetInstance()->GetDirectionalLight();
+	dirLight.SetIntensity(0.35f);
 
 }
 
@@ -250,7 +257,7 @@ void GameScene::ImGui() {
 
 	ImGui::Spacing();
 	// パーティクルエディタ（統合UI）
-	ImGui::Text("Particle Editorhanaku");
+	ImGui::Text("Particle Editor");
 	particleEditor_->ImGui();
 
 #endif

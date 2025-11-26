@@ -2,6 +2,8 @@
 #include "ImGui/ImGuiManager.h"
 #include "JsonSettings.h"
 #include <numbers>
+#include "LightManager.h"
+
 
 Torch::Torch()
 	: dxCommon_(nullptr)
@@ -81,6 +83,41 @@ void Torch::Initialize(DirectXCommon* dxCommon)
 
 	// 初回 transform 計算＆適用
 	UpdateTransforms();
+
+	LightManager* lightManager = LightManager::GetInstance();
+	// 各トーチにポイントライトを追加
+	for (int i = 0; i < kTorchCount_; ++i) {
+		lightManager->AddPointLight(
+			positions_[i],
+			Vector4{ 1.0f, 0.5f, 0.0f, 1.0f }, // オレンジ色
+			1.0f,
+			10.0f,
+			2.0f
+		);
+	}
+	ParticleEditor* particleEditor = ParticleEditor::GetInstance();
+
+	// 各トーチに火パーティクルを追加
+	for (int i = 0; i < kTorchCount_; i++)
+	{
+		std::string instanceName = std::format("Fire[{}]", i);
+
+		// 既存インスタンスがあれば削除（重複回避）
+		auto* existingInstance = particleEditor->GetInstance(instanceName);
+		if (existingInstance) {
+			particleEditor->DestroyInstance(instanceName);
+		}
+
+		particleEditor->CreateInstance("Fire", instanceName);
+		particleInstance_[i] = particleEditor->GetInstance(instanceName);
+
+		if (particleInstance_[i]) {
+			particleInstance_[i]->GetEmitter("FireEmitter")->GetTransform().SetPosition(positions_[i]);
+		}
+	}
+
+
+
 }
 
 void Torch::SaveToJson()
