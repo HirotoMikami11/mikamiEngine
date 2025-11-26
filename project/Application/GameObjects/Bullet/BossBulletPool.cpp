@@ -50,11 +50,11 @@ void BossBulletPool::Update(const Matrix4x4& viewProjectionMatrix) {
 	}
 }
 
-void BossBulletPool::Draw(const Light& directionalLight) {
+void BossBulletPool::Draw() {
 	// アクティブな弾のみ描画
 	for (size_t i = 0; i < bulletPool_.size(); ++i) {
 		if (isActive_[i]) {
-			bulletPool_[i]->Draw(directionalLight);
+			bulletPool_[i]->Draw();
 		}
 	}
 }

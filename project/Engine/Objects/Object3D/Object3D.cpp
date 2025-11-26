@@ -1,6 +1,5 @@
 #include "Object3D.h"
 #include "ImGui/ImGuiManager.h"
-#include "Object3DCommon.h"
 #include "CameraController.h"
 
 void Object3D::Initialize(DirectXCommon* dxCommon, const std::string& modelTag, const std::string& textureName) {
@@ -32,21 +31,13 @@ void Object3D::Update(const Matrix4x4& viewProjectionMatrix) {
 	materials_.UpdateAllUVTransforms();
 }
 
-void Object3D::Draw(const Light& directionalLight) {
+void Object3D::Draw() {
 	if (!sharedModel_ || !sharedModel_->IsValid()) {
 		return;
 	}
 
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
-	object3DCommon_->setCommonRenderSettings(commandList);
-
-	// ライトを設定
-	commandList->SetGraphicsRootConstantBufferView(3, directionalLight.GetResource()->GetGPUVirtualAddress());
-	// カメラを設定
-	ID3D12Resource* cameraResource = CameraController::GetInstance()->GetCameraForGPUResource();
-	if (cameraResource) {
-		commandList->SetGraphicsRootConstantBufferView(4, cameraResource->GetGPUVirtualAddress());
-	}
+	object3DCommon_->setCommonRenderSettings();
 
 	// トランスフォームを設定
 	commandList->SetGraphicsRootConstantBufferView(1, transform_.GetResource()->GetGPUVirtualAddress());

@@ -12,7 +12,7 @@ public:
 
 	void Initialize(DirectXCommon* dxCommon);
 	void Update(const Matrix4x4& viewProjectionMatrix);
-	void Draw(const Light& light);
+	void Draw();
 	void ImGui();
 
 	void SetAreaSize(const Vector2& areaSize);

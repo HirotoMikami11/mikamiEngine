@@ -51,7 +51,6 @@ private:
 	std::unique_ptr<ModelFont> pressA_;
 
 	// ライティング
-	Light directionalLight_;
 
 	// カメラ
 	CameraController* cameraController_;

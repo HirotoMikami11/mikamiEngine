@@ -47,9 +47,6 @@ private:
 	std::unique_ptr<ModelFont> clearFont_;
 	std::unique_ptr<ModelFont> pressA_;
 
-	// ライティング
-	Light directionalLight_;
-
 	// カメラ
 	CameraController* cameraController_;
 	Matrix4x4 viewProjectionMatrix;

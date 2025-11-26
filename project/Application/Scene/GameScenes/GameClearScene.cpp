@@ -55,10 +55,6 @@ void GameClearScene::InitializeGameObjects() {
 	pressA_ = std::make_unique<ModelFont>();
 	pressA_->Initialize(dxCommon_, "pressAFont", pressAPos);
 
-	///*-----------------------------------------------------------------------*///
-	///									ライト									///
-	///*-----------------------------------------------------------------------*///
-	directionalLight_.Initialize(dxCommon_, Light::Type::DIRECTIONAL);
 }
 
 void GameClearScene::Update() {
@@ -92,8 +88,8 @@ void GameClearScene::DrawOffscreen() {
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	/// 
 	// フォントの描画
-	clearFont_->Draw(directionalLight_);
-	pressA_->Draw(directionalLight_);
+	clearFont_->Draw();
+	pressA_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -127,11 +123,6 @@ void GameClearScene::ImGui() {
 	ImGui::Text("Fonts");
 	clearFont_->ImGui();
 	pressA_->ImGui();
-
-	ImGui::Spacing();
-	// ライトのImGui
-	ImGui::Text("Lighting");
-	directionalLight_.ImGui("DirectionalLight");
 
 #endif
 }

@@ -34,9 +34,9 @@ void ModelFont::Update(const Matrix4x4& viewProjectionMatrix) {
 	gameObject_->Update(viewProjectionMatrix);
 }
 
-void ModelFont::Draw(const Light& directionalLight) {
+void ModelFont::Draw() {
 	// 地面の描画
-	gameObject_->Draw(directionalLight);
+	gameObject_->Draw();
 }
 
 void ModelFont::ImGui()

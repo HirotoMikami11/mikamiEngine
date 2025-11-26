@@ -28,8 +28,7 @@ public:
 	/// <summary>
 	/// 描画（純粋仮想関数）
 	/// </summary>
-	/// <param name="directionalLight">平行光源</param>
-	virtual void Draw(const Light& directionalLight) = 0;
+	virtual void Draw() = 0;
 
 	/// <summary>
 	/// 死亡フラグを取得

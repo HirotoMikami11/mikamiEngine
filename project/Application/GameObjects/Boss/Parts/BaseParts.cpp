@@ -26,13 +26,13 @@ void BaseParts::Update(const Matrix4x4& viewProjectionMatrix) {
 	gameObject_->Update(viewProjectionMatrix);
 }
 
-void BaseParts::Draw(const Light& directionalLight) {
+void BaseParts::Draw() {
 	// デバッグ表示が有効な場合、コライダーを描画
 #ifdef USEIMGUI
 	DebugLineAdd();
 #endif
 
-	gameObject_->Draw(directionalLight);
+	gameObject_->Draw();
 }
 
 void BaseParts::ImGui(const char* label) {

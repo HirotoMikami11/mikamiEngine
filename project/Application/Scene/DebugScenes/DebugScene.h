@@ -48,12 +48,13 @@ private:
 	std::unique_ptr<DebugSphere> sphere_;
 	std::unique_ptr<Model3D> terrain_;
 
-	// ライティング
-	Light directionalLight_;
 
 	// カメラ
 	CameraController* cameraController_;
 	Matrix4x4 viewProjectionMatrix;
+
+	//ライティング
+	PointLight* Pointlight_;
 
 	// システム参照
 	DirectXCommon* dxCommon_;

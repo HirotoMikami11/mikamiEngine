@@ -4,11 +4,12 @@
 #include "DirectXCommon.h"
 
 #include "Sprite.h"
-#include "Light.h"
+#include "LightManager.h"
 #include "Object3D.h"
 #include "CameraController.h"
 #include "ParticleSystem.h"
 #include "ParticleEditor.h"
+
 
 /// <summary>
 /// シーンの基底クラス

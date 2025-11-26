@@ -7,9 +7,8 @@
 #include "ParticleGroup.h"
 #include "ParticleEmitter.h"
 #include "BaseField.h"
-#include "Light.h"
 #include "CameraController.h"
-
+#include "ParticleCommon.h"
 
 
 /// <summary>
@@ -43,8 +42,7 @@ public:
 	/// <summary>
 	/// 全グループの描画
 	/// </summary>
-	/// <param name="directionalLight">平行光源</param>
-	void Draw(const Light& directionalLight);
+	void Draw();
 
 	/// <summary>
 	/// ImGui用のデバッグ表示
@@ -199,4 +197,5 @@ private:
 	// システム参照
 	DirectXCommon* dxCommon_ = nullptr;
 	CameraController* cameraController_ = CameraController::GetInstance();
+	ParticleCommon* particleCommon_ = ParticleCommon::GetInstance();
 };

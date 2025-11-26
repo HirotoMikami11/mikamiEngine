@@ -86,16 +86,6 @@ void Game::Update() {
 	if (sceneManager_) {
 		sceneManager_->Update();
 	}
-
-	// シーンマネージャーのImGui更新
-	if (sceneManager_) {
-		sceneManager_->ImGui();
-	}
-	// トランジションマネージャーのImGui
-	if (transitionManager_) {
-		//　TODO:imgui必要に応じて作成
-		// 	transitionManager_->ImGui();
-	}
 }
 
 void Game::DrawOffscreen() {
@@ -115,6 +105,20 @@ void Game::DrawBackBuffer() {
 	if (transitionManager_) {
 		transitionManager_->Draw();
 	}
+}
+
+void Game::ImGui()
+{
+	// シーンマネージャーのImGui更新
+	if (sceneManager_) {
+		sceneManager_->ImGui();
+	}
+	// トランジションマネージャーのImGui
+	if (transitionManager_) {
+		//　TODO:imgui必要に応じて作成
+		// 	transitionManager_->ImGui();
+	}
+
 }
 
 void Game::Finalize() {

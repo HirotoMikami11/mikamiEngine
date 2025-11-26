@@ -1,7 +1,5 @@
 #pragma once
 #include "Object3D.h"
-#include "Light.h"
-#include "MyMath.h"
 #include "Collider.h"
 
 using namespace MyMath;
@@ -30,8 +28,7 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	/// <param name="directionalLight">平行光源</param>
-	virtual void Draw(const Light& directionalLight);
+	virtual void Draw();
 
 	/// <summary>
 	/// ImGui表示

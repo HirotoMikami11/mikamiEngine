@@ -60,10 +60,10 @@ void DebugSphere::Update(const Matrix4x4& viewProj)
 	}
 }
 
-void DebugSphere::Draw(Light& light)
+void DebugSphere::Draw()
 {
 	for (auto& s : spheres_) {
-		s->Draw(light);
+		s->Draw();
 	}
 }
 

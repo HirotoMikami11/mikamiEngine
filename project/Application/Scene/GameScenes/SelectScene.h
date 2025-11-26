@@ -47,9 +47,6 @@ private:
 	// ゲームオブジェクト
 	std::unique_ptr<Sphere> sphere_;
 
-	// ライティング
-	Light directionalLight_;
-
 	// カメラ
 	CameraController* cameraController_;
 	Matrix4x4 viewProjectionMatrix;

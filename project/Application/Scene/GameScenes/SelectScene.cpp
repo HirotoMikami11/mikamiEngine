@@ -66,10 +66,6 @@ void SelectScene::InitializeGameObjects() {
 	sphere_->Initialize(dxCommon_, "sphere", "monsterBall");
 	sphere_->SetTransform(transformSphere);
 
-	///*-----------------------------------------------------------------------*///
-	///									ライト									///
-	///*-----------------------------------------------------------------------*///
-	directionalLight_.Initialize(dxCommon_, Light::Type::DIRECTIONAL);
 }
 
 void SelectScene::Update() {
@@ -119,7 +115,7 @@ void SelectScene::DrawOffscreen() {
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	/// 
 	// 球体の描画
-	sphere_->Draw(directionalLight_);
+	sphere_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -147,11 +143,6 @@ void SelectScene::ImGui() {
 	ImGui::Spacing();
 	ImGui::Text("Sphere");
 	sphere_->ImGui();
-
-	ImGui::Spacing();
-	// ライトのImGui
-	ImGui::Text("Lighting");
-	directionalLight_.ImGui("DirectionalLight");
 
 #endif
 }

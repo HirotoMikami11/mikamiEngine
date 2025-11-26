@@ -49,8 +49,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	/// <param name="directionalLight">平行光源</param>
-	void Draw(const Light& directionalLight) override;
+	void Draw() override;
 
 	/// <summary>
 	/// 衝突時に呼ばれる関数（オーバーライド）

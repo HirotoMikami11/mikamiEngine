@@ -51,8 +51,7 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	/// <param name="directionalLight">平行光源</param>
-	void Draw(const Light& directionalLight);
+	void Draw();
 
 	/// <summary>
 	/// オフスクリーン外に描画
@@ -127,8 +126,7 @@ public:
 	/// <summary>
 	/// 全ての弾を描画
 	/// </summary>
-	/// <param name="directionalLight">平行光源</param>
-	void DrawBullets(const Light& directionalLight);
+	void DrawBullets();
 
 	/// <summary>
 	/// アクティブな弾のリストを取得（当たり判定用）

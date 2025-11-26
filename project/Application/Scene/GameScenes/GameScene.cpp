@@ -94,10 +94,7 @@ void GameScene::InitializeGameObjects() {
 
 #pragma endregion
 
-	///*-----------------------------------------------------------------------*///
-	///									ライト									///
-	///*-----------------------------------------------------------------------*///
-	directionalLight_.Initialize(dxCommon_, Light::Type::DIRECTIONAL);
+
 }
 
 void GameScene::Update() {
@@ -186,14 +183,14 @@ void GameScene::DrawOffscreen() {
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	/// 
 	// 自機の描画
-	player_->Draw(directionalLight_);
+	player_->Draw();
 
 	// ボスの描画
-	boss_->Draw(directionalLight_);
+	boss_->Draw();
 
 
-	ground_->Draw(directionalLight_);
-	wall_->Draw(directionalLight_);
+	ground_->Draw();
+	wall_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -245,13 +242,6 @@ void GameScene::ImGui() {
 	// パーティクルエディタ（統合UI）
 	ImGui::Text("Particle Editorhanaku");
 	particleEditor_->ImGui();
-
-
-
-	ImGui::Spacing();
-	// ライトのImGui
-	ImGui::Text("Lighting");
-	directionalLight_.ImGui("DirectionalLight");
 
 #endif
 }

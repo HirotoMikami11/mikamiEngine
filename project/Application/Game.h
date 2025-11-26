@@ -1,7 +1,6 @@
 #pragma once
 /// 				Scene							///
 #include "SceneManager.h"
-
 /// 				Transitions							///
 #include "TransitionManager.h"
 #include "SceneTransitionHelper.h"
@@ -28,6 +27,8 @@ public:
 	/// UI描画（オフスクリーン外）
 	/// </summary>
 	void DrawBackBuffer();
+
+	void ImGui();
 
 	void Finalize();
 

@@ -58,7 +58,6 @@ void TitleScene::InitializeGameObjects() {
 	///*-----------------------------------------------------------------------*///
 	///									ライト									///
 	///*-----------------------------------------------------------------------*///
-	directionalLight_.Initialize(dxCommon_, Light::Type::DIRECTIONAL);
 }
 
 void TitleScene::Update() {
@@ -94,8 +93,8 @@ void TitleScene::DrawOffscreen() {
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	/// 
 	// 球体の描画
-	titleRogo_->Draw(directionalLight_);
-	pressA_->Draw(directionalLight_);
+	titleRogo_->Draw();
+	pressA_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -125,12 +124,6 @@ void TitleScene::ImGui() {
 	ImGui::Text("titleRogo");
 	titleRogo_->ImGui();
 	pressA_->ImGui();
-
-	ImGui::Spacing();
-	// ライトのImGui
-	ImGui::Text("Lighting");
-	directionalLight_.ImGui("DirectionalLight");
-
 #endif
 }
 

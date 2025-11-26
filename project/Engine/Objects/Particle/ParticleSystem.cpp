@@ -53,11 +53,13 @@ void ParticleSystem::Update(const Matrix4x4& viewProjectionMatrix)
 	}
 }
 
-void ParticleSystem::Draw(const Light& directionalLight)
+void ParticleSystem::Draw()
 {
+	// 共通の描画設定をセット
+	particleCommon_->setCommonRenderSettings();
 	// すべてのグループを描画
 	for (auto& [groupName, group] : groups_) {
-		group->Draw(directionalLight);
+		group->Draw();
 	}
 
 #ifdef USEIMGUI

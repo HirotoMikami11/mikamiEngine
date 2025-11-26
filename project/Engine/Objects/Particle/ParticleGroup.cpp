@@ -2,6 +2,7 @@
 #include "ParticleGroup.h"
 #include "BaseField.h"
 #include "ImGui/ImGuiManager.h"
+#include "LightManager.h"
 #include "Logger.h"
 #include <algorithm>
 
@@ -210,7 +211,7 @@ void ParticleGroup::UpdateParticleForGPUBuffer(const Matrix4x4& viewProjectionMa
 	}
 }
 
-void ParticleGroup::Draw(const Light& directionalLight)
+void ParticleGroup::Draw()
 {
 	if (!sharedModel_ || !sharedModel_->IsValid()) {
 		return;
@@ -221,7 +222,6 @@ void ParticleGroup::Draw(const Light& directionalLight)
 	}
 
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
-	particleCommon_->setCommonRenderSettings(commandList);
 
 	// 全メッシュを描画
 	const auto& meshes = sharedModel_->GetMeshes();
@@ -248,10 +248,6 @@ void ParticleGroup::Draw(const Light& directionalLight)
 			commandList->SetGraphicsRootDescriptorTable(2,
 				textureManager_->GetTextureHandle(sharedModel_->GetTextureTagName(materialIndex)));
 		}
-
-		// ライトの設定
-		commandList->SetGraphicsRootConstantBufferView(3,
-			directionalLight.GetResource()->GetGPUVirtualAddress());
 
 		// メッシュをバインドして描画（アクティブなパーティクル数を指定）
 		const_cast<Mesh&>(mesh).Bind(commandList);

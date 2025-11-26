@@ -3,8 +3,6 @@
 #include <vector>
 #include "DirectXCommon.h"
 #include "ParticleState.h"
-#include "ParticleCommon.h"
-#include "Light.h"
 #include "Texture/TextureManager.h"
 #include "Model/ModelManager.h"
 
@@ -44,8 +42,7 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	/// <param name="directionalLight">平行光源</param>
-	void Draw(const Light& directionalLight);
+	void Draw();
 
 	/// <summary>
 	/// ImGui用のデバッグ表示
@@ -145,5 +142,4 @@ private:
 	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager_ = TextureManager::GetInstance();
 	ModelManager* modelManager_ = ModelManager::GetInstance();
-	ParticleCommon* particleCommon_ = ParticleCommon::GetInstance();
 };

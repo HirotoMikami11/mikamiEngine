@@ -80,12 +80,6 @@ public:
 	static PSODescriptor CreateParticle();
 
 	/// <summary>
-	/// パーティクル深度書き込み専用の設定を作成
-	/// </summary>
-	/// <returns></returns>
-	static PSODescriptor CreateParticleDepthOnly();
-
-	/// <summary>
 	/// ポストエフェクト用のデフォルト設定を作成
 	/// </summary>
 	static PSODescriptor CreatePostEffect();

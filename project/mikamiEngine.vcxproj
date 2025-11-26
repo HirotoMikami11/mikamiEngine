@@ -144,7 +144,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="Application\CollisionManager\Collider.cpp" />
     <ClCompile Include="Application\CollisionManager\CollisionManager.cpp" />
-    <ClCompile Include="Application\Scene\GameScenes\GameScene.cpp" />
     <ClCompile Include="Application\GameObjects\Boss\Parts\BaseParts.cpp" />
     <ClCompile Include="Application\GameObjects\Boss\Boss.cpp" />
     <ClCompile Include="Application\GameObjects\Boss\Parts\BodyParts.cpp" />
@@ -158,9 +157,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObjects\Boss\BossUI.cpp" />
     <ClCompile Include="Application\GameObjects\Bullet\BaseBullet.cpp" />
     <ClCompile Include="Application\GameObjects\Bullet\BossBullet.cpp" />
-    <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp" />
     <ClCompile Include="Application\GameObjects\Boss\State\BossStateManager.cpp" />
     <ClCompile Include="Application\GameObjects\Bullet\BossBulletPool.cpp" />
+    <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp" />
+    <ClCompile Include="Application\Scene\DebugScenes\DemoScene.cpp" />
+    <ClCompile Include="Application\Scene\GameScenes\GameClearScene.cpp" />
+    <ClCompile Include="Application\Scene\GameScenes\GameOverScene.cpp" />
+    <ClCompile Include="Application\Scene\GameScenes\GameScene.cpp" />
+    <ClCompile Include="Application\Scene\GameScenes\SelectScene.cpp" />
+    <ClCompile Include="Engine\Objects\Light\DirectionalLight.cpp" />
+    <ClCompile Include="Engine\Objects\Light\PointLight.cpp" />
     <ClCompile Include="Engine\OffscreenRenderer\EffectFunc\DamageVignette.cpp" />
     <ClCompile Include="Engine\Core\JsonSettings\JsonSettings.cpp" />
     <ClCompile Include="Engine\Utility\CSVUtility.cpp" />
@@ -189,7 +195,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Core\Input\Input.cpp" />
     <ClCompile Include="Engine\Managers\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\Managers\ObjectID\ObjectIDManager.cpp" />
-    <ClCompile Include="Application\Scene\DebugScenes\DemoScene.cpp" />
     <ClCompile Include="Application\Scene\SceneManager.cpp" />
     <ClCompile Include="Engine\Managers\Texture\Texture.cpp" />
     <ClCompile Include="Engine\Managers\Texture\TextureManager.cpp" />
@@ -206,7 +211,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Objects\Object3D\Mesh.cpp" />
     <ClCompile Include="Engine\Objects\Object3D\Model.cpp" />
     <ClCompile Include="Engine\Objects\Object3D\Transform3D.cpp" />
-    <ClCompile Include="Engine\Objects\Light\Light.cpp" />
     <ClCompile Include="Engine\Objects\Line\LineRenderer.cpp" />
     <ClCompile Include="Engine\Objects\Sprite\Sprite.cpp" />
     <ClCompile Include="Engine\Objects\Sprite\Transform2D.cpp" />
@@ -256,12 +260,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClCompile>
     <ClCompile Include="Application\Game.cpp" />
     <ClCompile Include="Engine\Objects\Particle\Field\GravityField.cpp" />
-    <ClCompile Include="Application\Scene\GameScenes\GameClearScene.cpp" />
-    <ClCompile Include="Application\Scene\GameScenes\GameOverScene.cpp" />
     <ClCompile Include="Application\GameObjects\Ground.cpp" />
     <ClCompile Include="Engine\Timers\GameTimer.cpp" />
     <ClCompile Include="Application\GameObjects\Boss\State\BossState.cpp" />
     <ClCompile Include="Application\GameObjects\Boss\State\IdleState.cpp" />
+    <ClCompile Include="Engine\Objects\Light\LightManager.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -275,7 +278,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Objects\Particle\ParticleSystem.cpp" />
     <ClCompile Include="Engine\Managers\ResourceLoader\ResourceLoader.cpp" />
     <ClCompile Include="Application\Scene\GameScenes\TitleScene.cpp" />
-    <ClCompile Include="Application\Scene\GameScenes\SelectScene.cpp" />
     <ClCompile Include="Application\GameObjects\Player\Player.cpp" />
     <ClCompile Include="Application\GameObjects\Bullet\PlayerBullet.cpp" />
     <ClCompile Include="Application\GameObjects\Boss\State\SplineMoveState.cpp" />
@@ -364,7 +366,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\CollisionManager\Collider.h" />
     <ClInclude Include="Application\CollisionManager\CollisionConfig.h" />
     <ClInclude Include="Application\CollisionManager\CollisionManager.h" />
-    <ClInclude Include="Application\Scene\GameScenes\GameScene.h" />
     <ClInclude Include="Application\GameObjects\Boss\Parts\BaseParts.h" />
     <ClInclude Include="Application\GameObjects\Boss\Boss.h" />
     <ClInclude Include="Application\GameObjects\Boss\Parts\BodyParts.h" />
@@ -378,10 +379,18 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObjects\Boss\BossUI.h" />
     <ClInclude Include="Application\GameObjects\Bullet\BaseBullet.h" />
     <ClInclude Include="Application\GameObjects\Bullet\BossBullet.h" />
-    <ClInclude Include="Application\Scene\DebugScenes\DebugSphere.h" />
     <ClInclude Include="Application\GameObjects\Boss\State\BossStateManager.h" />
     <ClInclude Include="Application\GameObjects\Boss\State\BossStateConfig.h" />
     <ClInclude Include="Application\GameObjects\Bullet\BossBulletPool.h" />
+    <ClInclude Include="Application\Scene\DebugScenes\DebugSphere.h" />
+    <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h" />
+    <ClInclude Include="Application\Scene\GameScenes\GameClearScene.h" />
+    <ClInclude Include="Application\Scene\GameScenes\GameOverScene.h" />
+    <ClInclude Include="Application\Scene\GameScenes\GameScene.h" />
+    <ClInclude Include="Application\Scene\GameScenes\SelectScene.h" />
+    <ClInclude Include="Engine\Objects\Light\DirectionalLight.h" />
+    <ClInclude Include="Engine\Objects\Light\LightBase.h" />
+    <ClInclude Include="Engine\Objects\Light\PointLight.h" />
     <ClInclude Include="Engine\OffscreenRenderer\EffectFunc\DamageVignette.h" />
     <ClInclude Include="Engine\Core\JsonSettings\JsonSettings.h" />
     <ClInclude Include="Engine\Utility\CSVUtility.h" />
@@ -413,7 +422,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Managers\Model\ModelManager.h" />
     <ClInclude Include="Engine\Managers\ObjectID\ObjectIDManager.h" />
     <ClInclude Include="Application\Scene\BaseScene.h" />
-    <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h" />
     <ClInclude Include="Application\Scene\SceneManager.h" />
     <ClInclude Include="Engine\Managers\Texture\Texture.h" />
     <ClInclude Include="Engine\Managers\Texture\TextureManager.h" />
@@ -432,7 +440,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Objects\Object3D\Mesh.h" />
     <ClInclude Include="Engine\Objects\Object3D\Model.h" />
     <ClInclude Include="Engine\Objects\Object3D\Transform3D.h" />
-    <ClInclude Include="Engine\Objects\Light\Light.h" />
     <ClInclude Include="Engine\Objects\Line\LineRenderer.h" />
     <ClInclude Include="Engine\Objects\Particle\ParticleState.h" />
     <ClInclude Include="Engine\Objects\Sprite\Sprite.h" />
@@ -499,10 +506,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Objects\Particle\ParticleSystem.h" />
     <ClInclude Include="Engine\Objects\Particle\Field\GravityField.h" />
     <ClInclude Include="Engine\Managers\ResourceLoader\ResourceLoader.h" />
-    <ClInclude Include="Application\Scene\GameScenes\GameClearScene.h" />
-    <ClInclude Include="Application\Scene\GameScenes\GameOverScene.h" />
     <ClInclude Include="Application\Scene\GameScenes\TitleScene.h" />
-    <ClInclude Include="Application\Scene\GameScenes\SelectScene.h" />
     <ClInclude Include="Application\GameObjects\Player\Player.h" />
     <ClInclude Include="Application\GameObjects\Ground.h" />
     <ClInclude Include="Engine\Timers\GameTimer.h" />
@@ -528,6 +532,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Objects\Particle\ParticlePreset.h" />
     <ClInclude Include="Engine\Objects\Particle\ParticlePresetInstance.h" />
     <ClInclude Include="Engine\Objects\Particle\ParticleEditor.h" />
+    <ClInclude Include="Engine\Objects\Light\LightManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

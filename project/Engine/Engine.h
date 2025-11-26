@@ -21,11 +21,12 @@
 #include "OffscreenRenderer.h"
 #include "DebugDrawLineSystem.h"
 
+#include "LightManager.h"
+
 ///Objects
 #include "CameraController.h"
 #include "Object3D.h"
 #include "Sprite.h"
-#include "Light.h"
 #include "ParticleCommon.h"
 
 class Engine {
@@ -121,6 +122,8 @@ private:
 	GameTimer* gameTimer_;
 	DebugDrawLineSystem* debugDrawManager_;
 	JsonSettings* jsonSettings_;
+
+	LightManager* lightManager_;
 
 	// カメラコントローラー
 	CameraController* cameraController_;
