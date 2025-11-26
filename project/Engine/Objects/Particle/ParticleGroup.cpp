@@ -222,7 +222,6 @@ void ParticleGroup::Draw()
 	}
 
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
-	particleCommon_->setCommonRenderSettings(commandList);
 
 	// 全メッシュを描画
 	const auto& meshes = sharedModel_->GetMeshes();

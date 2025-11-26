@@ -11,8 +11,9 @@ void SpriteCommon::Initialize(DirectXCommon* dxCommon)
 	dxCommon_ = dxCommon;
 }
 
-void SpriteCommon::setCommonSpriteRenderSettings(ID3D12GraphicsCommandList* commandList)
+void SpriteCommon::setCommonSpriteRenderSettings()
 {
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 	// スプライト専用のPSOを設定
 	commandList->SetGraphicsRootSignature(dxCommon_->GetSpriteRootSignature());
 	commandList->SetPipelineState(dxCommon_->GetSpritePipelineState());

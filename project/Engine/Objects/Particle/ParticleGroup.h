@@ -3,7 +3,6 @@
 #include <vector>
 #include "DirectXCommon.h"
 #include "ParticleState.h"
-#include "ParticleCommon.h"
 #include "Texture/TextureManager.h"
 #include "Model/ModelManager.h"
 
@@ -143,5 +142,4 @@ private:
 	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager_ = TextureManager::GetInstance();
 	ModelManager* modelManager_ = ModelManager::GetInstance();
-	ParticleCommon* particleCommon_ = ParticleCommon::GetInstance();
 };

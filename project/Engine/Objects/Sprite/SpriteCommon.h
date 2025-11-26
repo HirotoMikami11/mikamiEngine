@@ -25,7 +25,7 @@ public:
 	/// <summary>
 	/// 共通部分設定
 	/// </summary>
-	void setCommonSpriteRenderSettings(ID3D12GraphicsCommandList* commandList);
+	void setCommonSpriteRenderSettings();
 
 private:
 

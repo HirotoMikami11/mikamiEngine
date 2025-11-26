@@ -8,7 +8,7 @@
 #include "ParticleEmitter.h"
 #include "BaseField.h"
 #include "CameraController.h"
-
+#include "ParticleCommon.h"
 
 
 /// <summary>
@@ -197,4 +197,5 @@ private:
 	// システム参照
 	DirectXCommon* dxCommon_ = nullptr;
 	CameraController* cameraController_ = CameraController::GetInstance();
+	ParticleCommon* particleCommon_ = ParticleCommon::GetInstance();
 };

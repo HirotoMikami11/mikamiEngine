@@ -12,8 +12,9 @@ void ParticleCommon::Initialize(DirectXCommon* dxCommon)
 	dxCommon_ = dxCommon;
 }
 
-void ParticleCommon::setCommonRenderSettings(ID3D12GraphicsCommandList* commandList)
+void ParticleCommon::setCommonRenderSettings()
 {
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 	// パーティクル用のPSOを設定
 	commandList->SetGraphicsRootSignature(dxCommon_->GetParticleRootSignature());
 	commandList->SetPipelineState(dxCommon_->GetParticlePipelineState());

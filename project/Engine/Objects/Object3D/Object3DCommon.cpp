@@ -13,8 +13,10 @@ void Object3DCommon::Initialize(DirectXCommon* dxCommon)
 	dxCommon_ = dxCommon;
 }
 
-void Object3DCommon::setCommonRenderSettings(ID3D12GraphicsCommandList* commandList)
+void Object3DCommon::setCommonRenderSettings()
 {
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
+
 	// 3Dオブジェクト専用のPSOを設定
 	commandList->SetGraphicsRootSignature(dxCommon_->GetRootSignature());
 	commandList->SetPipelineState(dxCommon_->GetPipelineState());

@@ -38,7 +38,7 @@ void Object3D::Draw() {
 	}
 
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
-	object3DCommon_->setCommonRenderSettings(commandList);
+	object3DCommon_->setCommonRenderSettings();
 
 
 	// トランスフォームを設定

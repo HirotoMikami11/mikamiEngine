@@ -81,7 +81,7 @@ void Sprite::Draw()
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 	// スプライト専用のPSOを設定
-	spriteCommon_->setCommonSpriteRenderSettings(commandList);
+	spriteCommon_->setCommonSpriteRenderSettings();
 
 	//マテリアル
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
