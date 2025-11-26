@@ -8,14 +8,6 @@ struct Material
 };
 ConstantBuffer<Material> gMaterial : register(b0);
 
-struct DirectionalLight
-{
-    float32_t4 color; //色
-    float32_t3 direction; //方向
-    float32_t intensity; //強度
-};
-ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
-
 Texture2D<float32_t4> gTexture : register(t0); //SRVのregisterはt
 SamplerState gSampler : register(s0); //Samplerはs
 

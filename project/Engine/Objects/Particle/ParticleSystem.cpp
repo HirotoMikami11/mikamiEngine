@@ -55,6 +55,7 @@ void ParticleSystem::Update(const Matrix4x4& viewProjectionMatrix)
 
 void ParticleSystem::Draw()
 {
+
 	// すべてのグループを描画
 	for (auto& [groupName, group] : groups_) {
 		group->Draw();

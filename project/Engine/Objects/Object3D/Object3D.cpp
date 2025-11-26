@@ -40,14 +40,6 @@ void Object3D::Draw() {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 	object3DCommon_->setCommonRenderSettings(commandList);
 
-	// ライトを設定（LightManagerから取得）
-	LightManager* lightManager = LightManager::GetInstance();
-	commandList->SetGraphicsRootConstantBufferView(3, lightManager->GetLightingResource()->GetGPUVirtualAddress());
-	// カメラを設定
-	ID3D12Resource* cameraResource = CameraController::GetInstance()->GetCameraForGPUResource();
-	if (cameraResource) {
-		commandList->SetGraphicsRootConstantBufferView(4, cameraResource->GetGPUVirtualAddress());
-	}
 
 	// トランスフォームを設定
 	commandList->SetGraphicsRootConstantBufferView(1, transform_.GetResource()->GetGPUVirtualAddress());

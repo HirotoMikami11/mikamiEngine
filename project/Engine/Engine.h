@@ -21,6 +21,8 @@
 #include "OffscreenRenderer.h"
 #include "DebugDrawLineSystem.h"
 
+#include "LightManager.h"
+
 ///Objects
 #include "CameraController.h"
 #include "Object3D.h"
@@ -121,6 +123,7 @@ private:
 	DebugDrawLineSystem* debugDrawManager_;
 	JsonSettings* jsonSettings_;
 
+	LightManager* lightManager_;
 
 	// カメラコントローラー
 	CameraController* cameraController_;

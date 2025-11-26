@@ -62,6 +62,13 @@ void Engine::InitializeManagers() {
 	//JsonSettings初期化
 	jsonSettings_ = JsonSettings::GetInstance();
 
+	// カメラコントローラー取得
+	cameraController_ = CameraController::GetInstance();
+
+	// ライトマネージャーの初期化
+	lightManager_ = LightManager::GetInstance();
+	lightManager_->Initialize(dxCommon_.get());
+
 	// スプライトの共通部分を初期化
 	SpriteCommon::GetInstance()->Initialize(dxCommon_.get());
 
@@ -70,10 +77,6 @@ void Engine::InitializeManagers() {
 
 	// パーティクルの共通部分を初期化
 	ParticleCommon::GetInstance()->Initialize(dxCommon_.get());
-
-
-	// カメラコントローラー取得
-	cameraController_ = CameraController::GetInstance();
 
 	// ImGui初期化
 	imguiManager_ = ImGuiManager::GetInstance();
@@ -106,6 +109,12 @@ void Engine::Update() {
 
 	// AudioManagerの更新(再生し終わったインスタンスの削除)
 	audioManager_->Update();
+
+	// ライトマネージャーの更新
+	if (lightManager_) {
+		lightManager_->Update();
+	}
+
 
 	/// ImGuiの受付開始
 	imguiManager_->Begin();
@@ -188,6 +197,11 @@ void Engine::Finalize() {
 		offscreenRenderer_.reset();
 	}
 
+	// ライトマネージャー終了処理
+	if (lightManager_) {
+		lightManager_->Finalize();
+	}
+
 	// カメラコントローラー終了処理
 	if (cameraController_) {
 		cameraController_->Finalize();
@@ -260,14 +274,17 @@ void Engine::ImGui() {
 	ImGui::End();
 
 	///
-	/// カメラコントローラーのデバッグUI
+	///個別のウィンドウに表示
 	///
 
-	///個別のウィンドウに表示
+	// カメラコントローラーのImGui
 	if (cameraController_) {
-		//カメラコントローラーのアップデートがないとエラー
 		cameraController_->ImGui();
 	}
 
+	//　ライトマネージャーのImGui
+	if (lightManager_) {
+		lightManager_->ImGui();
+	}
 #endif
 }

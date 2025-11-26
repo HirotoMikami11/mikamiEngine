@@ -26,10 +26,6 @@ void Game::Initialize() {
 	transitionManager_ = TransitionManager::GetInstance();
 	transitionManager_->Initialize();
 
-	// ライトマネージャーの初期化
-	lightManager_ = LightManager::GetInstance();
-	lightManager_->Initialize(Engine::GetInstance()->GetDirectXCommon());
-
 	// カスタムトランジションエフェクトを登録
 	RegisterTransitionEffects();
 
@@ -86,29 +82,9 @@ void Game::Update() {
 		transitionManager_->Update(1.0f / 60.0f); //時間
 	}
 
-	// ライトマネージャーの更新
-	if (lightManager_) {
-		lightManager_->Update();
-	}
-
-
 	// シーンマネージャーの更新
 	if (sceneManager_) {
 		sceneManager_->Update();
-	}
-	// シーンマネージャーのImGui更新
-	if (sceneManager_) {
-		sceneManager_->ImGui();
-	}
-	// トランジションマネージャーのImGui
-	if (transitionManager_) {
-		//　TODO:imgui必要に応じて作成
-		// 	transitionManager_->ImGui();
-	}
-
-	//　ライトマネージャーのImGui
-	if (lightManager_) {
-		lightManager_->ImGui();
 	}
 }
 
@@ -133,8 +109,15 @@ void Game::DrawBackBuffer() {
 
 void Game::ImGui()
 {
-
-
+	// シーンマネージャーのImGui更新
+	if (sceneManager_) {
+		sceneManager_->ImGui();
+	}
+	// トランジションマネージャーのImGui
+	if (transitionManager_) {
+		//　TODO:imgui必要に応じて作成
+		// 	transitionManager_->ImGui();
+	}
 
 }
 
@@ -147,9 +130,5 @@ void Game::Finalize() {
 	// シーンマネージャーの終了処理
 	if (sceneManager_) {
 		sceneManager_->Finalize();
-	}
-
-	if (lightManager_) {
-		lightManager_->Finalize();
 	}
 }

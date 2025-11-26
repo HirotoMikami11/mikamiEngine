@@ -55,9 +55,6 @@ PointLight* LightManager::AddPointLight(
 {
 	// 上限チェック
 	if (pointLights_.size() >= MAX_POINT_LIGHTS) {
-		Logger::Log(Logger::GetStream(),
-			std::format("LightManager: Cannot add point light - max limit reached ({}/{})\n",
-				MAX_POINT_LIGHTS, MAX_POINT_LIGHTS));
 		return nullptr;
 	}
 
@@ -92,23 +89,16 @@ void LightManager::RemovePointLight(PointLight* light)
 	// ID検証
 	auto it = pointLights_.find(id);
 	if (it == pointLights_.end()) {
-		Logger::Log(Logger::GetStream(),
-			std::format("LightManager: Warning - Light ID={} not found (possibly already deleted)\n", id));
 		return;
 	}
 
 	// ポインタ一致確認（安全性チェック）
 	if (it->second.get() != light) {
-		Logger::Log(Logger::GetStream(),
-			std::format("LightManager: Error - Pointer mismatch for ID={}\n", id));
 		return;
 	}
 
 	pointLights_.erase(it);
 
-	Logger::Log(Logger::GetStream(),
-		std::format("LightManager: Removed light ID={} ({}/{})\n",
-			id, pointLights_.size(), MAX_POINT_LIGHTS));
 }
 
 void LightManager::ClearPointLights()
@@ -225,9 +215,9 @@ void LightManager::UpdateLightingData()
 		}
 	}
 
-	// GPU送信は最大10個まで
-	int gpuLightCount = std::min(static_cast<int>(activeLights.size()), MAX_POINT_LIGHTS);
-
+	// GPU送信上限数まで																																		
+		int gpuLightCount = std::min(static_cast<int>(activeLights.size()), MAX_POINT_LIGHTS);
+				
 	// GPU配列にコピー
 	for (int i = 0; i < gpuLightCount; ++i) {
 		lightingData_->pointLights[i] = activeLights[i]->GetData();

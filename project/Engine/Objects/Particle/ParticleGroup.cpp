@@ -250,11 +250,6 @@ void ParticleGroup::Draw()
 				textureManager_->GetTextureHandle(sharedModel_->GetTextureTagName(materialIndex)));
 		}
 
-
-		// ライトを設定（LightManagerから取得）
-		LightManager* lightManager = LightManager::GetInstance();
-		commandList->SetGraphicsRootConstantBufferView(3, lightManager->GetLightingResource()->GetGPUVirtualAddress());
-
 		// メッシュをバインドして描画（アクティブなパーティクル数を指定）
 		const_cast<Mesh&>(mesh).Bind(commandList);
 		const_cast<Mesh&>(mesh).Draw(commandList, activeParticleCount_);

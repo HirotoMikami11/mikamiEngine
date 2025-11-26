@@ -524,7 +524,6 @@ void DirectXCommon::MakeParticlePSO()
 	rsBuilder.AddCBV(0, D3D12_SHADER_VISIBILITY_PIXEL)		// Material (b0)PS
 		.AddSRV(0, 1, D3D12_SHADER_VISIBILITY_VERTEX)		// Transform (t0)VS
 		.AddSRV(0, 1, D3D12_SHADER_VISIBILITY_PIXEL)		// Texture (t0)PS
-		.AddCBV(1, D3D12_SHADER_VISIBILITY_PIXEL)			// DirectionalLight (b1)PS
 		.AddStaticSampler(0);								// Sampler (s0)
 
 	// PSO設定を構築（プリセット使用）

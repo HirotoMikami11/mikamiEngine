@@ -1,7 +1,6 @@
 #pragma once
 /// 				Scene							///
 #include "SceneManager.h"
-#include "LightManager.h"
 /// 				Transitions							///
 #include "TransitionManager.h"
 #include "SceneTransitionHelper.h"
@@ -49,8 +48,5 @@ private:
 
 	// トランジションマネージャー
 	TransitionManager* transitionManager_;
-
-	//ライトマネージャー
-	LightManager* lightManager_;
 
 };
