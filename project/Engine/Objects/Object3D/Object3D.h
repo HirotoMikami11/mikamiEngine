@@ -4,7 +4,6 @@
 #include "DirectXCommon.h"
 #include "Transform3D.h"
 #include "Object3DCommon.h"
-#include "Light.h"
 #include "LightManager.h"
 #include "Texture/TextureManager.h"
 #include "Model/ModelManager.h"

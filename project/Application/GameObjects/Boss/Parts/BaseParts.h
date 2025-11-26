@@ -1,7 +1,5 @@
 #pragma once
 #include "Object3D.h"
-#include "Light.h"
-#include "MyMath.h"
 #include "Collider.h"
 
 using namespace MyMath;

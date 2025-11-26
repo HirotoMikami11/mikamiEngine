@@ -4,7 +4,6 @@
 #include "DirectXCommon.h"
 #include "ParticleState.h"
 #include "ParticleCommon.h"
-#include "Light.h"
 #include "Texture/TextureManager.h"
 #include "Model/ModelManager.h"
 

@@ -7,7 +7,6 @@
 #include "ParticleGroup.h"
 #include "ParticleEmitter.h"
 #include "BaseField.h"
-#include "Light.h"
 #include "CameraController.h"
 
 

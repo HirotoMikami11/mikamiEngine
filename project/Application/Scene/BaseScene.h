@@ -4,7 +4,6 @@
 #include "DirectXCommon.h"
 
 #include "Sprite.h"
-#include "Light.h"
 #include "LightManager.h"
 #include "Object3D.h"
 #include "CameraController.h"

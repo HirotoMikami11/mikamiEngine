@@ -288,9 +288,6 @@
     <ClCompile Include="Engine\Objects\Sprite\Transform2D.cpp">
       <Filter>Engine\Objects\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Objects\Light\Light.cpp">
-      <Filter>Engine\Objects\Light</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Objects\Object3D\Object3D.cpp">
       <Filter>Engine\Objects\GameObject</Filter>
     </ClCompile>
@@ -687,9 +684,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Objects\Sprite\Transform2D.h">
       <Filter>Engine\Objects\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Objects\Light\Light.h">
-      <Filter>Engine\Objects\Light</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Objects\Object3D\Object3D.h">
       <Filter>Engine\Objects\GameObject</Filter>
