@@ -124,6 +124,12 @@ void SceneManager::ResetScene(const std::string& sceneName) {
 		// 現在のシーンをリセットする場合
 		if (currentSceneName_ == sceneName && currentScene_) {
 			currentScene_->Finalize();
+
+			// シーンを変えるときにIDを全てリセット
+			ObjectIDManager::GetInstance()->ResetAllCounters();
+			// ライトを平行光源しか存在しない状態にリセット
+			LightManager::GetInstance()->ResetToDefault();
+
 			currentScene_->Initialize();
 			currentScene_->SetInitialized(true);
 		} else {

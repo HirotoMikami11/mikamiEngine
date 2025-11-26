@@ -49,4 +49,8 @@ private:
 	// トランジションマネージャー
 	TransitionManager* transitionManager_;
 
+	// パーティクルシステム
+	ParticleSystem* particleSystem_;
+	ParticleEditor* particleEditor_;
+
 };
