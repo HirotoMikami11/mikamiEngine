@@ -265,13 +265,13 @@ void GameScene::ImGui() {
 
 void GameScene::Finalize() {
 
-		// シーン終了時にパーティクルシステムをクリア
-		if (particleSystem_) {
-			particleSystem_->Clear();
-		}
-		// シーン終了時にパーティクルインスタンスを全削除
-		if (particleEditor_) {
-			particleEditor_->DestroyAllInstance();
-		}
-	
+	// シーン終了時にパーティクルシステムをクリア
+	if (particleSystem_) {
+		particleSystem_->Clear();
+	}
+	// シーン終了時にパーティクルインスタンスを全削除
+	if (particleEditor_) {
+		particleEditor_->DestroyAllInstance();
+	}
+
 }

@@ -96,6 +96,57 @@ public:
 	std::vector<std::string> GetAvailablePresets() const;
 
 	// ========================================
+	// プリセット編集モード（新規）
+	// ========================================
+
+	/// <summary>
+	/// プリセットを編集モードで開く
+	/// </summary>
+	/// <param name="presetName">編集するプリセット名</param>
+	/// <returns>成功したらtrue</returns>
+	bool OpenPresetForEdit(const std::string& presetName);
+
+	/// <summary>
+	/// 現在編集中のプリセットを保存（上書き）
+	/// </summary>
+	/// <returns>成功したらtrue</returns>
+	bool SaveEditingPreset();
+
+	/// <summary>
+	/// 現在編集中のプリセットを別名で保存
+	/// </summary>
+	/// <param name="newPresetName">新しいプリセット名</param>
+	/// <returns>成功したらtrue</returns>
+	bool SaveEditingPresetAs(const std::string& newPresetName);
+
+	/// <summary>
+	/// プリセット編集モードを終了
+	/// </summary>
+	void ClosePresetEditor();
+
+	/// <summary>
+	/// 現在プリセット編集モードかどうか
+	/// </summary>
+	bool IsInPresetEditMode() const;
+
+	/// <summary>
+	/// 編集中のプリセット名を取得
+	/// </summary>
+	const std::string& GetEditingPresetName() const { return editingPresetName_; }
+
+	// ========================================
+	// インスタンス編集モード（既存を改良）
+	// ========================================
+
+	/// <summary>
+	/// インスタンスからプリセットを保存（名前正規化を実施）
+	/// </summary>
+	/// <param name="instanceName">保存元のインスタンス名</param>
+	/// <param name="presetName">保存先のプリセット名</param>
+	/// <returns>成功したらtrue</returns>
+	bool SaveInstanceAsPreset(const std::string& instanceName, const std::string& presetName);
+
+	// ========================================
 	// 選択操作（フェーズ2）
 	// ========================================
 
@@ -149,7 +200,17 @@ private:
 	void ShowEditTab();
 
 	/// <summary>
-	/// Presetsタブの表示
+	/// Preset Managerタブの表示
+	/// </summary>
+	void ShowPresetManagerTab();
+
+	/// <summary>
+	/// Instancesタブの表示
+	/// </summary>
+	void ShowInstancesTab();
+
+	/// <summary>
+	/// Presetsタブの表示（旧UI、互換性のため残す）
 	/// </summary>
 	void ShowPresetsTab();
 
@@ -235,12 +296,38 @@ private:
 	/// </summary>
 	ParticleFieldData CreateFieldData(BaseField* field) const;
 
+	/// <summary>
+	/// オブジェクト名からインスタンスプレフィックスを除去
+	/// </summary>
+	/// <param name="objectName">元の名前（例：「a_FireEmitter」）</param>
+	/// <param name="instanceName">インスタンス名（例：「a」）</param>
+	/// <returns>正規化された名前（例：「FireEmitter」）</returns>
+	std::string RemoveInstancePrefix(const std::string& objectName, const std::string& instanceName) const;
+
+	/// <summary>
+	/// プリセットデータの名前を正規化（インスタンスプレフィックスを除去）
+	/// </summary>
+	/// <param name="data">プリセットデータ</param>
+	/// <param name="instanceName">除去するインスタンス名</param>
+	void NormalizePresetNames(ParticlePresetData& data, const std::string& instanceName) const;
+
 	// ========================================
 	// メンバ変数
 	// ========================================
 
 	// プリセットディレクトリ
 	static constexpr const char* kPresetDirectory_ = "resources/ParticlePresets/";
+
+	// プリセット編集用の特別なインスタンス名
+	static constexpr const char* kPresetEditInstanceName_ = "__PRESET_EDITOR__";
+
+	// エディタモード
+	enum class EditorMode {
+		Instance,    // インスタンス編集モード（既存）
+		Preset       // プリセット編集モード（新規）
+	};
+	EditorMode currentMode_ = EditorMode::Instance;
+	std::string editingPresetName_;  // プリセット編集モード時のプリセット名
 
 	// インスタンス管理
 	std::unordered_map<std::string, std::unique_ptr<ParticlePresetInstance>> instances_;

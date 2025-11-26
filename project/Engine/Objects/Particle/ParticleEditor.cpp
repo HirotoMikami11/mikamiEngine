@@ -32,24 +32,52 @@ void ParticleEditor::ImGui()
 {
 #ifdef USEIMGUI
 	if (ImGui::Begin("Particle Editor", nullptr, ImGuiWindowFlags_None)) {
+
+		// ========================================
+		// モード表示
+		// ========================================
+		if (currentMode_ == EditorMode::Preset) {
+			ImGui::TextColored(ImVec4(0.2f, 1.0f, 0.2f, 1.0f),
+				"MODE: Editing Preset [%s]", editingPresetName_.c_str());
+			ImGui::Separator();
+		} else {
+			ImGui::TextColored(ImVec4(0.5f, 0.5f, 1.0f, 1.0f),
+				"MODE: Instance Editor");
+			ImGui::Separator();
+		}
+
 		// タブバー
 		if (ImGui::BeginTabBar("EditorTabs", ImGuiTabBarFlags_None)) {
 
-			// Createタブ
+			// ========================================
+			// Preset Manager タブ（新規）
+			// ========================================
+			if (ImGui::BeginTabItem("Preset Manager")) {
+				ShowPresetManagerTab();
+				ImGui::EndTabItem();
+			}
+
+			// ========================================
+			// Create タブ（既存）
+			// ========================================
 			if (ImGui::BeginTabItem("Create")) {
 				ShowCreateTab();
 				ImGui::EndTabItem();
 			}
 
-			// Editタブ
+			// ========================================
+			// Edit タブ（既存）
+			// ========================================
 			if (ImGui::BeginTabItem("Edit")) {
 				ShowEditTab();
 				ImGui::EndTabItem();
 			}
 
-			// Presetsタブ
-			if (ImGui::BeginTabItem("Presets")) {
-				ShowPresetsTab();
+			// ========================================
+			// Instances タブ（旧Presetsタブ）
+			// ========================================
+			if (ImGui::BeginTabItem("Instances")) {
+				ShowInstancesTab();
 				ImGui::EndTabItem();
 			}
 
@@ -644,7 +672,334 @@ void ParticleEditor::ShowEditPanel()
 // ParticleEditor.cpp - パート3: Presetsタブとユーティリティ
 
 // ========================================
-// Presetsタブ
+// Preset Manager タブ（新規）
+// ========================================
+
+void ParticleEditor::ShowPresetManagerTab()
+{
+#ifdef USEIMGUI
+	ImGui::Text("Preset Management");
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	// プリセット一覧を取得
+	std::vector<std::string> presets = GetAvailablePresets();
+
+	if (presets.empty()) {
+		ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f),
+			"No presets available");
+		ImGui::Spacing();
+		ImGui::TextWrapped("Create a preset by saving the current state in the Edit tab, "
+			"or by creating and configuring particles in the Create tab.");
+		return;
+	}
+
+	// 選択されたプリセットのインデックス
+	static int selectedPreset = 0;
+	if (selectedPreset >= static_cast<int>(presets.size())) {
+		selectedPreset = 0;
+	}
+
+	// 左側：プリセットリスト
+	ImGui::BeginChild("PresetList", ImVec2(250, 0), true);
+	{
+		ImGui::Text("Available Presets");
+		ImGui::Separator();
+
+		for (size_t i = 0; i < presets.size(); ++i) {
+			bool isSelected = (selectedPreset == static_cast<int>(i));
+
+			// プリセット編集中のものは特別な色で表示
+			if (currentMode_ == EditorMode::Preset && presets[i] == editingPresetName_) {
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 1.0f, 0.2f, 1.0f));
+				if (ImGui::Selectable((presets[i] + " (Editing)").c_str(), isSelected)) {
+					selectedPreset = static_cast<int>(i);
+				}
+				ImGui::PopStyleColor();
+			} else {
+				if (ImGui::Selectable(presets[i].c_str(), isSelected)) {
+					selectedPreset = static_cast<int>(i);
+				}
+			}
+		}
+	}
+	ImGui::EndChild();
+
+	ImGui::SameLine();
+
+	// 右側：プリセット操作
+	ImGui::BeginChild("PresetActions", ImVec2(0, 0), true);
+	{
+		const std::string& presetName = presets[selectedPreset];
+
+		ImGui::Text("Selected: %s", presetName.c_str());
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		// ========================================
+		// プリセット編集モードでない場合
+		// ========================================
+		if (currentMode_ == EditorMode::Instance) {
+
+			// 【新規】プリセットを直接編集
+			if (ImGui::Button("Edit This Preset", ImVec2(-1, 40))) {
+				OpenPresetForEdit(presetName);
+			}
+			ImGui::TextWrapped("Opens the preset for direct editing. "
+				"Changes will be saved to the original preset.");
+
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+
+			// 【既存】インスタンスとして生成
+			ImGui::Text("Create Instance");
+			static char instanceName[128] = "";
+			ImGui::InputTextWithHint("Instance Name", "Enter unique name...", instanceName, 128);
+
+			if (ImGui::Button("Create Instance", ImVec2(-1, 40))) {
+				if (strlen(instanceName) > 0) {
+					if (CreateInstance(presetName, instanceName)) {
+						instanceName[0] = '\0';  // クリア
+					}
+				} else {
+					Logger::Log(Logger::GetStream(),
+						"[ParticleEditor] Please enter an instance name\n");
+				}
+			}
+			ImGui::TextWrapped("Creates a new instance that can be "
+				"placed and configured independently.");
+
+		}
+		// ========================================
+		// プリセット編集モードの場合
+		// ========================================
+		else {
+			ImGui::TextColored(ImVec4(0.2f, 1.0f, 0.2f, 1.0f),
+				"Currently Editing: %s", editingPresetName_.c_str());
+
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+
+			// 保存ボタン
+			if (ImGui::Button("Save Preset", ImVec2(-1, 40))) {
+				SaveEditingPreset();
+			}
+			ImGui::TextWrapped("Saves changes to the preset '%s'", editingPresetName_.c_str());
+
+			ImGui::Spacing();
+
+			// 別名保存
+			ImGui::Text("Save As New Preset");
+			static char newName[128] = "";
+			ImGui::InputTextWithHint("New Preset Name", "Enter new name...", newName, 128);
+
+			if (ImGui::Button("Save As New Preset", ImVec2(-1, 40))) {
+				if (strlen(newName) > 0) {
+					if (SaveEditingPresetAs(newName)) {
+						newName[0] = '\0';
+					}
+				} else {
+					Logger::Log(Logger::GetStream(),
+						"[ParticleEditor] Please enter a new preset name\n");
+				}
+			}
+			ImGui::TextWrapped("Creates a new preset with the current settings");
+
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+
+			// 閉じるボタン
+			if (ImGui::Button("Close Editor", ImVec2(-1, 40))) {
+				ClosePresetEditor();
+			}
+			ImGui::TextWrapped("Closes the preset editor and returns to instance mode");
+		}
+
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		// ========================================
+		// 削除（常に表示）
+		// ========================================
+		ImGui::Text("Danger Zone");
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
+		if (ImGui::Button("Delete Preset", ImVec2(-1, 40))) {
+			ImGui::OpenPopup("DeletePresetConfirm");
+		}
+		ImGui::PopStyleColor(2);
+
+		// 削除確認ダイアログ
+		if (ImGui::BeginPopupModal("DeletePresetConfirm", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text("Delete preset '%s'?", presetName.c_str());
+			ImGui::TextColored(ImVec4(1.0f, 0.3f, 0.3f, 1.0f),
+				"This action cannot be undone!");
+			ImGui::Spacing();
+
+			if (ImGui::Button("Yes, Delete", ImVec2(120, 0))) {
+				// 編集中のプリセットを削除する場合は、先にエディタを閉じる
+				if (currentMode_ == EditorMode::Preset && presetName == editingPresetName_) {
+					ClosePresetEditor();
+				}
+
+				if (DeletePreset(presetName)) {
+					// 削除成功時、選択を先頭にリセット
+					selectedPreset = 0;
+				}
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+	}
+	ImGui::EndChild();
+#endif
+}
+
+// ========================================
+// Instances タブ（旧Presetsタブ）
+// ========================================
+
+void ParticleEditor::ShowInstancesTab()
+{
+#ifdef USEIMGUI
+	ImGui::Text("Instance Management");
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	// インスタンス一覧
+	if (instances_.empty()) {
+		ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f),
+			"No instances created");
+		ImGui::Spacing();
+		ImGui::TextWrapped("Create instances from presets in the Preset Manager tab.");
+		return;
+	}
+
+	// 選択されたインスタンス
+	static std::string selectedInstance;
+
+	// 左側：インスタンスリスト
+	ImGui::BeginChild("InstanceList", ImVec2(250, 0), true);
+	{
+		ImGui::Text("Active Instances");
+		ImGui::Separator();
+
+		for (const auto& [instanceName, instance] : instances_) {
+			// プリセット編集用の特別なインスタンスは表示しない
+			if (instanceName == kPresetEditInstanceName_) {
+				continue;
+			}
+
+			bool isSelected = (selectedInstance == instanceName);
+			if (ImGui::Selectable(instanceName.c_str(), isSelected)) {
+				selectedInstance = instanceName;
+			}
+		}
+	}
+	ImGui::EndChild();
+
+	ImGui::SameLine();
+
+	// 右側：インスタンス操作
+	ImGui::BeginChild("InstanceActions", ImVec2(0, 0), true);
+	{
+		if (!selectedInstance.empty() && instances_.find(selectedInstance) != instances_.end()) {
+			ImGui::Text("Selected: %s", selectedInstance.c_str());
+			ImGui::Separator();
+			ImGui::Spacing();
+
+			ParticlePresetInstance* instance = instances_[selectedInstance].get();
+
+			// 位置設定
+			ImGui::Text("Instance Position");
+			static Vector3 instancePos = { 0, 0, 0 };
+			if (ImGui::DragFloat3("Position", &instancePos.x, 0.1f)) {
+				instance->SetPositionOffset(instancePos);
+			}
+
+			ImGui::Spacing();
+
+			// 有効/無効切り替え
+			static bool instanceEnabled = true;
+			if (ImGui::Checkbox("Enable Instance", &instanceEnabled)) {
+				instance->SetEnabled(instanceEnabled);
+			}
+
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+
+			// プリセットとして保存
+			ImGui::Text("Save As Preset");
+			static char presetSaveName[128] = "";
+			ImGui::InputTextWithHint("Preset Name", "Enter preset name...", presetSaveName, 128);
+
+			if (ImGui::Button("Save Instance As Preset", ImVec2(-1, 40))) {
+				if (strlen(presetSaveName) > 0) {
+					if (SaveInstanceAsPreset(selectedInstance, presetSaveName)) {
+						presetSaveName[0] = '\0';  // クリア
+					}
+				} else {
+					Logger::Log(Logger::GetStream(),
+						"[ParticleEditor] Please enter a preset name\n");
+				}
+			}
+			ImGui::TextWrapped("Saves the current instance configuration as a preset. "
+				"Instance prefixes will be automatically removed.");
+
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+
+			// 削除
+			ImGui::Text("Danger Zone");
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
+			if (ImGui::Button("Destroy Instance", ImVec2(-1, 40))) {
+				ImGui::OpenPopup("DestroyInstanceConfirm");
+			}
+			ImGui::PopStyleColor(2);
+
+			// 削除確認ダイアログ
+			if (ImGui::BeginPopupModal("DestroyInstanceConfirm", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+				ImGui::Text("Destroy instance '%s'?", selectedInstance.c_str());
+				ImGui::TextColored(ImVec4(1.0f, 0.3f, 0.3f, 1.0f),
+					"All particles and settings will be removed!");
+				ImGui::Spacing();
+
+				if (ImGui::Button("Yes, Destroy", ImVec2(120, 0))) {
+					DestroyInstance(selectedInstance);
+					selectedInstance.clear();
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
+
+		} else {
+			ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f),
+				"Select an instance from the list");
+		}
+	}
+	ImGui::EndChild();
+#endif
+}
+
+// ========================================
+// Presets タブ（旧UI、互換性のため残す）
 // ========================================
 
 void ParticleEditor::ShowPresetsTab()
@@ -1349,4 +1704,221 @@ bool ParticleEditor::IsEmitterSelected(const std::string& emitterName) const
 bool ParticleEditor::IsFieldSelected(const std::string& fieldName) const
 {
 	return selectedFields_.find(fieldName) != selectedFields_.end();
+}
+
+// ========================================
+// 名前正規化ユーティリティ
+// ========================================
+
+std::string ParticleEditor::RemoveInstancePrefix(const std::string& objectName, const std::string& instanceName) const
+{
+	// プレフィックスパターン：「インスタンス名_」
+	std::string prefix = instanceName + "_";
+
+	// プレフィックスが存在する場合は除去
+	if (objectName.find(prefix) == 0) {
+		return objectName.substr(prefix.length());
+	}
+
+	// プレフィックスが無い場合はそのまま返す
+	return objectName;
+}
+
+void ParticleEditor::NormalizePresetNames(ParticlePresetData& data, const std::string& instanceName) const
+{
+	// グループ名を正規化
+	for (auto& group : data.groups) {
+		group.groupName = RemoveInstancePrefix(group.groupName, instanceName);
+	}
+
+	// エミッター名とターゲットグループ名を正規化
+	for (auto& emitter : data.emitters) {
+		emitter.emitterName = RemoveInstancePrefix(emitter.emitterName, instanceName);
+		emitter.targetGroupName = RemoveInstancePrefix(emitter.targetGroupName, instanceName);
+	}
+
+	// フィールド名を正規化
+	for (auto& field : data.fields) {
+		field.fieldName = RemoveInstancePrefix(field.fieldName, instanceName);
+	}
+}
+
+// ========================================
+// プリセット編集モード
+// ========================================
+
+bool ParticleEditor::OpenPresetForEdit(const std::string& presetName)
+{
+	// 既に編集中の場合は確認
+	if (currentMode_ == EditorMode::Preset) {
+		Logger::Log(Logger::GetStream(),
+			std::format("[ParticleEditor] Already editing preset '{}'. Close current editor first.\n",
+				editingPresetName_));
+		return false;
+	}
+
+	// 既存のインスタンスがある場合は警告を出す
+	if (!instances_.empty()) {
+		Logger::Log(Logger::GetStream(),
+			std::format("[ParticleEditor] Warning: {} instance(s) exist. They will remain active during preset editing.\n",
+				instances_.size()));
+	}
+
+	// プリセット編集用の特別なインスタンスを作成
+	ParticlePresetInstance* instance = CreateInstance(presetName, kPresetEditInstanceName_);
+
+	if (!instance) {
+		Logger::Log(Logger::GetStream(),
+			std::format("[ParticleEditor] Failed to open preset '{}' for editing\n", presetName));
+		return false;
+	}
+
+	// モードを切り替え
+	currentMode_ = EditorMode::Preset;
+	editingPresetName_ = presetName;
+
+	Logger::Log(Logger::GetStream(),
+		std::format("[ParticleEditor] Opened preset '{}' for editing\n", presetName));
+
+	return true;
+}
+
+bool ParticleEditor::SaveEditingPreset()
+{
+	if (currentMode_ != EditorMode::Preset) {
+		Logger::Log(Logger::GetStream(),
+			"[ParticleEditor] Not in preset editing mode\n");
+		return false;
+	}
+
+	// 現在のプリセット名で保存（上書き）
+	return SaveEditingPresetAs(editingPresetName_);
+}
+
+bool ParticleEditor::SaveEditingPresetAs(const std::string& newPresetName)
+{
+	if (currentMode_ != EditorMode::Preset) {
+		Logger::Log(Logger::GetStream(),
+			"[ParticleEditor] Not in preset editing mode\n");
+		return false;
+	}
+
+	// プリセット編集用インスタンスを取得
+	ParticlePresetInstance* instance = GetInstance(kPresetEditInstanceName_);
+	if (!instance) {
+		Logger::Log(Logger::GetStream(),
+			"[ParticleEditor] Preset editor instance not found\n");
+		return false;
+	}
+
+	// インスタンスからプリセットとして保存（名前正規化を実施）
+	bool success = SaveInstanceAsPreset(kPresetEditInstanceName_, newPresetName);
+
+	if (success) {
+		// 新しい名前で保存した場合、編集中のプリセット名を更新
+		if (newPresetName != editingPresetName_) {
+			Logger::Log(Logger::GetStream(),
+				std::format("[ParticleEditor] Saved preset '{}' as '{}'\n",
+					editingPresetName_, newPresetName));
+			editingPresetName_ = newPresetName;
+		} else {
+			Logger::Log(Logger::GetStream(),
+				std::format("[ParticleEditor] Saved preset '{}'\n", newPresetName));
+		}
+	}
+
+	return success;
+}
+
+void ParticleEditor::ClosePresetEditor()
+{
+	if (currentMode_ != EditorMode::Preset) {
+		Logger::Log(Logger::GetStream(),
+			"[ParticleEditor] Not in preset editing mode\n");
+		return;
+	}
+
+	// 編集用インスタンスを削除
+	DestroyInstance(kPresetEditInstanceName_);
+
+	// モードをリセット
+	currentMode_ = EditorMode::Instance;
+	editingPresetName_.clear();
+
+	Logger::Log(Logger::GetStream(),
+		"[ParticleEditor] Closed preset editor\n");
+}
+
+bool ParticleEditor::IsInPresetEditMode() const
+{
+	return currentMode_ == EditorMode::Preset;
+}
+
+// ========================================
+// インスタンス保存（名前正規化対応）
+// ========================================
+
+bool ParticleEditor::SaveInstanceAsPreset(const std::string& instanceName, const std::string& presetName)
+{
+	// インスタンスの存在確認
+	ParticlePresetInstance* instance = GetInstance(instanceName);
+	if (!instance) {
+		Logger::Log(Logger::GetStream(),
+			std::format("[ParticleEditor] Instance '{}' not found\n", instanceName));
+		return false;
+	}
+
+	// プリセットデータを作成
+	ParticlePresetData preset;
+	preset.presetName = presetName;
+
+	// インスタンスに属するグループを収集
+	for (const std::string& groupName : particleSystem_->GetAllGroupNames()) {
+		// グループ名がインスタンスに属しているかチェック
+		// (インスタンス名_で始まる、または特別なインスタンスの場合)
+		std::string prefix = instanceName + "_";
+		if (groupName.find(prefix) == 0 || instanceName == kPresetEditInstanceName_) {
+			ParticleGroup* group = particleSystem_->GetGroup(groupName);
+			if (group) {
+				preset.groups.push_back(CreateGroupData(group));
+			}
+		}
+	}
+
+	// インスタンスに属するエミッターを収集
+	for (const std::string& emitterName : particleSystem_->GetAllEmitterNames()) {
+		std::string prefix = instanceName + "_";
+		if (emitterName.find(prefix) == 0 || instanceName == kPresetEditInstanceName_) {
+			ParticleEmitter* emitter = particleSystem_->GetEmitter(emitterName);
+			if (emitter) {
+				preset.emitters.push_back(CreateEmitterData(emitter));
+			}
+		}
+	}
+
+	// インスタンスに属するフィールドを収集
+	for (const std::string& fieldName : particleSystem_->GetAllFieldNames()) {
+		std::string prefix = instanceName + "_";
+		if (fieldName.find(prefix) == 0 || instanceName == kPresetEditInstanceName_) {
+			BaseField* field = particleSystem_->GetField(fieldName);
+			if (field) {
+				preset.fields.push_back(CreateFieldData(field));
+			}
+		}
+	}
+
+	// 名前を正規化（インスタンスプレフィックスを除去）
+	NormalizePresetNames(preset, instanceName);
+
+	// ファイルに保存
+	std::string filePath = GetPresetFilePath(presetName);
+	bool success = preset.SaveToFile(filePath);
+
+	if (success) {
+		Logger::Log(Logger::GetStream(),
+			std::format("[ParticleEditor] Saved instance '{}' as preset '{}'\n",
+				instanceName, presetName));
+	}
+
+	return success;
 }
