@@ -7,31 +7,31 @@
                 0.0,
                 1.0
             ],
-            "emitCount": 1,
+            "emitCount": 3,
             "emitDirection": [
                 0.0,
                 1.0,
                 0.0
             ],
-            "emitFrequency": 0.009999999776482582,
+            "emitFrequency": 1.0,
             "emitterLifeTime": 5.0,
-            "emitterLifeTimeLoop": true,
-            "emitterName": "WalkSmoke_Emitter",
+            "emitterLifeTimeLoop": false,
+            "emitterName": "Field_Emitter",
             "enableColorOverLifetime": true,
             "enableRotation": false,
             "enableSizeOverLifetime": true,
             "initialSpeed": 1.0,
             "isEmitting": true,
             "particleEndColor": [
-                0.0,
-                0.0,
-                0.0,
+                1.0,
+                0.024509787559509277,
+                0.024509787559509277,
                 0.0
             ],
             "particleEndScale": [
-                6.0,
-                6.0,
-                6.0
+                1.0,
+                1.0,
+                1.0
             ],
             "particleLifeTimeMax": 3.0,
             "particleLifeTimeMin": 1.0,
@@ -56,9 +56,9 @@
                 1.0
             ],
             "particleStartColor": [
-                0.05392158031463623,
-                0.05392158031463623,
-                0.05392158031463623,
+                0.970588207244873,
+                0.4680820405483246,
+                0.15700682997703552,
                 1.0
             ],
             "particleStartScale": [
@@ -67,8 +67,8 @@
                 0.10000000149011612
             ],
             "position": [
-                -3.299999952316284,
                 0.0,
+                5.5,
                 0.0
             ],
             "rotation": [
@@ -89,19 +89,19 @@
             "showDebugAABB": false,
             "spawnArea": {
                 "max": [
-                    1.5,
+                    30.0,
                     0.5,
-                    1.5
+                    30.0
                 ],
                 "min": [
-                    -1.5,
-                    0.0,
-                    -1.5
+                    -30.0,
+                    -0.5,
+                    -30.0
                 ]
             },
-            "spreadAngle": 30.2189998626709,
-            "targetGroupName": "WalkSmoke_Particle",
-            "useDirectionalEmit": true,
+            "spreadAngle": 30.0,
+            "targetGroupName": "Field_Particle",
+            "useDirectionalEmit": false,
             "useEmitterLifeTime": false,
             "velocityRange": 1.0
         }
@@ -109,12 +109,12 @@
     "fields": [],
     "groups": [
         {
-            "groupName": "WalkSmoke_Particle",
-            "maxParticles": 200,
+            "groupName": "Field_Particle",
+            "maxParticles": 252,
             "modelTag": "plane",
             "textureName": "circle",
             "useBillboard": true
         }
     ],
-    "presetName": "WalkSmokeEffect"
+    "presetName": "FieldEffect"
 }

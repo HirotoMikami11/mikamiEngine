@@ -92,8 +92,8 @@ void GameScene::InitializeGameObjects() {
 	///*-----------------------------------------------------------------------*///
 #pragma region パーティクル
 
-	////砂煙パーティクル
-	//particleEditor_->CreateInstance("WalkSmokeEffect", "Smoke1");
+	//フィールドパーティクル
+	particleEditor_->CreateInstance("FieldEffect", "Field_circle");
 
 
 #pragma endregion

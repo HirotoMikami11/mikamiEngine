@@ -135,9 +135,14 @@ public:
 	std::vector<BossBullet*> GetActiveBullets() const;
 
 	/// <summary>
-	/// Activeな全パーツのリストを取得（State から使用）
+	/// Activeな全パーツのリストを取得（State使用）
 	/// </summary>
 	std::vector<BaseParts*> GetActiveBodyParts();
+
+	/// <summary>
+	/// 全パーツのリストを取得
+	/// </summary>
+	std::vector<BaseParts*> GetAllBodyParts();
 
 private:
 	/// <summary>

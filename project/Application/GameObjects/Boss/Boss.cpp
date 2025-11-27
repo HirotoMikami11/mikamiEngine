@@ -834,3 +834,26 @@ std::vector<BaseParts*> Boss::GetActiveBodyParts() {
 
 	return parts;
 }
+
+std::vector<BaseParts*> Boss::GetAllBodyParts() {
+	std::vector<BaseParts*> parts;
+
+	// 頭パーツ
+	if (head_) {
+		parts.push_back(head_.get());
+	}
+
+	// 体パーツ
+	for (auto& body : bodies_) {
+		if (body) {
+			parts.push_back(body.get());
+		}
+	}
+
+	// 尻尾パーツ
+	if (tail_) {
+		parts.push_back(tail_.get());
+	}
+
+	return parts;
+}

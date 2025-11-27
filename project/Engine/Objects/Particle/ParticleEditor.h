@@ -311,6 +311,20 @@ private:
 	/// <param name="instanceName">除去するインスタンス名</param>
 	void NormalizePresetNames(ParticlePresetData& data, const std::string& instanceName) const;
 
+	/// <summary>
+	/// エミッターにプリセットデータを適用
+	/// </summary>
+	/// <param name="emitter">エミッター</param>
+	/// <param name="data">エミッターデータ</param>
+	void ApplyEmitterData(ParticleEmitter* emitter, const ParticleEmitterData& data);
+
+	/// <summary>
+	/// フィールドにプリセットデータを適用
+	/// </summary>
+	/// <param name="field">フィールド</param>
+	/// <param name="data">フィールドデータ</param>
+	void ApplyFieldData(BaseField* field, const ParticleFieldData& data);
+
 	// ========================================
 	// メンバ変数
 	// ========================================

@@ -32,9 +32,9 @@ void BossSmokeEmitter::CreateParticleInstances()
 		return;
 	}
 
-	// ボスのアクティブなボディパーツを取得して数をカウント
-	auto activeBodyParts = boss_->GetActiveBodyParts();
-	bodyPartsCount_ = activeBodyParts.size();
+	// ボスのボディパーツの数を取得（固定値として取得）
+	// アクティブ状態に関わらず全パーツ分のエミッターを作成
+	bodyPartsCount_ = 5;  // kBodyCountと同じ値
 
 	// 頭用のパーティクルインスタンス作成
 	std::string headInstanceName = "Smoke[Head]";
@@ -118,42 +118,36 @@ void BossSmokeEmitter::Update()
 		return;
 	}
 
-	// アクティブなボディパーツを取得
-	auto activeBodyParts = boss_->GetActiveBodyParts();
+	// 全パーツを取得（アクティブ状態に関わらず）
+	std::vector<BaseParts*> allParts = boss_->GetAllBodyParts();
 
 	// 頭の位置を更新
-	if (headSmokeInstance_) {
-		// activeBodyPartsの最初の要素が頭（HeadParts）
-		if (!activeBodyParts.empty()) {
-			BaseParts* headPart = activeBodyParts[0];
-			Vector3 headBottomPos = CalculateBottomPosition(headPart);
-			UpdateEmitterPosition(headSmokeInstance_, headBottomPos);
-		}
+	if (headSmokeInstance_ && !allParts.empty()) {
+		BaseParts* headPart = allParts[0];
+		Vector3 headBottomPos = CalculateBottomPosition(headPart);
+		UpdateEmitterPosition(headSmokeInstance_, headBottomPos);
 	}
 
 	// 体の位置を更新
-	// activeBodyPartsには [Head, Body0, Body1, ..., Tail] の順で格納されている
+	// allPartsには [Head, Body0, Body1, ..., Tail] の順で格納されている
 	size_t bodyStartIndex = 1; // Headの次から
-	size_t bodyEndIndex = activeBodyParts.size() - 1; // Tailの前まで
+	size_t bodyEndIndex = allParts.size() - 1; // Tailの前まで
 
 	for (size_t i = 0; i < bodySmokeInstances_.size(); ++i) {
 		size_t bodyIndex = bodyStartIndex + i;
 
-		if (bodyIndex < bodyEndIndex && bodyIndex < activeBodyParts.size()) {
-			BaseParts* bodyPart = activeBodyParts[bodyIndex];
+		if (bodyIndex < bodyEndIndex && bodyIndex < allParts.size()) {
+			BaseParts* bodyPart = allParts[bodyIndex];
 			Vector3 bodyBottomPos = CalculateBottomPosition(bodyPart);
 			UpdateEmitterPosition(bodySmokeInstances_[i], bodyBottomPos);
 		}
 	}
 
 	// 尻尾の位置を更新
-	if (tailSmokeInstance_) {
-		// activeBodyPartsの最後の要素が尻尾（TailParts）
-		if (!activeBodyParts.empty()) {
-			BaseParts* tailPart = activeBodyParts.back();
-			Vector3 tailBottomPos = CalculateBottomPosition(tailPart);
-			UpdateEmitterPosition(tailSmokeInstance_, tailBottomPos);
-		}
+	if (tailSmokeInstance_ && !allParts.empty()) {
+		BaseParts* tailPart = allParts.back();
+		Vector3 tailBottomPos = CalculateBottomPosition(tailPart);
+		UpdateEmitterPosition(tailSmokeInstance_, tailBottomPos);
 	}
 }
 
@@ -197,29 +191,29 @@ void BossSmokeEmitter::ImGui()
 
 		// デバッグ情報表示
 		if (showDebugPositions_ && boss_) {
-			auto activeBodyParts = boss_->GetActiveBodyParts();
+			auto allParts = boss_->GetAllBodyParts();
 
 			if (ImGui::TreeNode("Emitter Positions")) {
 				// 頭
-				if (!activeBodyParts.empty()) {
-					Vector3 headPos = CalculateBottomPosition(activeBodyParts[0]);
+				if (!allParts.empty()) {
+					Vector3 headPos = CalculateBottomPosition(allParts[0]);
 					ImGui::Text("Head: (%.2f, %.2f, %.2f)", headPos.x, headPos.y, headPos.z);
 				}
 
 				// 体
 				size_t bodyStartIndex = 1;
-				size_t bodyEndIndex = activeBodyParts.size() - 1;
+				size_t bodyEndIndex = allParts.size() - 1;
 				for (size_t i = 0; i < bodySmokeInstances_.size(); ++i) {
 					size_t bodyIndex = bodyStartIndex + i;
-					if (bodyIndex < bodyEndIndex && bodyIndex < activeBodyParts.size()) {
-						Vector3 bodyPos = CalculateBottomPosition(activeBodyParts[bodyIndex]);
+					if (bodyIndex < bodyEndIndex && bodyIndex < allParts.size()) {
+						Vector3 bodyPos = CalculateBottomPosition(allParts[bodyIndex]);
 						ImGui::Text("Body[%zu]: (%.2f, %.2f, %.2f)", i, bodyPos.x, bodyPos.y, bodyPos.z);
 					}
 				}
 
 				// 尻尾
-				if (!activeBodyParts.empty()) {
-					Vector3 tailPos = CalculateBottomPosition(activeBodyParts.back());
+				if (!allParts.empty()) {
+					Vector3 tailPos = CalculateBottomPosition(allParts.back());
 					ImGui::Text("Tail: (%.2f, %.2f, %.2f)", tailPos.x, tailPos.y, tailPos.z);
 				}
 
