@@ -11,24 +11,7 @@ Torch::Torch()
 	, globalColor_({ 1.0f, 1.0f, 1.0f, 1.0f })
 {
 	// 12個のトーチのデフォルト配置（例：円形に配置）
-	const float radius = 25.0f;
-	const float angleStep = (2.0f * std::numbers::pi_v<float>) / kTorchCount_;
-
-	for (int i = 0; i < kTorchCount_; ++i) {
-		float angle = angleStep * i;
-		positions_[i] = {
-			radius * std::cos(angle),
-			0.0f,
-			radius * std::sin(angle)
-		};
-
-		// 中心を向くように回転
-		rotations_[i] = {
-			0.0f,
-			angle + std::numbers::pi_v<float>,  // 中心を向く
-			0.0f
-		};
-	}
+	for (int i = 0; i < kTorchCount_; ++i) { positions_[i] = { 0.0f,0.0f,0.0f }; }
 }
 
 Torch::~Torch() {}
@@ -115,8 +98,6 @@ void Torch::Initialize(DirectXCommon* dxCommon)
 			particleInstance_[i]->GetEmitter("FireEmitter")->GetTransform().SetPosition(positions_[i]);
 		}
 	}
-
-
 
 }
 

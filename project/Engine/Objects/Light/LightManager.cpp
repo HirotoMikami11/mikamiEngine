@@ -111,80 +111,80 @@ void LightManager::ImGui()
 {
 #ifdef USEIMGUI
 
-	if (ImGui::TreeNode("Light Manager")) {
-		// 平行光源
-		directionalLight_.ImGui("Directional Light");
 
-		ImGui::Separator();
+	ImGui::Begin("Light Manager");
+	// 平行光源
+	directionalLight_.ImGui("Directional Light");
 
-		// 使用状況表示
-		int activeCount = 0;
-		for (const auto& [id, light] : pointLights_) {
-			if (light && light->IsActive()) {
-				activeCount++;
-			}
+	ImGui::Separator();
+
+	// 使用状況表示
+	int activeCount = 0;
+	for (const auto& [id, light] : pointLights_) {
+		if (light && light->IsActive()) {
+			activeCount++;
 		}
-
-		ImGui::Text("Point Lights: %d / %d (Active: %d)",
-			static_cast<int>(pointLights_.size()),
-			MAX_POINT_LIGHTS,
-			activeCount);
-
-		ImGui::Separator();
-
-		// 削除対象を記録（ループ中に削除できないため）
-		PointLight* lightToRemove = nullptr;
-
-		// 使用中のポイントライトのみ表示
-		for (auto& [id, light] : pointLights_) {
-			if (light) {
-				std::string label = std::format("Point Light [ID:{}]", id);
-
-				if (ImGui::TreeNode(label.c_str())) {
-					// ライトの編集UI
-					light->ImGui(label);
-
-					// 削除ボタン
-					ImGui::Separator();
-					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
-					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
-					ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.1f, 0.1f, 1.0f));
-
-					if (ImGui::Button("Remove This Light", ImVec2(-1, 0))) {
-						lightToRemove = light.get();
-					}
-
-					ImGui::PopStyleColor(3);
-
-					ImGui::TreePop();
-				}
-			}
-		}
-
-		// ループ外で削除（イテレーション中の削除を避ける）
-		if (lightToRemove) {
-			RemovePointLight(lightToRemove);
-		}
-
-		ImGui::Separator();
-
-		// 追加ボタン（上限チェック）
-		if (pointLights_.size() >= MAX_POINT_LIGHTS) {
-			ImGui::BeginDisabled();
-		}
-
-		if (ImGui::Button("Add Point Light", ImVec2(-1, 0))) {
-			AddPointLight({ 0.0f, 2.0f, 0.0f });
-		}
-
-		if (pointLights_.size() >= MAX_POINT_LIGHTS) {
-			ImGui::EndDisabled();
-			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f),
-				"Maximum light limit reached");
-		}
-
-		ImGui::TreePop();
 	}
+
+	ImGui::Text("Point Lights: %d / %d (Active: %d)",
+		static_cast<int>(pointLights_.size()),
+		MAX_POINT_LIGHTS,
+		activeCount);
+
+	ImGui::Separator();
+
+	// 削除対象を記録（ループ中に削除できないため）
+	PointLight* lightToRemove = nullptr;
+
+	// 使用中のポイントライトのみ表示
+	for (auto& [id, light] : pointLights_) {
+		if (light) {
+			std::string label = std::format("Point Light [ID:{}]", id);
+
+			if (ImGui::TreeNode(label.c_str())) {
+				// ライトの編集UI
+				light->ImGui(label);
+
+				// 削除ボタン
+				ImGui::Separator();
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.1f, 0.1f, 1.0f));
+
+				if (ImGui::Button("Remove This Light", ImVec2(-1, 0))) {
+					lightToRemove = light.get();
+				}
+
+				ImGui::PopStyleColor(3);
+
+				ImGui::TreePop();
+			}
+		}
+	}
+
+	// ループ外で削除（イテレーション中の削除を避ける）
+	if (lightToRemove) {
+		RemovePointLight(lightToRemove);
+	}
+
+	ImGui::Separator();
+
+	// 追加ボタン（上限チェック）
+	if (pointLights_.size() >= MAX_POINT_LIGHTS) {
+		ImGui::BeginDisabled();
+	}
+
+	if (ImGui::Button("Add Point Light", ImVec2(-1, 0))) {
+		AddPointLight({ 0.0f, 2.0f, 0.0f });
+	}
+
+	if (pointLights_.size() >= MAX_POINT_LIGHTS) {
+		ImGui::EndDisabled();
+		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f),
+			"Maximum light limit reached");
+	}
+
+	ImGui::End();
 
 #endif
 }
@@ -216,8 +216,8 @@ void LightManager::UpdateLightingData()
 	}
 
 	// GPU送信上限数まで																																		
-		int gpuLightCount = std::min(static_cast<int>(activeLights.size()), MAX_POINT_LIGHTS);
-				
+	int gpuLightCount = std::min(static_cast<int>(activeLights.size()), MAX_POINT_LIGHTS);
+
 	// GPU配列にコピー
 	for (int i = 0; i < gpuLightCount; ++i) {
 		lightingData_->pointLights[i] = activeLights[i]->GetData();

@@ -96,6 +96,10 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	bulletPool_ = std::make_unique<BossBulletPool>();
 	bulletPool_->Initialize(dxCommon_, kBulletPoolSize);
 
+	// 砂煙エミッターの初期化
+	smokeEmitter_ = std::make_unique<BossSmokeEmitter>();
+	smokeEmitter_->Initialize(this);
+
 }
 
 
@@ -156,6 +160,11 @@ void Boss::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPr
 
 	//弾の更新
 	UpdateBullets(viewProjectionMatrix);
+
+	// 砂煙エミッターの更新
+	if (smokeEmitter_) {
+		smokeEmitter_->Update();
+	}
 
 
 	// UIの更新
@@ -329,6 +338,15 @@ void Boss::ImGui() {
 				moveEditor_->ImGui();
 			} else {
 				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Move Editor not initialized");
+			}
+		}
+
+		// 砂煙エミッター
+		if (ImGui::CollapsingHeader("Smoke Emitter")) {
+			if (smokeEmitter_) {
+				smokeEmitter_->ImGui();
+			} else {
+				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Smoke Emitter not initialized");
 			}
 		}
 

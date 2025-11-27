@@ -16,6 +16,7 @@
 #include "BossMoveEditor.h"
 #include "BossUI.h"
 #include "BossBulletPool.h "
+#include "BossSmokeEmitter.h"
 
 
 /// <summary>
@@ -213,6 +214,7 @@ private:
 
 	// 弾管理
 	std::unique_ptr<BossBulletPool> bulletPool_;
+	std::unique_ptr<BossSmokeEmitter> smokeEmitter_;
 
 	// パラメータ
 	const size_t kBodyCount = 5;				// 体のパーツ数

@@ -185,9 +185,9 @@ void DemoScene::UpdateGameObjects() {
 		planePosition.x += moveSpeed * gameDeltaTime;  // 右移動
 	}
 
-	//// 座標を変更したい場合は以下のようにアクセス可能
-	auto* centerInstance = particleEditor_->GetInstance("Center");
-	centerInstance->GetEmitter("CenterEmitter")->GetTransform().SetPosition(sphere_->GetPosition());
+	////// 座標を変更したい場合は以下のようにアクセス可能
+	//auto* centerInstance = particleEditor_->GetInstance("Center");
+	//centerInstance->GetEmitter("CenterEmitter")->GetTransform().SetPosition(sphere_->GetPosition());
 
 	plane_->SetPosition(planePosition);
 	plane_->Update(viewProjectionMatrix);
