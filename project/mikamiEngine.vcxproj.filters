@@ -597,10 +597,10 @@
     <ClCompile Include="Application\GameObjects\FieldObjects\Torch.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\Emitter\BossSmokeEmitter.cpp">
+    <ClCompile Include="Application\GameObjects\Emitters\BossSmokeEmitter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\Emitter\BossBreakSmokeEmitter.cpp">
+    <ClCompile Include="Application\GameObjects\Emitters\BossBreakSmokeEmitter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Application\GameObjects\Bullet\PlayerBulletPool.cpp">
@@ -1045,10 +1045,10 @@
     <ClInclude Include="Application\GameObjects\FieldObjects\Torch.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\Emitter\BossSmokeEmitter.h">
+    <ClInclude Include="Application\GameObjects\Emitters\BossSmokeEmitter.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\Emitter\BossBreakSmokeEmitter.h">
+    <ClInclude Include="Application\GameObjects\Emitters\BossBreakSmokeEmitter.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\GameObjects\Bullet\PlayerBulletPool.h">

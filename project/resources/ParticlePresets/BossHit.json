@@ -21,7 +21,7 @@
             "enableRotation": false,
             "enableSizeOverLifetime": true,
             "initialSpeed": 3.0,
-            "isEmitting": false,
+            "isEmitting": true,
             "particleEndColor": [
                 0.0,
                 0.01312039140611887,

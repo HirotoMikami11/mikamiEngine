@@ -17,8 +17,8 @@
 #include "BossUI.h"
 #include "BossBulletPool.h "
 //エミッター関連
-#include "Emitter/BossSmokeEmitter.h"
-#include "Emitter/BossBreakSmokeEmitter.h"
+#include "BossSmokeEmitter.h"
+#include "BossBreakSmokeEmitter.h"
 
 
 /// <summary>
