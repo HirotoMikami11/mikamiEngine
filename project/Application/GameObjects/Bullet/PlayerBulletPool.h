@@ -4,6 +4,9 @@
 #include "PlayerBullet.h"
 #include "Engine.h"
 
+// 前方宣言
+class PlayerBulletHitEffectPool;
+
 /// <summary>
 /// プレイヤー弾のオブジェクトプールクラス
 /// 事前に弾を生成しておき、使い回すことでパフォーマンスを向上
@@ -67,6 +70,13 @@ public:
 		if (index >= isActive_.size()) return false;
 		return isActive_[index];
 	}
+
+	/// <summary>
+	/// ヒットエフェクトプールを設定
+	/// 全ての弾丸に対してエフェクトプールを設定
+	/// </summary>
+	/// <param name="effectPool">エフェクトプールのポインタ</param>
+	void SetHitEffectPool(PlayerBulletHitEffectPool* effectPool);
 
 private:
 	// 弾のプール

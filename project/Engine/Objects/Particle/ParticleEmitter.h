@@ -57,7 +57,7 @@ public:
 	void SetFrequency(float frequency) { emitFrequency_ = frequency; }
 	float GetFrequency() const { return emitFrequency_; }
 
-	void SetEmitEnabled(bool enabled) { isEmitting_ = enabled;emitterCurrentTime_ = 0.0f; }
+	void SetEmitEnabled(bool enabled) { isEmitting_ = enabled; emitterCurrentTime_ = 0.0f; }
 	bool IsEmitting() const { return isEmitting_; }
 
 	// パーティクル初期設定
@@ -65,7 +65,13 @@ public:
 		particleLifeTimeMin_ = min;
 		particleLifeTimeMax_ = max;
 	}
+	// ⭐ 追加: パーティクル寿命のGetter
+	float GetParticleLifeTimeMin() const { return particleLifeTimeMin_; }
+	float GetParticleLifeTimeMax() const { return particleLifeTimeMax_; }
+
 	void SetParticleVelocityRange(float range) { velocityRange_ = range; }
+	// ⭐ 追加: 速度範囲のGetter
+	float GetParticleVelocityRange() const { return velocityRange_; }
 
 	// 新方式：方向指定発射
 	void SetEmitDirection(const Vector3& direction) {
@@ -174,7 +180,7 @@ public:
 	/// ワールド座標でのAABBを取得
 	/// </summary>
 	AABB GetWorldAABB() const;
-	
+
 	// デバッグ描画
 	void SetShowDebugAABB(bool show) { showDebugAABB_ = show; }
 	bool IsShowDebugAABB() const { return showDebugAABB_; }

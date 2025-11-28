@@ -2,8 +2,12 @@
 #include "BaseBullet.h"
 #include "CollisionConfig.h"
 
+// 前方宣言
+class PlayerBulletHitEffectPool;
+
 /// <summary>
-/// プレイヤーの弾クラス
+/// プレイヤーの弾クラス（プール対応版）
+/// BaseBullet を継承
 /// Activate/Deactivateパターンでリソースを再利用
 /// </summary>
 class PlayerBullet : public BaseBullet {
@@ -56,7 +60,16 @@ public:
 	/// </summary>
 	void OnCollision(Collider* other) override;
 
+	/// <summary>
+	/// ヒットエフェクトプールを設定
+	/// </summary>
+	/// <param name="effectPool">エフェクトプールのポインタ</param>
+	void SetHitEffectPool(PlayerBulletHitEffectPool* effectPool) { hitEffectPool_ = effectPool; }
+
 private:
 	// 寿命
 	static const int32_t kLifeTime = 60 * 5;	// 弾の寿命（5秒）
+
+	// ヒットエフェクトプールへの参照（所有権なし）
+	PlayerBulletHitEffectPool* hitEffectPool_ = nullptr;
 };

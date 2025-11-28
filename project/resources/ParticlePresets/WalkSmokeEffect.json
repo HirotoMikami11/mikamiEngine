@@ -33,7 +33,7 @@
                 6.0,
                 6.0
             ],
-            "particleLifeTimeMax": 3.0,
+            "particleLifeTimeMax": 1.600000023841858,
             "particleLifeTimeMin": 1.0,
             "particleRotateMax": [
                 0.0,

@@ -43,6 +43,13 @@ void Player::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	bulletPool_ = std::make_unique<PlayerBulletPool>();
 	bulletPool_->Initialize(dxCommon_, kBulletPoolSize);
 
+	// ヒットエフェクトプールの初期化
+	hitEffectPool_ = std::make_unique<PlayerBulletHitEffectPool>();
+	hitEffectPool_->Initialize(dxCommon_, "PlayerBulletHit", "PlayerBulletHit_Emitter");
+
+	// 弾プールにエフェクトプールを設定
+	bulletPool_->SetHitEffectPool(hitEffectPool_.get());
+
 	//UIクラスの初期化
 	playerUI_ = std::make_unique<PlayerUI>();
 	playerUI_->Initialize(dxCommon_);
@@ -83,6 +90,9 @@ void Player::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& view
 
 	// 弾プールの更新
 	bulletPool_->Update(viewProjectionMatrix);
+
+	// ヒットエフェクトプールの更新
+	hitEffectPool_->Update();
 
 	// 行列更新
 	gameObject_->Update(viewProjectionMatrix);
@@ -356,6 +366,16 @@ void Player::ImGui() {
 			ImGui::DragInt("Fire Interval (frames)", &fireInterval_, 1, 1, 60);
 			ImGui::Text("Active Bullets: %zu / %zu", bulletPool_->GetActiveBulletCount(), bulletPool_->GetPoolSize());
 			ImGui::Text("Fire Timer: %d", fireTimer_);
+
+			// ヒットエフェクト情報
+			ImGui::Separator();
+			ImGui::Text("Hit Effect Pool:");
+			ImGui::Text("Active Effects: %zu / %zu",
+				hitEffectPool_->GetActiveEffectCount(),
+				hitEffectPool_->GetPoolSize());
+
+			// エフェクトプールの詳細情報
+			hitEffectPool_->ImGui();
 		}
 
 		// 衝突情報 

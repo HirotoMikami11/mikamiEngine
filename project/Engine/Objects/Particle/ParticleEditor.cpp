@@ -1130,22 +1130,24 @@ ParticleEmitterData ParticleEditor::CreateEmitterData(ParticleEmitter* emitter) 
 	data.emitFrequency = emitter->GetFrequency();
 	data.isEmitting = emitter->IsEmitting();
 
-	// パーティクル寿命（現時点でGetterがないため、デフォルト値）
-	data.particleLifeTimeMin = 1.0f;
-	data.particleLifeTimeMax = 3.0f;
+	// パーティクル寿命を実際の値から取得
+	data.particleLifeTimeMin = emitter->GetParticleLifeTimeMin();
+	data.particleLifeTimeMax = emitter->GetParticleLifeTimeMax();
 
 	// 速度設定
 	data.emitDirection = emitter->GetEmitDirection();
 	data.initialSpeed = emitter->GetInitialSpeed();
 	data.spreadAngle = emitter->GetSpreadAngle();
 	data.useDirectionalEmit = emitter->IsUseDirectionalEmit();
-	data.velocityRange = 1.0f;
 
-	// スケール・回転（現時点でGetterがないため、デフォルト値）
-	data.particleScaleMin = { 1.0f, 1.0f, 1.0f };
-	data.particleScaleMax = { 1.0f, 1.0f, 1.0f };
-	data.particleRotateMin = { 0.0f, 0.0f, 0.0f };
-	data.particleRotateMax = { 0.0f, 0.0f, 0.0f };
+	// 速度範囲も実際の値から取得
+	data.velocityRange = emitter->GetParticleVelocityRange();
+
+	// スケール・回転も実際の値から取得
+	data.particleScaleMin = emitter->GetParticleScaleMin();
+	data.particleScaleMax = emitter->GetParticleScaleMax();
+	data.particleRotateMin = emitter->GetParticleRotateMin();
+	data.particleRotateMax = emitter->GetParticleRotateMax();
 
 	// エミッター寿命
 	data.emitterLifeTime = emitter->GetEmitterLifeTime();
@@ -1157,7 +1159,7 @@ ParticleEmitterData ParticleEditor::CreateEmitterData(ParticleEmitter* emitter) 
 
 	// デバッグ
 	data.showDebugAABB = emitter->IsShowDebugAABB();
-	data.debugAABBColor = { 1.0f, 0.0f, 0.0f, 1.0f };
+	data.debugAABBColor = emitter->GetDebugAABBColor();
 
 	// Color Over Lifetime
 	data.enableColorOverLifetime = emitter->IsEnableColorOverLifetime();

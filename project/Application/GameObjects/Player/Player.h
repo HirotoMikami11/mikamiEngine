@@ -2,6 +2,7 @@
 #include "Collider.h"			//衝突判定
 #include "CollisionConfig.h"	//衝突属性のフラグを定義する
 #include "PlayerBulletPool.h"	// プレイヤー弾プール
+#include "PlayerBulletHitEffectPool.h"	// ヒットエフェクトプール
 #include "PlayerUI.h"			// UI
 #include "OffscreenRenderer/EffectFunc/DamageVignette.h"	
 #include <memory>
@@ -93,6 +94,9 @@ private:
 
 	// 弾プール
 	std::unique_ptr<PlayerBulletPool> bulletPool_;
+
+	// ヒットエフェクトプール
+	std::unique_ptr<PlayerBulletHitEffectPool> hitEffectPool_;
 
 	//UI表示
 	std::unique_ptr<PlayerUI> playerUI_;

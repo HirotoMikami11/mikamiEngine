@@ -133,10 +133,6 @@ void DemoScene::InitializeGameObjects() {
 	// 右側エフェクト（左下発射 + 重力フィールド）
 	particleEditor_->CreateInstance("RightEffect", "Right");
 
-	//砂煙パーティクル
-	particleEditor_->CreateInstance("WalkSmokeEffect", "Smoke1");
-	particleEditor_->CreateInstance("WalkSmokeEffect", "Smoke2");
-
 #pragma endregion
 
 	///*-----------------------------------------------------------------------*///

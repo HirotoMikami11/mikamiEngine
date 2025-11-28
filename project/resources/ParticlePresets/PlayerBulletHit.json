@@ -7,34 +7,34 @@
                 0.0,
                 1.0
             ],
-            "emitCount": 16,
+            "emitCount": 28,
             "emitDirection": [
-                -0.9796137809753418,
-                -0.19344989955425262,
-                -0.054165612906217575
+                -0.9796138405799866,
+                -0.19344991445541382,
+                -0.054165616631507874
             ],
             "emitFrequency": 0.10000000149011612,
             "emitterLifeTime": 0.10000000149011612,
             "emitterLifeTimeLoop": false,
-            "emitterName": "BossHit_Emitter",
+            "emitterName": "PlayerBulletHit_Emitter",
             "enableColorOverLifetime": true,
             "enableRotation": false,
             "enableSizeOverLifetime": true,
-            "initialSpeed": 3.0,
-            "isEmitting": true,
+            "initialSpeed": 6.900000095367432,
+            "isEmitting": false,
             "particleEndColor": [
                 0.0,
-                0.01312039140611887,
-                0.44607841968536377,
+                0.3944636285305023,
+                0.8382352590560913,
                 0.0
             ],
             "particleEndScale": [
-                0.0,
-                0.0,
-                0.0
+                1.0,
+                1.0,
+                1.0
             ],
-            "particleLifeTimeMax": 3.0,
-            "particleLifeTimeMin": 1.0,
+            "particleLifeTimeMax": 0.30000001192092896,
+            "particleLifeTimeMin": 0.10000000149011612,
             "particleRotateMax": [
                 0.0,
                 0.0,
@@ -57,18 +57,18 @@
             ],
             "particleStartColor": [
                 0.0,
-                0.03171885758638382,
-                0.2696078419685364,
+                0.0,
+                0.9460784196853638,
                 1.0
             ],
             "particleStartScale": [
-                1.5,
-                1.5,
-                1.5
+                0.10000000149011612,
+                0.10000000149011612,
+                0.10000000149011612
             ],
             "position": [
-                -9.199999809265137,
-                4.300000190734863,
+                -6.5,
+                -2.200000047683716,
                 0.0
             ],
             "rotation": [
@@ -86,7 +86,7 @@
                 1.0,
                 1.0
             ],
-            "showDebugAABB": false,
+            "showDebugAABB": true,
             "spawnArea": {
                 "max": [
                     0.30000001192092896,
@@ -100,7 +100,7 @@
                 ]
             },
             "spreadAngle": 95.02799987792969,
-            "targetGroupName": "BossHit_Particle",
+            "targetGroupName": "PlayerBulletHit_Particle",
             "useDirectionalEmit": true,
             "useEmitterLifeTime": true,
             "velocityRange": 1.0
@@ -109,12 +109,12 @@
     "fields": [],
     "groups": [
         {
-            "groupName": "BossHit_Particle",
+            "groupName": "PlayerBulletHit_Particle",
             "maxParticles": 100,
             "modelTag": "plane",
             "textureName": "circle",
             "useBillboard": true
         }
     ],
-    "presetName": "BossHit"
+    "presetName": "PlayerBulletHit"
 }
