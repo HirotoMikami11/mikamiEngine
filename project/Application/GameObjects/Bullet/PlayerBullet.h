@@ -3,8 +3,8 @@
 #include "CollisionConfig.h"
 
 /// <summary>
-/// プレイヤーの弾クラス（シンプル版）
-/// BaseBullet を継承
+/// プレイヤーの弾クラス
+/// Activate/Deactivateパターンでリソースを再利用
 /// </summary>
 class PlayerBullet : public BaseBullet {
 public:
@@ -19,12 +19,26 @@ public:
 	~PlayerBullet();
 
 	/// <summary>
-	/// 初期化
+	/// 初期化（プール生成時に1回だけ呼ぶ）
+	/// リソースを確保する
 	/// </summary>
 	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <param name="position">初期位置</param>
 	/// <param name="velocity">速度ベクトル</param>
 	void Initialize(DirectXCommon* dxCommon, const Vector3& position, const Vector3& velocity) override;
+
+	/// <summary>
+	/// アクティブ化（発射時に呼ぶ）
+	/// 位置と速度のみ更新し、リソースは再利用
+	/// </summary>
+	/// <param name="position">発射位置</param>
+	/// <param name="velocity">速度ベクトル</param>
+	void Activate(const Vector3& position, const Vector3& velocity);
+
+	/// <summary>
+	/// 非アクティブ化（死亡時に呼ぶ）
+	/// </summary>
+	void Deactivate();
 
 	/// <summary>
 	/// 更新

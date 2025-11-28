@@ -39,6 +39,10 @@ void Player::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	//HPの初期化
 	SetHP(maxHP_);
 
+	// 弾プールの初期化
+	bulletPool_ = std::make_unique<PlayerBulletPool>();
+	bulletPool_->Initialize(dxCommon_, kBulletPoolSize);
+
 	//UIクラスの初期化
 	playerUI_ = std::make_unique<PlayerUI>();
 	playerUI_->Initialize(dxCommon_);
@@ -77,13 +81,8 @@ void Player::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& view
 
 	gameObject_->SetPosition(currentPosition);
 
-	// 弾の更新
-	for (auto& bullet : bullets_) {
-		bullet->Update(viewProjectionMatrix);
-	}
-
-	// 死んだ弾を削除
-	DeleteBullets();
+	// 弾プールの更新
+	bulletPool_->Update(viewProjectionMatrix);
 
 	// 行列更新
 	gameObject_->Update(viewProjectionMatrix);
@@ -293,31 +292,20 @@ void Player::ProcessFire() {
 			std::cosf(rotation.y) * bulletSpeed_
 		};
 
-		// 弾を生成
-		std::unique_ptr<PlayerBullet> bullet = std::make_unique<PlayerBullet>();
-		bullet->Initialize(dxCommon_, position, velocity);
-		bullets_.push_back(std::move(bullet));
-
-		// 発射タイマーをリセット
-		fireTimer_ = fireInterval_;
+		// プールから弾を発射
+		if (bulletPool_->FireBullet(position, velocity)) {
+			// 発射タイマーをリセット
+			fireTimer_ = fireInterval_;
+		}
 	}
-}
-
-void Player::DeleteBullets() {
-	// 死んだ弾を削除
-	bullets_.remove_if([](const std::unique_ptr<PlayerBullet>& bullet) {
-		return bullet->IsDead();
-		});
 }
 
 void Player::Draw() {
 	// 球体の描画
-gameObject_->Draw();
+	gameObject_->Draw();
 
-	// 弾の描画
-	for (auto& bullet : bullets_) {
-		bullet->Draw();
-	}
+	// 弾プールの描画
+	bulletPool_->Draw();
 }
 
 void Player::DrawUI()
@@ -366,7 +354,7 @@ void Player::ImGui() {
 		if (ImGui::CollapsingHeader("Bullet")) {
 			ImGui::DragFloat("Bullet Speed", &bulletSpeed_, 0.01f, 0.01f, 2.0f, "%.2f");
 			ImGui::DragInt("Fire Interval (frames)", &fireInterval_, 1, 1, 60);
-			ImGui::Text("Bullets Count: %zu", bullets_.size());
+			ImGui::Text("Active Bullets: %zu / %zu", bulletPool_->GetActiveBulletCount(), bulletPool_->GetPoolSize());
 			ImGui::Text("Fire Timer: %d", fireTimer_);
 		}
 
@@ -399,4 +387,8 @@ void Player::OnCollision(Collider* other) {
 Vector3 Player::GetWorldPosition() {
 	// ゲームオブジェクトのワールド座標を返す
 	return gameObject_->GetPosition();
+}
+
+std::vector<PlayerBullet*> Player::GetActiveBullets() const {
+	return bulletPool_->GetActiveBullets();
 }

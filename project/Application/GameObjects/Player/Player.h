@@ -1,10 +1,9 @@
 #pragma once
 #include "Collider.h"			//衝突判定
 #include "CollisionConfig.h"	//衝突属性のフラグを定義する
-#include "PlayerBullet.h"		// 自機弾
+#include "PlayerBulletPool.h"	// プレイヤー弾プール
 #include "PlayerUI.h"			// UI
 #include "OffscreenRenderer/EffectFunc/DamageVignette.h"	
-#include <list>
 #include <memory>
 
 class Player : public Collider
@@ -61,9 +60,10 @@ public:
 	Vector3 GetWorldPosition() override;
 
 	/// <summary>
-	/// 弾リストを取得
+	/// アクティブな弾のリストを取得（当たり判定用）
 	/// </summary>
-	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() const { return bullets_; }
+	/// <returns>アクティブな弾のポインタのベクター</returns>
+	std::vector<PlayerBullet*> GetActiveBullets() const;
 
 	// HP管理
 	float GetHP() const { return HP_; }
@@ -71,6 +71,7 @@ public:
 	void SetHP(float hp) { HP_ = hp; }
 	void TakeDamage(float damage);
 	bool GetIsAlive() { return isAlive_; }
+
 private:
 	/// <summary>
 	/// 移動処理（XZ平面）
@@ -87,16 +88,12 @@ private:
 	/// </summary>
 	void ProcessFire();
 
-	/// <summary>
-	/// 寿命の尽きた弾を削除
-	/// </summary>
-	void DeleteBullets();
-
 	// ゲームオブジェクト
 	std::unique_ptr<Object3D> gameObject_;
 
-	// 弾リスト
-	std::list<std::unique_ptr<PlayerBullet>> bullets_;
+	// 弾プール
+	std::unique_ptr<PlayerBulletPool> bulletPool_;
+
 	//UI表示
 	std::unique_ptr<PlayerUI> playerUI_;
 
@@ -114,7 +111,6 @@ private:
 	float attenuation_ = 0.5f;
 	Vector2 limitArea_ = { 60.0f,60.0f };
 
-
 	// 回転関連
 	float rotationSpeed_ = 0.05f;
 
@@ -122,6 +118,7 @@ private:
 	float bulletSpeed_ = 0.6f;
 	int fireInterval_ = 6;
 	int fireTimer_ = 0;					// 発射タイマー
+	const size_t kBulletPoolSize = 200;	// 弾プールサイズ
 
 	// HP管理
 	float maxHP_ = 100.0f;	// 最大HP

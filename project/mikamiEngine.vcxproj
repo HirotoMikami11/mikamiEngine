@@ -292,6 +292,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Objects\Particle\ParticlePresetInstance.cpp" />
     <ClCompile Include="Engine\Objects\Particle\ParticleEditor.cpp" />
     <ClCompile Include="Application\GameObjects\FieldObjects\Torch.cpp" />
+    <ClCompile Include="Application\GameObjects\Bullet\PlayerBulletPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -539,6 +540,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Objects\Particle\ParticleEditor.h" />
     <ClInclude Include="Engine\Objects\Light\LightManager.h" />
     <ClInclude Include="Application\GameObjects\FieldObjects\Torch.h" />
+    <ClInclude Include="Application\GameObjects\Bullet\PlayerBulletPool.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

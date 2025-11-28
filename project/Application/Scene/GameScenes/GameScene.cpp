@@ -160,8 +160,8 @@ void GameScene::UpdateCollison()
 	// 衝突マネージャーのリストをクリアする
 	collisionManager_->ClearColliderList();
 
-	// プレイヤーの弾のリストを取得
-	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player_->GetBullets();
+	// プレイヤーの弾のリストを取得（プール対応）
+	std::vector<PlayerBullet*> playerBullets = player_->GetActiveBullets();
 	std::vector<BossBullet*> bossBullets = boss_->GetActiveBullets();
 
 	// Player
@@ -173,12 +173,12 @@ void GameScene::UpdateCollison()
 	}
 
 
-	// プレイヤーの弾のコライダーを追加する
-	for (const auto& bullet : playerBullets) {
-		collisionManager_->AddCollider(bullet.get());
+	// プレイヤーの弾のコライダーを追加
+	for (auto* bullet : playerBullets) {
+		collisionManager_->AddCollider(bullet);
 	}
 
-	// 新: 生ポインタなので直接使用
+	// ボスの弾のコライダーを追加
 	for (auto* bullet : bossBullets) {
 		collisionManager_->AddCollider(bullet);
 	}
