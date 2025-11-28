@@ -7,25 +7,25 @@
                 0.0,
                 1.0
             ],
-            "emitCount": 2,
+            "emitCount": 16,
             "emitDirection": [
-                0.0,
-                0.0,
-                0.0
+                -0.9796137809753418,
+                -0.19344989955425262,
+                -0.054165612906217575
             ],
-            "emitFrequency": 0.009999999776482582,
+            "emitFrequency": 0.10000000149011612,
             "emitterLifeTime": 0.10000000149011612,
             "emitterLifeTimeLoop": false,
             "emitterName": "BossHit_Emitter",
             "enableColorOverLifetime": true,
             "enableRotation": false,
             "enableSizeOverLifetime": true,
-            "initialSpeed": 0.800000011920929,
-            "isEmitting": true,
+            "initialSpeed": 3.0,
+            "isEmitting": false,
             "particleEndColor": [
                 0.0,
-                0.007497185841202736,
-                0.12745100259780884,
+                0.01312039140611887,
+                0.44607841968536377,
                 0.0
             ],
             "particleEndScale": [
@@ -57,14 +57,14 @@
             ],
             "particleStartColor": [
                 0.0,
-                2.384185791015625e-07,
-                1.0,
+                0.03171885758638382,
+                0.2696078419685364,
                 1.0
             ],
             "particleStartScale": [
-                1.0,
-                1.0,
-                1.0
+                1.5,
+                1.5,
+                1.5
             ],
             "position": [
                 -9.199999809265137,
@@ -99,7 +99,7 @@
                     -0.30000001192092896
                 ]
             },
-            "spreadAngle": 180.0,
+            "spreadAngle": 95.02799987792969,
             "targetGroupName": "BossHit_Particle",
             "useDirectionalEmit": true,
             "useEmitterLifeTime": true,

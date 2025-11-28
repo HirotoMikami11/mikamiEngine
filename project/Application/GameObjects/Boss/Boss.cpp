@@ -87,6 +87,10 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	// 砂煙エミッターの初期化
 	smokeEmitter_ = std::make_unique<BossSmokeEmitter>();
 	smokeEmitter_->Initialize(this);
+
+	//破壊煙エミッターの初期化
+	smokeBreakEmitter_ = std::make_unique<BossBreakSmokeEmitter>();
+	smokeBreakEmitter_->Initialize(this);
 }
 
 float Boss::CalculateDistanceBetweenParts(BaseParts* part1, BaseParts* part2) {
@@ -133,6 +137,10 @@ void Boss::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPr
 	// 砂煙エミッターの更新
 	if (smokeEmitter_) {
 		smokeEmitter_->Update();
+	}
+	// 破壊煙エミッターの更新
+	if (smokeBreakEmitter_) {
+		smokeBreakEmitter_->Update();
 	}
 
 	// UIの更新
@@ -427,6 +435,8 @@ void Boss::UpdatePartsPositionsFromHistory() {
 		currentPart->SetPosition(targetPosition);
 	}
 }
+
+
 void Boss::UpdateAllParts(const Matrix4x4& viewProjectionMatrix) {
 	// 1. 位置設定（履歴から距離ベースで計算）
 	UpdatePartsPositionsFromHistory();

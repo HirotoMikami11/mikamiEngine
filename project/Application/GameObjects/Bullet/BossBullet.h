@@ -3,7 +3,7 @@
 #include "CollisionConfig.h"
 
 /// <summary>
-/// ボスの弾クラス（プール対応版）
+/// ボスの弾クラス
 /// Activate/Deactivateパターンでリソースを再利用
 /// </summary>
 class BossBullet : public BaseBullet {

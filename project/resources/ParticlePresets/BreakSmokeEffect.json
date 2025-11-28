@@ -20,17 +20,17 @@
             "enableColorOverLifetime": true,
             "enableRotation": false,
             "enableSizeOverLifetime": true,
-            "initialSpeed": 3.0,
-            "isEmitting": true,
+            "initialSpeed": 3.4000000953674316,
+            "isEmitting": false,
             "particleEndColor": [
-                0.15196079015731812,
-                0.15196079015731812,
-                0.15196079015731812,
+                0.14215683937072754,
+                0.14215683937072754,
+                0.14215683937072754,
                 0.0
             ],
             "particleEndScale": [
                 0.0,
-                0.8999999761581421,
+                0.0,
                 0.0
             ],
             "particleLifeTimeMax": 3.0,
@@ -56,9 +56,9 @@
                 1.0
             ],
             "particleStartColor": [
-                0.019607841968536377,
-                0.019607841968536377,
-                0.019607841968536377,
+                0.07352942228317261,
+                0.041514020413160324,
+                0.019103234633803368,
                 1.0
             ],
             "particleStartScale": [
@@ -67,8 +67,8 @@
                 1.0
             ],
             "position": [
-                -4.0,
-                -3.200000047683716,
+                -3.4000000953674316,
+                -4.300000190734863,
                 0.0
             ],
             "rotation": [
@@ -99,7 +99,7 @@
                     -0.5
                 ]
             },
-            "spreadAngle": 30.128999710083008,
+            "spreadAngle": 1.74399995803833,
             "targetGroupName": "BreakSmoke",
             "useDirectionalEmit": true,
             "useEmitterLifeTime": true,
