@@ -110,6 +110,7 @@ void BossSmokeEmitter::UpdateEmitterPosition(ParticlePresetInstance* instance, c
 	if (emitter) {
 		emitter->GetTransform().SetPosition(position);
 	}
+
 }
 
 void BossSmokeEmitter::Update()

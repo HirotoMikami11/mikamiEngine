@@ -218,7 +218,12 @@ void ParticleEmitter::ImGui()
 
 			ImGui::Separator();
 
-			ImGui::Checkbox("Is Emitting", &isEmitting_);
+			if (ImGui::Checkbox("Is Emitting", &isEmitting_)) {
+				// 発生状態が変わった場合、タイマーをリセット
+				if (isEmitting_) {
+					frequencyTimer_ = 0.0f;
+				}
+			}
 
 			// エミッター位置
 			Vector3 pos = emitterTransform_.GetPosition();

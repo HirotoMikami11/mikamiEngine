@@ -30,24 +30,13 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 		previousHeadPosition_ = position;
 
 		// 初期位置履歴を作成（全パーツが正しい位置に配置されるように）
-		// 各パーツのスケールに基づいて距離を計算
 		Vector3 historyPosition = position;
 		positionHistory_.push_back(historyPosition);
 
-		// 全パーツのリストを作成
-		std::vector<BaseParts*> allParts;
-		allParts.push_back(head_.get());
-		for (auto& body : bodies_) {
-			allParts.push_back(body.get());
-		}
-		if (tail_) {
-			allParts.push_back(tail_.get());
-		}
-
-		// 各パーツの初期位置を計算
-		for (size_t i = 1; i < allParts.size(); ++i) {
-			BaseParts* prevPart = allParts[i - 1];
-			BaseParts* currentPart = allParts[i];
+		// 各パーツの初期位置を計算（allPartsCache_を使用）
+		for (size_t i = 1; i < allPartsCache_.size(); ++i) {
+			BaseParts* prevPart = allPartsCache_[i - 1];
+			BaseParts* currentPart = allPartsCache_[i];
 
 			// 前のパーツと現在のパーツの間の距離を計算
 			float distance = CalculateDistanceBetweenParts(prevPart, currentPart);
@@ -57,8 +46,8 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 			positionHistory_.push_back(historyPosition);
 		}
 
-		// 各パーツの初期位置を設定
-		UpdatePartsPositions();
+		// 履歴から各パーツの位置を設定
+		UpdatePartsPositionsFromHistory();
 	}
 
 	// パーツのHPを設定
@@ -67,10 +56,9 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	// Phase1のパーツ状態を設定（衝突属性とアクティブ状態）
 	UpdatePartsState();
 
-	//UIクラスの初期化
+	// UIクラスの初期化
 	bossUI_ = std::make_unique<BossUI>();
 	bossUI_->Initialize(dxCommon_);
-
 
 	// スプラインシステムの初期化
 	DebugDrawLineSystem* debugDrawSystem = Engine::GetInstance()->GetDebugDrawManager();
@@ -88,21 +76,18 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	stateManager_ = std::make_unique<BossStateManager>();
 	stateManager_->Initialize();
 
-	// 初期Stateを設定（RotateShootState）
+	// 初期Stateを設定
 	currentState_ = std::make_unique<SplineMoveRotateShootState>("resources/CSV/BossMove/RotateShoot_1.csv");
 	currentState_->Initialize();
 
-	//弾のプールを作成
+	// 弾のプールを作成
 	bulletPool_ = std::make_unique<BossBulletPool>();
 	bulletPool_->Initialize(dxCommon_, kBulletPoolSize);
 
 	// 砂煙エミッターの初期化
 	smokeEmitter_ = std::make_unique<BossSmokeEmitter>();
 	smokeEmitter_->Initialize(this);
-
 }
-
-
 
 float Boss::CalculateDistanceBetweenParts(BaseParts* part1, BaseParts* part2) {
 	if (!part1 || !part2) {
@@ -121,9 +106,7 @@ float Boss::CalculateDistanceBetweenParts(BaseParts* part1, BaseParts* part2) {
 
 void Boss::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewProjectionMatirxSprite)
 {
-
-
-	// Stateの更新
+	// State更新
 	if (currentState_) {
 		currentState_->Update(this);
 	}
@@ -141,31 +124,16 @@ void Boss::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPr
 	// 位置履歴の更新
 	UpdatePositionHistory();
 
-	// 各パーツの位置を更新
-	UpdatePartsPositions();
+	// 全パーツの位置・回転・行列を更新
+	UpdateAllParts(viewProjectionMatrix);
 
-	// 各パーツの向きを更新
-	UpdatePartsRotations();
-
-	// 各パーツの行列更新
-	if (head_) {
-		head_->Update(viewProjectionMatrix);
-	}
-	for (auto& body : bodies_) {
-		body->Update(viewProjectionMatrix);
-	}
-	if (tail_) {
-		tail_->Update(viewProjectionMatrix);
-	}
-
-	//弾の更新
+	// 弾の更新
 	UpdateBullets(viewProjectionMatrix);
 
 	// 砂煙エミッターの更新
 	if (smokeEmitter_) {
 		smokeEmitter_->Update();
 	}
-
 
 	// UIの更新
 	bossUI_->Update(bossHP_, maxBossHP_, viewProjectionMatirxSprite);
@@ -174,8 +142,8 @@ void Boss::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPr
 	if (moveEditor_) {
 		moveEditor_->Update();
 	}
-
 }
+
 void Boss::Draw() {
 	// 全パーツを描画
 	if (head_) {
@@ -193,7 +161,6 @@ void Boss::Draw() {
 	if (splineDebugger_) {
 		splineDebugger_->Draw();
 	}
-
 }
 
 void Boss::DrawUI()
@@ -216,9 +183,8 @@ void Boss::ImGui() {
 				SetPartsHP();
 			}
 
-			//UI情報
+			// UI情報
 			bossUI_->ImGui();
-
 		}
 
 		// Phase情報
@@ -241,7 +207,6 @@ void Boss::ImGui() {
 
 		// State情報
 		if (ImGui::CollapsingHeader("State", ImGuiTreeNodeFlags_DefaultOpen)) {
-
 			std::vector<std::string> stateNames = {
 				"Idle",
 				"DebugMove",
@@ -267,7 +232,6 @@ void Boss::ImGui() {
 			if (stateManager_) {
 				stateManager_->ImGui();
 			}
-
 		}
 
 		// パラメータ設定
@@ -312,7 +276,6 @@ void Boss::ImGui() {
 			}
 		}
 
-
 		if (ImGui::CollapsingHeader("Bullet Pool Info")) {
 			ImGui::Text("Pool Size: %zu", bulletPool_->GetPoolSize());
 			ImGui::Text("Active Bullets: %zu", bulletPool_->GetActiveBulletCount());
@@ -341,15 +304,6 @@ void Boss::ImGui() {
 			}
 		}
 
-		// 砂煙エミッター
-		if (ImGui::CollapsingHeader("Smoke Emitter")) {
-			if (smokeEmitter_) {
-				smokeEmitter_->ImGui();
-			} else {
-				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Smoke Emitter not initialized");
-			}
-		}
-
 		ImGui::TreePop();
 	}
 #endif
@@ -358,16 +312,16 @@ void Boss::ImGui() {
 void Boss::InitializeParts() {
 	// 頭パーツ（黄色）
 	head_ = std::make_unique<HeadParts>();
-	head_->Initialize(dxCommon_, Vector3{ 0.0f, 0.0f, 0.0f });
+	Vector3 headPosition = { 0.0f, 0.0f, 0.0f };
+	head_->Initialize(dxCommon_, headPosition);
 
 	// 体パーツ（白） × 5
-	// 初期位置は後でUpdatePartsPositions()で正しく配置されるため、仮の位置を設定
 	bodies_.clear();
 	for (size_t i = 0; i < kBodyCount; ++i) {
 		auto body = std::make_unique<BodyParts>();
 		Vector3 bodyPosition = { 0.0f, 0.0f, -static_cast<float>(i + 1) * (kBasePartSize + partsOffset_) };
 		body->Initialize(dxCommon_, bodyPosition);
-		body->SetBoss(this);  // Bossへの参照を設定
+		body->SetBoss(this);
 		bodies_.push_back(std::move(body));
 	}
 
@@ -375,7 +329,10 @@ void Boss::InitializeParts() {
 	tail_ = std::make_unique<TailParts>();
 	Vector3 tailPosition = { 0.0f, 0.0f, -static_cast<float>(kBodyCount + 1) * (kBasePartSize + partsOffset_) };
 	tail_->Initialize(dxCommon_, tailPosition);
-	tail_->SetBoss(this);  // Bossへの参照を設定
+	tail_->SetBoss(this);
+
+	//キャッシュを作成
+	RebuildPartsCache();
 }
 
 void Boss::SetPartsHP() {
@@ -396,8 +353,6 @@ void Boss::SetHP(float hp) {
 	bossHP_ = hp;
 	SetPartsHP();
 }
-
-
 
 void Boss::UpdatePositionHistory() {
 	if (!head_) return;
@@ -421,18 +376,8 @@ void Boss::UpdatePositionHistory() {
 	}
 }
 
-void Boss::UpdatePartsPositions() {
+void Boss::UpdatePartsPositionsFromHistory() {
 	if (!head_ || positionHistory_.empty()) return;
-
-	// 全パーツのリストを作成（頭を含む）
-	std::vector<BaseParts*> allPartsWithHead;
-	allPartsWithHead.push_back(head_.get());
-	for (auto& body : bodies_) {
-		allPartsWithHead.push_back(body.get());
-	}
-	if (tail_) {
-		allPartsWithHead.push_back(tail_.get());
-	}
 
 	// 体と尻尾のパーツのみのリスト（頭以外）
 	std::vector<BaseParts*> allParts;
@@ -446,14 +391,14 @@ void Boss::UpdatePartsPositions() {
 	// 各パーツに対して、履歴から適切な位置を取得
 	for (size_t i = 0; i < allParts.size(); ++i) {
 		// 前のパーツ（0番目なら頭、それ以外は前の体パーツ）
-		BaseParts* prevPart = allPartsWithHead[i];
+		BaseParts* prevPart = allPartsCache_[i];
 		BaseParts* currentPart = allParts[i];
 
 		// 前のパーツまでの累積距離を計算
 		float targetDistance = 0.0f;
 		for (size_t j = 0; j <= i; ++j) {
-			BaseParts* part1 = allPartsWithHead[j];
-			BaseParts* part2 = allPartsWithHead[j + 1];
+			BaseParts* part1 = allPartsCache_[j];
+			BaseParts* part2 = allPartsCache_[j + 1];
 			targetDistance += CalculateDistanceBetweenParts(part1, part2);
 		}
 
@@ -478,45 +423,38 @@ void Boss::UpdatePartsPositions() {
 			accumulatedDistance += segmentDistance;
 		}
 
-		// パーツの位置を設定
+		// 位置を設定
 		currentPart->SetPosition(targetPosition);
 	}
 }
+void Boss::UpdateAllParts(const Matrix4x4& viewProjectionMatrix) {
+	// 1. 位置設定（履歴から距離ベースで計算）
+	UpdatePartsPositionsFromHistory();
 
-void Boss::UpdatePartsRotations() {
-	if (!head_) return;
+	// 2. 各パーツの回転を設定
+	for (size_t i = 1; i < allPartsCache_.size(); ++i) {
+		auto* part = allPartsCache_[i];
+		auto* prevPart = allPartsCache_[i - 1];
 
-	// 全パーツのリストを作成（頭を含む）
-	std::vector<BaseParts*> allParts;
-	allParts.push_back(head_.get());
-	for (auto& body : bodies_) {
-		allParts.push_back(body.get());
-	}
-	if (tail_) {
-		allParts.push_back(tail_.get());
-	}
+		Vector3 currentPos = part->GetPosition();
+		Vector3 prevPos = prevPart->GetPosition();
 
-	// 各パーツの向きを次のパーツ方向に設定
-	for (size_t i = 0; i < allParts.size() - 1; ++i) {
-		Vector3 currentPosition = allParts[i]->GetPosition();
-		Vector3 nextPosition = allParts[i + 1]->GetPosition();
-
-		// 次のパーツへの方向ベクトルを計算
-		Vector3 direction = Subtract(nextPosition, currentPosition);
-		float distance = Length(direction);
-
-		// 距離が十分にある場合のみ回転を適用（ゼロ除算防止）
-		if (distance > 0.001f) {
-			// Y軸回転角度を計算（-Z方向が前方）
+		Vector3 direction = currentPos - prevPos;
+		if (Length(direction) > 0.001f) {
 			float rotationY = std::atan2(-direction.x, -direction.z);
-			allParts[i]->SetRotationY(rotationY);
+			part->SetRotationY(rotationY);
 		}
 	}
 
-	// 最後のパーツ（尻尾）は一つ前のパーツと同じ向き
-	if (allParts.size() >= 2) {
-		Vector3 lastRotation = allParts[allParts.size() - 2]->GetRotation();
-		allParts[allParts.size() - 1]->SetRotation(lastRotation);
+	// 3. 尻尾の回転は特殊処理（最後から2番目のパーツの回転をコピー）
+	if (allPartsCache_.size() >= 2) {
+		Vector3 lastRotation = allPartsCache_[allPartsCache_.size() - 2]->GetRotation();
+		allPartsCache_[allPartsCache_.size() - 1]->SetRotation(lastRotation);
+	}
+
+	// 4. 全パーツの行列更新
+	for (auto* part : allPartsCache_) {
+		part->Update(viewProjectionMatrix);
 	}
 }
 
@@ -546,6 +484,9 @@ void Boss::TransitionToPhase2() {
 
 	// パーツ状態を更新（アクティブ状態と衝突属性）
 	UpdatePartsState();
+
+	// アクティブパーツキャッシュを無効化
+	InvalidateActivePartsCache();
 }
 
 void Boss::TransitionToDeathPhase() {
@@ -553,6 +494,9 @@ void Boss::TransitionToDeathPhase() {
 
 	// パーツ状態を更新（全パーツ非アクティブ）
 	UpdatePartsState();
+
+	// アクティブパーツキャッシュを無効化
+	InvalidateActivePartsCache();
 }
 
 void Boss::UpdatePartsState() {
@@ -573,7 +517,7 @@ void Boss::UpdatePartsState() {
 		// 尻尾を非アクティブに
 		if (tail_) {
 			tail_->SetActive(false);
-			tail_->SetPhase1Attribute();  // 属性は設定するが、非アクティブなのでダメージは受けない
+			tail_->SetPhase1Attribute();
 		}
 
 	} else if (currentPhase_ == BossPhase::Phase2) {
@@ -587,7 +531,7 @@ void Boss::UpdatePartsState() {
 		// 体を非アクティブに
 		for (auto& body : bodies_) {
 			body->SetActive(false);
-			body->SetPhase2Attribute();  // 属性は設定するが、非アクティブなのでダメージは受けない
+			body->SetPhase2Attribute();
 		}
 
 		// 尻尾をアクティブにしてEnemy属性に
@@ -620,28 +564,9 @@ void Boss::TakeDamageFromPart(float damage) {
 	}
 }
 
-
-std::vector<Collider*> Boss::GetColliders() {
-	std::vector<Collider*> colliders;
-
-
-	if (head_) {
-		colliders.push_back(head_.get());
-	}
-
-	// 体パーツ
-	for (auto& body : bodies_) {
-		colliders.push_back(body.get());
-	}
-
-	// 尻尾パーツ
-	if (tail_) {
-		colliders.push_back(tail_.get());
-	}
-
-	return colliders;
+const std::vector<Collider*>& Boss::GetColliders() {
+	return collidersCache_;
 }
-
 
 void Boss::ChangeState(std::unique_ptr<BossState> newState) {
 	if (newState) {
@@ -689,26 +614,16 @@ void Boss::ClearPositionHistory() {
 		Vector3 historyPosition = headPosition;
 		positionHistory_.push_back(historyPosition);
 
-		// 全パーツのリストを作成
-		std::vector<BaseParts*> allParts;
-		allParts.push_back(head_.get());
-		for (auto& body : bodies_) {
-			allParts.push_back(body.get());
-		}
-		if (tail_) {
-			allParts.push_back(tail_.get());
-		}
-
-		// 各パーツの初期位置を計算
-		for (size_t i = 1; i < allParts.size(); ++i) {
-			BaseParts* prevPart = allParts[i - 1];
-			BaseParts* currentPart = allParts[i];
+		// 各パーツの初期位置を計算（allPartsCache_を使用）
+		for (size_t i = 1; i < allPartsCache_.size(); ++i) {
+			BaseParts* prevPart = allPartsCache_[i - 1];
+			BaseParts* currentPart = allPartsCache_[i];
 
 			// 前のパーツと現在のパーツの間の距離を計算
 			float distance = CalculateDistanceBetweenParts(prevPart, currentPart);
 
 			// 現在の向きの逆方向に移動
-			Vector3 direction = { 0.0f, 0.0f, -1.0f };  // デフォルトは-Z方向
+			Vector3 direction = { 0.0f, 0.0f, -1.0f };
 			if (i == 1) {
 				// 頭の向きを取得
 				Vector3 headRotation = head_->GetRotation();
@@ -723,7 +638,6 @@ void Boss::ClearPositionHistory() {
 	}
 }
 
-
 void Boss::AlignAllPartsInLine() {
 	if (!head_) {
 		return;
@@ -735,22 +649,11 @@ void Boss::AlignAllPartsInLine() {
 	float headRotationY = headRotation.y;
 
 	// 頭の後ろ方向ベクトルを計算
-	// -Z方向が前方なので、180度回転させた方向が後ろ
 	Vector3 backDirection = {
-		std::sin(headRotationY),  // X成分
-		0.0f,                     // Y成分（水平に保つ）
-		std::cos(headRotationY)   // Z成分
+		std::sin(headRotationY),
+		0.0f,
+		std::cos(headRotationY)
 	};
-
-	// 全パーツのリストを作成
-	std::vector<BaseParts*> allParts;
-	allParts.push_back(head_.get());
-	for (auto& body : bodies_) {
-		allParts.push_back(body.get());
-	}
-	if (tail_) {
-		allParts.push_back(tail_.get());
-	}
 
 	// 位置履歴をクリア
 	positionHistory_.clear();
@@ -758,8 +661,8 @@ void Boss::AlignAllPartsInLine() {
 	// 現在の位置から後ろ方向に配置
 	Vector3 currentPosition = headPosition;
 
-	for (size_t i = 0; i < allParts.size(); ++i) {
-		BaseParts* currentPart = allParts[i];
+	for (size_t i = 0; i < allPartsCache_.size(); ++i) {
+		BaseParts* currentPart = allPartsCache_[i];
 
 		// 位置を設定
 		currentPart->SetPosition(currentPosition);
@@ -771,8 +674,8 @@ void Boss::AlignAllPartsInLine() {
 		positionHistory_.push_back(currentPosition);
 
 		// 次のパーツの位置を計算（後ろ方向に移動）
-		if (i < allParts.size() - 1) {
-			BaseParts* nextPart = allParts[i + 1];
+		if (i < allPartsCache_.size() - 1) {
+			BaseParts* nextPart = allPartsCache_[i + 1];
 
 			// パーツ間の距離を計算
 			float distance = CalculateDistanceBetweenParts(currentPart, nextPart);
@@ -788,15 +691,11 @@ void Boss::AlignAllPartsInLine() {
 	previousHeadPosition_ = headPosition;
 }
 
-
-
 bool Boss::FireBullet(const Vector3& position, const Vector3& velocity) {
-	// BulletPoolから弾を取得して発射
 	return bulletPool_->FireBullet(position, velocity);
 }
 
 void Boss::UpdateBullets(const Matrix4x4& viewProjectionMatrix) {
-	// BulletPoolで一括更新（死亡した弾は自動的に非アクティブ化される）
 	bulletPool_->Update(viewProjectionMatrix);
 }
 
@@ -808,52 +707,59 @@ std::vector<BossBullet*> Boss::GetActiveBullets() const {
 	return bulletPool_->GetActiveBullets();
 }
 
-std::vector<BaseParts*> Boss::GetActiveBodyParts() {
-	std::vector<BaseParts*> parts;
+const std::vector<BaseParts*>& Boss::GetActiveBodyParts() const {
+	if (activePartsCacheDirty_) {
+		activePartsCache_.clear();
 
-	// 頭パーツ（常にActive）
-	if (head_ && head_->IsActive()) {
-		parts.push_back(head_.get());
-	}
+		if (head_ && head_->IsActive()) {
+			activePartsCache_.push_back(head_.get());
+		}
 
-	// 体パーツ（Phase1でActive）
-	if (currentPhase_ == BossPhase::Phase1) {
-		for (auto& body : bodies_) {
-			if (body && body->IsActive()) {
-				parts.push_back(body.get());
+		if (currentPhase_ == BossPhase::Phase1) {
+			for (auto& body : bodies_) {
+				if (body && body->IsActive()) {
+					activePartsCache_.push_back(body.get());
+				}
 			}
 		}
-	}
 
-	// 尻尾パーツ（Phase2でActive）
-	if (currentPhase_ == BossPhase::Phase2) {
-		if (tail_ && tail_->IsActive()) {
-			parts.push_back(tail_.get());
+		if (currentPhase_ == BossPhase::Phase2) {
+			if (tail_ && tail_->IsActive()) {
+				activePartsCache_.push_back(tail_.get());
+			}
 		}
+
+		activePartsCacheDirty_ = false;
 	}
 
-	return parts;
+	return activePartsCache_;
 }
 
-std::vector<BaseParts*> Boss::GetAllBodyParts() {
-	std::vector<BaseParts*> parts;
 
-	// 頭パーツ
-	if (head_) {
-		parts.push_back(head_.get());
-	}
+const std::vector<BaseParts*>& Boss::GetAllBodyParts() const {
+	return allPartsCache_;
+}
 
-	// 体パーツ
+void Boss::RebuildPartsCache() {
+	// 全パーツキャッシュ
+	allPartsCache_.clear();
+	if (head_) allPartsCache_.push_back(head_.get());
 	for (auto& body : bodies_) {
-		if (body) {
-			parts.push_back(body.get());
-		}
+		allPartsCache_.push_back(body.get());
 	}
+	if (tail_) allPartsCache_.push_back(tail_.get());
 
-	// 尻尾パーツ
-	if (tail_) {
-		parts.push_back(tail_.get());
+	// 全コライダーキャッシュ
+	collidersCache_.clear();
+	if (head_) collidersCache_.push_back(head_.get());
+	for (auto& body : bodies_) {
+		collidersCache_.push_back(body.get());
 	}
+	if (tail_) collidersCache_.push_back(tail_.get());
 
-	return parts;
+	// アクティブパーツキャッシュを無効化
+	activePartsCacheDirty_ = true;
+}
+void Boss::InvalidateActivePartsCache() {
+	activePartsCacheDirty_ = true;
 }

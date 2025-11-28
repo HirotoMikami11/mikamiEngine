@@ -57,7 +57,7 @@ public:
 	void SetFrequency(float frequency) { emitFrequency_ = frequency; }
 	float GetFrequency() const { return emitFrequency_; }
 
-	void SetEmitEnabled(bool enabled) { isEmitting_ = enabled; }
+	void SetEmitEnabled(bool enabled) { isEmitting_ = enabled;emitterCurrentTime_ = 0.0f; }
 	bool IsEmitting() const { return isEmitting_; }
 
 	// パーティクル初期設定

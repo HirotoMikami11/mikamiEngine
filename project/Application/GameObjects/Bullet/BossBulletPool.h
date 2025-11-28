@@ -53,22 +53,31 @@ public:
 	/// <summary>
 	/// 現在のアクティブな弾の数を取得
 	/// </summary>
-	size_t GetActiveBulletCount() const { return activeBulletCount_; }
+	size_t GetActiveBulletCount() const { return activeIndices_.size(); }
 
 	/// <summary>
 	/// プールサイズを取得
 	/// </summary>
 	size_t GetPoolSize() const { return bulletPool_.size(); }
 
+	/// <summary>
+	/// 指定インデックスの弾がアクティブかチェック（デバッグ用）
+	/// </summary>
+	bool IsActive(size_t index) const {
+		if (index >= isActive_.size()) return false;
+		return isActive_[index];
+	}
+
 private:
-	// 弾のプール（全てuniquePtrで管理）
+	// 弾のプール
 	std::vector<std::unique_ptr<BossBullet>> bulletPool_;
 
-	// アクティブ状態の管理（インデックスで対応）
-	std::vector<bool> isActive_;
+	// 高速アクセス用インデックス
+	std::vector<size_t> freeIndices_;	// 空いているインデックスのスタック
+	std::vector<size_t> activeIndices_;	// アクティブな弾のインデックスリスト
 
-	// アクティブな弾の数
-	size_t activeBulletCount_ = 0;
+	// アクティブ状態の管理（デバッグ用に保持）
+	std::vector<bool> isActive_;
 
 	// システム参照
 	DirectXCommon* dxCommon_ = nullptr;

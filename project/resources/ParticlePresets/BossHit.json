@@ -7,30 +7,30 @@
                 0.0,
                 1.0
             ],
-            "emitCount": 1,
+            "emitCount": 2,
             "emitDirection": [
                 0.0,
-                1.0,
+                0.0,
                 0.0
             ],
             "emitFrequency": 0.009999999776482582,
-            "emitterLifeTime": 2.0,
+            "emitterLifeTime": 0.10000000149011612,
             "emitterLifeTimeLoop": false,
-            "emitterName": "BreakSmoke_Emitter",
+            "emitterName": "BossHit_Emitter",
             "enableColorOverLifetime": true,
             "enableRotation": false,
             "enableSizeOverLifetime": true,
-            "initialSpeed": 3.0,
+            "initialSpeed": 0.800000011920929,
             "isEmitting": true,
             "particleEndColor": [
-                0.15196079015731812,
-                0.15196079015731812,
-                0.15196079015731812,
+                0.0,
+                0.007497185841202736,
+                0.12745100259780884,
                 0.0
             ],
             "particleEndScale": [
                 0.0,
-                0.8999999761581421,
+                0.0,
                 0.0
             ],
             "particleLifeTimeMax": 3.0,
@@ -56,9 +56,9 @@
                 1.0
             ],
             "particleStartColor": [
-                0.019607841968536377,
-                0.019607841968536377,
-                0.019607841968536377,
+                0.0,
+                2.384185791015625e-07,
+                1.0,
                 1.0
             ],
             "particleStartScale": [
@@ -67,8 +67,8 @@
                 1.0
             ],
             "position": [
-                -4.0,
-                -3.200000047683716,
+                -9.199999809265137,
+                4.300000190734863,
                 0.0
             ],
             "rotation": [
@@ -89,18 +89,18 @@
             "showDebugAABB": false,
             "spawnArea": {
                 "max": [
-                    0.5,
-                    0.5,
-                    0.5
+                    0.30000001192092896,
+                    0.30000001192092896,
+                    0.30000001192092896
                 ],
                 "min": [
-                    -0.5,
-                    -0.5,
-                    -0.5
+                    -0.30000001192092896,
+                    -0.30000001192092896,
+                    -0.30000001192092896
                 ]
             },
-            "spreadAngle": 30.128999710083008,
-            "targetGroupName": "BreakSmoke",
+            "spreadAngle": 180.0,
+            "targetGroupName": "BossHit_Particle",
             "useDirectionalEmit": true,
             "useEmitterLifeTime": true,
             "velocityRange": 1.0
@@ -109,12 +109,12 @@
     "fields": [],
     "groups": [
         {
-            "groupName": "BreakSmoke",
-            "maxParticles": 206,
+            "groupName": "BossHit_Particle",
+            "maxParticles": 100,
             "modelTag": "plane",
             "textureName": "circle",
             "useBillboard": true
         }
     ],
-    "presetName": "BreakSmokeEffect"
+    "presetName": "BossHit"
 }

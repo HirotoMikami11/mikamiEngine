@@ -71,7 +71,7 @@ public:
 	// 頭の位置操作（State から呼ばれる）
 	Vector3 GetHeadPosition() const;
 	void MoveHead(const Vector3& movement);
-	void SetHeadPosition(const Vector3& position);  // 追加：直接位置を設定
+	void SetHeadPosition(const Vector3& position);//直接位置を設定
 	void SetHeadRotationY(float rotationY);
 
 	// 移動速度の取得
@@ -89,7 +89,8 @@ public:
 	void TransitionToDeathPhase();
 
 	// コライダーリストを取得（CollisionManagerに登録するため）
-	std::vector<Collider*> GetColliders();
+	// const参照で返す（コピー不要）
+	const std::vector<Collider*>& GetColliders();
 
 	// スプライントラックを取得
 	BossSplineTrack* GetSplineTrack() const { return splineTrack_.get(); }
@@ -108,8 +109,6 @@ public:
 	/// </summary>
 	void AlignAllPartsInLine();
 
-
-	// 弾発射機構）
 	/// <summary>
 	/// 弾を発射
 	/// </summary>
@@ -136,13 +135,15 @@ public:
 
 	/// <summary>
 	/// Activeな全パーツのリストを取得（State使用）
+	/// const参照で返す
 	/// </summary>
-	std::vector<BaseParts*> GetActiveBodyParts();
+	const std::vector<BaseParts*>& GetActiveBodyParts() const;
 
 	/// <summary>
 	/// 全パーツのリストを取得
+	/// const参照で返す
 	/// </summary>
-	std::vector<BaseParts*> GetAllBodyParts();
+	const std::vector<BaseParts*>& GetAllBodyParts() const;
 
 private:
 	/// <summary>
@@ -156,14 +157,15 @@ private:
 	void UpdatePositionHistory();
 
 	/// <summary>
-	/// 各パーツの位置を更新（履歴から参照）
+	/// 全パーツの更新を統合処理（位置・回転・行列）
+	/// 元の UpdatePartsPositions(), UpdatePartsRotations(), 個別Update() を統合
 	/// </summary>
-	void UpdatePartsPositions();
+	void UpdateAllParts(const Matrix4x4& viewProjectionMatrix);
 
 	/// <summary>
-	/// 各パーツの向きを更新
+	/// 位置履歴から各パーツの位置を更新
 	/// </summary>
-	void UpdatePartsRotations();
+	void UpdatePartsPositionsFromHistory();
 
 	/// <summary>
 	/// Phase遷移チェック
@@ -188,10 +190,26 @@ private:
 	/// </summary>
 	void UpdatePartsState();
 
+	/// <summary>
+	/// 【Phase 1 最適化】パーツキャッシュを再構築
+	/// </summary>
+	void RebuildPartsCache();
+
+	/// <summary>
+	/// 【Phase 1 最適化】アクティブパーツキャッシュを無効化
+	/// </summary>
+	void InvalidateActivePartsCache();
+
 	// パーツ（ポインタは生ポインタで管理）
 	std::unique_ptr<HeadParts> head_;
 	std::vector<std::unique_ptr<BodyParts>> bodies_;
 	std::unique_ptr<TailParts> tail_;
+
+	// 【Phase 1 最適化】パーツキャッシュ（パフォーマンス最適化用）
+	std::vector<Collider*> collidersCache_;				// 全コライダーのキャッシュ（固定）
+	std::vector<BaseParts*> allPartsCache_;				// 全パーツのキャッシュ（固定）
+	mutable std::vector<BaseParts*> activePartsCache_;	// アクティブパーツのキャッシュ（Phase依存）
+	mutable bool activePartsCacheDirty_ = true;			// アクティブパーツキャッシュの更新フラグ
 
 	// 位置履歴（頭の移動履歴を保存）
 	std::deque<Vector3> positionHistory_;
