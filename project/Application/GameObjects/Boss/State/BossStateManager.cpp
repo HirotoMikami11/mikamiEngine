@@ -1,5 +1,6 @@
 #include "BossStateManager.h"
 #include "Boss.h"
+#include "Phase/BossPhaseManager.h"
 #include "State/IdleState.h"
 #include "State/SplineMoveState.h"
 #include "State/SplineMove8WayShootState.h"
@@ -14,42 +15,21 @@ BossStateManager::BossStateManager()
 {
 }
 
-void BossStateManager::Initialize() {
-	// デフォルトの設定をロード
-	LoadConfigurations();
-
-	// デフォルトの遷移候補を設定
-	std::vector<StateTransitionCandidate> defaultCandidates = {
-		//	{ BossStateType::SplineMove, 2.0f },
-			{ BossStateType::SplineMove8WayShoot, 2.0f },
-			{ BossStateType::SplineMoveRotateShoot, 2.0f },
-	};
-	SetTransitionCandidates(defaultCandidates);
+void BossStateManager::Initialize(const PhaseConfig& config)
+{
+	// PhaseConfigから設定を受け取る
+	UpdateConfig(config);
 }
 
-void BossStateManager::LoadConfigurations() {
-	// SplineMove8WayShootStateの設定
-	splineMove8WayShootConfig_.csvFilePaths = {
-		"Resources/CSV/BossMove/Move_1.csv",
-		"Resources/CSV/BossMove/Move_2.csv",
-		"Resources/CSV/BossMove/Move_3.csv",
-	};
-	// SplineMoveRotateShootStateの設定
-	splineMoveRotateShootConfig_.csvFilePaths = {
-		"Resources/CSV/BossMove/RotateShoot_1.csv",
-		"Resources/CSV/BossMove/RotateShoot_2.csv",
-		"Resources/CSV/BossMove/RotateShoot_3.csv",
-	};
-	// SplineMoveStateの設定
-	splineMoveConfig_.csvFilePaths = {
-		"Resources/CSV/BossMove/Move_1.csv",
-		"Resources/CSV/BossMove/Move_2.csv",
-		"Resources/CSV/BossMove/Move_3.csv",
-	};
-}
+void BossStateManager::UpdateConfig(const PhaseConfig& config)
+{
+	// 遷移候補を更新
+	transitionCandidates_ = config.transitionCandidates;
 
-void BossStateManager::SetTransitionCandidates(const std::vector<StateTransitionCandidate>& candidates) {
-	transitionCandidates_ = candidates;
+	// 各StateConfigを更新
+	splineMove8WayShootConfig_ = config.splineMove8WayShootConfig;
+	splineMoveRotateShootConfig_ = config.splineMoveRotateShootConfig;
+	splineMoveConfig_ = config.splineMoveConfig;
 }
 
 void BossStateManager::TransitionToRandomState(Boss* boss) {
@@ -183,7 +163,7 @@ void BossStateManager::ImGui() {
 	ImGui::Spacing();
 
 	// 遷移候補の表示と編集
-	if (ImGui::CollapsingHeader("Transition Candidates")) {
+	if (ImGui::CollapsingHeader("Current Transition Candidates")) {
 		for (size_t i = 0; i < transitionCandidates_.size(); ++i) {
 			auto& candidate = transitionCandidates_[i];
 
@@ -192,79 +172,40 @@ void BossStateManager::ImGui() {
 			// Stateタイプ名
 			const char* stateNames[] = { "Idle", "SplineMove", "SplineMove8WayShoot", "SplineMoveRotateShoot" };
 			int currentType = static_cast<int>(candidate.stateType);
-			ImGui::Combo("Type", &currentType, stateNames, IM_ARRAYSIZE(stateNames));
-			candidate.stateType = static_cast<BossStateType>(currentType);
+			ImGui::Text("%s", stateNames[currentType]);
+			ImGui::SameLine();
 
 			// 重み
-			ImGui::DragFloat("Weight", &candidate.weight, 0.1f, 0.0f, 10.0f);
+			ImGui::Text("Weight: %.1f", candidate.weight);
 
 			ImGui::PopID();
-			ImGui::Separator();
-		}
-
-		// 候補追加ボタン
-		if (ImGui::Button("Add Candidate")) {
-			transitionCandidates_.push_back({ BossStateType::SplineMove, 1.0f });
-		}
-
-		// 候補削除ボタン
-		if (!transitionCandidates_.empty()) {
-			ImGui::SameLine();
-			if (ImGui::Button("Remove Last")) {
-				transitionCandidates_.pop_back();
-			}
 		}
 	}
 
 	ImGui::Spacing();
 
-	// 各Stateの設定表示
-	if (ImGui::CollapsingHeader("State Configurations")) {
+	// 現在の設定表示
+	if (ImGui::CollapsingHeader("Current State Configurations")) {
 		// SplineMove8WayShoot設定
 		if (ImGui::TreeNode("SplineMove8WayShoot Config")) {
-			ImGui::Text("CSV Files:");
-			for (size_t i = 0; i < splineMove8WayShootConfig_.csvFilePaths.size(); ++i) {
-				ImGui::BulletText("%s", splineMove8WayShootConfig_.csvFilePaths[i].c_str());
-			}
-			ImGui::DragInt("Shoot Interval", &splineMove8WayShootConfig_.shootInterval, 1, 10, 300);
-			ImGui::DragFloat("Bullet Speed", &splineMove8WayShootConfig_.bulletSpeed, 0.01f, 0.05f, 1.0f);
-			ImGui::DragInt("Bullet Number", &splineMove8WayShootConfig_.onShootBulletNumber, 1, 1, 16);
+			ImGui::Text("CSV Files: %zu", splineMove8WayShootConfig_.csvFilePaths.size());
+			ImGui::Text("Shoot Interval: %d", splineMove8WayShootConfig_.shootInterval);
+			ImGui::Text("Bullet Speed: %.2f", splineMove8WayShootConfig_.bulletSpeed);
+			ImGui::Text("Bullet Number: %d", splineMove8WayShootConfig_.onShootBulletNumber);
 			ImGui::TreePop();
 		}
 
 		// SplineMoveRotateShoot設定
 		if (ImGui::TreeNode("SplineMoveRotateShoot Config")) {
-			ImGui::Text("CSV Files:");
-			for (size_t i = 0; i < splineMoveRotateShootConfig_.csvFilePaths.size(); ++i) {
-				ImGui::BulletText("%s", splineMoveRotateShootConfig_.csvFilePaths[i].c_str());
-			}
-			ImGui::DragInt("Stop Control Point Index", &splineMoveRotateShootConfig_.stopControlPointIndex, 1, 0, 10);
-			ImGui::DragFloat("Start Angle", &splineMoveRotateShootConfig_.startAngle, 1.0f, -180.0f, 180.0f);
-			ImGui::DragFloat("End Angle", &splineMoveRotateShootConfig_.endAngle, 1.0f, -180.0f, 180.0f);
-			ImGui::DragFloat("Rotation Speed", &splineMoveRotateShootConfig_.rotationSpeed, 0.1f, 0.1f, 10.0f);
-			ImGui::DragInt("Shoot Interval", &splineMoveRotateShootConfig_.shootInterval, 1, 1, 60);
-			ImGui::DragFloat("Bullet Speed", &splineMoveRotateShootConfig_.bulletSpeed, 0.01f, 0.05f, 1.0f);
-			ImGui::DragInt("Angle Interval Duration", &splineMoveRotateShootConfig_.angleIntervalDuration, 1, 10, 120);
-			ImGui::DragInt("Max Repeat Count", &splineMoveRotateShootConfig_.maxRepeatCount, 1, 1, 10);
+			ImGui::Text("CSV Files: %zu", splineMoveRotateShootConfig_.csvFilePaths.size());
+			ImGui::Text("Stop Control Point Index: %d", splineMoveRotateShootConfig_.stopControlPointIndex);
+			ImGui::Text("Start Angle: %.1f", splineMoveRotateShootConfig_.startAngle);
+			ImGui::Text("End Angle: %.1f", splineMoveRotateShootConfig_.endAngle);
+			ImGui::Text("Rotation Speed: %.2f", splineMoveRotateShootConfig_.rotationSpeed);
+			ImGui::Text("Shoot Interval: %d", splineMoveRotateShootConfig_.shootInterval);
+			ImGui::Text("Max Repeat Count: %d", splineMoveRotateShootConfig_.maxRepeatCount);
 			ImGui::TreePop();
 		}
-
-		// SplineMove設定
-		if (ImGui::TreeNode("SplineMove Config")) {
-			ImGui::Text("CSV Files:");
-			for (size_t i = 0; i < splineMoveConfig_.csvFilePaths.size(); ++i) {
-				ImGui::BulletText("%s", splineMoveConfig_.csvFilePaths[i].c_str());
-			}
-			ImGui::TreePop();
-		}
-	}
-
-	// 手動遷移ボタン
-	ImGui::Separator();
-	ImGui::Spacing();
-	if (ImGui::Button("Transition to Random State (Manual)")) {
-		// このボタンはBossクラス側で処理する必要がある
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Use Boss::TransitionToRandomState()");
 	}
 #endif
 }

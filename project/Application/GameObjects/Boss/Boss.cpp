@@ -53,9 +53,6 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	// パーツのHPを設定
 	SetPartsHP();
 
-	// Phase1のパーツ状態を設定（衝突属性とアクティブ状態）
-	UpdatePartsState();
-
 	// UIクラスの初期化
 	bossUI_ = std::make_unique<BossUI>();
 	bossUI_->Initialize(dxCommon_);
@@ -72,9 +69,21 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	splineDebugger_->Initialize(debugDrawSystem, splineTrack_.get());
 	moveEditor_->Initialize(splineTrack_.get(), splineMovement_.get(), splineDebugger_.get());
 
-	// StateManagerの初期化
+	// 爆発エミッターの初期化
+	explosionEmitter_ = std::make_unique<BossExplosionEmitter>();
+	explosionEmitter_->Initialize(this);
+
+	// PhaseManagerの初期化（ExplosionEmitterの後）
+	phaseManager_ = std::make_unique<BossPhaseManager>();
+	phaseManager_->Initialize(this, explosionEmitter_.get());
+
+	// StateManagerの初期化（PhaseManager から Phase1の設定を受け取る）
 	stateManager_ = std::make_unique<BossStateManager>();
-	stateManager_->Initialize();
+	const PhaseConfig& phase1Config = phaseManager_->GetCurrentPhaseConfig();
+	stateManager_->Initialize(phase1Config);
+
+	// Phase1のパーツ状態を設定（衝突属性とアクティブ状態）
+	UpdatePartsState();
 
 	// 初期Stateを設定
 	currentState_ = std::make_unique<SplineMoveRotateShootState>("resources/CSV/BossMove/RotateShoot_1.csv");
@@ -88,7 +97,7 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	smokeEmitter_ = std::make_unique<BossSmokeEmitter>();
 	smokeEmitter_->Initialize(this);
 
-	//破壊煙エミッターの初期化
+	// 破壊煙エミッターの初期化
 	smokeBreakEmitter_ = std::make_unique<BossBreakSmokeEmitter>();
 	smokeBreakEmitter_->Initialize(this);
 }
@@ -110,13 +119,29 @@ float Boss::CalculateDistanceBetweenParts(BaseParts* part1, BaseParts* part2) {
 
 void Boss::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewProjectionMatirxSprite)
 {
+	// PhaseManager更新（Phase遷移チェック、Death演出制御）
+	if (phaseManager_) {
+		phaseManager_->Update();
+
+		// Phase変更があった場合、StateManagerに新しい設定を適用
+		if (phaseManager_->HasPhaseChanged()) {
+			const PhaseConfig& config = phaseManager_->GetCurrentPhaseConfig();
+			stateManager_->UpdateConfig(config);
+			UpdatePartsState();  // パーツの状態更新
+			InvalidateActivePartsCache();
+			phaseManager_->ResetPhaseChangeFlag();
+		}
+	}
+
 	// State更新
 	if (currentState_) {
 		currentState_->Update(this);
 	}
 
-	// AI有効時、IdleStateなら自動的に次のStateへ遷移
-	if (stateManager_ && stateManager_->IsAIEnabled()) {
+	// AI動作（Death中は動作しない）
+	BossPhase currentPhase = GetCurrentPhase();
+	if (currentPhase != BossPhase::Death &&
+		stateManager_ && stateManager_->IsAIEnabled()) {
 		if (currentState_ && strcmp(currentState_->GetStateName(), "Idle") == 0) {
 			stateManager_->TransitionToRandomState(this);
 		}
@@ -141,6 +166,10 @@ void Boss::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPr
 	// 破壊煙エミッターの更新
 	if (smokeBreakEmitter_) {
 		smokeBreakEmitter_->Update();
+	}
+	// 爆発エミッターの更新
+	if (explosionEmitter_) {
+		explosionEmitter_->Update();
 	}
 
 	// UIの更新
@@ -190,27 +219,18 @@ void Boss::ImGui() {
 				bossHP_ = maxBossHP_;
 				SetPartsHP();
 			}
-
+			// HPのリセットボタン
+			if (ImGui::Button("Take Damege 100")) {
+				bossHP_ -= 100;
+				SetPartsHP();
+			}
 			// UI情報
 			bossUI_->ImGui();
 		}
 
-		// Phase情報
-		if (ImGui::CollapsingHeader("Phase")) {
-			const char* phaseNames[] = { "Phase 1 (Head & Body)", "Phase 2 (Head & Tail)", "Death" };
-			int currentPhaseIndex = static_cast<int>(currentPhase_);
-			ImGui::Text("Current Phase: %s", phaseNames[currentPhaseIndex]);
-
-			// Phase強制変更ボタン（デバッグ用）
-			if (currentPhase_ == BossPhase::Phase1) {
-				if (ImGui::Button("Force Transition to Phase2")) {
-					TransitionToPhase2();
-				}
-			} else if (currentPhase_ == BossPhase::Phase2) {
-				if (ImGui::Button("Force Transition to Death")) {
-					TransitionToDeathPhase();
-				}
-			}
+		// PhaseManager情報
+		if (phaseManager_) {
+			phaseManager_->ImGui();
 		}
 
 		// State情報
@@ -249,7 +269,10 @@ void Boss::ImGui() {
 			ImGui::Text("(Distance between parts = Part1 Size/2 + Part2 Size/2 + Offset)");
 
 			// 移動速度
-			ImGui::DragFloat("Move Speed", &moveSpeed_, 0.1f, 0.1f, 10.0f);
+			ImGui::DragFloat("Base Move Speed", &baseMoveSpeed_, 0.1f, 0.1f, 10.0f);
+			ImGui::Text("Current Move Speed: %.2f (Base %.2f x Multiplier %.2f)",
+				GetMoveSpeed(), baseMoveSpeed_,
+				phaseManager_ ? phaseManager_->GetCurrentPhaseConfig().moveSpeedMultiplier : 1.0f);
 
 			// 履歴情報
 			ImGui::Text("Position History Size: %zu", positionHistory_.size());
@@ -303,6 +326,11 @@ void Boss::ImGui() {
 			}
 		}
 
+		// 爆発エミッター
+		if (explosionEmitter_) {
+			explosionEmitter_->ImGui();
+		}
+
 		// スプラインシステム
 		if (ImGui::CollapsingHeader("Spline System")) {
 			if (moveEditor_) {
@@ -323,7 +351,7 @@ void Boss::InitializeParts() {
 	Vector3 headPosition = { 0.0f, 0.0f, 0.0f };
 	head_->Initialize(dxCommon_, headPosition, "Boss_Head", "white2x2");
 
-	// 体パーツ（白） × 5
+	// 体パーツ（白） × 6
 	bodies_.clear();
 	for (size_t i = 0; i < kBodyCount; ++i) {
 		auto body = std::make_unique<BodyParts>();
@@ -344,7 +372,7 @@ void Boss::InitializeParts() {
 }
 
 void Boss::SetPartsHP() {
-	// 体パーツのHP: Boss HP / 5
+	// 体パーツのHP: Boss HP / 6
 	float bodyHP = maxBossHP_ / static_cast<float>(kBodyCount);
 	for (auto& body : bodies_) {
 		body->SetHP(bodyHP);
@@ -463,48 +491,26 @@ void Boss::UpdateAllParts(const Matrix4x4& viewProjectionMatrix) {
 }
 
 void Boss::CheckPhaseTransition() {
-	// 現在のPhaseと前回のPhaseが変わった場合のみ処理
-	if (currentPhase_ != previousPhase_) {
-		UpdatePartsState();
-		previousPhase_ = currentPhase_;
+	if (!phaseManager_) {
+		return;
 	}
 
-	// Phase遷移チェック
-	if (currentPhase_ == BossPhase::Phase1 && bossHP_ <= 0.0f) {
-		TransitionToPhase2();
-	} else if (currentPhase_ == BossPhase::Phase2 && bossHP_ <= 0.0f) {
-		TransitionToDeathPhase();
+	BossPhase currentPhase = phaseManager_->GetCurrentPhase();
+
+	// HP条件でPhase遷移をトリガー
+	if (currentPhase == BossPhase::Phase1 && bossHP_ <= 0.0f) {
+		phaseManager_->TriggerPhase2Transition();
+		bossHP_ = maxBossHP_;  // HP回復
+		SetPartsHP();
+	} else if (currentPhase == BossPhase::Phase2 && bossHP_ <= 0.0f) {
+		phaseManager_->TriggerDeathTransition();
 	}
-}
-
-void Boss::TransitionToPhase2() {
-	currentPhase_ = BossPhase::Phase2;
-
-	// BossのHPを全回復
-	bossHP_ = maxBossHP_;
-
-	// パーツのHPをリセット
-	SetPartsHP();
-
-	// パーツ状態を更新（アクティブ状態と衝突属性）
-	UpdatePartsState();
-
-	// アクティブパーツキャッシュを無効化
-	InvalidateActivePartsCache();
-}
-
-void Boss::TransitionToDeathPhase() {
-	currentPhase_ = BossPhase::Death;
-
-	// パーツ状態を更新（全パーツ非アクティブ）
-	UpdatePartsState();
-
-	// アクティブパーツキャッシュを無効化
-	InvalidateActivePartsCache();
 }
 
 void Boss::UpdatePartsState() {
-	if (currentPhase_ == BossPhase::Phase1) {
+	BossPhase currentPhase = GetCurrentPhase();
+
+	if (currentPhase == BossPhase::Phase1) {
 		// Phase1: 頭と体がアクティブ、尻尾が非アクティブ
 
 		// 頭は常にアクティブ（ダメージは受けない）
@@ -524,7 +530,7 @@ void Boss::UpdatePartsState() {
 			tail_->SetPhase1Attribute();
 		}
 
-	} else if (currentPhase_ == BossPhase::Phase2) {
+	} else if (currentPhase == BossPhase::Phase2) {
 		// Phase2: 頭と尻尾がアクティブ、体が非アクティブ
 
 		// 頭は常にアクティブ（ダメージは受けない）
@@ -544,20 +550,9 @@ void Boss::UpdatePartsState() {
 			tail_->SetPhase2Attribute();
 		}
 
-	} else if (currentPhase_ == BossPhase::Death) {
-		// Death: すべて非アクティブ
-
-		if (head_) {
-			head_->SetActive(false);
-		}
-
-		for (auto& body : bodies_) {
-			body->SetActive(false);
-		}
-
-		if (tail_) {
-			tail_->SetActive(false);
-		}
+	} else if (currentPhase == BossPhase::Death) {
+		// Death: 現在の状態を維持（爆発演出で順次非表示にする）
+		// パーツの状態は爆発エミッターが制御
 	}
 }
 
@@ -604,6 +599,28 @@ void Boss::SetHeadPosition(const Vector3& position) {
 	if (head_) {
 		head_->SetPosition(position);
 	}
+}
+
+float Boss::GetMoveSpeed() const {
+	if (phaseManager_) {
+		const PhaseConfig& config = phaseManager_->GetCurrentPhaseConfig();
+		return baseMoveSpeed_ * config.moveSpeedMultiplier;
+	}
+	return baseMoveSpeed_;
+}
+
+BossPhase Boss::GetCurrentPhase() const {
+	if (phaseManager_) {
+		return phaseManager_->GetCurrentPhase();
+	}
+	return BossPhase::Phase1;
+}
+
+DeathSubPhase Boss::GetDeathSubPhase() const {
+	if (phaseManager_) {
+		return phaseManager_->GetDeathSubPhase();
+	}
+	return DeathSubPhase::None;
 }
 
 void Boss::ClearPositionHistory() {
@@ -715,11 +732,13 @@ const std::vector<BaseParts*>& Boss::GetActiveBodyParts() const {
 	if (activePartsCacheDirty_) {
 		activePartsCache_.clear();
 
+		BossPhase currentPhase = GetCurrentPhase();
+
 		if (head_ && head_->IsActive()) {
 			activePartsCache_.push_back(head_.get());
 		}
 
-		if (currentPhase_ == BossPhase::Phase1) {
+		if (currentPhase == BossPhase::Phase1) {
 			for (auto& body : bodies_) {
 				if (body && body->IsActive()) {
 					activePartsCache_.push_back(body.get());
@@ -727,7 +746,7 @@ const std::vector<BaseParts*>& Boss::GetActiveBodyParts() const {
 			}
 		}
 
-		if (currentPhase_ == BossPhase::Phase2) {
+		if (currentPhase == BossPhase::Phase2) {
 			if (tail_ && tail_->IsActive()) {
 				activePartsCache_.push_back(tail_.get());
 			}
@@ -764,6 +783,7 @@ void Boss::RebuildPartsCache() {
 	// アクティブパーツキャッシュを無効化
 	activePartsCacheDirty_ = true;
 }
+
 void Boss::InvalidateActivePartsCache() {
 	activePartsCacheDirty_ = true;
 }

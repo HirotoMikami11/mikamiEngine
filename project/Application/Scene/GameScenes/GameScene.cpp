@@ -122,7 +122,8 @@ void GameScene::Update() {
 
 	//クリア・デス判定
 
-	if (boss_->GetCurrentPhase() == BossPhase::Death) {
+	if (boss_->GetCurrentPhase() == BossPhase::Death&&
+		boss_->GetDeathSubPhase() ==DeathSubPhase::Complete) {
 		// フェードを使った遷移
 		SceneTransitionHelper::FadeToScene("GameClearScene", 1.0f);
 		return; // 以降の処理をスキップ

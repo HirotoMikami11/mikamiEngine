@@ -61,6 +61,12 @@ void SplineMoveState::Update(Boss* boss) {
 
 	// 終点に到達したかチェック
 	if (movement->IsAtEnd()) {
+		// PhaseManagerに終了を通知
+		if (boss->GetPhaseManager()) {
+			boss->GetPhaseManager()->NotifyStateFinished();
+		}
+
+		// Idle状態へ（PhaseManagerが必要に応じて次の遷移を実行）
 		boss->ChangeState(std::make_unique<IdleState>());
 	}
 }

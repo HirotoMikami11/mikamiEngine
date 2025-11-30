@@ -4,31 +4,29 @@
 #include <deque>
 
 #include "Engine.h"
+
+//パーツ関連
 #include "Parts/BaseParts.h"
 #include "Parts/HeadParts.h"
 #include "Parts/BodyParts.h"
 #include "Parts/TailParts.h"
+//State Phase関連
 #include "State/BossState.h"
 #include "State/BossStateManager.h"
+#include "Phase/BossPhaseManager.h"
+//spline移動
 #include "BossSplineTrack.h"
 #include "BossSplineMovement.h"
 #include "BossSplineDebugger.h"
 #include "BossMoveEditor.h"
+//UI関連
 #include "BossUI.h"
+//弾関連
 #include "BossBulletPool.h "
 //エミッター関連
 #include "BossSmokeEmitter.h"
 #include "BossBreakSmokeEmitter.h"
-
-
-/// <summary>
-/// Phase（フェーズ管理）
-/// </summary>
-enum class BossPhase {
-	Phase1,		// フェーズ1: 頭と体がアクティブ
-	Phase2,		// フェーズ2: 頭と尻尾がアクティブ
-	Death,		// 死亡フェーズ: すべて非アクティブ
-};
+#include "BossExplosionEmitter.h"
 
 /// <summary>
 /// 蛇のような動きをするボスクラス
@@ -76,8 +74,8 @@ public:
 	void SetHeadPosition(const Vector3& position);//直接位置を設定
 	void SetHeadRotationY(float rotationY);
 
-	// 移動速度の取得
-	float GetMoveSpeed() const { return moveSpeed_; }
+	// 移動速度の取得（Phase別倍率を適用）
+	float GetMoveSpeed() const;
 
 	// HP管理
 	float GetHP() const { return bossHP_; }
@@ -86,9 +84,9 @@ public:
 	void TakeDamageFromPart(float damage);  // パーツからのダメージを受ける
 
 	// Phase管理
-	BossPhase GetCurrentPhase() const { return currentPhase_; }
-	void TransitionToPhase2();
-	void TransitionToDeathPhase();
+	BossPhase GetCurrentPhase() const;
+	DeathSubPhase GetDeathSubPhase() const;
+	BossPhaseManager* GetPhaseManager() const { return phaseManager_.get(); }
 
 	// コライダーリストを取得（CollisionManagerに登録するため）
 	// const参照で返す（コピー不要）
@@ -221,8 +219,7 @@ private:
 	std::unique_ptr<BossStateManager> stateManager_;
 
 	// Phase管理
-	BossPhase currentPhase_ = BossPhase::Phase1;
-	BossPhase previousPhase_ = BossPhase::Phase1;
+	std::unique_ptr<BossPhaseManager> phaseManager_;
 
 	//UI
 	std::unique_ptr<BossUI> bossUI_;
@@ -241,11 +238,12 @@ private:
 	std::unique_ptr<BossBulletPool> bulletPool_;
 	std::unique_ptr<BossSmokeEmitter> smokeEmitter_;
 	std::unique_ptr<BossBreakSmokeEmitter> smokeBreakEmitter_;
+	std::unique_ptr<BossExplosionEmitter> explosionEmitter_;
 
 	// パラメータ
 	const size_t kBodyCount = 6;				// 体のパーツ数
 	float partsOffset_ = 0.0f;					// パーツ間のオフセット（隙間）（ImGuiで変更可能）
-	float moveSpeed_ = 10.0f;					// 移動速度
+	float baseMoveSpeed_ = 10.0f;				// 基本移動速度
 	const float kHistoryUpdateThreshold = 0.001f;	// 履歴更新の閾値（ガタガタ防止）
 	const size_t kMaxHistorySize = 2048;		// 履歴の最大サイズ
 	const float kBasePartSize = 1.0f;			// 基本パーツサイズ（モデルのデフォルトサイズ）
