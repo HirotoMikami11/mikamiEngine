@@ -32,7 +32,6 @@ void BaseParts::Draw() {
 #ifdef USEIMGUI
 	DebugLineAdd();
 #endif
-
 	gameObject_->Draw();
 }
 

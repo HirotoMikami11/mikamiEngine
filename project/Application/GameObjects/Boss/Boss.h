@@ -193,12 +193,12 @@ private:
 	void UpdatePartsState();
 
 	/// <summary>
-	/// 【Phase 1 最適化】パーツキャッシュを再構築
+	/// パーツキャッシュを再構築
 	/// </summary>
 	void RebuildPartsCache();
 
 	/// <summary>
-	/// 【Phase 1 最適化】アクティブパーツキャッシュを無効化
+	/// アクティブパーツキャッシュを無効化
 	/// </summary>
 	void InvalidateActivePartsCache();
 
@@ -207,7 +207,7 @@ private:
 	std::vector<std::unique_ptr<BodyParts>> bodies_;
 	std::unique_ptr<TailParts> tail_;
 
-	// 【Phase 1 最適化】パーツキャッシュ（パフォーマンス最適化用）
+	// パーツキャッシュ
 	std::vector<Collider*> collidersCache_;				// 全コライダーのキャッシュ（固定）
 	std::vector<BaseParts*> allPartsCache_;				// 全パーツのキャッシュ（固定）
 	mutable std::vector<BaseParts*> activePartsCache_;	// アクティブパーツのキャッシュ（Phase依存）
@@ -248,7 +248,7 @@ private:
 	float moveSpeed_ = 10.0f;					// 移動速度
 	const float kHistoryUpdateThreshold = 0.001f;	// 履歴更新の閾値（ガタガタ防止）
 	const size_t kMaxHistorySize = 2048;		// 履歴の最大サイズ
-	const float kBasePartSize = 1.0f;			// 基本パーツサイズ（キューブのデフォルトサイズ）
+	const float kBasePartSize = 1.0f;			// 基本パーツサイズ（モデルのデフォルトサイズ）
 	const size_t kBulletPoolSize = 500;			// 弾プールサイズ
 
 	// 前回の頭の位置（履歴更新判定用）
