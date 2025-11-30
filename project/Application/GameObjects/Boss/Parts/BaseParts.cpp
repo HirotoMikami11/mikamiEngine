@@ -1,12 +1,13 @@
 #include "Parts/BaseParts.h"
 #include "ImGui/ImGuiManager.h"
 
-void BaseParts::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
+void BaseParts::Initialize(DirectXCommon* dxCommon, const Vector3& position, const std::string& modelName, const std::string& textureName)
+{
 	dxCommon_ = dxCommon;
 
 	// キューブオブジェクトの生成
 	gameObject_ = std::make_unique<Object3D>();
-	gameObject_->Initialize(dxCommon_, "cube", "white2x2");
+	gameObject_->Initialize(dxCommon_, modelName, textureName);
 
 	// トランスフォームの設定
 	Vector3Transform transform;

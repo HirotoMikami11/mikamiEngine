@@ -321,14 +321,14 @@ void Boss::InitializeParts() {
 	// 頭パーツ（黄色）
 	head_ = std::make_unique<HeadParts>();
 	Vector3 headPosition = { 0.0f, 0.0f, 0.0f };
-	head_->Initialize(dxCommon_, headPosition);
+	head_->Initialize(dxCommon_, headPosition, "Boss_Head", "white2x2");
 
 	// 体パーツ（白） × 5
 	bodies_.clear();
 	for (size_t i = 0; i < kBodyCount; ++i) {
 		auto body = std::make_unique<BodyParts>();
 		Vector3 bodyPosition = { 0.0f, 0.0f, -static_cast<float>(i + 1) * (kBasePartSize + partsOffset_) };
-		body->Initialize(dxCommon_, bodyPosition);
+		body->Initialize(dxCommon_, bodyPosition, "Boss_Body", "white2x2");
 		body->SetBoss(this);
 		bodies_.push_back(std::move(body));
 	}
@@ -336,7 +336,7 @@ void Boss::InitializeParts() {
 	// 尻尾パーツ（緑）
 	tail_ = std::make_unique<TailParts>();
 	Vector3 tailPosition = { 0.0f, 0.0f, -static_cast<float>(kBodyCount + 1) * (kBasePartSize + partsOffset_) };
-	tail_->Initialize(dxCommon_, tailPosition);
+	tail_->Initialize(dxCommon_, tailPosition, "Boss_Tail", "white2x2");
 	tail_->SetBoss(this);
 
 	//キャッシュを作成
@@ -456,13 +456,7 @@ void Boss::UpdateAllParts(const Matrix4x4& viewProjectionMatrix) {
 		}
 	}
 
-	// 3. 尻尾の回転は特殊処理（最後から2番目のパーツの回転をコピー）
-	if (allPartsCache_.size() >= 2) {
-		Vector3 lastRotation = allPartsCache_[allPartsCache_.size() - 2]->GetRotation();
-		allPartsCache_[allPartsCache_.size() - 1]->SetRotation(lastRotation);
-	}
-
-	// 4. 全パーツの行列更新
+	// 3. 全パーツの行列更新
 	for (auto* part : allPartsCache_) {
 		part->Update(viewProjectionMatrix);
 	}

@@ -78,6 +78,9 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Model/FontModel", "PressA.obj", "pressAFont", false},
 		{"resources/Model/Wall", "Wall.obj", "wall", false},
 		{"resources/Model/torch", "torch.obj", "torch", false},
+		{"resources/Model/Boss", "Boss_Body.obj", "Boss_Body", false},
+		{"resources/Model/Boss", "Boss_Head.obj", "Boss_Head", false},
+		{"resources/Model/Boss", "Boss_Tail.obj", "Boss_Tail", false},
 
 
 		// モデルはここに追加

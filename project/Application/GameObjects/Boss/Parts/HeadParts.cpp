@@ -1,9 +1,9 @@
 #include "Parts/HeadParts.h"
 
-void HeadParts::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
+void HeadParts::Initialize(DirectXCommon* dxCommon, const Vector3& position, const std::string& modelName, const std::string& textureName)
+{
 	// 基底クラスの初期化
-	BaseParts::Initialize(dxCommon, position);
-
+	BaseParts::Initialize(dxCommon, position, modelName, textureName);
 	// 黄色に設定
 	SetColor(0xFFFF00FF);
 	SetDefaultColor(0xFFFF00FF);

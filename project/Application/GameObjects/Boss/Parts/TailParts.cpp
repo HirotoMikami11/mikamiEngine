@@ -1,9 +1,10 @@
 #include "Parts/TailParts.h"
 #include "Boss.h"
 
-void TailParts::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
+void TailParts::Initialize(DirectXCommon* dxCommon, const Vector3& position, const std::string& modelName, const std::string& textureName)
+{
 	// 基底クラスの初期化
-	BaseParts::Initialize(dxCommon, position);
+	BaseParts::Initialize(dxCommon, position,modelName,textureName);
 
 	// 緑色に設定
 	SetColor(0x00FF00FF);

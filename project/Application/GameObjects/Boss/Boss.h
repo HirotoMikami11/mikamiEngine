@@ -243,7 +243,7 @@ private:
 	std::unique_ptr<BossBreakSmokeEmitter> smokeBreakEmitter_;
 
 	// パラメータ
-	const size_t kBodyCount = 5;				// 体のパーツ数
+	const size_t kBodyCount = 6;				// 体のパーツ数
 	float partsOffset_ = 0.0f;					// パーツ間のオフセット（隙間）（ImGuiで変更可能）
 	float moveSpeed_ = 10.0f;					// 移動速度
 	const float kHistoryUpdateThreshold = 0.001f;	// 履歴更新の閾値（ガタガタ防止）

@@ -1,9 +1,10 @@
 #include "Parts/BodyParts.h"
 #include "Boss.h"
 
-void BodyParts::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
+void BodyParts::Initialize(DirectXCommon* dxCommon, const Vector3& position, const std::string& modelName, const std::string& textureName)
+{
 	// 基底クラスの初期化
-	BaseParts::Initialize(dxCommon, position);
+	BaseParts::Initialize(dxCommon, position, modelName, textureName);
 
 	// 白色に設定
 	SetColor(0xFFFFFFFF);

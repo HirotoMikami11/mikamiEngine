@@ -17,7 +17,11 @@ public:
 	/// </summary>
 	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <param name="position">初期位置</param>
-	virtual void Initialize(DirectXCommon* dxCommon, const Vector3& position);
+	/// <param name="modelName">使用するモデル</param>
+	/// <param name="textureName">使用するテクスチャ名</param>
+	virtual void Initialize(DirectXCommon* dxCommon, const Vector3& position,
+		const std::string& modelName = "Boss_Body",
+		const std::string& textureName = "white2x2");
 
 	/// <summary>
 	/// 更新処理
