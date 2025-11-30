@@ -95,7 +95,7 @@ void BossExplosionEmitter::Update()
 			// 非表示時間に達したらパーツを消す
 			if (current.hideTimer >= hideDelay_) {
 				if (current.targetPart) {
-					current.targetPart->SetActive(false);
+					current.targetPart->SetVisible(false);
 				}
 				current.hasHidden = true;
 			}

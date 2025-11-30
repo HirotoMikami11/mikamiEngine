@@ -147,6 +147,18 @@ void Boss::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPr
 		}
 	}
 
+	// Death演出中の自動進行処理
+	// WaitingStateFinish状態でIdleになったら、次のフェーズへ自動進行
+	if (currentPhase == BossPhase::Death && phaseManager_) {
+		DeathSubPhase deathSubPhase = phaseManager_->GetDeathSubPhase();
+		if (deathSubPhase == DeathSubPhase::WaitingStateFinish) {
+			if (currentState_ && strcmp(currentState_->GetStateName(), "Idle") == 0) {
+				// Idleになったので、PhaseManagerに終了を通知
+				phaseManager_->NotifyStateFinished();
+			}
+		}
+	}
+
 	// Phase遷移チェック
 	CheckPhaseTransition();
 
@@ -224,6 +236,7 @@ void Boss::ImGui() {
 				bossHP_ -= 100;
 				SetPartsHP();
 			}
+
 			// UI情報
 			bossUI_->ImGui();
 		}

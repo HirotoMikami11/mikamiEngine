@@ -91,6 +91,16 @@ public:
 	/// </summary>
 	void UpdateDamageColorTimer();
 
+	/// <summary>
+	/// 描画の可視性を取得
+	/// </summary>
+	bool IsVisible() const { return isVisible_; }
+
+	/// <summary>
+	/// 描画の可視性を設定（爆発演出などで使用）
+	/// </summary>
+	void SetVisible(bool visible) { isVisible_ = visible; }
+
 protected:
 	std::unique_ptr<Object3D> gameObject_;
 	DirectXCommon* dxCommon_ = nullptr;
@@ -99,6 +109,9 @@ protected:
 	float maxHP_ = 100.0f;
 	float currentHP_ = 100.0f;
 	bool isActive_ = true;
+
+	// 描画可視性フラグ（爆発演出などで使用）
+	bool isVisible_ = true;
 
 	// デフォルトカラー（死亡時に黒にするため保存）
 	uint32_t defaultColor_ = 0xFFFFFFFF;

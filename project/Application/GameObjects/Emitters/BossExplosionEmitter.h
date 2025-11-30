@@ -19,7 +19,7 @@ public:
 		ParticlePresetInstance* instance = nullptr;
 
 		float explosionTimer = 0.0f;    // 次の爆発までの待機時間
-		float hideTimer = 0.0f;         // パーツ非表示までの時間
+		float hideTimer = 0.1f;         // パーツ非表示までの時間
 
 		bool hasExploded = false;       // 爆発済みか
 		bool hasHidden = false;         // 非表示済みか

@@ -28,10 +28,16 @@ void BaseParts::Update(const Matrix4x4& viewProjectionMatrix) {
 }
 
 void BaseParts::Draw() {
+	// 可視性フラグがfalseなら描画しない
+	if (!isVisible_) {
+		return;
+	}
+
 	// デバッグ表示が有効な場合、コライダーを描画
 #ifdef USEIMGUI
 	DebugLineAdd();
 #endif
+
 	gameObject_->Draw();
 }
 
@@ -44,6 +50,9 @@ void BaseParts::ImGui(const char* label) {
 			float hpPercentage = (maxHP_ > 0.0f) ? (currentHP_ / maxHP_) * 100.0f : 0.0f;
 			ImGui::ProgressBar(currentHP_ / maxHP_, ImVec2(0.0f, 0.0f), std::format("{:.1f}%%", hpPercentage).c_str());
 			ImGui::Checkbox("Is Active", &isActive_);
+
+			// 可視性フラグ
+			ImGui::Checkbox("Is Visible", &isVisible_);
 		}
 
 		// コライダー情報
