@@ -7,21 +7,21 @@
                 0.0,
                 1.0
             ],
-            "emitCount": 1,
+            "emitCount": 2,
             "emitDirection": [
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
             ],
             "emitFrequency": 0.009999999776482582,
             "emitterLifeTime": 2.0,
             "emitterLifeTimeLoop": false,
-            "emitterName": "BreakSmoke_Emitter",
+            "emitterName": "BreakSmoke[0]_BreakSmoke_Emitter",
             "enableColorOverLifetime": true,
             "enableRotation": false,
             "enableSizeOverLifetime": true,
-            "initialSpeed": 3.4000000953674316,
-            "isEmitting": false,
+            "initialSpeed": 6.099999904632568,
+            "isEmitting": true,
             "particleEndColor": [
                 0.14215683937072754,
                 0.14215683937072754,
@@ -33,7 +33,7 @@
                 0.0,
                 0.0
             ],
-            "particleLifeTimeMax": 3.0,
+            "particleLifeTimeMax": 1.0,
             "particleLifeTimeMin": 1.0,
             "particleRotateMax": [
                 0.0,
@@ -56,9 +56,9 @@
                 1.0
             ],
             "particleStartColor": [
-                0.19607841968536377,
-                0.08073817938566208,
-                0.0,
+                0.07352942228317261,
+                0.041514020413160324,
+                0.019103234633803368,
                 1.0
             ],
             "particleStartScale": [
@@ -67,9 +67,9 @@
                 1.0
             ],
             "position": [
-                39.65522384643555,
-                1.5,
-                14.426741600036621
+                36.67018508911133,
+                3.0,
+                13.225879669189453
             ],
             "rotation": [
                 0.0,
@@ -100,7 +100,7 @@
                 ]
             },
             "spreadAngle": 1.74399995803833,
-            "targetGroupName": "BreakSmoke",
+            "targetGroupName": "BreakSmoke[0]_BreakSmoke",
             "useDirectionalEmit": true,
             "useEmitterLifeTime": true,
             "velocityRange": 1.0
@@ -109,7 +109,7 @@
     "fields": [],
     "groups": [
         {
-            "groupName": "BreakSmoke",
+            "groupName": "BreakSmoke[0]_BreakSmoke",
             "maxParticles": 206,
             "modelTag": "plane",
             "textureName": "circle",

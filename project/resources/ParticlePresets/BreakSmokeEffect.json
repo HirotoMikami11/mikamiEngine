@@ -7,7 +7,7 @@
                 0.0,
                 1.0
             ],
-            "emitCount": 1,
+            "emitCount": 2,
             "emitDirection": [
                 0.0,
                 1.0,
@@ -20,7 +20,7 @@
             "enableColorOverLifetime": true,
             "enableRotation": false,
             "enableSizeOverLifetime": true,
-            "initialSpeed": 3.4000000953674316,
+      "initialSpeed": 6.099999904632568,
             "isEmitting": false,
             "particleEndColor": [
                 0.14215683937072754,
@@ -33,7 +33,7 @@
                 0.0,
                 0.0
             ],
-            "particleLifeTimeMax": 3.0,
+            "particleLifeTimeMax": 1.0,
             "particleLifeTimeMin": 1.0,
             "particleRotateMax": [
                 0.0,
@@ -110,7 +110,7 @@
     "groups": [
         {
             "groupName": "BreakSmoke",
-            "maxParticles": 206,
+            "maxParticles": 300,
             "modelTag": "plane",
             "textureName": "circle",
             "useBillboard": true
