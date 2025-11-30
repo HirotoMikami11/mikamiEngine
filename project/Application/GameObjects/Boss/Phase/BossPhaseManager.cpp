@@ -185,7 +185,7 @@ void BossPhaseManager::UpdateDeathSequence()
 void BossPhaseManager::ImGui()
 {
 #ifdef USEIMGUI
-	if (ImGui::TreeNode("Phase Manager")) {
+	if (ImGui::CollapsingHeader("Phase Manager")) {
 		// Phase表示
 		const char* phaseNames[] = { "Phase1", "Phase2", "Death" };
 		ImGui::Text("Current Phase: %s", phaseNames[static_cast<int>(currentPhase_)]);
@@ -231,8 +231,6 @@ void BossPhaseManager::ImGui()
 			ImGui::Text("Rotate Max Repeat: %d", phase2Config_.splineMoveRotateShootConfig.maxRepeatCount);
 			ImGui::TreePop();
 		}
-
-		ImGui::TreePop();
 	}
 #endif
 }

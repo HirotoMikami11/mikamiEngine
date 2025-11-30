@@ -2,6 +2,7 @@
 #include "BaseCamera.h"
 #include "Camera.h"
 #include "DebugCamera.h"
+#include "CameraFunc/CameraShake.h"
 #include <memory>
 #include <unordered_map>
 #include <string>
@@ -21,6 +22,7 @@ public:
 	/// カメラシステムの初期化
 	/// 標準カメラ（Normal、Debug）を自動登録
 	/// </summary>
+	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <param name="position">初期位置</param>
 	/// <param name="rotation">初期回転（デフォルト：{0,0,0}）</param>
 	void Initialize(DirectXCommon* dxCommon, const Vector3& position, const Vector3& rotation = { 0.0f, 0.0f, 0.0f });
@@ -40,8 +42,7 @@ public:
 	/// </summary>
 	void ImGui();
 
-
-	// カメラ登録システム
+	// === カメラ登録システム ===
 
 	/// <summary>
 	/// カメラを登録
@@ -74,7 +75,34 @@ public:
 	/// <returns>カメラID一覧</returns>
 	std::vector<std::string> GetRegisteredCameraIds() const;
 
+	// === カメラシェイク関連 ===
 
+	/// <summary>
+	/// カメラシェイクを開始
+	/// </summary>
+	/// <param name="duration">揺れ時間（秒）</param>
+	/// <param name="amplitude">揺れ強度</param>
+	void StartCameraShake(float duration, float amplitude);
+
+	/// <summary>
+	/// 複数回シェイクを開始（爆発演出用）
+	/// </summary>
+	/// <param name="duration">総時間（秒）</param>
+	/// <param name="amplitude">最大強度</param>
+	/// <param name="frequency">揺れ頻度（Hz）</param>
+	void StartMultiCameraShake(float duration, float amplitude, float frequency = 8.0f);
+
+	/// <summary>
+	/// カメラシェイクを停止
+	/// </summary>
+	void StopCameraShake();
+
+	/// <summary>
+	/// シェイク中かどうか判定
+	/// </summary>
+	bool IsCameraShaking() const;
+
+	// === デバッグ機能 ===
 
 	/// <summary>
 	/// デバッグカメラが使用中かどうか確認
@@ -92,12 +120,25 @@ public:
 	/// </summary>
 	bool IsRegistered(const std::string& cameraId) const;
 
+	// === カメラ情報取得 ===
+
+	/// <summary>
+	/// カメラ行列を取得（シェイク適用）
+	/// </summary>
 	Matrix4x4 GetCameraMatrix() const;
+
+	/// <summary>
+	/// ビュープロジェクション行列を取得（シェイク適用）
+	/// </summary>
 	Matrix4x4 GetViewProjectionMatrix() const;
+
+	/// <summary>
+	/// スプライト用ビュープロジェクション行列を取得（シェイクなし）
+	/// </summary>
 	Matrix4x4 GetViewProjectionMatrixSprite() const;
 
 	/// <summary>
-	/// アクティブカメラの位置を取得
+	/// アクティブカメラの位置を取得（シェイク適用）
 	/// </summary>
 	/// <returns>カメラの位置</returns>
 	Vector3 GetPosition() const;
@@ -114,13 +155,15 @@ public:
 	/// <returns>カメラの前方向ベクトル（正規化済み）</returns>
 	Vector3 GetForward() const;
 
-
 	/// <summary>
 	/// アクティブカメラのCameraForGPUリソースを取得
 	/// </summary>
 	/// <returns>CameraForGPUリソース</returns>
 	ID3D12Resource* GetCameraForGPUResource() const;
 
+	/// <summary>
+	/// 指定IDのカメラを取得
+	/// </summary>
 	BaseCamera* GetCamera(const std::string& cameraId) const;
 
 private:
@@ -138,7 +181,6 @@ private:
 		bool isEngineCamera; // エンジン標準カメラかどうか
 	};
 
-
 	// 登録されたカメラの管理マップ
 	std::unordered_map<std::string, CameraInfo> registeredCameras_;
 
@@ -147,13 +189,29 @@ private:
 	// デバッグカメラ切り替え前のカメラID（戻り先）
 	std::string lastActiveCameraId_ = "normal";
 
+	// カメラシェイク機能
+	CameraShake cameraShake_;
 
-	// 現在アクティブなカメラを取得
+	// 内部ヘルパー関数
+
+	/// <summary>
+	/// 現在アクティブなカメラを取得
+	/// </summary>
 	BaseCamera* GetActiveCamera() const;
 
-	// エンジン標準カメラの登録
+	/// <summary>
+	/// エンジン標準カメラの登録
+	/// </summary>
 	void RegisterBuiltInCameras(DirectXCommon* dxCommon, const Vector3& initialPosition, const Vector3& initialRotation);
 
-	//デバッグ入力処理（Shift+TABでの切り替え）
+	/// <summary>
+	/// デバッグ入力処理（Shift+TABでの切り替え）
+	/// </summary>
 	void HandleDebugInput();
+
+	/// <summary>
+	/// シェイクオフセットを適用したビュー行列を取得
+	/// </summary>
+	Matrix4x4 GetViewMatrixWithShake() const;
 };
+

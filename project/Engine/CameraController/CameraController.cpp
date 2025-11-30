@@ -24,7 +24,7 @@ void CameraController::Finalize() {
 }
 
 void CameraController::RegisterBuiltInCameras(DirectXCommon* dxCommon, const Vector3& initialPosition, const Vector3& initialRotation) {
-	// カメラを登録
+	// Normalカメラを登録
 	auto normalCamera = std::make_unique<NormalCamera>();
 	normalCamera->Initialize(dxCommon, initialPosition, initialRotation);
 	registeredCameras_["normal"] = { std::move(normalCamera), true };
@@ -76,6 +76,9 @@ void CameraController::SetActiveCamera(const std::string& cameraId) {
 }
 
 void CameraController::Update() {
+	// カメラシェイク更新（固定60FPS想定、実際はdeltaTimeを使用）
+	cameraShake_.Update(1.0f / 60.0f);
+
 	// アクティブなカメラのみ更新
 	BaseCamera* activeCamera = GetActiveCamera();
 	if (activeCamera) {
@@ -85,7 +88,6 @@ void CameraController::Update() {
 	// アクティブカメラが無効になった場合はnormalカメラに戻す
 	if (!activeCamera || !activeCamera->IsActive()) {
 		SetActiveCamera("normal");
-		// 新しいアクティブカメラを更新
 		activeCamera = GetActiveCamera();
 		if (activeCamera) {
 			activeCamera->Update();
@@ -104,6 +106,7 @@ void CameraController::HandleDebugInput() {
 	}
 #endif
 }
+
 void CameraController::ToggleDebugCamera() {
 	if (activeCameraId_ == "debug") {
 		SetActiveCamera(lastActiveCameraId_);
@@ -113,34 +116,90 @@ void CameraController::ToggleDebugCamera() {
 	}
 }
 
+// === カメラシェイク関連 ===
 
+void CameraController::StartCameraShake(float duration, float amplitude) {
+	cameraShake_.StartShake(duration, amplitude);
+}
 
+void CameraController::StartMultiCameraShake(float duration, float amplitude, float frequency) {
+	cameraShake_.StartMultiShake(duration, amplitude, frequency);
+}
+
+void CameraController::StopCameraShake() {
+	cameraShake_.StopShake();
+}
+
+bool CameraController::IsCameraShaking() const {
+	return cameraShake_.IsShaking();
+}
+
+// === カメラ情報取得 ===
 
 BaseCamera* CameraController::GetActiveCamera() const {
 	auto it = registeredCameras_.find(activeCameraId_);
 	return (it != registeredCameras_.end()) ? it->second.camera.get() : nullptr;
 }
 
-Matrix4x4 CameraController::GetCameraMatrix() const
-{
+Matrix4x4 CameraController::GetCameraMatrix() const {
 	BaseCamera* activeCamera = GetActiveCamera();
-	return activeCamera ? activeCamera->GetCameraMatrix() : MakeIdentity4x4();
-}
+	if (!activeCamera) {
+		return MakeIdentity4x4();
+	}
 
+	Matrix4x4 cameraMatrix = activeCamera->GetCameraMatrix();
+
+	// シェイクオフセットを適用
+	if (cameraShake_.IsShaking()) {
+		Vector3 shakeOffset = cameraShake_.GetOffset();
+		Matrix4x4 shakeMatrix = MakeTranslateMatrix(shakeOffset);
+		cameraMatrix = Matrix4x4Multiply(shakeMatrix, cameraMatrix);
+	}
+
+	return cameraMatrix;
+}
 
 Matrix4x4 CameraController::GetViewProjectionMatrix() const {
 	BaseCamera* activeCamera = GetActiveCamera();
-	return activeCamera ? activeCamera->GetViewProjectionMatrix() : MakeIdentity4x4();
+	if (!activeCamera) {
+		return MakeIdentity4x4();
+	}
+
+	// 通常のビュープロジェクション行列を取得
+	Matrix4x4 viewProjection = activeCamera->GetViewProjectionMatrix();
+
+	// シェイクオフセットを適用
+	if (cameraShake_.IsShaking()) {
+		Vector3 shakeOffset = cameraShake_.GetOffset();
+
+		// シェイクを逆変換としてビュー行列に適用
+		Matrix4x4 inverseShakeMatrix = MakeTranslateMatrix(Multiply(shakeOffset,-1.0f));
+		viewProjection = Matrix4x4Multiply(inverseShakeMatrix, viewProjection);
+	}
+
+	return viewProjection;
 }
 
 Matrix4x4 CameraController::GetViewProjectionMatrixSprite() const {
 	BaseCamera* activeCamera = GetActiveCamera();
-	return activeCamera ? activeCamera->GetSpriteViewProjectionMatrix() : MakeIdentity4x4();
+	if (!activeCamera) {
+		return MakeIdentity4x4();
+	}
+
+	// スプライト用は揺れを適用しない（UI要素は揺らさない）
+	return activeCamera->GetSpriteViewProjectionMatrix();
 }
 
 Vector3 CameraController::GetPosition() const {
 	BaseCamera* activeCamera = GetActiveCamera();
-	return activeCamera ? activeCamera->GetPosition() : Vector3{ 0.0f, 0.0f, 0.0f };
+	Vector3 basePosition = activeCamera ? activeCamera->GetPosition() : Vector3{ 0.0f, 0.0f, 0.0f };
+
+	// シェイクオフセットを加算
+	if (cameraShake_.IsShaking()) {
+		return Add(basePosition, cameraShake_.GetOffset());
+	}
+
+	return basePosition;
 }
 
 void CameraController::SetPosition(const Vector3& position) {
@@ -160,7 +219,6 @@ Vector3 CameraController::GetForward() const {
 	Vector3 rotation = activeCamera->GetRotation();
 
 	// 回転角度から前方向ベクトルを計算
-	// Y軸回転（ヨー）とX軸回転（ピッチ）から前方向を算出
 	Vector3 forward;
 	forward.x = std::sin(rotation.y) * std::cos(rotation.x);
 	forward.y = -std::sin(rotation.x);
@@ -169,10 +227,12 @@ Vector3 CameraController::GetForward() const {
 	// 正規化して返す
 	return Normalize(forward);
 }
+
 ID3D12Resource* CameraController::GetCameraForGPUResource() const {
 	BaseCamera* activeCamera = GetActiveCamera();
 	return activeCamera ? activeCamera->GetCameraForGPUResource() : nullptr;
 }
+
 bool CameraController::IsRegistered(const std::string& cameraId) const {
 	return registeredCameras_.find(cameraId) != registeredCameras_.end();
 }
@@ -193,6 +253,24 @@ std::vector<std::string> CameraController::GetRegisteredCameraIds() const {
 	return ids;
 }
 
+Matrix4x4 CameraController::GetViewMatrixWithShake() const {
+	BaseCamera* activeCamera = GetActiveCamera();
+	if (!activeCamera) {
+		return MakeIdentity4x4();
+	}
+
+	// 基本のビュー行列を取得
+	Matrix4x4 viewMatrix = Matrix4x4Inverse(activeCamera->GetCameraMatrix());
+
+	// シェイクオフセットを適用
+	if (cameraShake_.IsShaking()) {
+		Vector3 shakeOffset = cameraShake_.GetOffset();
+		Matrix4x4 shakeMatrix = MakeTranslateMatrix(Multiply(shakeOffset, -1.0f));
+		viewMatrix = Matrix4x4Multiply(shakeMatrix, viewMatrix);
+	}
+
+	return viewMatrix;
+}
 
 void CameraController::ImGui() {
 #ifdef USEIMGUI
@@ -257,12 +335,15 @@ void CameraController::ImGui() {
 	}
 
 	ImGui::Separator();
+	// カメラシェイクのImGui表示
+	cameraShake_.ImGui();
 
+	ImGui::Separator();
 	// 操作説明
 	ImGui::Text("Controls:");
 	ImGui::Text("Shift + TAB: Toggle Debug Camera");
 
-	// Shift + Enter でデバッグカメラの切り替え
 	ImGui::End();
 #endif
 }
+

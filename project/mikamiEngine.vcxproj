@@ -169,6 +169,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObjects\Emitters\BossBreakSmokeEmitter.cpp" />
     <ClCompile Include="Application\GameObjects\Emitters\BossExplosionEmitter.cpp" />
     <ClCompile Include="Application\GameObjects\Boss\Phase\BossPhaseManager.cpp" />
+    <ClCompile Include="Engine\CameraController\CameraFunc\CameraShake.cpp" />
     <ClCompile Include="Engine\Objects\Light\DirectionalLight.cpp" />
     <ClCompile Include="Engine\Objects\Light\PointLight.cpp" />
     <ClCompile Include="Engine\OffscreenRenderer\EffectFunc\DamageVignette.cpp" />
@@ -399,6 +400,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObjects\Emitters\BossBreakSmokeEmitter.h" />
     <ClInclude Include="Application\GameObjects\Emitters\BossExplosionEmitter.h" />
     <ClInclude Include="Application\GameObjects\Boss\Phase\BossPhaseManager.h" />
+    <ClInclude Include="Engine\CameraController\CameraFunc\CameraShake.h" />
     <ClInclude Include="Engine\Objects\Light\DirectionalLight.h" />
     <ClInclude Include="Engine\Objects\Light\LightBase.h" />
     <ClInclude Include="Engine\Objects\Light\PointLight.h" />

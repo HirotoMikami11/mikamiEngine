@@ -145,6 +145,8 @@ void BossExplosionEmitter::ExecuteNextExplosion()
 
 	// 放出開始
 	emitter->SetEmitEnabled(true);
+	// カメラシェイク
+	CameraController::GetInstance()->StartCameraShake(0.8f, 0.6f);
 
 	// 爆発済みフラグを立てる
 	data.hasExploded = true;
