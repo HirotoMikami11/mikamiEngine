@@ -73,8 +73,8 @@ void Torch::Initialize(DirectXCommon* dxCommon)
 		lightManager->AddPointLight(
 			positions_[i],
 			Vector4{ 1.0f, 0.5f, 0.0f, 1.0f }, // オレンジ色
-			1.0f,
-			10.0f,
+			1.5f,
+			15.0f,
 			2.0f
 		);
 	}
