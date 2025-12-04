@@ -6,6 +6,17 @@
 #include "Logger.h"
 #include <algorithm>
 
+// デストラクタでSRVを解放
+ParticleGroup::~ParticleGroup()
+{
+	// SRVが有効な場合のみ解放
+	if (srvHandle_.isValid && descriptorManager_) {
+		descriptorManager_->ReleaseSRV(srvHandle_.index);
+		Logger::Log(Logger::GetStream(),
+			std::format("ParticleGroup '{}': Released SRV at index {}\n", name_, srvHandle_.index));
+	}
+}
+
 void ParticleGroup::Initialize(DirectXCommon* dxCommon, const std::string& modelTag,
 	uint32_t maxParticles, const std::string& textureName, bool useBillboard)
 {
@@ -19,6 +30,9 @@ void ParticleGroup::Initialize(DirectXCommon* dxCommon, const std::string& model
 
 	// パーティクル配列の予約
 	particles_.reserve(maxParticles_);
+
+	// DescriptorManagerへの参照を保持
+	descriptorManager_ = dxCommon_->GetDescriptorManager();
 
 	// GPU転送用バッファの作成
 	CreateTransformBuffer();
@@ -44,10 +58,16 @@ void ParticleGroup::CreateTransformBuffer() {
 		instancingData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
-	auto descriptorManager = dxCommon_->GetDescriptorManager();
+	// descriptorManager_が既に保持されている前提で使用
+	if (!descriptorManager_) {
+		Logger::Log(Logger::GetStream(),
+			std::format("[ParticleGroup] ERROR: DescriptorManager is null!\n"));
+		assert(false && "DescriptorManager is null");
+		return;
+	}
 
 	// 構造化バッファ用のSRVを作成
-	srvHandle_ = descriptorManager->CreateSRVForStructuredBuffer(
+	srvHandle_ = descriptorManager_->CreateSRVForStructuredBuffer(
 		transformResource_.Get(),
 		maxParticles_,
 		sizeof(ParticleForGPU)
@@ -56,8 +76,12 @@ void ParticleGroup::CreateTransformBuffer() {
 	// エラーチェック
 	if (!srvHandle_.isValid) {
 		Logger::Log(Logger::GetStream(),
-			std::format("Failed to create SRV for ParticleGroup (maxParticles: {})\n", maxParticles_));
+			std::format("Failed to create SRV for ParticleGroup '{}' (maxParticles: {})\n",
+				name_, maxParticles_));
 		assert(false && "SRV creation failed");
+	} else {
+		Logger::Log(Logger::GetStream(),
+			std::format("ParticleGroup '{}': Allocated SRV at index {}\n", name_, srvHandle_.index));
 	}
 }
 
@@ -262,6 +286,7 @@ void ParticleGroup::ImGui()
 		// パーティクルグループ全体の設定
 		if (ImGui::CollapsingHeader("Particle Group", ImGuiTreeNodeFlags_DefaultOpen)) {
 			ImGui::Text("Active Particles: %u / %u", activeParticleCount_, maxParticles_);
+			ImGui::Text("SRV Index: %u", srvHandle_.index); // デバッグ用にSRVインデックス表示
 			ImGui::Checkbox("Use Billboard", &useBillboard_);
 
 			ImGui::Separator();

@@ -18,7 +18,7 @@ class ParticleGroup
 {
 public:
 	ParticleGroup() = default;
-	~ParticleGroup() = default;
+	~ParticleGroup(); // デストラクタでSRVを解放
 
 	/// <summary>
 	/// 初期化
@@ -140,6 +140,7 @@ private:
 
 	// システム参照
 	DirectXCommon* dxCommon_ = nullptr;
+	DescriptorHeapManager* descriptorManager_ = nullptr; // SRV解放のために保持
 	TextureManager* textureManager_ = TextureManager::GetInstance();
 	ModelManager* modelManager_ = ModelManager::GetInstance();
 };
