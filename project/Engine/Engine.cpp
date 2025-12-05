@@ -93,10 +93,6 @@ void Engine::InitializeManagers() {
 
 
 void Engine::Update() {
-	// ウィンドウメッセージの処理
-	if (!winApp_->ProsessMessege()) {
-		ClosedWindow_ = true; //ウィンドウを閉じる
-	}
 
 	// FPS開始
 	frameTimer_->BeginFrame();
@@ -287,4 +283,12 @@ void Engine::ImGui() {
 		lightManager_->ImGui();
 	}
 #endif
+}
+
+bool Engine::ProcessMessage()
+{
+	if (winApp_ && !winApp_->ProsessMessege()) {
+		closedWindow_ = true;
+	}
+	return !closedWindow_;
 }

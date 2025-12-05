@@ -20,7 +20,6 @@
 #include "GameTimer.h"
 #include "OffscreenRenderer.h"
 #include "DebugDrawLineSystem.h"
-
 #include "LightManager.h"
 
 ///Objects
@@ -76,13 +75,19 @@ public:
 	/// </summary>
 	void ImGui();
 
+	/// <summary>
+	/// ウィンドウメッセージ処理
+	/// </summary>
+	/// <returns></returns>
+	bool ProcessMessage();
+
 	// ゲッター
 	WinApp* GetWinApp() const { return winApp_.get(); }
 	DirectXCommon* GetDirectXCommon() const { return dxCommon_.get(); }
 	OffscreenRenderer* GetOffscreenRenderer() const { return offscreenRenderer_.get(); }
 	DebugDrawLineSystem* GetDebugDrawManager() const { return debugDrawManager_; }
 	GameTimer* GetGameTimer() const { return gameTimer_; }  // ← 追加
-	bool IsClosedWindow() const { return ClosedWindow_; }
+	bool IsClosedWindow() const { return closedWindow_; }
 
 private:
 	/// <summary>
@@ -129,5 +134,5 @@ private:
 	CameraController* cameraController_;
 
 	//ウィンドウを閉じるか否か
-	bool ClosedWindow_ = false;
+	bool closedWindow_ = false;
 };

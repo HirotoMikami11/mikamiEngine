@@ -1,36 +1,38 @@
 #pragma once
-/// 				Scene							///
+/// Framework 
+#include "Framework.h"
+/// Scene
 #include "SceneManager.h"
-/// 				Transitions							///
+/// Transitions
 #include "TransitionManager.h"
 #include "SceneTransitionHelper.h"
-#include "TransitionEffect/SlideEffect.h"
+
 
 /// <summary>
 /// ゲーム全体を管理するクラス
 /// </summary>
-class Game
+class Game : public Framework
 {
 public:
 	Game();
-	~Game();
+	~Game() override;
 
-	void Initialize();
-	void Update();
+	void Initialize() override;
+	void Update() override;
 
 	/// <summary>
 	/// 3D描画（オフスクリーン内）
 	/// </summary>
-	void DrawOffscreen();
+	void DrawOffscreen() override;
 
 	/// <summary>
 	/// UI描画（オフスクリーン外）
 	/// </summary>
-	void DrawBackBuffer();
+	void DrawBackBuffer() override;
 
-	void ImGui();
+	void ImGui() override;
 
-	void Finalize();
+	void Finalize() override;
 
 private:
 	/// <summary>
@@ -48,9 +50,5 @@ private:
 
 	// トランジションマネージャー
 	TransitionManager* transitionManager_;
-
-	// パーティクルシステム
-	ParticleSystem* particleSystem_;
-	ParticleEditor* particleEditor_;
 
 };

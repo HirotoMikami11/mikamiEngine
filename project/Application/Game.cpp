@@ -8,7 +8,8 @@
 #include "GameScenes/GameScene.h"
 #include "GameScenes/GameClearScene.h"
 #include "GameScenes/GameOverScene.h"
-
+//必要なトランジションエフェクト
+#include "TransitionEffect/SlideEffect.h"
 
 Game::Game() :
 	sceneManager_(nullptr) {
@@ -40,7 +41,7 @@ void Game::InitializeScenes() {
 
 	auto debugScene = std::make_unique<DebugScene>();
 	sceneManager_->RegisterScene("DebugScene", std::move(debugScene));
-
+	
 	auto titleScene = std::make_unique<TitleScene>();
 	sceneManager_->RegisterScene("TitleScene", std::move(titleScene));
 
