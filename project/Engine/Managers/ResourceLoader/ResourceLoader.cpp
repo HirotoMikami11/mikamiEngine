@@ -50,6 +50,7 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Texture/white2x2.png", "white"},
 		{"resources/Texture/circle.png", "circle"},
 		{"resources/Texture/gaugeLight.png", "gaugeLight"},
+		{"resources/Texture/field.png", "field"},
 
 		// テクスチャここに追加
 		// {"resources/Texture/example.png", "example"},
@@ -76,11 +77,13 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Model/FontModel", "GameOverFont.obj", "overFont", false},
 		{"resources/Model/FontModel", "GameClearFont.obj", "clearFont", false},
 		{"resources/Model/FontModel", "PressA.obj", "pressAFont", false},
-		{"resources/Model/Wall", "Wall.obj", "wall", false},
+		{"resources/Model/wallRock", "wallRock.obj", "wall", false},
+		{"resources/Model/fieldRock", "fieldRock.obj", "field", false},
 		{"resources/Model/torch", "torch.obj", "torch", false},
 		{"resources/Model/Boss", "Boss_Body.obj", "Boss_Body", false},
 		{"resources/Model/Boss", "Boss_Head.obj", "Boss_Head", false},
 		{"resources/Model/Boss", "Boss_Tail.obj", "Boss_Tail", false},
+		{"resources/Model/wallRock", "Boss_Tail.obj", "Boss_Tail", false},
 
 
 		// モデルはここに追加

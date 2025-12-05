@@ -8,6 +8,8 @@ TitleScene::TitleScene()
 	, cameraController_(nullptr)
 	, dxCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
+	, particleSystem_(nullptr)
+	, particleEditor_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
 {
 }
@@ -21,12 +23,27 @@ void TitleScene::ConfigureOffscreenEffects()
 	// 全てのエフェクトを無効化
 	offscreenRenderer_->DisableAllEffects();
 	// 必要に応じてここでエフェクトを有効化
+	auto* depthFogEffect = offscreenRenderer_->GetDepthFogEffect();
+	if (depthFogEffect) {
+		depthFogEffect->SetEnabled(true);
+		depthFogEffect->SetFogDistance(0.1f, 119.0f); // 深度フォグの距離を設定
+		depthFogEffect->SetFogColor({ 0.0f,0.0f,0.0f,1.0f });
+
+	}
 }
 
 void TitleScene::Initialize() {
 	// システム参照の取得
 	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
+
+	// ParticleSystemシングルトンを取得
+	particleSystem_ = ParticleSystem::GetInstance();
+	particleSystem_->Initialize(dxCommon_);
+
+	// ParticleEditorシングルトンを取得
+	particleEditor_ = ParticleEditor::GetInstance();
+	particleEditor_->Initialize(dxCommon_);
 
 	///*-----------------------------------------------------------------------*///
 	///								カメラの初期化									///
@@ -44,7 +61,7 @@ void TitleScene::Initialize() {
 
 void TitleScene::InitializeGameObjects() {
 	///*-----------------------------------------------------------------------*///
-	///								フォント										///
+	///								モデル										///
 	///*-----------------------------------------------------------------------*///
 
 	Vector3 titleRogoPos = { 0.0f,0.8f,-1.74f };
@@ -54,6 +71,23 @@ void TitleScene::InitializeGameObjects() {
 	Vector3 pressAPos = { 0.0f,-2.04f,4.5f };
 	pressA_ = std::make_unique<ModelFont>();
 	pressA_->Initialize(dxCommon_, "pressAFont", pressAPos);
+
+
+
+
+	///地面
+	ground_ = std::make_unique<Ground>();
+	ground_->Initialize(dxCommon_, { 0.0f,-0.51f,0.0f });
+
+	wall_ = std::make_unique<Wall>();
+	wall_->Initialize(dxCommon_);
+
+	torch_ = std::make_unique<Torch>();
+	torch_->Initialize(dxCommon_);
+
+
+	//フィールドパーティクル
+	particleEditor_->CreateInstance("FieldEffect", "Field_circle");
 
 	///*-----------------------------------------------------------------------*///
 	///									ライト									///
@@ -67,6 +101,8 @@ void TitleScene::Update() {
 	// ゲームオブジェクト更新
 	UpdateGameObjects();
 
+	// パーティクルシステムの更新
+	particleSystem_->Update(viewProjectionMatrix);
 	// ゲームシーンに移動
 	if (!TransitionManager::GetInstance()->IsTransitioning() &&
 		Input::GetInstance()->IsKeyTrigger(DIK_SPACE) ||
@@ -85,6 +121,12 @@ void TitleScene::UpdateGameObjects() {
 	titleRogo_->Update(viewProjectionMatrix);
 	pressA_->Update(viewProjectionMatrix);
 
+
+	ground_->Update(viewProjectionMatrix);
+	wall_->Update(viewProjectionMatrix);
+	torch_->Update(viewProjectionMatrix);
+
+
 }
 
 void TitleScene::DrawOffscreen() {
@@ -96,10 +138,15 @@ void TitleScene::DrawOffscreen() {
 	titleRogo_->Draw();
 	pressA_->Draw();
 
+	ground_->Draw();
+	wall_->Draw();
+	torch_->Draw();
+
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
 	/// 
-
+		// パーティクルシステムの描画（全グループ）
+	particleSystem_->Draw();
 }
 
 void TitleScene::DrawBackBuffer() {
@@ -128,4 +175,13 @@ void TitleScene::ImGui() {
 }
 
 void TitleScene::Finalize() {
+	// シーン終了時にパーティクルシステムをクリア
+	if (particleSystem_) {
+		particleSystem_->Clear();
+	}
+	// シーン終了時にパーティクルインスタンスを全削除
+	if (particleEditor_) {
+		particleEditor_->DestroyAllInstance();
+	}
+
 }

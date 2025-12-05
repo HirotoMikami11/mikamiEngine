@@ -36,9 +36,8 @@ void Wall::Initialize(DirectXCommon* dxCommon)
 	// 各壁モデルを初期化して transform をセットする
 	for (int i = 0; i < 4; ++i) {
 		walls_[i].obj = std::make_unique<Model3D>();
-		// モデル名/マテリアル名は既存仕様に合わせてください
-		walls_[i].obj->Initialize(dxCommon_, "wall", "white2x2");
-
+		walls_[i].obj->Initialize(dxCommon_, "wall");
+		walls_[i].obj->SetColor(0x3F3A38FF);
 		// SetName にインデックスを反映
 		char nameBuf[32];
 		snprintf(nameBuf, sizeof(nameBuf), "Wall[%d]", i);

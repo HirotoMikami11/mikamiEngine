@@ -4,6 +4,9 @@
 #include "BaseScene.h"
 #include "ModelFont/ModelFont.h"
 
+#include "Ground.h"
+#include "Wall.h"
+#include "torch.h"
 
 /// <summary>
 /// タイトルシーン
@@ -46,9 +49,17 @@ private:
 	void UpdateGameObjects();
 
 	// ゲームオブジェクト
-
 	std::unique_ptr<ModelFont> titleRogo_;
 	std::unique_ptr<ModelFont> pressA_;
+	//地面
+	std::unique_ptr<Ground> ground_;
+	std::unique_ptr<Wall> wall_;
+	std::unique_ptr<Torch> torch_;
+
+
+	// パーティクルシステム
+	ParticleSystem* particleSystem_;
+	ParticleEditor* particleEditor_;
 
 	// ライティング
 

@@ -105,6 +105,15 @@ void GameScene::InitializeGameObjects() {
 	DirectionalLight& dirLight = LightManager::GetInstance()->GetDirectionalLight();
 	dirLight.SetIntensity(0.35f);
 
+	LightManager::GetInstance()->AddPointLight(
+		Vector3{ 0.2f,-8.70f,1.6f },
+		Vector4{ 1.0f, 0.5f, 0.0f, 1.0f }, // オレンジ色
+		4.11f,
+		29.0f,
+		1.2f
+	);
+
+
 }
 
 void GameScene::Update() {
@@ -122,8 +131,8 @@ void GameScene::Update() {
 
 	//クリア・デス判定
 
-	if (boss_->GetCurrentPhase() == BossPhase::Death&&
-		boss_->GetDeathSubPhase() ==DeathSubPhase::Complete) {
+	if (boss_->GetCurrentPhase() == BossPhase::Death &&
+		boss_->GetDeathSubPhase() == DeathSubPhase::Complete) {
 		// フェードを使った遷移
 		SceneTransitionHelper::FadeToScene("GameClearScene", 1.0f);
 		return; // 以降の処理をスキップ

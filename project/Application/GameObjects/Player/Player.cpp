@@ -244,8 +244,9 @@ void Player::ProcessRotation() {
 
 
 	// 右スティック入力（向き制御用）
-	if (input_->IsGamePadConnected(0) &&
-		input_->IsUseAnalogStick(Input::AnalogStick::RIGHT_X, 0)) {
+	if (input_->IsGamePadConnected(0) 
+		//&&input_->IsUseAnalogStick(Input::AnalogStick::RIGHT_X, 0)
+		) {
 		float stickX = input_->GetAnalogStick(Input::AnalogStick::RIGHT_X, 0);
 		float stickY = input_->GetAnalogStick(Input::AnalogStick::RIGHT_Y, 0);
 		rotateInput.x = stickX;
