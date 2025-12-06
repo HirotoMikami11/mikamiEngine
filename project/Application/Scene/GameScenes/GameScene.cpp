@@ -105,14 +105,16 @@ void GameScene::InitializeGameObjects() {
 	DirectionalLight& dirLight = LightManager::GetInstance()->GetDirectionalLight();
 	dirLight.SetIntensity(0.35f);
 
-	LightManager::GetInstance()->AddPointLight(
-		Vector3{ 0.2f,-8.70f,1.6f },
-		Vector4{ 1.0f, 0.5f, 0.0f, 1.0f }, // オレンジ色
-		4.11f,
-		29.0f,
-		1.2f
+	SpotLight* groundLight =LightManager::GetInstance()->AddSpotLight(
+		{ 0.0f, -109.2f, 0.0f },		//座標
+		{ -90.0f, 0.0f, 0.0f },			// 真上を向く
+		{ 1.0f, 0.3f, 0.0f, 1.0f },		// 暖色系
+		20.0f,							// 強度
+		110.0f,							// 最大距離
+		0.1f,							// 減衰率
+		25.0f,							// スポット角度
+		0.0f							// フォールオフ開始角度
 	);
-
 
 }
 
