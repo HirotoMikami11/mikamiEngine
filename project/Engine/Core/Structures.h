@@ -71,6 +71,21 @@ struct PointLightData final {
 };
 
 /// <summary>
+/// スポットライト（GPU用）
+/// </summary>
+struct SpotLightData final {
+	Vector4 color;			// 色
+	Vector3 position;		// ライトの位置
+	float intensity;		// 輝度
+	Vector3 direction;		// 方向（正規化済み）
+	float distance;			// ライトの届く最大距離
+	float decay;			// 減衰率
+	float cosAngle;			// スポットライトの余弦（外側の角度）
+	float cosFalloffStart;	// フォールオフ開始の余弦（内側の角度）
+	float padding;			// アライメント調整
+};
+
+/// <summary>
 /// 統合ライティングデータ（GPU用）
 /// 全てのライト情報を1つのConstantBufferにまとめる
 /// </summary>
@@ -78,5 +93,8 @@ struct LightingData final {
 	DirectionalLightData directionalLight;	// 平行光源
 	PointLightData pointLights[32];			// ポイントライト（最大32個）
 	int32_t numPointLights;					// 有効なポイントライト数
-	float padding[3];						// アライメント調整
+	float padding1[3];						// アライメント調整
+	SpotLightData spotLights[16];			// スポットライト（最大16個）
+	int32_t numSpotLights;					// 有効なスポットライト数
+	float padding2[3];						// アライメント調整
 };

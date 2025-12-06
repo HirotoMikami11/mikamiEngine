@@ -14,7 +14,7 @@ public:
 	enum class Type {
 		DIRECTIONAL,	// 平行光源
 		POINT,			// 点光源
-		SPOT			// スポットライト（未実装）
+		SPOT			// スポットライト
 	};
 
 	LightBase() = default;

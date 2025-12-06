@@ -70,10 +70,10 @@ void DebugScene::InitializeGameObjects() {
 
 	// シーン内で平行光源を取得して編集
 	DirectionalLight& dirLight = LightManager::GetInstance()->GetDirectionalLight();
-	dirLight.SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });	// 黒い光
+	dirLight.SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });	// 黒い光（無効化）
 
 	// ポイントライト: 青い光
-	Pointlight_ = LightManager::GetInstance()->AddPointLight(
+	pointLight_ = LightManager::GetInstance()->AddPointLight(
 		{ -5.0f, 2.0f, 0.0f },			//座標
 		{ 0.3f, 0.3f, 1.0f, 1.0f },		// 青色
 		2.0f,							// 強度
@@ -81,12 +81,24 @@ void DebugScene::InitializeGameObjects() {
 		2.0f							// 減衰率
 	);
 
+	// スポットライト: 白い光（真上から下向き）
+	spotLight_ = LightManager::GetInstance()->AddSpotLight(
+		{ 0.0f, 5.0f, 0.0f },			// 位置（上方）
+		{ 90.0f, 0.0f, 0.0f },			// 回転（X軸90度=下向き）
+		{ 1.0f, 1.0f, 1.0f, 1.0f },		// 白色
+		3.0f,							// 強度
+		15.0f,							// 最大距離
+		2.0f,							// 減衰率
+		30.0f,							// スポット角度（度）
+		20.0f							// フォールオフ開始角度（度）
+	);
+
 }
 
 void DebugScene::Update() {
 	// カメラ更新
 	cameraController_->Update();
-	
+
 	// ゲームオブジェクト更新
 	UpdateGameObjects();
 }
@@ -98,8 +110,10 @@ void DebugScene::UpdateGameObjects() {
 	sphere_->Update(viewProjectionMatrix);
 	// 地面の更新
 	terrain_->Update(viewProjectionMatrix);
-	//ライトの座標を地面に合わせる
-	Pointlight_->SetPosition(terrain_->GetPosition());
+	//ポイントライトの座標を地面に合わせる
+	if (pointLight_) {
+		pointLight_->SetPosition(terrain_->GetPosition());
+	}
 
 }
 

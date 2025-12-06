@@ -34,6 +34,9 @@ void LightManager::ResetToDefault()
 	// 全ポイントライトをクリア
 	ClearPointLights();
 
+	// 全スポットライトをクリア
+	ClearSpotLights();
+
 	// LightingDataを更新
 	UpdateLightingData();
 
@@ -76,6 +79,39 @@ PointLight* LightManager::AddPointLight(
 	return ptr;
 }
 
+SpotLight* LightManager::AddSpotLight(
+	const Vector3& position,
+	const Vector3& rotation,
+	const Vector4& color,
+	float intensity,
+	float distance,
+	float decay,
+	float angle,
+	float falloffStart)
+{
+	// 上限チェック
+	if (spotLights_.size() >= MAX_SPOT_LIGHTS) {
+		return nullptr;
+	}
+
+	// ID割り当て（単調増加）
+	uint32_t id = nextLightID_++;
+
+	// ライト作成
+	auto light = std::make_unique<SpotLight>();
+	light->Initialize(position, rotation, color, intensity, distance, decay, angle, falloffStart);
+	light->lightID_ = id;  // 内部管理用IDを設定
+
+	SpotLight* ptr = light.get();
+	spotLights_[id] = std::move(light);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("LightManager: Added spot light ID={} ({}/{})\n",
+			id, spotLights_.size(), MAX_SPOT_LIGHTS));
+
+	return ptr;
+}
+
 void LightManager::RemovePointLight(PointLight* light)
 {
 	if (!light) {
@@ -98,7 +134,30 @@ void LightManager::RemovePointLight(PointLight* light)
 	}
 
 	pointLights_.erase(it);
+}
 
+void LightManager::RemoveSpotLight(SpotLight* light)
+{
+	if (!light) {
+		Logger::Log(Logger::GetStream(),
+			"LightManager: Warning - Attempted to remove nullptr light\n");
+		return;
+	}
+
+	uint32_t id = light->lightID_;
+
+	// ID検証
+	auto it = spotLights_.find(id);
+	if (it == spotLights_.end()) {
+		return;
+	}
+
+	// ポインタ一致確認（安全性チェック）
+	if (it->second.get() != light) {
+		return;
+	}
+
+	spotLights_.erase(it);
 }
 
 void LightManager::ClearPointLights()
@@ -107,34 +166,41 @@ void LightManager::ClearPointLights()
 	Logger::Log(Logger::GetStream(), "LightManager: Cleared all point lights\n");
 }
 
+void LightManager::ClearSpotLights()
+{
+	spotLights_.clear();
+	Logger::Log(Logger::GetStream(), "LightManager: Cleared all spot lights\n");
+}
+
 void LightManager::ImGui()
 {
 #ifdef USEIMGUI
 
-
 	ImGui::Begin("Light Manager");
+
 	// 平行光源
 	directionalLight_.ImGui("Directional Light");
 
 	ImGui::Separator();
 
+	// ===== ポイントライト =====
 	// 使用状況表示
-	int activeCount = 0;
+	int activePointLights = 0;
 	for (const auto& [id, light] : pointLights_) {
 		if (light && light->IsActive()) {
-			activeCount++;
+			activePointLights++;
 		}
 	}
 
 	ImGui::Text("Point Lights: %d / %d (Active: %d)",
 		static_cast<int>(pointLights_.size()),
 		MAX_POINT_LIGHTS,
-		activeCount);
+		activePointLights);
 
 	ImGui::Separator();
 
 	// 削除対象を記録（ループ中に削除できないため）
-	PointLight* lightToRemove = nullptr;
+	PointLight* pointLightToRemove = nullptr;
 
 	// 使用中のポイントライトのみ表示
 	for (auto& [id, light] : pointLights_) {
@@ -152,7 +218,7 @@ void LightManager::ImGui()
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.1f, 0.1f, 1.0f));
 
 				if (ImGui::Button("Remove This Light", ImVec2(-1, 0))) {
-					lightToRemove = light.get();
+					pointLightToRemove = light.get();
 				}
 
 				ImGui::PopStyleColor(3);
@@ -163,8 +229,8 @@ void LightManager::ImGui()
 	}
 
 	// ループ外で削除（イテレーション中の削除を避ける）
-	if (lightToRemove) {
-		RemovePointLight(lightToRemove);
+	if (pointLightToRemove) {
+		RemovePointLight(pointLightToRemove);
 	}
 
 	ImGui::Separator();
@@ -181,7 +247,77 @@ void LightManager::ImGui()
 	if (pointLights_.size() >= MAX_POINT_LIGHTS) {
 		ImGui::EndDisabled();
 		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f),
-			"Maximum light limit reached");
+			"Maximum point light limit reached");
+	}
+
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	// ===== スポットライト =====
+	// 使用状況表示
+	int activeSpotLights = 0;
+	for (const auto& [id, light] : spotLights_) {
+		if (light && light->IsActive()) {
+			activeSpotLights++;
+		}
+	}
+
+	ImGui::Text("Spot Lights: %d / %d (Active: %d)",
+		static_cast<int>(spotLights_.size()),
+		MAX_SPOT_LIGHTS,
+		activeSpotLights);
+
+	ImGui::Separator();
+
+	// 削除対象を記録（ループ中に削除できないため）
+	SpotLight* spotLightToRemove = nullptr;
+
+	// 使用中のスポットライトのみ表示
+	for (auto& [id, light] : spotLights_) {
+		if (light) {
+			std::string label = std::format("Spot Light [ID:{}]", id);
+
+			if (ImGui::TreeNode(label.c_str())) {
+				// ライトの編集UI
+				light->ImGui(label);
+
+				// 削除ボタン
+				ImGui::Separator();
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.1f, 0.1f, 1.0f));
+
+				if (ImGui::Button("Remove This Light", ImVec2(-1, 0))) {
+					spotLightToRemove = light.get();
+				}
+
+				ImGui::PopStyleColor(3);
+
+				ImGui::TreePop();
+			}
+		}
+	}
+
+	// ループ外で削除（イテレーション中の削除を避ける）
+	if (spotLightToRemove) {
+		RemoveSpotLight(spotLightToRemove);
+	}
+
+	ImGui::Separator();
+
+	// 追加ボタン（上限チェック）
+	if (spotLights_.size() >= MAX_SPOT_LIGHTS) {
+		ImGui::BeginDisabled();
+	}
+
+	if (ImGui::Button("Add Spot Light", ImVec2(-1, 0))) {
+		AddSpotLight({ 0.0f, 5.0f, 0.0f }, { 90.0f, 0.0f, 0.0f });
+	}
+
+	if (spotLights_.size() >= MAX_SPOT_LIGHTS) {
+		ImGui::EndDisabled();
+		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f),
+			"Maximum spot light limit reached");
 	}
 
 	ImGui::End();
@@ -206,39 +342,73 @@ void LightManager::UpdateLightingData()
 	lightingData_->directionalLight = directionalLight_.GetData();
 
 	// アクティブなポイントライトを収集
-	std::vector<PointLight*> activeLights;
-	activeLights.reserve(pointLights_.size());
+	std::vector<PointLight*> activePointLights;
+	activePointLights.reserve(pointLights_.size());
 
 	for (auto& [id, light] : pointLights_) {
 		if (light && light->IsActive()) {
-			activeLights.push_back(light.get());
+			activePointLights.push_back(light.get());
 		}
 	}
 
-	// GPU送信上限数まで																																		
-	int gpuLightCount = std::min(static_cast<int>(activeLights.size()), MAX_POINT_LIGHTS);
+	// GPU送信上限数まで
+	int gpuPointLightCount = std::min(static_cast<int>(activePointLights.size()), MAX_POINT_LIGHTS);
 
 	// GPU配列にコピー
-	for (int i = 0; i < gpuLightCount; ++i) {
-		lightingData_->pointLights[i] = activeLights[i]->GetData();
+	for (int i = 0; i < gpuPointLightCount; ++i) {
+		lightingData_->pointLights[i] = activePointLights[i]->GetData();
 	}
 
 	// 有効なポイントライト数を設定
-	lightingData_->numPointLights = gpuLightCount;
+	lightingData_->numPointLights = gpuPointLightCount;
+
+	// アクティブなスポットライトを収集
+	std::vector<SpotLight*> activeSpotLights;
+	activeSpotLights.reserve(spotLights_.size());
+
+	for (auto& [id, light] : spotLights_) {
+		if (light && light->IsActive()) {
+			activeSpotLights.push_back(light.get());
+		}
+	}
+
+	// GPU送信上限数まで
+	int gpuSpotLightCount = std::min(static_cast<int>(activeSpotLights.size()), MAX_SPOT_LIGHTS);
+
+	// GPU配列にコピー
+	for (int i = 0; i < gpuSpotLightCount; ++i) {
+		lightingData_->spotLights[i] = activeSpotLights[i]->GetData();
+	}
+
+	// 有効なスポットライト数を設定
+	lightingData_->numSpotLights = gpuSpotLightCount;
 
 	// パディングをゼロで埋める
-	lightingData_->padding[0] = 0.0f;
-	lightingData_->padding[1] = 0.0f;
-	lightingData_->padding[2] = 0.0f;
+	lightingData_->padding1[0] = 0.0f;
+	lightingData_->padding1[1] = 0.0f;
+	lightingData_->padding1[2] = 0.0f;
+	lightingData_->padding2[0] = 0.0f;
+	lightingData_->padding2[1] = 0.0f;
+	lightingData_->padding2[2] = 0.0f;
 
-	// 警告：10個を超えた場合（通常は発生しない）
-	if (activeLights.size() > MAX_POINT_LIGHTS) {
-		static bool warned = false;
-		if (!warned) {
+	//それぞれ最大数を超えた場合の警告
+	if (activePointLights.size() > MAX_POINT_LIGHTS) {
+		static bool warnedPoint = false;
+		if (!warnedPoint) {
 			Logger::Log(Logger::GetStream(),
-				std::format("LightManager: Warning - {} active lights, but only {} sent to GPU\n",
-					activeLights.size(), MAX_POINT_LIGHTS));
-			warned = true;
+				std::format("LightManager: Warning - {} active point lights, but only {} sent to GPU\n",
+					activePointLights.size(), MAX_POINT_LIGHTS));
+			warnedPoint = true;
+		}
+	}
+
+	if (activeSpotLights.size() > MAX_SPOT_LIGHTS) {
+		static bool warnedSpot = false;
+		if (!warnedSpot) {
+			Logger::Log(Logger::GetStream(),
+				std::format("LightManager: Warning - {} active spot lights, but only {} sent to GPU\n",
+					activeSpotLights.size(), MAX_SPOT_LIGHTS));
+			warnedSpot = true;
 		}
 	}
 }

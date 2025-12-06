@@ -54,7 +54,8 @@ private:
 	Matrix4x4 viewProjectionMatrix;
 
 	//ライティング
-	PointLight* Pointlight_;
+	PointLight* pointLight_;
+	SpotLight* spotLight_;
 
 	// システム参照
 	DirectXCommon* dxCommon_;

@@ -144,6 +144,51 @@ PixelShaderOutput main(VertexShaderOutput input)
             totalSpecular += specular * attenuation;
         }
         
+        // 3. スポットライトの計算（有効な数だけループ）
+        for (int j = 0; j < gLighting.numSpotLights; j++)
+        {
+            SpotLight spotLight = gLighting.spotLights[j];
+            
+            // ライトへの方向ベクトルを計算
+            float3 spotLightDir = normalize(spotLight.position - input.worldPosition);
+            
+            // ライトまでの距離を計算
+            float distance = length(spotLight.position - input.worldPosition);
+            
+            // 距離による減衰を計算
+            float distanceAttenuation = pow(saturate(-distance / spotLight.distance + 1.0), spotLight.decay);
+            
+            // 入射角を計算（表面からライトへの方向 と スポットライトの方向 の内積）
+            float cosAngle = dot(spotLightDir, -spotLight.direction);
+            
+            // フォールオフ係数を計算
+            // cosAngleがcosFalloffStart（内側）より大きい場合は1.0（最大）
+            // cosAngleがcosAngle（外側）より小さい場合は0.0（影響なし）
+            // その間は線形補間
+            float falloffFactor = saturate((cosAngle - spotLight.cosAngle) / (spotLight.cosFalloffStart - spotLight.cosAngle));
+            
+            // 拡散反射を計算
+            float3 diffuse = CalculateDiffuse(
+                normal,
+                spotLightDir,
+                spotLight.color.rgb,
+                spotLight.intensity
+            );
+            
+            // 鏡面反射を計算
+            float3 specular = CalculateSpecular(
+                normal,
+                spotLightDir,
+                toEye,
+                spotLight.color.rgb,
+                spotLight.intensity
+            );
+            
+            // 距離減衰とフォールオフを適用して合計に加算
+            totalDiffuse += diffuse * distanceAttenuation * falloffFactor;
+            totalSpecular += specular * distanceAttenuation * falloffFactor;
+        }
+        
         // 拡散反射にマテリアル色とテクスチャ色を適用
         float3 diffuseColor = gMaterial.color.rgb * textureColor.rgb * totalDiffuse;
         

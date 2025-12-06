@@ -7,6 +7,7 @@
 #include "Structures.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 #include "Logger.h"
 
 /// <summary>
@@ -16,6 +17,7 @@ class LightManager
 {
 public:
 	static constexpr int MAX_POINT_LIGHTS = 32;
+	static constexpr int MAX_SPOT_LIGHTS = 16;
 
 	// シングルトン
 	static LightManager* GetInstance();
@@ -54,15 +56,48 @@ public:
 		float decay = 2.0f);
 
 	/// <summary>
+	/// スポットライトを追加
+	/// </summary>
+	/// <param name="position">位置</param>
+	/// <param name="rotation">回転（Euler角、度数法）</param>
+	/// <param name="color">色</param>
+	/// <param name="intensity">強度</param>
+	/// <param name="distance">最大距離</param>
+	/// <param name="decay">減衰率</param>
+	/// <param name="angle">スポット角度（外側の境界、度数法）</param>
+	/// <param name="falloffStart">フォールオフ開始角度（内側の境界、度数法）※ angle > falloffStart</param>
+	/// <returns>追加されたライトのポインタ（失敗時はnullptr）</returns>
+	SpotLight* AddSpotLight(
+		const Vector3& position,
+		const Vector3& rotation = { 0.0f, 0.0f, 0.0f },
+		const Vector4& color = { 1.0f, 1.0f, 1.0f, 1.0f },
+		float intensity = 1.0f,
+		float distance = 15.0f,
+		float decay = 2.0f,
+		float angle = 30.0f,
+		float falloffStart = 20.0f);
+
+	/// <summary>
 	/// ポイントライトを削除
 	/// </summary>
 	/// <param name="light">削除するライトのポインタ</param>
 	void RemovePointLight(PointLight* light);
 
 	/// <summary>
+	/// スポットライトを削除
+	/// </summary>
+	/// <param name="light">削除するライトのポインタ</param>
+	void RemoveSpotLight(SpotLight* light);
+
+	/// <summary>
 	/// 全ポイントライトをクリア
 	/// </summary>
 	void ClearPointLights();
+
+	/// <summary>
+	/// 全スポットライトをクリア
+	/// </summary>
+	void ClearSpotLights();
 
 	/// <summary>
 	/// 平行光源を取得（編集可能）
@@ -74,6 +109,11 @@ public:
 	/// ポイントライト数を取得
 	/// </summary>
 	int GetPointLightCount() const { return static_cast<int>(pointLights_.size()); }
+
+	/// <summary>
+	/// スポットライト数を取得
+	/// </summary>
+	int GetSpotLightCount() const { return static_cast<int>(spotLights_.size()); }
 
 	/// <summary>
 	/// LightingDataリソースを取得（GPU送信用）
@@ -106,6 +146,7 @@ private:
 	// ライトデータ
 	DirectionalLight directionalLight_;
 	std::unordered_map<uint32_t, std::unique_ptr<PointLight>> pointLights_;
+	std::unordered_map<uint32_t, std::unique_ptr<SpotLight>> spotLights_;
 	uint32_t nextLightID_ = 1;  // ID生成用（単調増加）
 
 	// GPU送信用リソース
