@@ -19,9 +19,9 @@ void Ground::Initialize(DirectXCommon* dxCommon, const Vector3& position)
 
 	// 初期位置設定
 	Vector3Transform defaultTransform{
-		{1.0f, 1.0f, 1.0f},	// scale
-		{0.0f, 0.0f, 0.0f},	// rotate
-		position			// translate
+		{1.0f, 1.0f, 1.0f},
+		{0.0f, 0.0f, 0.0f},
+		position
 	};
 	gameObject_->SetTransform(defaultTransform);
 

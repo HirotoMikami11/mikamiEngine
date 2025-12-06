@@ -9,6 +9,7 @@
 #include "Boss.h"
 #include "Wall.h"
 #include "torch.h"
+#include "GroundLight.h"
 
 /// <summary>
 /// ゲームシーン
@@ -57,6 +58,7 @@ private:
 	std::unique_ptr<Boss> boss_;
 	std::unique_ptr<Wall> wall_;
 	std::unique_ptr<Torch> torch_;
+	std::unique_ptr<GroundLight> groundLight_;
 
 	// パーティクルシステム
 	ParticleSystem* particleSystem_;

@@ -104,18 +104,9 @@ void GameScene::InitializeGameObjects() {
 	// シーン内で平行光源を取得して編集
 	DirectionalLight& dirLight = LightManager::GetInstance()->GetDirectionalLight();
 	dirLight.SetIntensity(0.35f);
-
-	SpotLight* groundLight =LightManager::GetInstance()->AddSpotLight(
-		{ 0.0f, -109.2f, 0.0f },		//座標
-		{ -90.0f, 0.0f, 0.0f },			// 真上を向く
-		{ 1.0f, 0.3f, 0.0f, 1.0f },		// 暖色系
-		20.0f,							// 強度
-		110.0f,							// 最大距離
-		0.1f,							// 減衰率
-		25.0f,							// スポット角度
-		0.0f							// フォールオフ開始角度
-	);
-
+	// 地面ライトの生成
+	groundLight_ = std::make_unique<GroundLight>();
+	groundLight_->Initialize(LightManager::GetInstance());
 }
 
 void GameScene::Update() {
@@ -164,6 +155,8 @@ void GameScene::UpdateGameObjects() {
 	ground_->Update(viewProjectionMatrix);
 	wall_->Update(viewProjectionMatrix);
 	torch_->Update(viewProjectionMatrix);
+	groundLight_->Update();
+
 }
 
 void GameScene::UpdateCollison()
@@ -266,6 +259,8 @@ void GameScene::ImGui() {
 	ImGui::Text("Torch");
 	torch_->ImGui();
 
+	ImGui::Spacing();
+	groundLight_->ImGui();
 
 	ImGui::Spacing();
 	// パーティクルエディタ（統合UI）

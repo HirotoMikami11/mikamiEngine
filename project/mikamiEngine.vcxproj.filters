@@ -546,7 +546,7 @@
     <ClCompile Include="Engine\Utility\CSVUtility.cpp">
       <Filter>Engine\MyMath</Filter>
     </ClCompile>
-    <ClCompile Include="Application\GameObjects\Ground.cpp">
+    <ClCompile Include="Application\GameObjects\FieldObjects\Ground.cpp">
       <Filter>Application\GameObjects\FieldObjects\Ground</Filter>
     </ClCompile>
     <ClCompile Include="Application\GameObjects\FieldObjects\Wall.cpp">
@@ -622,6 +622,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Objects\Light\SpotLight.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\GameObjects\FieldObjects\GroundLight.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1009,7 +1012,7 @@
     <ClInclude Include="Engine\Utility\CSVUtility.h">
       <Filter>Engine\MyMath</Filter>
     </ClInclude>
-    <ClInclude Include="Application\GameObjects\Ground.h">
+    <ClInclude Include="Application\GameObjects\FieldObjects\Ground.h">
       <Filter>Application\GameObjects\FieldObjects\Ground</Filter>
     </ClInclude>
     <ClInclude Include="Application\GameObjects\FieldObjects\Wall.h">
@@ -1088,6 +1091,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Objects\Light\SpotLight.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\GameObjects\FieldObjects\GroundLight.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
