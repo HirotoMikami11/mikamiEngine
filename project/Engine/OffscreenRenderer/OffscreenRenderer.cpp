@@ -44,7 +44,8 @@ void OffscreenRenderer::Initialize(DirectXCommon* dxCommon, uint32_t width, uint
 	depthFogEffect_ = postProcessChain_->AddEffect<DepthFogPostEffect>();
 	// 深度ぼかしエフェクトを追加
 	depthOfFieldEffect_ = postProcessChain_->AddEffect<DepthOfFieldPostEffect>();
-
+	// アウトラインエフェクトを追加
+	outlineEffect_ = postProcessChain_->AddEffect<OutlinePostEffect>();
 
 	// グリッチエフェクトを追加
 	RGBShiftEffect_ = postProcessChain_->AddEffect<RGBShiftPostEffect>();
@@ -56,6 +57,7 @@ void OffscreenRenderer::Initialize(DirectXCommon* dxCommon, uint32_t width, uint
 	vignetteEffect_ = postProcessChain_->AddEffect<VignettePostEffect>();
 	// ダメージエフェクトを追加
 	damageEffect_ = postProcessChain_->AddEffect<VignettePostEffect>();
+
 
 
 
@@ -83,6 +85,7 @@ void OffscreenRenderer::Finalize() {
 	damageEffect_ = nullptr;
 	lineGlitchEffect_ = nullptr;
 	depthOfFieldEffect_ = nullptr;
+	outlineEffect_ = nullptr;
 
 	// オフスクリーンOffscreenTriangle削除（Sprite置き換え）
 	if (offscreenTriangle_) {

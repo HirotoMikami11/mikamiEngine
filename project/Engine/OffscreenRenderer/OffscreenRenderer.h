@@ -19,6 +19,8 @@
 
 #include "PostEffect/DepthOfField/DepthOfFieldPostEffect.h"	// 深度ぼかしエフェクト
 #include "PostEffect/DepthFog/DepthFogPostEffect.h"	// 深度フォグエフェクト
+#include "PostEffect/Outline/OutlinePostEffect.h"
+
 
 
 /// <summary>
@@ -131,9 +133,9 @@ public:
 	VignettePostEffect* GetVignetteEffect() { return vignetteEffect_; }
 
 	/// <summary>
-/// ダメージエフェクトを取得
-/// </summary>
-/// <returns>ビネットポストエフェクトのポインタ</returns>
+	/// ダメージエフェクトを取得
+	/// </summary>
+	/// <returns>ビネットポストエフェクトのポインタ</returns>
 	VignettePostEffect* GetDamageEffect() { return damageEffect_; }
 
 	/// <summary>
@@ -148,6 +150,11 @@ public:
 	/// <returns>深度フォグポストエフェクトのポインタ</returns>
 	DepthFogPostEffect* GetDepthFogEffect() { return depthFogEffect_; }
 
+	/// <summary>
+	/// 深度アウトラインエフェクトを取得
+	/// </summary>
+	/// <returns></returns>
+	OutlinePostEffect* GetOutlineEffect() { return outlineEffect_; }
 
 	/// <summary>
 	/// ポストプロセスチェーンを取得
@@ -161,7 +168,7 @@ public:
 	/// <returns>オフスクリーン用OffscreenTriangleのポインタ</returns>
 	OffscreenTriangle* GetOffscreenTriangle() { return offscreenTriangle_.get(); }
 
-	
+
 
 private:
 	/// <summary>
@@ -181,6 +188,9 @@ private:
 	void InitializeOffscreenTriangle();
 
 private:
+
+
+
 	//DirectXCommonへの参照
 	DirectXCommon* dxCommon_ = nullptr;
 
@@ -226,5 +236,5 @@ private:
 
 	DepthFogPostEffect* depthFogEffect_ = nullptr;
 	DepthOfFieldPostEffect* depthOfFieldEffect_ = nullptr;
-	
+	OutlinePostEffect* outlineEffect_ = nullptr;
 };

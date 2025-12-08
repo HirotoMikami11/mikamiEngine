@@ -300,6 +300,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObjects\Bullet\PlayerBulletPool.cpp" />
     <ClCompile Include="Application\GameObjects\Emitters\PlayerBulletHitEffectPool.cpp" />
     <ClCompile Include="Engine\Objects\Light\SpotLight.cpp" />
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Outline\OutlinePostEffect .cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -341,6 +342,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\Outline\Outline.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="resources\Shader\Particle\Particle.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
@@ -555,6 +561,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Framework\Framework.h" />
     <ClInclude Include="Engine\Objects\Light\SpotLight.h" />
     <ClInclude Include="Application\GameObjects\FieldObjects\GroundLight.h" />
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Outline\OutlinePostEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
@@ -571,6 +578,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="resources\Shader\LineGlitch\LineGlitch.hlsli" />
     <None Include="resources\Shader\Line\Line.hlsli" />
     <None Include="resources\Shader\Object3d\Object3d.hlsli" />
+    <None Include="resources\Shader\Outline\Outline.hlsli" />
     <None Include="resources\Shader\Particle\Particle.hlsli" />
     <None Include="resources\Shader\RGBShift\RGBShift.hlsli" />
     <None Include="resources\Shader\Sprite\Sprite.hlsli" />
