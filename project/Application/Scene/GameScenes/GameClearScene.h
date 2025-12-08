@@ -3,7 +3,7 @@
 
 #include "BaseScene.h"
 #include "ModelFont/ModelFont.h"
-
+#include "Ground.h"
 /// <summary>
 /// ゲームクリアシーン
 /// </summary>
@@ -46,6 +46,8 @@ private:
 	// ゲームオブジェクト
 	std::unique_ptr<ModelFont> clearFont_;
 	std::unique_ptr<ModelFont> pressA_;
+	//地面
+	std::unique_ptr<Ground> ground_;
 
 	// カメラ
 	CameraController* cameraController_;

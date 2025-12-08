@@ -21,13 +21,13 @@ void GameOverScene::ConfigureOffscreenEffects()
 	// 全てのエフェクトを無効化
 	offscreenRenderer_->DisableAllEffects();
 	// 必要に応じてここでエフェクトを有効化
-		//auto* depthFogEffect = offscreenRenderer_->GetDepthFogEffect();
-	//if (depthFogEffect) {
-	//	depthFogEffect->SetEnabled(true);
-	//	depthFogEffect->SetFogDistance(33.3f, 142.0f); // 深度フォグの距離を設定
-	//	depthFogEffect->SetFogColor({0.23f,0.23f,0.23f,1.0f});
-	//
-	//}
+	auto* depthFogEffect = offscreenRenderer_->GetDepthFogEffect();
+	if (depthFogEffect) {
+		depthFogEffect->SetEnabled(true);
+		depthFogEffect->SetFogDistance(0.1f, 119.0f); // 深度フォグの距離を設定
+		depthFogEffect->SetFogColor({ 0.0f,0.0f,0.0f,1.0f });
+
+	}
 }
 
 void GameOverScene::Initialize() {
@@ -63,6 +63,19 @@ void GameOverScene::InitializeGameObjects() {
 	pressA_ = std::make_unique<ModelFont>();
 	pressA_->Initialize(dxCommon_, "pressAFont", pressAPos);
 
+	///地面
+	ground_ = std::make_unique<Ground>();
+	ground_->Initialize(dxCommon_, { 0.0f,-3.0f,0.0f });
+
+	///*-----------------------------------------------------------------------*///
+	///								ライト									///
+	///*-----------------------------------------------------------------------*///
+
+	// シーン内で平行光源を取得して編集
+	DirectionalLight& dirLight = LightManager::GetInstance()->GetDirectionalLight();
+	dirLight.SetDirection(Vector3{ 0.0f,1.0f,0.0f });
+	dirLight.SetIntensity(1.0f);
+
 }
 
 void GameOverScene::Update() {
@@ -89,8 +102,7 @@ void GameOverScene::UpdateGameObjects() {
 	// 球体の更新
 	overFont_->Update(viewProjectionMatrix);
 	pressA_->Update(viewProjectionMatrix);
-
-
+	ground_->Update(viewProjectionMatrix);
 }
 
 void GameOverScene::DrawOffscreen() {
@@ -101,7 +113,7 @@ void GameOverScene::DrawOffscreen() {
 	// 球体の描画
 	overFont_->Draw();
 	pressA_->Draw();
-
+	ground_->Draw();
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
 	/// 

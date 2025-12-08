@@ -1,6 +1,7 @@
 #include "torch.h"
 #include "ImGui/ImGuiManager.h"
 #include "JsonSettings.h"
+#include "GameTimer.h"
 #include <numbers>
 #include "LightManager.h"
 
@@ -70,7 +71,7 @@ void Torch::Initialize(DirectXCommon* dxCommon)
 	LightManager* lightManager = LightManager::GetInstance();
 	// 各トーチにポイントライトを追加
 	for (int i = 0; i < kTorchCount_; ++i) {
-		lightManager->AddPointLight(
+		torchLights_[i] = lightManager->AddPointLight(
 			positions_[i],
 			Vector4{ 1.0f, 0.5f, 0.0f, 1.0f }, // オレンジ色
 			1.5f,
@@ -97,6 +98,13 @@ void Torch::Initialize(DirectXCommon* dxCommon)
 		if (particleInstance_[i]) {
 			particleInstance_[i]->GetEmitter("FireEmitter")->GetTransform().SetPosition(positions_[i]);
 		}
+	}
+
+	//ちらつき速度をずらして初期化
+	for (int i = 0; i < kTorchCount_; ++i) {
+		flickerTime_[i] = 0.0f;
+		flickerSpeed_[i] = 2.0f + (i * 0.2f); // 各トーチで異なる速度
+		flickerOffset_[i] = i * 0.5f; // 位相をずらす
 	}
 
 }
@@ -157,7 +165,33 @@ void Torch::UpdateTransforms()
 
 void Torch::Update(const Matrix4x4& viewProjectionMatrix)
 {
+	// GameTimerからデルタタイムを取得
+	GameTimer& gameTimer = GameTimer::GetInstance();
+	float deltaTime = gameTimer.GetDeltaTime();
+
+	LightManager* lightManager = LightManager::GetInstance();
+
 	for (int i = 0; i < kTorchCount_; ++i) {
+		// 時間を進める
+		flickerTime_[i] += deltaTime;
+
+		// 複数の正弦波を組み合わせて自然な揺らぎを作る
+		float flicker1 = std::sin(flickerTime_[i] * flickerSpeed_[i] + flickerOffset_[i]);
+		float flicker2 = std::sin(flickerTime_[i] * flickerSpeed_[i] * 2.3f) * 0.5f;
+		float flicker3 = std::sin(flickerTime_[i] * flickerSpeed_[i] * 3.7f) * 0.3f;
+
+		float flickerValue = (flicker1 + flicker2 + flicker3) / 1.8f; // -1 ~ 1
+		float intensity = baseIntensity_ + (flickerValue * flickerAmount_);
+
+		// ライトの強度を更新
+		torchLights_[i]->SetIntensity(intensity);
+
+		// パーティクルのスケールも連動させる
+		if (particleInstance_[i]) {
+			float scale = 1.0f + (flickerValue * 0.2f);
+			particleInstance_[i]->GetEmitter("FireEmitter")->SetParticleStartScale({ scale ,scale,scale});
+		}
+
 		if (torches_[i].obj) {
 			torches_[i].obj->Update(viewProjectionMatrix);
 		}

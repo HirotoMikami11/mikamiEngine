@@ -77,21 +77,26 @@ void TitleScene::InitializeGameObjects() {
 
 	///地面
 	ground_ = std::make_unique<Ground>();
-	ground_->Initialize(dxCommon_, { 0.0f,-0.51f,0.0f });
+	ground_->Initialize(dxCommon_, { 0.0f,-3.0f,0.0f });
 
-	wall_ = std::make_unique<Wall>();
-	wall_->Initialize(dxCommon_);
+	//wall_ = std::make_unique<Wall>();
+	//wall_->Initialize(dxCommon_);
 
-	torch_ = std::make_unique<Torch>();
-	torch_->Initialize(dxCommon_);
+	//torch_ = std::make_unique<Torch>();
+	//torch_->Initialize(dxCommon_);
 
 
 	//フィールドパーティクル
 	particleEditor_->CreateInstance("FieldEffect", "Field_circle");
 
 	///*-----------------------------------------------------------------------*///
-	///									ライト									///
+	///								ライト									///
 	///*-----------------------------------------------------------------------*///
+
+	// シーン内で平行光源を取得して編集
+	DirectionalLight& dirLight = LightManager::GetInstance()->GetDirectionalLight();
+	dirLight.SetDirection(Vector3{ 0.0f,1.0f,0.0f });
+	dirLight.SetIntensity(1.0f);
 }
 
 void TitleScene::Update() {
@@ -123,8 +128,8 @@ void TitleScene::UpdateGameObjects() {
 
 
 	ground_->Update(viewProjectionMatrix);
-	wall_->Update(viewProjectionMatrix);
-	torch_->Update(viewProjectionMatrix);
+	//wall_->Update(viewProjectionMatrix);
+	//torch_->Update(viewProjectionMatrix);
 
 
 }
@@ -139,8 +144,8 @@ void TitleScene::DrawOffscreen() {
 	pressA_->Draw();
 
 	ground_->Draw();
-	wall_->Draw();
-	torch_->Draw();
+	//wall_->Draw();
+	//torch_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -171,6 +176,7 @@ void TitleScene::ImGui() {
 	ImGui::Text("titleRogo");
 	titleRogo_->ImGui();
 	pressA_->ImGui();
+	ground_->ImGui();
 #endif
 }
 

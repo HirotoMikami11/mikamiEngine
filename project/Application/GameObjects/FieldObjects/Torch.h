@@ -91,6 +91,14 @@ private:
 	// 各トーチの回転（個別設定）
 	std::array<Vector3, kTorchCount_> rotations_;
 
+	//torchのちらつきイージング用
+	PointLight* torchLights_[kTorchCount_];
+	std::array<float, kTorchCount_> flickerTime_;
+	std::array<float, kTorchCount_> flickerSpeed_;
+	std::array<float, kTorchCount_> flickerOffset_;
+	float baseIntensity_ = 1.5f;
+	float flickerAmount_ = 0.3f;
+
 	// JsonSettingsのグループパス
 	const std::vector<std::string> kGroupPath_ = { "Torch" };
 	ParticlePresetInstance* particleInstance_[12];

@@ -18,13 +18,13 @@ void PlayerBullet::Initialize(DirectXCommon* dxCommon, const Vector3& position, 
 
 	// トランスフォームの初期設定（ダミー値）
 	Vector3Transform transform;
-	transform.scale = { 0.3f, 0.3f, 0.3f };
+	transform.scale = { 0.6f, 0.6f, 0.6f };
 	transform.rotate = { 0.0f, 0.0f, 0.0f };
 	transform.translate = { 0.0f, -1000.0f, 0.0f };  // 画面外に配置
 	gameObject_->SetTransform(transform);
 
 	// 弾の色を赤色に設定
-	gameObject_->SetColor(0xFF0000FF);
+	gameObject_->SetColor(0x0000FFFF);
 
 	// 衝突判定設定
 	SetRadius(0.3f);

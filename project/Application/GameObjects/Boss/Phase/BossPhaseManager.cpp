@@ -79,7 +79,7 @@ void BossPhaseManager::LoadPhaseConfigs()
 	phase2Config_ = phase1Config_;  // まずコピー
 
 	// 速度1.5倍
-	phase2Config_.moveSpeedMultiplier = 1.0f;
+	phase2Config_.moveSpeedMultiplier = 1.3f;
 
 	// 弾数増加（8 → 12）
 	phase2Config_.splineMove8WayShootConfig.onShootBulletNumber = 12;

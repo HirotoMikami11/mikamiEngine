@@ -54,7 +54,7 @@ private:
 	Vector2 frameOffset_;
 	float LightScrollSpeed_;
 	float originalLightWidth_;
-	Vector4 hpNormalColor_{ 0.0f, 1.0f, 0.0f, 1.0f };	//黄色
+	Vector4 hpNormalColor_{ 0.0f, 0.265f, 1.0f, 1.0f };	//黄色
 	Vector4 backgroundColor_{ 0.2f, 0.2f, 0.2f, 1.0f };	 // 暗い灰色
 
 	/// <summary>
