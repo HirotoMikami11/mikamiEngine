@@ -113,6 +113,7 @@ private:
 	std::unique_ptr<WinApp> winApp_;
 	std::unique_ptr<DirectXCommon> dxCommon_;
 
+
 	// オフスクリーン
 	std::unique_ptr<OffscreenRenderer> offscreenRenderer_;
 
