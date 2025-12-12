@@ -40,20 +40,8 @@ void AudioManager::Initialize() {
 
 void AudioManager::Finalize() {
 	// 全てのインスタンスを解放
-	for (auto& pair : instanceMap) {
-		if (pair.second) {
-			delete pair.second;
-		}
-	}
 	instanceMap.clear();
-
 	// 全ての音声データを解放
-	for (auto& pair : audioDataMap) {
-		if (pair.second) {
-			pair.second->Unload();
-			delete pair.second;
-		}
-	}
 	audioDataMap.clear();
 
 	// マスターボイスの解放
@@ -89,22 +77,21 @@ void AudioManager::Update() {
 void AudioManager::LoadAudio(const std::string& filename, const std::string& tagName) {
 	// 既に同じタグ名で登録されていた場合は古いものを解放
 	if (audioDataMap.find(tagName) != audioDataMap.end()) {
-		if (audioDataMap[tagName]) {
-			audioDataMap[tagName]->Unload();
-			delete audioDataMap[tagName];
-		}
 		audioDataMap.erase(tagName);
 	}
 
 	// 新しい音声データを作成
-	AudioData* audioData = new AudioData();
+	auto audioData = std::make_unique<AudioData>();
 	audioData->LoadFromFile(filename);
-	audioDataMap[tagName] = audioData;
+
+	// mapに移動（所有権の移動）
+	audioDataMap[tagName] = std::move(audioData);
 }
 
 int AudioManager::Play(const std::string& tagName, bool isLoop, float volume) {
 	// 指定したタグ名の音声データが見つからなければ失敗
-	if (audioDataMap.find(tagName) == audioDataMap.end()) {
+	auto it = audioDataMap.find(tagName);
+	if (it == audioDataMap.end()) {
 		return 0;  // 失敗
 	}
 
@@ -114,20 +101,20 @@ int AudioManager::Play(const std::string& tagName, bool isLoop, float volume) {
 	// マスターボリュームを考慮した音量
 	float actualVolume = volume * masterVolume;
 
-	// 新しいインスタンスを作成
-	AudioInstance* instance = new AudioInstance(
+	// unique_ptrから生ポインタを取得して渡す（AudioInstanceは参照のみ保持）
+	auto instance = std::make_unique<AudioInstance>(
 		xAudio2.Get(),
-		audioDataMap[tagName],
+		it->second.get(),
 		instanceId,
 		isLoop,
 		actualVolume
 	);
 
-	// インスタンスマップに追加
-	instanceMap[instanceId] = instance;
-
 	// 再生開始
 	instance->Start();
+
+	// インスタンスマップに移動（所有権の移動）
+	instanceMap[instanceId] = std::move(instance);
 
 	return instanceId;
 }
@@ -142,51 +129,55 @@ int AudioManager::PlayOverride(const std::string& tagName, bool isLoop, float vo
 
 void AudioManager::Pause(int instanceId) {
 	// インスタンスが存在しなければ何もしない
-	if (instanceMap.find(instanceId) == instanceMap.end()) {
+	auto it = instanceMap.find(instanceId);
+	if (it == instanceMap.end()) {
 		return;
 	}
 
-	instanceMap[instanceId]->Pause();
+	it->second->Pause();
 }
 
 void AudioManager::Resume(int instanceId) {
 	// インスタンスが存在しなければ何もしない
-	if (instanceMap.find(instanceId) == instanceMap.end()) {
+	auto it = instanceMap.find(instanceId);
+	if (it == instanceMap.end()) {
 		return;
 	}
 
-	instanceMap[instanceId]->Resume();
+	it->second->Resume();
 }
 
 void AudioManager::Stop(int instanceId) {
 	// インスタンスが存在しなければ何もしない
-	if (instanceMap.find(instanceId) == instanceMap.end()) {
+	auto it = instanceMap.find(instanceId);
+	if (it == instanceMap.end()) {
 		return;
 	}
 
 	// 停止してインスタンスを削除
-	instanceMap[instanceId]->Stop();
-	delete instanceMap[instanceId];
-	instanceMap.erase(instanceId);
+	it->second->Stop();
+	instanceMap.erase(it);
 }
 
 void AudioManager::SetLoop(int instanceId, bool loop) {
 	// インスタンスが存在しなければ何もしない
-	if (instanceMap.find(instanceId) == instanceMap.end()) {
+	auto it = instanceMap.find(instanceId);
+	if (it == instanceMap.end()) {
 		return;
 	}
 
-	instanceMap[instanceId]->SetLoop(loop);
+	it->second->SetLoop(loop);
 }
 
 void AudioManager::SetVolume(int instanceId, float volume) {
 	// インスタンスが存在しなければ何もしない
-	if (instanceMap.find(instanceId) == instanceMap.end()) {
+	auto it = instanceMap.find(instanceId);
+	if (it == instanceMap.end()) {
 		return;
 	}
 
 	// マスターボリュームを考慮した音量を設定
-	instanceMap[instanceId]->SetVolumeWithMaster(volume, masterVolume);
+	it->second->SetVolumeWithMaster(volume, masterVolume);
 }
 
 void AudioManager::SetMasterVolume(float volume) {
@@ -198,23 +189,24 @@ void AudioManager::SetMasterVolume(float volume) {
 }
 
 void AudioManager::StopAll() {
-	// 全てのインスタンスを停止して削除
+	// 全てのインスタンスを停止
 	for (auto& pair : instanceMap) {
 		if (pair.second) {
 			pair.second->Stop();
-			delete pair.second;
 		}
 	}
+	// clear()でunique_ptrが自動的にdeleteを呼ぶ
 	instanceMap.clear();
 }
 
 void AudioManager::PauseByTag(const std::string& tagName) {
 	// 指定したタグ名の音声データが見つからなければ何もしない
-	if (audioDataMap.find(tagName) == audioDataMap.end()) {
+	auto dataIt = audioDataMap.find(tagName);
+	if (dataIt == audioDataMap.end()) {
 		return;
 	}
 
-	AudioData* targetData = audioDataMap[tagName];
+	const AudioData* targetData = dataIt->second.get();
 
 	// 該当する全てのインスタンスを一時停止
 	for (auto& pair : instanceMap) {
@@ -226,11 +218,12 @@ void AudioManager::PauseByTag(const std::string& tagName) {
 
 void AudioManager::ResumeByTag(const std::string& tagName) {
 	// 指定したタグ名の音声データが見つからなければ何もしない
-	if (audioDataMap.find(tagName) == audioDataMap.end()) {
+	auto dataIt = audioDataMap.find(tagName);
+	if (dataIt == audioDataMap.end()) {
 		return;
 	}
 
-	AudioData* targetData = audioDataMap[tagName];
+	const AudioData* targetData = dataIt->second.get();
 
 	// 該当する全てのインスタンスを再開
 	for (auto& pair : instanceMap) {
@@ -242,18 +235,19 @@ void AudioManager::ResumeByTag(const std::string& tagName) {
 
 void AudioManager::StopByTag(const std::string& tagName) {
 	// 指定したタグ名の音声データが見つからなければ何もしない
-	if (audioDataMap.find(tagName) == audioDataMap.end()) {
+	auto dataIt = audioDataMap.find(tagName);
+	if (dataIt == audioDataMap.end()) {
 		return;
 	}
 
-	AudioData* targetData = audioDataMap[tagName];
+
+	const AudioData* targetData = dataIt->second.get();
 
 	// 該当する全てのインスタンスを停止して削除
 	auto it = instanceMap.begin();
 	while (it != instanceMap.end()) {
 		if (it->second && it->second->GetAudioData() == targetData) {
 			it->second->Stop();
-			delete it->second;
 			it = instanceMap.erase(it);
 		} else {
 			++it;
@@ -263,11 +257,12 @@ void AudioManager::StopByTag(const std::string& tagName) {
 
 void AudioManager::SetLoopByTag(const std::string& tagName, bool loop) {
 	// 指定したタグ名の音声データが見つからなければ何もしない
-	if (audioDataMap.find(tagName) == audioDataMap.end()) {
+	auto dataIt = audioDataMap.find(tagName);
+	if (dataIt == audioDataMap.end()) {
 		return;
 	}
 
-	AudioData* targetData = audioDataMap[tagName];
+	const AudioData* targetData = dataIt->second.get();
 
 	// 該当する全てのインスタンスのループ設定を変更
 	for (auto& pair : instanceMap) {
@@ -279,11 +274,12 @@ void AudioManager::SetLoopByTag(const std::string& tagName, bool loop) {
 
 void AudioManager::SetVolumeByTag(const std::string& tagName, float volume) {
 	// 指定したタグ名の音声データが見つからなければ何もしない
-	if (audioDataMap.find(tagName) == audioDataMap.end()) {
+	auto dataIt = audioDataMap.find(tagName);
+	if (dataIt == audioDataMap.end()) {
 		return;
 	}
 
-	AudioData* targetData = audioDataMap[tagName];
+	const AudioData* targetData = dataIt->second.get();
 
 	// 該当する全てのインスタンスの音量を変更
 	for (auto& pair : instanceMap) {
@@ -302,33 +298,37 @@ bool AudioManager::HasAudioData(const std::string& tagName) const {
 }
 
 bool AudioManager::IsPlaying(int instanceId) const {
-	if (instanceMap.find(instanceId) == instanceMap.end()) {
+	auto it = instanceMap.find(instanceId);
+	if (it == instanceMap.end()) {
 		return false;
 	}
-	return instanceMap.at(instanceId)->IsPlaying();
+	return it->second->IsPlaying();
 }
 
 bool AudioManager::IsPaused(int instanceId) const {
-	if (instanceMap.find(instanceId) == instanceMap.end()) {
+	auto it = instanceMap.find(instanceId);
+	if (it == instanceMap.end()) {
 		return false;
 	}
-	return instanceMap.at(instanceId)->IsPaused();
+	return it->second->IsPaused();
 }
 
 bool AudioManager::IsLooping(int instanceId) const {
-	if (instanceMap.find(instanceId) == instanceMap.end()) {
+	auto it = instanceMap.find(instanceId);
+	if (it == instanceMap.end()) {
 		return false;
 	}
-	return instanceMap.at(instanceId)->IsLooping();
+	return it->second->IsLooping();
 }
 
 bool AudioManager::IsPlayingByTag(const std::string& tagName) const {
 	// 指定したタグ名の音声データが見つからなければfalse
-	if (audioDataMap.find(tagName) == audioDataMap.end()) {
+	auto dataIt = audioDataMap.find(tagName);
+	if (dataIt == audioDataMap.end()) {
 		return false;
 	}
 
-	const AudioData* targetData = audioDataMap.at(tagName);
+	const AudioData* targetData = dataIt->second.get();
 
 	// 該当するインスタンスが1つでも再生中ならtrue
 	for (const auto& pair : instanceMap) {
@@ -342,11 +342,12 @@ bool AudioManager::IsPlayingByTag(const std::string& tagName) const {
 
 int AudioManager::GetInstanceCountByTag(const std::string& tagName) const {
 	// 指定したタグ名の音声データが見つからなければ0
-	if (audioDataMap.find(tagName) == audioDataMap.end()) {
+	auto dataIt = audioDataMap.find(tagName);
+	if (dataIt == audioDataMap.end()) {
 		return 0;
 	}
 
-	const AudioData* targetData = audioDataMap.at(tagName);
+	const AudioData* targetData = dataIt->second.get();
 	int count = 0;
 
 	// 該当するインスタンスをカウント
@@ -374,7 +375,6 @@ void AudioManager::CleanupFinishedInstances() {
 	auto it = instanceMap.begin();
 	while (it != instanceMap.end()) {
 		if (it->second && it->second->IsFinished()) {
-			delete it->second;
 			it = instanceMap.erase(it);
 		} else {
 			++it;
@@ -388,15 +388,16 @@ int AudioManager::GenerateInstanceId() {
 
 std::string AudioManager::GetTagNameFromInstance(int instanceId) const {
 	// インスタンスが存在しなければ空文字列を返す
-	if (instanceMap.find(instanceId) == instanceMap.end()) {
+	auto instIt = instanceMap.find(instanceId);
+	if (instIt == instanceMap.end()) {
 		return "";
 	}
 
-	const AudioData* targetData = instanceMap.at(instanceId)->GetAudioData();
+	const AudioData* targetData = instIt->second->GetAudioData();
 
 	// AudioDataからタグ名を逆引き
 	for (const auto& pair : audioDataMap) {
-		if (pair.second == targetData) {
+		if (pair.second.get() == targetData) {
 			return pair.first;
 		}
 	}
@@ -460,7 +461,7 @@ void AudioManager::ImGui() {
 		// このデータのインスタンス数をカウント
 		int instanceCount = 0;
 		for (const auto& instPair : instanceMap) {
-			if (instPair.second && instPair.second->GetAudioData() == dataPair.second) {
+			if (instPair.second && instPair.second->GetAudioData() == dataPair.second.get()) {
 				instanceCount++;
 			}
 		}
@@ -507,7 +508,7 @@ void AudioManager::ImGui() {
 
 		for (const auto& pair : instanceMap) {
 			int instanceId = pair.first;
-			AudioInstance* instance = pair.second;
+			AudioInstance* instance = pair.second.get();
 
 			if (!instance) continue;
 
