@@ -65,6 +65,15 @@ void GameScene::Initialize() {
 	InitializeGameObjects();
 	//ポストエフェクトの初期設定
 	ConfigureOffscreenEffects();
+
+	// 操作説明
+	sousa_ = std::make_unique<Sprite>();
+	sousa_->Initialize(
+		dxCommon_,
+		"sousa",
+		{640.0f,360.0f},
+		{1280.0f,720.0f}
+	);
 }
 
 void GameScene::InitializeGameObjects() {
@@ -119,6 +128,7 @@ void GameScene::Update() {
 	//当たり判定の更新
 	UpdateCollison();
 
+
 	// パーティクルシステムの更新
 	particleSystem_->Update(viewProjectionMatrix);
 
@@ -156,6 +166,7 @@ void GameScene::UpdateGameObjects() {
 	wall_->Update(viewProjectionMatrix);
 	torch_->Update(viewProjectionMatrix);
 	groundLight_->Update();
+	sousa_->Update(viewProjectionMatrixSprite);
 
 }
 
@@ -229,7 +240,7 @@ void GameScene::DrawBackBuffer() {
 
 	boss_->DrawUI();
 	player_->DrawUI();
-
+	sousa_->Draw();
 }
 
 void GameScene::ImGui() {
@@ -266,6 +277,7 @@ void GameScene::ImGui() {
 	// パーティクルエディタ（統合UI）
 	ImGui::Text("Particle Editor");
 	particleEditor_->ImGui();
+	sousa_->ImGui();
 
 #endif
 }

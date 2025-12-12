@@ -51,6 +51,7 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Texture/circle.png", "circle"},
 		{"resources/Texture/gaugeLight.png", "gaugeLight"},
 		{"resources/Texture/field.png", "field"},
+		{"resources/Texture/sousa.png", "sousa"},
 
 		// テクスチャここに追加
 		// {"resources/Texture/example.png", "example"},

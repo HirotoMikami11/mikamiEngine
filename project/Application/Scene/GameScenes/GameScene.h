@@ -60,6 +60,7 @@ private:
 	std::unique_ptr<Torch> torch_;
 	std::unique_ptr<GroundLight> groundLight_;
 
+	std::unique_ptr<Sprite> sousa_;
 	// パーティクルシステム
 	ParticleSystem* particleSystem_;
 	ParticleEditor* particleEditor_;
