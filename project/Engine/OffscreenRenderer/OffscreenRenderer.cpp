@@ -57,6 +57,8 @@ void OffscreenRenderer::Initialize(DirectXCommon* dxCommon, uint32_t width, uint
 	vignetteEffect_ = postProcessChain_->AddEffect<VignettePostEffect>();
 	// ダメージエフェクトを追加
 	damageEffect_ = postProcessChain_->AddEffect<VignettePostEffect>();
+	// 燃焼エフェクトを追加
+	burnEffect_ = postProcessChain_->AddEffect<BurnPostEffect>();
 
 
 
@@ -86,6 +88,8 @@ void OffscreenRenderer::Finalize() {
 	lineGlitchEffect_ = nullptr;
 	depthOfFieldEffect_ = nullptr;
 	outlineEffect_ = nullptr;
+	burnEffect_ = nullptr;
+
 
 	// オフスクリーンOffscreenTriangle削除（Sprite置き換え）
 	if (offscreenTriangle_) {

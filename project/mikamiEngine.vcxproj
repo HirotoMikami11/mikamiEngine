@@ -175,6 +175,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObjects\Emitters\BossBreakSmokeEmitter.cpp" />
     <ClCompile Include="Application\GameObjects\Emitters\BossExplosionEmitter.cpp" />
     <ClCompile Include="Application\GameObjects\Boss\Phase\BossPhaseManager.cpp" />
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Burn\BurnPostEffect.cpp" />
     <ClCompile Include="Engine\Managers\ImGui\EditorLayoutManager.cpp" />
     <ClCompile Include="Engine\CameraController\CameraFunc\CameraShake.cpp" />
     <ClCompile Include="Engine\Objects\Light\DirectionalLight.cpp" />
@@ -310,6 +311,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Outline\OutlinePostEffect .cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="resources\Shader\Burn\Burn.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -416,6 +420,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObjects\Emitters\BossBreakSmokeEmitter.h" />
     <ClInclude Include="Application\GameObjects\Emitters\BossExplosionEmitter.h" />
     <ClInclude Include="Application\GameObjects\Boss\Phase\BossPhaseManager.h" />
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Burn\BurnPostEffect.h" />
     <ClInclude Include="Engine\Managers\ImGui\EditorLayoutManager.h" />
     <ClInclude Include="Engine\CameraController\CameraFunc\CameraShake.h" />
     <ClInclude Include="Engine\Objects\Light\DirectionalLight.h" />
@@ -580,6 +585,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="resources\Shader\Burn\Burn.hlsli" />
     <None Include="resources\Shader\DepthFog\DepthFog.hlsli" />
     <None Include="resources\Shader\DepthOfField\DepthOfField.hlsli" />
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli" />

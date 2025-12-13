@@ -9,17 +9,18 @@
 #include "Logger.h"
 #include "MyFunction.h"
 
-#include "OffscreenTriangle/OffscreenTriangle.h"				// OffscreenTriangleクラスを使用
-#include "PostProcessChain.h"	// ポストプロセスチェーン
+#include "OffscreenTriangle/OffscreenTriangle.h"			// OffscreenTriangleクラスを使用
+#include "PostProcessChain.h"								// ポストプロセスチェーン
 
-#include "PostEffect/RGBShift/RGBShiftPostEffect.h"	// RGBシフトエフェクト
-#include "PostEffect/LineGlitch/LineGlitchPostEffect.h"	// ラインズラシ
-#include "PostEffect/Grayscale/GrayscalePostEffect.h"	// グレースケールエフェクト
-#include "PostEffect/Vignette/VignettePostEffect.h"	// ビネットエフェクト
+#include "PostEffect/RGBShift/RGBShiftPostEffect.h"			// RGBシフトエフェクト
+#include "PostEffect/LineGlitch/LineGlitchPostEffect.h"		// ラインズラシ
+#include "PostEffect/Grayscale/GrayscalePostEffect.h"		// グレースケールエフェクト
+#include "PostEffect/Vignette/VignettePostEffect.h"			// ビネットエフェクト
+#include "PostEffect/Burn/BurnPostEffect.h"					// 燃焼エフェクト
 
 #include "PostEffect/DepthOfField/DepthOfFieldPostEffect.h"	// 深度ぼかしエフェクト
-#include "PostEffect/DepthFog/DepthFogPostEffect.h"	// 深度フォグエフェクト
-#include "PostEffect/Outline/OutlinePostEffect.h"
+#include "PostEffect/DepthFog/DepthFogPostEffect.h"			// 深度フォグエフェクト
+#include "PostEffect/Outline/OutlinePostEffect.h"			// アウトラインエフェクト
 
 
 
@@ -156,6 +157,13 @@ public:
 	/// <returns></returns>
 	OutlinePostEffect* GetOutlineEffect() { return outlineEffect_; }
 
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	BurnPostEffect* GetBurnEffect() { return burnEffect_; }
+
 	/// <summary>
 	/// ポストプロセスチェーンを取得
 	/// </summary>
@@ -237,4 +245,5 @@ private:
 	DepthFogPostEffect* depthFogEffect_ = nullptr;
 	DepthOfFieldPostEffect* depthOfFieldEffect_ = nullptr;
 	OutlinePostEffect* outlineEffect_ = nullptr;
+	BurnPostEffect* burnEffect_ = nullptr;
 };

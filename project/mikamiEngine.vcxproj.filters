@@ -633,6 +633,9 @@
     <ClCompile Include="Engine\Managers\ImGui\EditorLayoutManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Burn\BurnPostEffect.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -678,6 +681,7 @@
       <Filter>リソース ファイル\Shader\Particle</Filter>
     </FxCompile>
     <FxCompile Include="resources\Shader\Outline\Outline.PS.hlsl" />
+    <FxCompile Include="resources\Shader\Burn\Burn.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Game.h">
@@ -1109,6 +1113,9 @@
     <ClInclude Include="Engine\Managers\ImGui\EditorLayoutManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Burn\BurnPostEffect.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli">
@@ -1142,6 +1149,7 @@
       <Filter>リソース ファイル\Shader\Particle</Filter>
     </None>
     <None Include="resources\Shader\Outline\Outline.hlsli" />
+    <None Include="resources\Shader\Burn\Burn.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
