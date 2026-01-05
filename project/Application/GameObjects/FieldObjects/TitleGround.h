@@ -2,25 +2,25 @@
 #include "Object3D.h"
 #include "DirectXCommon.h"
 
-class ModelFont
+class TitleGround
 {
 public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	ModelFont();
+	TitleGround();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~ModelFont();
+	~TitleGround();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <param name="position">初期位置</param>
-	void Initialize(DirectXCommon* dxCommon, const std::string& modelTag, const Vector3& position);
+	void Initialize(DirectXCommon* dxCommon, const Vector3& position);
 
 	/// <summary>
 	/// 更新
@@ -37,21 +37,6 @@ public:
 	/// ImGui
 	/// </summary>
 	void ImGui();
-
-	//座標Setter
-	void SetPosition(const Vector3& position) {
-		if (gameObject_) {
-			gameObject_->SetPosition(position);
-		}
-	};
-	//座標Getter
-	Vector3 GetPosition() const {
-		if (gameObject_) {
-			return gameObject_->GetPosition();
-		}
-		return { 0.0f, 0.0f, 0.0f };
-	};
-
 
 private:
 	// ゲームオブジェクト

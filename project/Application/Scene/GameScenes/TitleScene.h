@@ -4,9 +4,8 @@
 #include "BaseScene.h"
 #include "ModelFont/ModelFont.h"
 
-#include "Ground.h"
-#include "Wall.h"
-#include "torch.h"
+#include "TitleFieldSegment.h"
+
 
 /// <summary>
 /// タイトルシーン
@@ -52,10 +51,10 @@ private:
 	std::unique_ptr<ModelFont> titleRogo_;
 	std::unique_ptr<ModelFont> pressA_;
 	//地面
-	std::unique_ptr<Ground> ground_;
-	std::unique_ptr<Wall> wall_;
-	std::unique_ptr<Torch> torch_;
-
+	std::unique_ptr<TitleFieldSegment> titleFieldSegment_;
+	
+	//カメラ移動
+	float cameraMoveSpeed_;
 
 	// パーティクルシステム
 	ParticleSystem* particleSystem_;

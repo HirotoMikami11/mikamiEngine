@@ -15,7 +15,7 @@ void Pause::Initialize(DirectXCommon* dxCommon) {
 
 	// "タイトルへ"テキストSprite初期化（白色、仮画像white2x2使用）
 	titleTextSprite_ = std::make_unique<Sprite>();
-	titleTextSprite_->Initialize(dxCommon,"pause2", titleTextPosition_, titleTextSize_);
+	titleTextSprite_->Initialize(dxCommon, "pause2", titleTextPosition_, titleTextSize_);
 	titleTextSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f }); // 初期は透明
 
 	// 初期状態設定
@@ -28,6 +28,15 @@ void Pause::Initialize(DirectXCommon* dxCommon) {
 	currentBackgroundAlpha_ = 0.0f;
 	currentTextAlpha_ = 0.0f;
 	selectColorTimer_ = 0.0f;
+	selectSizeTimer_ = 0.0f;
+
+	// サイズの初期化
+	currentResumeSize_ = resumeTextSize_;
+	currentTitleSize_ = titleTextSize_;
+
+	// 初期色の設定（Resume が選択中なので黄色、Title は白）
+	resumeColor_ = selectedColor_;
+	titleColor_ = unselectedColor_;
 }
 
 void Pause::Update(const Matrix4x4& viewProjectionMatrix) {
@@ -41,14 +50,20 @@ void Pause::Update(const Matrix4x4& viewProjectionMatrix) {
 	if (isPaused_ && !isEasingIn_ && !isEasingOut_) {
 		CheckSelectInput();
 		CheckDecideInput();
-	} else {
+	} else if (!isPaused_) {
 		// ポーズ中でない場合は前フレーム状態をリセット
 		prevStickUp_ = false;
 		prevStickDown_ = false;
+		// 色とサイズもリセット
+		selectColorTimer_ = 0.0f;
+		selectSizeTimer_ = 0.0f;
 	}
 
 	// セレクト色のイージング更新
 	UpdateSelectColorEasing();
+
+	// セレクトサイズのイージング更新
+	UpdateSelectSizeEasing();
 
 	// Sprite更新
 	backgroundSprite_->SetPosition(backgroundPosition_);
@@ -56,11 +71,11 @@ void Pause::Update(const Matrix4x4& viewProjectionMatrix) {
 	backgroundSprite_->Update(viewProjectionMatrix);
 
 	resumeTextSprite_->SetPosition(resumeTextPosition_);
-	resumeTextSprite_->SetScale(resumeTextSize_);
+	resumeTextSprite_->SetScale(currentResumeSize_); // 現在のサイズを使用
 	resumeTextSprite_->Update(viewProjectionMatrix);
 
 	titleTextSprite_->SetPosition(titleTextPosition_);
-	titleTextSprite_->SetScale(titleTextSize_);
+	titleTextSprite_->SetScale(currentTitleSize_); // 現在のサイズを使用
 	titleTextSprite_->Update(viewProjectionMatrix);
 }
 
@@ -99,6 +114,11 @@ void Pause::ImGui() {
 		ImGui::Text("Colors");
 		ImGui::ColorEdit4("Selected Color", &selectedColor_.x);
 		ImGui::ColorEdit4("Unselected Color", &unselectedColor_.x);
+
+		ImGui::Separator();
+		ImGui::Text("Size Scale");
+		ImGui::SliderFloat("Selected Scale", &selectedScale_, 1.0f, 2.0f);
+		ImGui::Text("Unselected Scale: %.2f", unselectedScale_);
 	}
 #endif
 }
@@ -119,6 +139,14 @@ void Pause::CheckPauseToggleInput() {
 			targetBackgroundAlpha_ = 0.8f;
 			targetTextAlpha_ = 1.0f;
 			selectMode_ = PauseSelectMode::Resume; // セレクトをリセット
+			selectColorTimer_ = 0.0f;
+			selectSizeTimer_ = 0.0f;
+
+			// 初期色とサイズを設定（Resume が選択中）
+			resumeColor_ = selectedColor_;
+			titleColor_ = unselectedColor_;
+			currentResumeSize_ = resumeTextSize_ * selectedScale_;
+			currentTitleSize_ = titleTextSize_ * unselectedScale_;
 		} else {
 			// ポーズ解除：イージングアウト開始
 			isEasingOut_ = true;
@@ -158,6 +186,7 @@ void Pause::CheckSelectInput() {
 			selectMode_ = PauseSelectMode::Resume;
 		}
 		selectColorTimer_ = 0.0f; // 色変化のタイマーをリセット
+		selectSizeTimer_ = 0.0f;  // サイズ変化のタイマーをリセット
 	}
 
 	// 前フレームの状態を保存
@@ -219,7 +248,12 @@ void Pause::UpdateAlphaEasing() {
 		}
 	} else if (isEasingOut_) {
 		// フェードアウト
-		currentBackgroundAlpha_ = (1.0f - easedT) * 0.9f;
+		currentBackgroundAlpha_ = (1.0f - easedT) * 1.0f;
+		//背景色の最大値は0.8
+		if (currentBackgroundAlpha_ > 0.8f) {
+			currentBackgroundAlpha_ = 0.8f;
+		};
+
 		currentTextAlpha_ = (1.0f - easedT) * 1.0f;
 
 		// イージング完了チェック
@@ -282,4 +316,61 @@ void Pause::UpdateSelectColorEasing() {
 
 float Pause::EaseInCubic(float x) {
 	return x * x * x;
+}
+
+float Pause::EaseOutBounce(float x) {
+	const float n1 = 7.5625f;
+	const float d1 = 2.75f;
+
+	if (x < 1.0f / d1) {
+		return n1 * x * x;
+	} else if (x < 2.0f / d1) {
+		x -= 1.5f / d1;
+		return n1 * x * x + 0.75f;
+	} else if (x < 2.5f / d1) {
+		x -= 2.25f / d1;
+		return n1 * x * x + 0.9375f;
+	} else {
+		x -= 2.625f / d1;
+		return n1 * x * x + 0.984375f;
+	}
+}
+
+void Pause::UpdateSelectSizeEasing() {
+	// ポーズ中でない場合は何もしない
+	if (!isPaused_) {
+		return;
+	}
+
+	// 実時間のデルタタイムを使用
+	float deltaTime = gameTimer_->GetRealDeltaTime();
+	selectSizeTimer_ += deltaTime;
+
+	// イージング進行率を計算
+	float t = selectSizeTimer_ / selectSizeDuration_;
+	if (t > 1.0f) {
+		t = 1.0f;
+	}
+
+	// EaseOutBounceを適用
+	float easedT = EaseOutBounce(t);
+
+	// セレクトモードに応じてサイズを補間
+	if (selectMode_ == PauseSelectMode::Resume) {
+		// "ゲーム再開"が選択中 → 大きくなる
+		float resumeScale = unselectedScale_ + (selectedScale_ - unselectedScale_) * easedT;
+		currentResumeSize_ = resumeTextSize_ * resumeScale;
+
+		// "タイトルへ"は非選択 → 通常サイズに戻る
+		float titleScale = selectedScale_ + (unselectedScale_ - selectedScale_) * easedT;
+		currentTitleSize_ = titleTextSize_ * titleScale;
+	} else {
+		// "タイトルへ"が選択中 → 大きくなる
+		float titleScale = unselectedScale_ + (selectedScale_ - unselectedScale_) * easedT;
+		currentTitleSize_ = titleTextSize_ * titleScale;
+
+		// "ゲーム再開"は非選択 → 通常サイズに戻る
+		float resumeScale = selectedScale_ + (unselectedScale_ - selectedScale_) * easedT;
+		currentResumeSize_ = resumeTextSize_ * resumeScale;
+	}
 }

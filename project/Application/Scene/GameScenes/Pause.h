@@ -79,9 +79,19 @@ private:
 	void UpdateSelectColorEasing();
 
 	/// <summary>
+	/// セレクトサイズのイージング更新
+	/// </summary>
+	void UpdateSelectSizeEasing();
+
+	/// <summary>
 	/// イージング関数（EaseInCubic）
 	/// </summary>
 	float EaseInCubic(float x);
+
+	/// <summary>
+	/// イージング関数（EaseOutBounce）
+	/// </summary>
+	float EaseOutBounce(float x);
 
 	// Input参照
 	Input* input_ = Input::GetInstance();
@@ -120,8 +130,16 @@ private:
 	const float selectColorDuration_ = 0.3f;// 色変化の時間
 	Vector4 resumeColor_ = { 1.0f, 1.0f, 1.0f, 1.0f };		// ゲーム再開の色
 	Vector4 titleColor_ = { 1.0f, 1.0f, 1.0f, 1.0f };		// タイトルへの色
-	Vector4 selectedColor_ = { 1.0f, 1.0f, 0.0f, 1.0f };	// 選択中の色（黄色）
+	Vector4 selectedColor_ = { 1.0f, 1.0f, 1.0f, 1.0f };	// 選択中の色
 	Vector4 unselectedColor_ = { 1.0f, 1.0f, 1.0f, 1.0f };	// 非選択の色（白）
+
+	// セレクトサイズのイージング
+	float selectSizeTimer_ = 0.0f;			// サイズ変化のタイマー
+	const float selectSizeDuration_ = 0.5f;	// サイズ変化の時間
+	float selectedScale_ = 1.2f;			// 選択中のスケール倍率（ImGuiで調整可能）
+	float unselectedScale_ = 1.0f;			// 非選択のスケール倍率
+	Vector2 currentResumeSize_;				// ゲーム再開の現在サイズ
+	Vector2 currentTitleSize_;				// タイトルへの現在サイズ
 
 	// レイアウト設定（ImGuiで調整可能）
 	Vector2 backgroundPosition_ = { 640.0f, 360.0f };		// 背景の位置

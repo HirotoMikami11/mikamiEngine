@@ -14,21 +14,18 @@ void TailParts::Initialize(DirectXCommon* dxCommon, const Vector3& position, con
 }
 
 void TailParts::OnCollision(Collider* other) {
-	// 非アクティブの場合はダメージを受けない
 	if (!isActive_) {
 		return;
 	}
 
-	// 衝突相手の属性を取得
 	uint32_t otherAttribute = other->GetCollisionAttribute();
 
 	// プレイヤーの弾との衝突
 	if (otherAttribute & kCollisionAttributePlayerBullet) {
-		// 弾の攻撃力を取得
 		float attackPower = other->GetAttackPower();
 
-		// ダメージを受けて、実際に減ったHP分を取得
-		float actualDamage = TakeDamage(attackPower);
+		// 倍率を掛ける
+		float actualDamage = TakeDamage(attackPower * 1.5f);
 
 		// Bossに実際に減ったHP分のダメージを与える
 		if (boss_ && actualDamage > 0.0f) {
@@ -38,9 +35,10 @@ void TailParts::OnCollision(Collider* other) {
 
 	// プレイヤーとの衝突（Phase2でのみ発生）
 	if (otherAttribute & kCollisionAttributePlayer) {
-		// プレイヤーとの衝突処理（今回は特に実装なし）
+		// 必要ならここにも倍率を掛けて処理
 	}
 }
+
 
 void TailParts::SetPhase1Attribute() {
 	// 非アクティブの場合は属性を変更しない

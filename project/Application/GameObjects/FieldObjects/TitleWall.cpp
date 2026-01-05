@@ -36,7 +36,7 @@ void TitleWall::Initialize(DirectXCommon* dxCommon)
 	// 各壁モデルを初期化して transform をセットする
 	for (int i = 0; i < 4; ++i) {
 		walls_[i].obj = std::make_unique<Model3D>();
-		walls_[i].obj->Initialize(dxCommon_, "TitleWall");
+		walls_[i].obj->Initialize(dxCommon_, "titleWall");
 		walls_[i].obj->SetColor(0x3F3A38FF);
 		// SetName にインデックスを反映
 		char nameBuf[32];

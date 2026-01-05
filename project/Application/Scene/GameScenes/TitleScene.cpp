@@ -26,7 +26,7 @@ void TitleScene::ConfigureOffscreenEffects()
 	auto* depthFogEffect = offscreenRenderer_->GetDepthFogEffect();
 	if (depthFogEffect) {
 		depthFogEffect->SetEnabled(true);
-		depthFogEffect->SetFogDistance(0.1f, 119.0f); // 深度フォグの距離を設定
+		depthFogEffect->SetFogDistance(0.1f, 76.0f); // 深度フォグの距離を設定
 		depthFogEffect->SetFogColor({ 0.0f,0.0f,0.0f,1.0f });
 
 	}
@@ -50,13 +50,17 @@ void TitleScene::Initialize() {
 	///*-----------------------------------------------------------------------*///
 	cameraController_ = CameraController::GetInstance();
 	// 座標を指定して初期化
-	Vector3 initialPosition = { 0.0f, 0.0f, -10.0f };
+	Vector3 initialPosition = { 0.0f, 4.6f, -50.0f };
 	cameraController_->Initialize(dxCommon_, initialPosition);
 	cameraController_->SetActiveCamera("normal");
+
+	cameraMoveSpeed_ = 0.1f;
+
 	// ゲームオブジェクト初期化
 	InitializeGameObjects();
 	//ポストエフェクトの初期設定
 	ConfigureOffscreenEffects();
+
 }
 
 void TitleScene::InitializeGameObjects() {
@@ -64,26 +68,19 @@ void TitleScene::InitializeGameObjects() {
 	///								モデル										///
 	///*-----------------------------------------------------------------------*///
 
-	Vector3 titleRogoPos = { 0.0f,0.8f,-1.74f };
+	Vector3 titleRogoPos = { 0.0f,5.36f,cameraController_->GetCamera("normal")->GetPosition().z + 10.0f};
 	titleRogo_ = std::make_unique<ModelFont>();
 	titleRogo_->Initialize(dxCommon_, "titleFont", titleRogoPos);
 
-	Vector3 pressAPos = { 0.0f,-2.04f,4.5f };
+	Vector3 pressAPos = { 0.0f,3.410f,cameraController_->GetCamera("normal")->GetPosition().z + ( 50.0f - 36.15f)};
 	pressA_ = std::make_unique<ModelFont>();
 	pressA_->Initialize(dxCommon_, "pressAFont", pressAPos);
 
 
 
-
 	///地面
-	ground_ = std::make_unique<Ground>();
-	ground_->Initialize(dxCommon_, { 0.0f,-3.0f,0.0f });
-
-	//wall_ = std::make_unique<Wall>();
-	//wall_->Initialize(dxCommon_);
-
-	//torch_ = std::make_unique<Torch>();
-	//torch_->Initialize(dxCommon_);
+	titleFieldSegment_ = std::make_unique<TitleFieldSegment>();
+	titleFieldSegment_->Initialize(dxCommon_);
 
 
 	//フィールドパーティクル
@@ -102,6 +99,10 @@ void TitleScene::InitializeGameObjects() {
 void TitleScene::Update() {
 	// カメラ更新
 	cameraController_->Update();
+	cameraController_->GetCamera("normal")->SetPosition(
+		{ 0.0f,4.6f,
+		cameraController_->GetCamera("normal")->GetPosition().z + cameraMoveSpeed_ }
+	);
 
 	// ゲームオブジェクト更新
 	UpdateGameObjects();
@@ -124,14 +125,21 @@ void TitleScene::Update() {
 void TitleScene::UpdateGameObjects() {
 	// 行列更新
 	viewProjectionMatrix = cameraController_->GetViewProjectionMatrix();
+
+
+	Vector3 titleRogoPos = { 0.0f,5.36f,cameraController_->GetCamera("normal")->GetPosition().z + 10.0f };
+	titleRogo_->SetPosition(titleRogoPos);
+
+	Vector3 pressAPos = { 0.0f,3.410f,cameraController_->GetCamera("normal")->GetPosition().z + (50.0f - 36.15f) };
+	pressA_->SetPosition(pressAPos);
+
+
 	// 球体の更新
 	titleRogo_->Update(viewProjectionMatrix);
 	pressA_->Update(viewProjectionMatrix);
 
 
-	ground_->Update(viewProjectionMatrix);
-	//wall_->Update(viewProjectionMatrix);
-	//torch_->Update(viewProjectionMatrix);
+	titleFieldSegment_->Update(viewProjectionMatrix);
 
 
 }
@@ -145,7 +153,7 @@ void TitleScene::DrawOffscreen() {
 	titleRogo_->Draw();
 	pressA_->Draw();
 
-	ground_->Draw();
+	titleFieldSegment_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -176,7 +184,8 @@ void TitleScene::ImGui() {
 	ImGui::Text("titleRogo");
 	titleRogo_->ImGui();
 	pressA_->ImGui();
-	ground_->ImGui();
+
+	titleFieldSegment_->ImGui();
 #endif
 }
 

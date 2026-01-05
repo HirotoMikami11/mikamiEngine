@@ -30,6 +30,8 @@ public:
 	/// </summary>
 	void OnCollision(Collider* other) override;
 
+
+
 	/// <summary>
 	/// Bossへの参照を設定（ダメージ連動のため）
 	/// </summary>

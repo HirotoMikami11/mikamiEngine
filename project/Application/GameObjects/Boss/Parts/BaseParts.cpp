@@ -140,7 +140,7 @@ float BaseParts::TakeDamage(float damage) {
 
 	// ダメージ前のHP
 	float previousHP = currentHP_;
-
+	
 	// ダメージを適用
 	currentHP_ -= damage;
 
