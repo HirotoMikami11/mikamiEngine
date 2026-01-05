@@ -200,3 +200,5 @@ void TitleWall::SetZOffset(float zOffset) {
 	// オフセットが変更されたら transform を再計算
 	UpdateTransforms();
 }
+
+

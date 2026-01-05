@@ -75,7 +75,7 @@ private:
 	float waitTimer_;			// 待機時間カウンター
 
 	// パラメータ
-	float waitTime_ = 2.5f;		// 爆発後の待機時間（秒）
+	float waitTime_ = 2.0f;		// 爆発後の待機時間（秒）
 
 	// エミッター名
 	const std::string kExplosionPresetName_ = "PlayerExplosion";

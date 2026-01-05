@@ -409,6 +409,8 @@ void SplineMoveRotateShootState::ShootBulletFromHead(Boss* boss) {
 	};
 
 	boss->FireBullet(headPosition, bulletVelocity);
+	//発射音
+	AudioManager::GetInstance()->Play("EnemyShot2", false, 0.35f);
 }
 
 void SplineMoveRotateShootState::UpdatePositionAndRotation(Boss* boss) {

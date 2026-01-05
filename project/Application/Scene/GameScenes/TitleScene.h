@@ -52,6 +52,8 @@ private:
 	std::unique_ptr<ModelFont> pressA_;
 	//地面
 	std::unique_ptr<TitleField> titleField_;
+	//デプス対策用の背景
+	std::unique_ptr<Object3D> wallGround_;
 
 	//カメラ移動
 	float cameraMoveSpeed_;
@@ -66,6 +68,12 @@ private:
 	CameraController* cameraController_;
 	Matrix4x4 viewProjectionMatrix;
 	int BGMHandle_;
+	int voiceHandle_;
+	//ボイスタイマー
+	float voiceTimer_;
+	float voiceInterval_;
+
+
 	// システム参照
 	DirectXCommon* dxCommon_;
 	OffscreenRenderer* offscreenRenderer_;

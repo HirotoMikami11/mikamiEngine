@@ -63,6 +63,10 @@ void TitleScene::Initialize() {
 
 	//BGM
 	BGMHandle_ = AudioManager::GetInstance()->Play("TitleBGM", true, 0.3f);
+	//ボイスタイマー
+	voiceTimer_ = 0.0f;
+	voiceInterval_ = 20.0f;
+
 
 }
 
@@ -85,6 +89,12 @@ void TitleScene::InitializeGameObjects() {
 	titleField_ = std::make_unique<TitleField>();
 	titleField_->Initialize(dxCommon_);
 
+	//深度対策硫黄
+	Vector3 wallPos = { 0.0f,0.0f,cameraController_->GetCamera("normal")->GetPosition().z + 60.0f };
+	wallGround_ = std::make_unique<Object3D>();
+	wallGround_->Initialize(dxCommon_, "titleWall");
+	wallGround_->SetPosition(wallPos);
+	wallGround_->SetScale({ 5.0f,1.0f,5.0f });
 
 	//フィールドパーティクル
 	particleEditor_->CreateInstance("FieldEffect", "Field_circle");
@@ -110,16 +120,30 @@ void TitleScene::Update() {
 	// ゲームオブジェクト更新
 	UpdateGameObjects();
 
+
+	voiceTimer_ += GameTimer::GetInstance().GetDeltaTime();
+
+	if (voiceTimer_ >= voiceInterval_) {
+		//ボイス再生
+		voiceHandle_ = AudioManager::GetInstance()->Play("TitleVoice", false, 0.1f);
+		voiceTimer_ = 0.0f;
+	}
+
 	// パーティクルシステムの更新
 	particleSystem_->Update(viewProjectionMatrix);
 	// ゲームシーンに移動
 	if (!TransitionManager::GetInstance()->IsTransitioning() &&
 		Input::GetInstance()->IsKeyTrigger(DIK_SPACE) ||
 		Input::GetInstance()->IsGamePadButtonTrigger(Input::GamePadButton::A)) {
-		//押したおと
-		AudioManager::GetInstance()->Play("PressA", false, 0.5f);
-		// フェードを使った遷移
-		SceneTransitionHelper::FadeToScene("GameScene", 1.0f);
+
+		if (!AudioManager::GetInstance()->IsPlayingByTag("PressA"))
+		{
+			//押したおと
+			AudioManager::GetInstance()->Play("PressA", false, 0.5f);
+			// フェードを使った遷移
+			SceneTransitionHelper::FadeToScene("GameScene", 1.0f);
+		}
+
 		return; // 以降の処理をスキップ
 	}
 
@@ -136,10 +160,13 @@ void TitleScene::UpdateGameObjects() {
 	Vector3 pressAPos = { 0.0f,3.410f,cameraController_->GetCamera("normal")->GetPosition().z + (50.0f - 36.15f) };
 	pressA_->SetPosition(pressAPos);
 
+	Vector3 wallPos = { 0.0f,0.0f,cameraController_->GetCamera("normal")->GetPosition().z + 80.0f };
+	wallGround_->SetPosition(wallPos);
 
 	// 球体の更新
 	titleRogo_->Update(viewProjectionMatrix);
 	pressA_->Update(viewProjectionMatrix);
+	wallGround_->Update(viewProjectionMatrix);
 
 	// カメラのZ座標を取得してTitleFieldに渡す
 	float cameraZ = cameraController_->GetCamera("normal")->GetPosition().z;
@@ -156,7 +183,7 @@ void TitleScene::DrawOffscreen() {
 	// 球体の描画
 	titleRogo_->Draw();
 	pressA_->Draw();
-
+	wallGround_->Draw();
 	titleField_->Draw();
 
 	///
@@ -190,6 +217,12 @@ void TitleScene::ImGui() {
 	pressA_->ImGui();
 
 	titleField_->ImGui();
+
+	wallGround_->ImGui();
+	// パーティクルエディタ（統合UI）
+	ImGui::Text("Particle Editor");
+	particleEditor_->ImGui();
+
 #endif
 }
 
@@ -205,5 +238,6 @@ void TitleScene::Finalize() {
 
 	// BGM停止
 	AudioManager::GetInstance()->Stop(BGMHandle_);
+	AudioManager::GetInstance()->Stop(voiceHandle_);
 
 }

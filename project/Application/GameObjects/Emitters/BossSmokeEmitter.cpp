@@ -226,3 +226,32 @@ void BossSmokeEmitter::ImGui()
 	}
 #endif
 }
+
+void BossSmokeEmitter::SetAllEmittersEnabled(bool enabled)
+{
+	// 頭
+	if (headSmokeInstance_) {
+		auto* emitter = headSmokeInstance_->GetEmitter(kEmitterName_);
+		if (emitter) {
+			emitter->SetEmitEnabled(enabled);
+		}
+	}
+
+	// 体
+	for (auto* bodyInstance : bodySmokeInstances_) {
+		if (bodyInstance) {
+			auto* emitter = bodyInstance->GetEmitter(kEmitterName_);
+			if (emitter) {
+				emitter->SetEmitEnabled(enabled);
+			}
+		}
+	}
+
+	// 尻尾
+	if (tailSmokeInstance_) {
+		auto* emitter = tailSmokeInstance_->GetEmitter(kEmitterName_);
+		if (emitter) {
+			emitter->SetEmitEnabled(enabled);
+		}
+	}
+}

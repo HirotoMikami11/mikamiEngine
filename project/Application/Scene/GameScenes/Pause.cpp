@@ -131,6 +131,9 @@ void Pause::CheckPauseToggleInput() {
 	if (toggleInput && !isEasingIn_ && !isEasingOut_) {
 		isPaused_ = !isPaused_;
 
+		//押したおと
+		AudioManager::GetInstance()->Play("PressA", false, 0.5f);
+
 		if (isPaused_) {
 			// ポーズ開始：GameTimerを停止してイージング開始
 			gameTimer_->Pause();
@@ -185,6 +188,8 @@ void Pause::CheckSelectInput() {
 		} else {
 			selectMode_ = PauseSelectMode::Resume;
 		}
+		//押したおと
+		AudioManager::GetInstance()->Play("PauseMove", false, 0.5f);
 		selectColorTimer_ = 0.0f; // 色変化のタイマーをリセット
 		selectSizeTimer_ = 0.0f;  // サイズ変化のタイマーをリセット
 	}
@@ -207,13 +212,25 @@ void Pause::CheckDecideInput() {
 			easingTimer_ = 0.0f;
 			targetBackgroundAlpha_ = 0.0f;
 			targetTextAlpha_ = 0.0f;
+			if (!AudioManager::GetInstance()->IsPlayingByTag("PressA"))
+			{
+				//押したおと
+				AudioManager::GetInstance()->Play("PressA", false, 0.5f);
+			}
 		} else if (selectMode_ == PauseSelectMode::BackToTitle) {
 			// タイトルへ戻る
 			shouldReturnToTitle_ = true;
 			// GameTimerを再開してから遷移
 			gameTimer_->Resume();
+			if (!AudioManager::GetInstance()->IsPlayingByTag("PressA"))
+			{
+				//押したおと
+				AudioManager::GetInstance()->Play("PressA", false, 0.5f);
+			}
 			SceneTransitionHelper::FadeToScene("TitleScene", 1.0f);
 		}
+
+
 	}
 }
 

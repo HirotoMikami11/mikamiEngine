@@ -22,7 +22,7 @@ void TitleField::Initialize(DirectXCommon* dxCommon) {
 	// 3つのセグメントを初期化
 	for (int i = 0; i < 3; ++i) {
 		segments_[i] = std::make_unique<TitleFieldSegment>();
-		segments_[i]->Initialize(dxCommon_);
+		segments_[i]->Initialize(dxCommon_, i); // セグメントインデックスを渡す
 	}
 
 	// 初期位置を設定

@@ -105,7 +105,7 @@ void Player::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& view
 		if (!hasStartedDeathSequence_) {
 			explosionEmitter_->StartExplosionSequence();
 			//爆発音
-			AudioManager::GetInstance()->Play("Explosion", false, 0.5f);
+			AudioManager::GetInstance()->Play("Explosion", false, 0.8f);
 			hasStartedDeathSequence_ = true;
 		}
 
@@ -337,6 +337,8 @@ void Player::ProcessFire() {
 
 		// プールから弾を発射
 		if (bulletPool_->FireBullet(position, velocity)) {
+			//発射音
+			AudioManager::GetInstance()->Play("PlayerShot", false, 0.1f);
 			// 発射タイマーをリセット
 			fireTimer_ = fireInterval_;
 		}
@@ -440,6 +442,11 @@ void Player::ImGui() {
 }
 
 void Player::OnCollision(Collider* other) {
+	if (!isAlive_)
+	{
+		return;
+	}
+
 	// 衝突時の処理
 	uint32_t otherAttribute = other->GetCollisionAttribute();
 

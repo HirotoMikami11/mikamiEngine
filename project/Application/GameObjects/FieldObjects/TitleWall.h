@@ -69,6 +69,9 @@ public:
 	/// <param name="zOffset">Z座標のオフセット値</param>
 	void SetZOffset(float zOffset);
 
+	//スケール設定
+	void SetScale(const Vector3& scale);
+
 private:
 	/// <summary>
 	/// 壁オブジェクトの構造体

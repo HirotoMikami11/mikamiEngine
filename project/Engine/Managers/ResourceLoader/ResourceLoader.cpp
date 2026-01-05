@@ -109,6 +109,15 @@ void ResourceLoader::RegisterAllResources() {
 		 {"resources/Audio/GameBGM.mp3", "GameBGM"},
 		 {"resources/Audio/TitleBGM.mp3", "TitleBGM"},
 		 {"resources/Audio/ClearBGM.mp3", "ClearBGM"},
+		 {"resources/Audio/TitleVoice.mp3", "TitleVoice"},
+		 {"resources/Audio/PlayerHit.mp3", "PlayerHit"},
+		 {"resources/Audio/EnemyHit.mp3", "EnemyHit"},
+		 {"resources/Audio/EnemyHitMuteki.mp3", "EnemyHitMuteki"},
+		 {"resources/Audio/PauseMove.mp3", "PauseMove"},
+		 {"resources/Audio/PlayerShot.mp3", "PlayerShot"},
+		 {"resources/Audio/EnemyShot.mp3", "EnemyShot"},
+		 {"resources/Audio/EnemyShot2.mp3", "EnemyShot2"},
+
 	};
 }
 

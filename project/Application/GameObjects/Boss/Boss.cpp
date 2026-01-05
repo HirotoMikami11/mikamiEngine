@@ -193,6 +193,14 @@ void Boss::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPr
 		explosionEmitter_->Update();
 	}
 
+	if (currentPhase == BossPhase::Death&&
+		phaseManager_->GetDeathSubPhase() ==DeathSubPhase::Exploding||
+		phaseManager_->GetDeathSubPhase() ==DeathSubPhase::Complete
+		) {
+		smokeBreakEmitter_->SetAllEmittersEnabled(false);
+		smokeEmitter_->SetAllEmittersEnabled(false);
+	}
+
 	// UIの更新
 	bossUI_->Update(bossHP_, maxBossHP_, viewProjectionMatirxSprite);
 

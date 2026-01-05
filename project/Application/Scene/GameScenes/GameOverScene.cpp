@@ -93,8 +93,11 @@ void GameOverScene::Update() {
 	if (!TransitionManager::GetInstance()->IsTransitioning() && 
 		Input::GetInstance()->IsKeyTrigger(DIK_SPACE) ||
 		Input::GetInstance()->IsGamePadButtonTrigger(Input::GamePadButton::A)) {
-		//押したおと
-		AudioManager::GetInstance()->Play("PressA", false, 0.5f);
+		if (!AudioManager::GetInstance()->IsPlayingByTag("PressA"))
+		{
+			//押したおと
+			AudioManager::GetInstance()->Play("PressA", false, 0.5f);
+		}
 		// フェードを使った遷移
 		SceneTransitionHelper::FadeToScene("TitleScene", 1.0f);
 		return; // 以降の処理をスキップ

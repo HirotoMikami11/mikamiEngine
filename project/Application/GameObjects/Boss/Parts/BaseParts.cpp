@@ -30,6 +30,7 @@ void BaseParts::Update(const Matrix4x4& viewProjectionMatrix) {
 void BaseParts::Draw() {
 	// 可視性フラグがfalseなら描画しない
 	if (!isVisible_) {
+		radius_ = 0.0f; // 当たり判定も無効化
 		return;
 	}
 

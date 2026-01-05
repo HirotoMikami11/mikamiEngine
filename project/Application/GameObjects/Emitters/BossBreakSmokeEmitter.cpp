@@ -420,3 +420,15 @@ void BossBreakSmokeEmitter::ImGui()
 	}
 #endif
 }
+
+void BossBreakSmokeEmitter::SetAllEmittersEnabled(bool enabled)
+{
+	for (int i = 0; i < kEmitterCount; ++i) {
+		if (emitters_[i].instance) {
+			auto* emitter = emitters_[i].instance->GetEmitter(kEmitterName_);
+			if (emitter) {
+				emitter->SetEmitEnabled(enabled);
+			}
+		}
+	}
+}

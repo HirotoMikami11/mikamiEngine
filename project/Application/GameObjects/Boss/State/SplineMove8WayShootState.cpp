@@ -206,4 +206,6 @@ void SplineMove8WayShootState::ShootBulletsFrom8Directions(Boss* boss) {
 			boss->FireBullet(partPosition, direction);
 		}
 	}
+	//発射音
+	AudioManager::GetInstance()->Play("EnemyShot", false, 0.5f);
 }

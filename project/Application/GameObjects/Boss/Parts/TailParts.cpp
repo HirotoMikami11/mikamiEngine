@@ -14,7 +14,15 @@ void TailParts::Initialize(DirectXCommon* dxCommon, const Vector3& position, con
 }
 
 void TailParts::OnCollision(Collider* other) {
+
+	// 可視性フラグがfalseなら描画しない
+	if (!isVisible_) {
+		return;
+	}
+
 	if (!isActive_) {
+		//damege
+		AudioManager::GetInstance()->Play("EnemyHitMuteki", false, 0.25f);
 		return;
 	}
 
@@ -30,6 +38,8 @@ void TailParts::OnCollision(Collider* other) {
 		// Bossに実際に減ったHP分のダメージを与える
 		if (boss_ && actualDamage > 0.0f) {
 			boss_->TakeDamageFromPart(actualDamage);
+			//damege
+			AudioManager::GetInstance()->Play("EnemyHit", false, 0.25f);
 		}
 	}
 

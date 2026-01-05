@@ -130,7 +130,8 @@ void BossBullet::OnCollision(Collider* other) {
 				hitDirection.y = -hitDirection.y / length;
 				hitDirection.z = -hitDirection.z / length;
 			}
-
+			//damege
+			AudioManager::GetInstance()->Play("PlayerHit", false, 0.5f);
 			// エフェクトを発動
 			hitEffectPool_->TriggerEffect(hitPosition, hitDirection);
 		}

@@ -2,6 +2,7 @@
 #include <memory>
 #include "TitleWall.h"
 #include "TitleGround.h"
+#include "TitleTorch.h"
 
 class TitleFieldSegment
 {
@@ -10,7 +11,7 @@ public:
 	TitleFieldSegment();
 	~TitleFieldSegment();
 
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize(DirectXCommon* dxCommon, int segmentIndex);
 	void Update(const Matrix4x4& viewProjectionMatrix);
 	void Draw();
 	void ImGui();
@@ -33,6 +34,7 @@ private:
 	std::unique_ptr<TitleGround> ground_;
 	std::unique_ptr<TitleGround> skyGround_;
 	std::unique_ptr<TitleWall> titleWall_;
+	std::unique_ptr<TitleTorch> titleTorch_;
 
 	// Z座標オフセット（セグメント全体の位置調整用）
 	float zOffset_ = 0.0f;

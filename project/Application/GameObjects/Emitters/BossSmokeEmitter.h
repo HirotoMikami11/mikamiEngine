@@ -38,6 +38,7 @@ public:
 	/// </summary>
 	void ImGui();
 
+	void SetAllEmittersEnabled(bool enabled);
 private:
 	/// <summary>
 	/// パーティクルインスタンスを作成
