@@ -308,6 +308,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObjects\Emitters\PlayerBulletHitEffectPool.cpp" />
     <ClCompile Include="Engine\Objects\Light\SpotLight.cpp" />
     <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Outline\OutlinePostEffect .cpp" />
+    <ClCompile Include="Application\GameObjects\Emitters\PlayerExplosionEmitter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -570,6 +571,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Objects\Light\SpotLight.h" />
     <ClInclude Include="Application\GameObjects\FieldObjects\GroundLight.h" />
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Outline\OutlinePostEffect.h" />
+    <ClInclude Include="Application\GameObjects\Emitters\PlayerExplosionEmitter.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

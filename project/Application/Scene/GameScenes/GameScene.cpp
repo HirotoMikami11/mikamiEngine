@@ -119,35 +119,41 @@ void GameScene::InitializeGameObjects() {
 }
 
 void GameScene::Update() {
-	// カメラ更新
-	cameraController_->Update();
 
-	// ゲームオブジェクト更新
-	UpdateGameObjects();
+	// GameTimerからデルタタイムを取得
+	GameTimer& gameTimer = GameTimer::GetInstance();
+	
+	//ポーズ中は処理を行わない
+	if (!gameTimer.IsPaused()) {
+		// カメラ更新
+		cameraController_->Update();
 
-	//当たり判定の更新
-	UpdateCollison();
+		// ゲームオブジェクト更新
+		UpdateGameObjects();
+
+		//当たり判定の更新
+		UpdateCollison();
 
 
-	// パーティクルシステムの更新
-	particleSystem_->Update(viewProjectionMatrix);
+		// パーティクルシステムの更新
+		particleSystem_->Update(viewProjectionMatrix);
 
-	//クリア・デス判定
+		//クリア・デス判定
 
-	if (boss_->GetCurrentPhase() == BossPhase::Death &&
-		boss_->GetDeathSubPhase() == DeathSubPhase::Complete) {
-		// フェードを使った遷移
-		SceneTransitionHelper::FadeToScene("GameClearScene", 1.0f);
-		return; // 以降の処理をスキップ
+		if (boss_->GetCurrentPhase() == BossPhase::Death &&
+			boss_->GetDeathSubPhase() == DeathSubPhase::Complete) {
+			// フェードを使った遷移
+			SceneTransitionHelper::FadeToScene("GameClearScene", 1.0f);
+			return; // 以降の処理をスキップ
+		}
+
+		if (player_->IsDeathSequenceComplete()) {
+			// フェードを使った遷移
+			SceneTransitionHelper::FadeToScene("GameOverScene", 1.0f);
+			return; // 以降の処理をスキップ
+		}
+
 	}
-
-	if (!player_->GetIsAlive()) {
-		// フェードを使った遷移
-		SceneTransitionHelper::FadeToScene("GameOverScene", 1.0f);
-		return; // 以降の処理をスキップ
-	}
-
-
 
 }
 

@@ -4,7 +4,8 @@
 #include "PlayerBulletPool.h"	// プレイヤー弾プール
 #include "PlayerBulletHitEffectPool.h"	// ヒットエフェクトプール
 #include "PlayerUI.h"			// UI
-#include "OffscreenRenderer/EffectFunc/DamageVignette.h"	
+#include "OffscreenRenderer/EffectFunc/DamageVignette.h"
+#include "PlayerExplosionEmitter.h"	// 爆発演出
 #include <memory>
 
 class Player : public Collider
@@ -73,6 +74,9 @@ public:
 	void TakeDamage(float damage);
 	bool GetIsAlive() { return isAlive_; }
 
+	// 演出完了チェック
+	bool IsDeathSequenceComplete() const;
+
 private:
 	/// <summary>
 	/// 移動処理（XZ平面）
@@ -104,14 +108,20 @@ private:
 	//ダメージ演出
 	std::unique_ptr<DamageVignette> damageVignette_;
 
+	// 爆発演出
+	std::unique_ptr<PlayerExplosionEmitter> explosionEmitter_;
+
 	// システム参照
 	DirectXCommon* dxCommon_;
 	Input* input_;
 
+	//モデルの大きさ
+	float modelScale_ = 0.8f;
+
 	// 移動関連
 	Vector3 velocity_;					// 速度
 	float acceleration_ = 1.5f;
-	float limitRunSpeed_ = 7.0f;
+	float limitRunSpeed_ = 8.0f;
 	float attenuation_ = 0.5f;
 	Vector2 limitArea_ = { 60.0f,60.0f };
 
@@ -129,4 +139,5 @@ private:
 	float HP_;				// 現在HP
 
 	bool isAlive_ = true;
+	bool hasStartedDeathSequence_ = false;	// 死亡演出を開始したか
 };
