@@ -8,7 +8,7 @@ void Framework::Run() {
 
 	//エンジンの取得と初期化
 	engine_ = Engine::GetInstance();
-	engine_->Initialize(L"LE2A_15_ミカミ_ヒロト_AL3_Game");
+	engine_->Initialize(L"LE2A_15_ミカミ_ヒロト_SerpentDepths");
 
 	//初期化
 	Initialize();
