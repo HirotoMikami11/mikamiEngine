@@ -38,10 +38,21 @@ public:
 	/// </summary>
 	void ImGui();
 
+	/// <summary>
+	/// Z座標オフセットを設定
+	/// </summary>
+	/// <param name="zOffset">Z座標のオフセット値</param>
+	void SetZOffset(float zOffset);
+
 private:
 	// ゲームオブジェクト
 	std::unique_ptr<Object3D> gameObject_;
 	// システム参照
 	DirectXCommon* dxCommon_ = nullptr;
+	
+	// 初期位置（Initialize時に設定）
+	Vector3 initialPosition_;
+	// Z座標オフセット
+	float zOffset_ = 0.0f;
 };
 

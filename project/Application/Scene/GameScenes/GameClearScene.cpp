@@ -58,6 +58,9 @@ void GameClearScene::Initialize() {
 	InitializeGameObjects();
 	//ポストエフェクトの初期設定
 	ConfigureOffscreenEffects();
+
+	//BGM
+	BGMHandle_ =AudioManager::GetInstance()->Play("ClearBGM", true, 0.3f);
 }
 
 void GameClearScene::InitializeGameObjects() {
@@ -171,4 +174,7 @@ void GameClearScene::Finalize() {
 	if (particleEditor_) {
 		particleEditor_->DestroyAllInstance();
 	}
+
+	// BGM停止
+	 AudioManager::GetInstance()->Stop(BGMHandle_);
 }

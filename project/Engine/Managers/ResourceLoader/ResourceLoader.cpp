@@ -100,12 +100,15 @@ void ResourceLoader::RegisterAllResources() {
 	///*-----------------------------------------------------------------------*///
 	audios_ = {
 		// 音声ここに追加
-		 {"resources/Audio/Alarm01.wav", "Alarm"},
-		 {"resources/Audio/Bgm01.mp3", "BGM"},
-		 {"resources/Audio/Se01.mp3", "SE"},
+		 //{"resources/Audio/Alarm01.wav", "Alarm"},
+		 //{"resources/Audio/Bgm01.mp3", "BGM"},
+		 //{"resources/Audio/Se01.mp3", "SE"},
 		 {"resources/Audio/Explosion.mp3", "Explosion"},
 		 {"resources/Audio/Smoke.mp3", "Smoke"},
 		 {"resources/Audio/PressA.mp3", "PressA"},
+		 {"resources/Audio/GameBGM.mp3", "GameBGM"},
+		 {"resources/Audio/TitleBGM.mp3", "TitleBGM"},
+		 {"resources/Audio/ClearBGM.mp3", "ClearBGM"},
 	};
 }
 

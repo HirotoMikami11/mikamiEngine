@@ -12,6 +12,9 @@ void TitleGround::Initialize(DirectXCommon* dxCommon, const Vector3& position)
 {
 	dxCommon_ = dxCommon;
 
+	// 初期位置を保存
+	initialPosition_ = position;
+
 	// ゲームオブジェクト（3Dモデル）の初期化
 	gameObject_ = std::make_unique<Model3D>();
 	gameObject_->Initialize(dxCommon, "titleField");
@@ -47,4 +50,20 @@ void TitleGround::ImGui()
 	}
 
 #endif
+}
+
+void TitleGround::SetZOffset(float zOffset) {
+	zOffset_ = zOffset;
+	
+	// オフセットを適用した位置を設定
+	if (gameObject_) {
+		Vector3Transform transform;
+		transform.translate= gameObject_->GetTransform().GetPosition();
+		transform.scale = gameObject_->GetTransform().GetScale();
+		transform.rotate = gameObject_->GetTransform().GetRotation();
+
+		transform.translate = initialPosition_;
+		transform.translate.z += zOffset_;
+		gameObject_->SetTransform(transform);
+	}
 }

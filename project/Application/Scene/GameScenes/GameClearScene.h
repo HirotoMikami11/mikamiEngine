@@ -55,7 +55,7 @@ private:
 	// パーティクルシステム
 	ParticleSystem* particleSystem_;
 	ParticleEditor* particleEditor_;
-
+	int BGMHandle_;
 	// システム参照
 	DirectXCommon* dxCommon_;
 	OffscreenRenderer* offscreenRenderer_;

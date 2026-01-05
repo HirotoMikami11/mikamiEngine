@@ -61,6 +61,9 @@ void TitleScene::Initialize() {
 	//ポストエフェクトの初期設定
 	ConfigureOffscreenEffects();
 
+	//BGM
+	BGMHandle_ = AudioManager::GetInstance()->Play("TitleBGM", true, 0.3f);
+
 }
 
 void TitleScene::InitializeGameObjects() {
@@ -68,19 +71,19 @@ void TitleScene::InitializeGameObjects() {
 	///								モデル										///
 	///*-----------------------------------------------------------------------*///
 
-	Vector3 titleRogoPos = { 0.0f,5.36f,cameraController_->GetCamera("normal")->GetPosition().z + 10.0f};
+	Vector3 titleRogoPos = { 0.0f,5.36f,cameraController_->GetCamera("normal")->GetPosition().z + 10.0f };
 	titleRogo_ = std::make_unique<ModelFont>();
 	titleRogo_->Initialize(dxCommon_, "titleFont", titleRogoPos);
 
-	Vector3 pressAPos = { 0.0f,3.410f,cameraController_->GetCamera("normal")->GetPosition().z + ( 50.0f - 36.15f)};
+	Vector3 pressAPos = { 0.0f,3.410f,cameraController_->GetCamera("normal")->GetPosition().z + (50.0f - 36.15f) };
 	pressA_ = std::make_unique<ModelFont>();
 	pressA_->Initialize(dxCommon_, "pressAFont", pressAPos);
 
 
 
 	///地面
-	titleFieldSegment_ = std::make_unique<TitleFieldSegment>();
-	titleFieldSegment_->Initialize(dxCommon_);
+	titleField_ = std::make_unique<TitleField>();
+	titleField_->Initialize(dxCommon_);
 
 
 	//フィールドパーティクル
@@ -138,8 +141,9 @@ void TitleScene::UpdateGameObjects() {
 	titleRogo_->Update(viewProjectionMatrix);
 	pressA_->Update(viewProjectionMatrix);
 
-
-	titleFieldSegment_->Update(viewProjectionMatrix);
+	// カメラのZ座標を取得してTitleFieldに渡す
+	float cameraZ = cameraController_->GetCamera("normal")->GetPosition().z;
+	titleField_->Update(viewProjectionMatrix, cameraZ);
 
 
 }
@@ -153,7 +157,7 @@ void TitleScene::DrawOffscreen() {
 	titleRogo_->Draw();
 	pressA_->Draw();
 
-	titleFieldSegment_->Draw();
+	titleField_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -185,7 +189,7 @@ void TitleScene::ImGui() {
 	titleRogo_->ImGui();
 	pressA_->ImGui();
 
-	titleFieldSegment_->ImGui();
+	titleField_->ImGui();
 #endif
 }
 
@@ -198,5 +202,8 @@ void TitleScene::Finalize() {
 	if (particleEditor_) {
 		particleEditor_->DestroyAllInstance();
 	}
+
+	// BGM停止
+	AudioManager::GetInstance()->Stop(BGMHandle_);
 
 }

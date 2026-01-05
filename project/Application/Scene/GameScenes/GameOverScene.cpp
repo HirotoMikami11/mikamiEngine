@@ -48,6 +48,9 @@ void GameOverScene::Initialize() {
 	InitializeGameObjects();
 	//ポストエフェクトの初期設定
 	ConfigureOffscreenEffects();
+
+	//BGM
+	BGMHandle_ = AudioManager::GetInstance()->Play("ClearBGM", true, 0.3f);
 }
 
 void GameOverScene::InitializeGameObjects() {
@@ -55,11 +58,11 @@ void GameOverScene::InitializeGameObjects() {
 	///								フォント										///
 	///*-----------------------------------------------------------------------*///
 
-	Vector3 overFontPos = { 0.0f,0.9f,0.0f };
+	Vector3 overFontPos = { 0.0f,0.9f,cameraController_->GetCamera("normal")->GetPosition().z + 10.0f };
 	overFont_ = std::make_unique<ModelFont>();
 	overFont_->Initialize(dxCommon_, "overFont", overFontPos);
 
-	Vector3 pressAPos = { 0.0f, -2.04f, 4.5f };
+	Vector3 pressAPos = { 0.0f, -2.04f,cameraController_->GetCamera("normal")->GetPosition().z + 14.5f };
 	pressA_ = std::make_unique<ModelFont>();
 	pressA_->Initialize(dxCommon_, "pressAFont", pressAPos);
 
@@ -148,4 +151,7 @@ void GameOverScene::ImGui() {
 }
 
 void GameOverScene::Finalize() {
+
+	// BGM停止
+	AudioManager::GetInstance()->Stop(BGMHandle_);
 }

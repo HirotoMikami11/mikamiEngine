@@ -109,25 +109,25 @@ void TitleWall::UpdateTransforms()
 
 	// 手前 (-Z)
 	walls_[0].transform.rotate = { 0.0f, rotY[0], 0.0f };
-	walls_[0].transform.translate = { 0.0f, yPos, -(areaHalfZ + modelHalfZ) };
+	walls_[0].transform.translate = { 0.0f, yPos, -(areaHalfZ + modelHalfZ) + zOffset_ };
 	walls_[0].transform.scale = { 1.0f, 1.0f, 1.0f };
 	walls_[0].obj->SetTransform(walls_[0].transform);
 
 	// 右 (+X)
 	walls_[1].transform.rotate = { 0.0f, rotY[1], 0.0f };
-	walls_[1].transform.translate = { (areaHalfX + modelHalfZ), yPos, 0.0f };
+	walls_[1].transform.translate = { (areaHalfX + modelHalfZ), yPos, 0.0f + zOffset_ };
 	walls_[1].transform.scale = { 1.0f, 1.0f, 1.0f };
 	walls_[1].obj->SetTransform(walls_[1].transform);
 
 	// 奥 (+Z)
 	walls_[2].transform.rotate = { 0.0f, rotY[2], 0.0f };
-	walls_[2].transform.translate = { 0.0f, yPos, (areaHalfZ + modelHalfZ) };
+	walls_[2].transform.translate = { 0.0f, yPos, (areaHalfZ + modelHalfZ) + zOffset_ };
 	walls_[2].transform.scale = { 1.0f, 1.0f, 1.0f };
 	walls_[2].obj->SetTransform(walls_[2].transform);
 
 	// 左 (-X)
 	walls_[3].transform.rotate = { 0.0f, rotY[3], 0.0f };
-	walls_[3].transform.translate = { -(areaHalfX + modelHalfZ), yPos, 0.0f };
+	walls_[3].transform.translate = { -(areaHalfX + modelHalfZ), yPos, 0.0f + zOffset_ };
 	walls_[3].transform.scale = { 1.0f, 1.0f, 1.0f };
 	walls_[3].obj->SetTransform(walls_[3].transform);
 }
@@ -194,4 +194,9 @@ void TitleWall::ImGui()
 	}
 
 #endif
+}
+void TitleWall::SetZOffset(float zOffset) {
+	zOffset_ = zOffset;
+	// オフセットが変更されたら transform を再計算
+	UpdateTransforms();
 }

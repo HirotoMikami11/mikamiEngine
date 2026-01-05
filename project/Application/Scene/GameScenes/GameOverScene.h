@@ -51,7 +51,7 @@ private:
 	// カメラ
 	CameraController* cameraController_;
 	Matrix4x4 viewProjectionMatrix;
-
+	int BGMHandle_;
 	// システム参照
 	DirectXCommon* dxCommon_;
 	OffscreenRenderer* offscreenRenderer_;

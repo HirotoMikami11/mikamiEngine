@@ -4,7 +4,7 @@
 #include "BaseScene.h"
 #include "ModelFont/ModelFont.h"
 
-#include "TitleFieldSegment.h"
+#include "TitleField.h"
 
 
 /// <summary>
@@ -51,8 +51,8 @@ private:
 	std::unique_ptr<ModelFont> titleRogo_;
 	std::unique_ptr<ModelFont> pressA_;
 	//地面
-	std::unique_ptr<TitleFieldSegment> titleFieldSegment_;
-	
+	std::unique_ptr<TitleField> titleField_;
+
 	//カメラ移動
 	float cameraMoveSpeed_;
 
@@ -65,7 +65,7 @@ private:
 	// カメラ
 	CameraController* cameraController_;
 	Matrix4x4 viewProjectionMatrix;
-
+	int BGMHandle_;
 	// システム参照
 	DirectXCommon* dxCommon_;
 	OffscreenRenderer* offscreenRenderer_;

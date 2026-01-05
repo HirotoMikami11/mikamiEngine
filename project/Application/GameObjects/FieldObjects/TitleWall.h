@@ -63,6 +63,12 @@ public:
 	/// </summary>
 	void ApplyParameters();
 
+	/// <summary>
+	/// Z座標オフセットを設定
+	/// </summary>
+	/// <param name="zOffset">Z座標のオフセット値</param>
+	void SetZOffset(float zOffset);
+
 private:
 	/// <summary>
 	/// 壁オブジェクトの構造体
@@ -90,6 +96,9 @@ private:
 
 	// 囲みたい領域（フルサイズ)
 	Vector2 areaSize_;
+
+	// Z座標オフセット
+	float zOffset_ = 0.0f;
 
 	// JsonSettingsのグループパス
 	const std::vector<std::string> kGroupPath_ = { "TitleWall" };

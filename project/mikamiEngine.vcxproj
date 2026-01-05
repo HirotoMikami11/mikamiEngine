@@ -166,6 +166,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObjects\Boss\State\BossStateManager.cpp" />
     <ClCompile Include="Application\GameObjects\Bullet\BossBulletPool.cpp" />
     <ClCompile Include="Application\GameObjects\Emitters\BossBulletHitEffectPool.cpp" />
+    <ClCompile Include="Application\GameObjects\FieldObjects\TitleField.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\DemoScene.cpp" />
     <ClCompile Include="Application\Scene\GameScenes\GameClearScene.cpp" />
@@ -414,6 +415,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObjects\Boss\State\BossStateConfig.h" />
     <ClInclude Include="Application\GameObjects\Bullet\BossBulletPool.h" />
     <ClInclude Include="Application\GameObjects\Emitters\BossBulletHitEffectPool.h" />
+    <ClInclude Include="Application\GameObjects\FieldObjects\TitleField.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DebugSphere.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h" />
     <ClInclude Include="Application\Scene\GameScenes\GameClearScene.h" />

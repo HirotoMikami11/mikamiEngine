@@ -66,6 +66,7 @@ private:
 	ParticleSystem* particleSystem_;
 	ParticleEditor* particleEditor_;
 
+	int BGMHandle_;
 
 
 	// カメラ

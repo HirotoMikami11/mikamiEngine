@@ -66,6 +66,9 @@ void GameScene::Initialize() {
 	//ポストエフェクトの初期設定
 	ConfigureOffscreenEffects();
 
+	//BGM
+	BGMHandle_ = AudioManager::GetInstance()->Play("GameBGM", true, 0.5f);
+
 	// 操作説明
 	sousa_ = std::make_unique<Sprite>();
 	sousa_->Initialize(
@@ -288,5 +291,8 @@ void GameScene::Finalize() {
 	if (particleEditor_) {
 		particleEditor_->DestroyAllInstance();
 	}
+
+	// BGM停止
+	AudioManager::GetInstance()->Stop(BGMHandle_);
 
 }
