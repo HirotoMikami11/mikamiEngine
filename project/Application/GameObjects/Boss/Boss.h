@@ -23,6 +23,7 @@
 #include "BossUI.h"
 //弾関連
 #include "BossBulletPool.h "
+#include "BossBulletHitEffectPool.h"	// ボス弾のヒットエフェクト
 //エミッター関連
 #include "BossSmokeEmitter.h"
 #include "BossBreakSmokeEmitter.h"
@@ -236,6 +237,7 @@ private:
 
 	// 弾管理
 	std::unique_ptr<BossBulletPool> bulletPool_;
+	std::unique_ptr<BossBulletHitEffectPool> bulletHitEffectPool_;	// ボス弾のヒットエフェクト
 	std::unique_ptr<BossSmokeEmitter> smokeEmitter_;
 	std::unique_ptr<BossBreakSmokeEmitter> smokeBreakEmitter_;
 	std::unique_ptr<BossExplosionEmitter> explosionEmitter_;

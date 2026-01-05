@@ -2,6 +2,9 @@
 #include "BaseBullet.h"
 #include "CollisionConfig.h"
 
+// 前方宣言
+class BossBulletHitEffectPool;
+
 /// <summary>
 /// ボスの弾クラス
 /// Activate/Deactivateパターンでリソースを再利用
@@ -56,7 +59,16 @@ public:
 	/// </summary>
 	void OnCollision(Collider* other) override;
 
+	/// <summary>
+	/// ヒットエフェクトプールを設定
+	/// </summary>
+	/// <param name="effectPool">エフェクトプールのポインタ</param>
+	void SetHitEffectPool(BossBulletHitEffectPool* effectPool) { hitEffectPool_ = effectPool; }
+
 private:
 	// 寿命
 	static const int32_t kLifeTime = 60 * 8;	// 弾の寿命（8秒）
+
+	// ヒットエフェクトプールへの参照（所有権なし）
+	BossBulletHitEffectPool* hitEffectPool_ = nullptr;
 };

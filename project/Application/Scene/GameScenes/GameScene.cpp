@@ -84,14 +84,8 @@ void GameScene::InitializeGameObjects() {
 
 
 	///地面
-	ground_ = std::make_unique<Ground>();
-	ground_->Initialize(dxCommon_, { 0.0f,-0.51f,0.0f });
-
-	wall_ = std::make_unique<Wall>();
-	wall_->Initialize(dxCommon_);
-
-	torch_ = std::make_unique<Torch>();
-	torch_->Initialize(dxCommon_);
+	field_ = std::make_unique<GameField>();
+	field_->Initialize(dxCommon_);
 
 	///ボス
 	boss_ = std::make_unique<Boss>();
@@ -113,9 +107,7 @@ void GameScene::InitializeGameObjects() {
 	// シーン内で平行光源を取得して編集
 	DirectionalLight& dirLight = LightManager::GetInstance()->GetDirectionalLight();
 	dirLight.SetIntensity(0.35f);
-	// 地面ライトの生成
-	groundLight_ = std::make_unique<GroundLight>();
-	groundLight_->Initialize(LightManager::GetInstance());
+
 }
 
 void GameScene::Update() {
@@ -168,10 +160,7 @@ void GameScene::UpdateGameObjects() {
 	// ボスの更新
 	boss_->Update(viewProjectionMatrix, viewProjectionMatrixSprite);
 
-	ground_->Update(viewProjectionMatrix);
-	wall_->Update(viewProjectionMatrix);
-	torch_->Update(viewProjectionMatrix);
-	groundLight_->Update();
+	field_->Update(viewProjectionMatrix);
 	sousa_->Update(viewProjectionMatrixSprite);
 
 }
@@ -222,9 +211,7 @@ void GameScene::DrawOffscreen() {
 	boss_->Draw();
 
 
-	ground_->Draw();
-	wall_->Draw();
-	torch_->Draw();
+	field_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -263,23 +250,8 @@ void GameScene::ImGui() {
 	ImGui::Text("Boss");
 	boss_->ImGui();
 
+	field_->ImGui();
 
-	ImGui::Spacing();
-	ImGui::Text("Ground");
-	ground_->ImGui();
-
-	ImGui::Spacing();
-	ImGui::Text("Wall");
-	wall_->ImGui();
-
-	ImGui::Spacing();
-	ImGui::Text("Torch");
-	torch_->ImGui();
-
-	ImGui::Spacing();
-	groundLight_->ImGui();
-
-	ImGui::Spacing();
 	// パーティクルエディタ（統合UI）
 	ImGui::Text("Particle Editor");
 	particleEditor_->ImGui();

@@ -165,6 +165,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObjects\Bullet\BossBullet.cpp" />
     <ClCompile Include="Application\GameObjects\Boss\State\BossStateManager.cpp" />
     <ClCompile Include="Application\GameObjects\Bullet\BossBulletPool.cpp" />
+    <ClCompile Include="Application\GameObjects\Emitters\BossBulletHitEffectPool.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\DemoScene.cpp" />
     <ClCompile Include="Application\Scene\GameScenes\GameClearScene.cpp" />
@@ -279,6 +280,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Objects\Light\LightManager.cpp" />
     <ClCompile Include="Engine\Framework\Framework.cpp" />
     <ClCompile Include="Application\GameObjects\FieldObjects\GroundLight.cpp" />
+    <ClCompile Include="Application\GameObjects\FieldObjects\GameField.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -309,6 +311,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Objects\Light\SpotLight.cpp" />
     <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Outline\OutlinePostEffect .cpp" />
     <ClCompile Include="Application\GameObjects\Emitters\PlayerExplosionEmitter.cpp" />
+    <ClCompile Include="Application\GameObjects\FieldObjects\TitleWall.cpp" />
+    <ClCompile Include="Application\GameObjects\FieldObjects\TitleFieldSegment.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -407,6 +411,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObjects\Boss\State\BossStateManager.h" />
     <ClInclude Include="Application\GameObjects\Boss\State\BossStateConfig.h" />
     <ClInclude Include="Application\GameObjects\Bullet\BossBulletPool.h" />
+    <ClInclude Include="Application\GameObjects\Emitters\BossBulletHitEffectPool.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DebugSphere.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h" />
     <ClInclude Include="Application\Scene\GameScenes\GameClearScene.h" />
@@ -572,6 +577,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObjects\FieldObjects\GroundLight.h" />
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Outline\OutlinePostEffect.h" />
     <ClInclude Include="Application\GameObjects\Emitters\PlayerExplosionEmitter.h" />
+    <ClInclude Include="Application\GameObjects\FieldObjects\TitleWall.h" />
+    <ClInclude Include="Application\GameObjects\FieldObjects\TitleFieldSegment.h" />
+    <ClInclude Include="Application\GameObjects\FieldObjects\GameField.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
