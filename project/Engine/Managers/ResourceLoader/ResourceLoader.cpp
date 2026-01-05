@@ -52,6 +52,8 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Texture/gaugeLight.png", "gaugeLight"},
 		{"resources/Texture/field.png", "field"},
 		{"resources/Texture/sousa.png", "sousa"},
+		{"resources/Texture/pause1.png", "pause1"},
+		{"resources/Texture/pause2.png", "pause2"}
 
 		// テクスチャここに追加
 		// {"resources/Texture/example.png", "example"},
@@ -99,6 +101,9 @@ void ResourceLoader::RegisterAllResources() {
 		 {"resources/Audio/Alarm01.wav", "Alarm"},
 		 {"resources/Audio/Bgm01.mp3", "BGM"},
 		 {"resources/Audio/Se01.mp3", "SE"},
+		 {"resources/Audio/Explosion.mp3", "Explosion"},
+		 {"resources/Audio/Smoke.mp3", "Smoke"},
+		 {"resources/Audio/PressA.mp3", "PressA"},
 	};
 }
 

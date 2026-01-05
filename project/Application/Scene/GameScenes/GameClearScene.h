@@ -3,7 +3,7 @@
 
 #include "BaseScene.h"
 #include "ModelFont/ModelFont.h"
-#include "Ground.h"
+#include "GameField.h"
 /// <summary>
 /// ゲームクリアシーン
 /// </summary>
@@ -47,11 +47,14 @@ private:
 	std::unique_ptr<ModelFont> clearFont_;
 	std::unique_ptr<ModelFont> pressA_;
 	//地面
-	std::unique_ptr<Ground> ground_;
+	std::unique_ptr<GameField> field_;
 
 	// カメラ
 	CameraController* cameraController_;
 	Matrix4x4 viewProjectionMatrix;
+	// パーティクルシステム
+	ParticleSystem* particleSystem_;
+	ParticleEditor* particleEditor_;
 
 	// システム参照
 	DirectXCommon* dxCommon_;

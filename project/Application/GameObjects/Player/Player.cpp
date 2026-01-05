@@ -104,6 +104,8 @@ void Player::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& view
 		// 死亡演出をまだ開始していない場合、開始する
 		if (!hasStartedDeathSequence_) {
 			explosionEmitter_->StartExplosionSequence();
+			//爆発音
+			AudioManager::GetInstance()->Play("Explosion", false, 0.5f);
 			hasStartedDeathSequence_ = true;
 		}
 

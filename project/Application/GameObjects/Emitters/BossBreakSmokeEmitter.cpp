@@ -134,6 +134,8 @@ void BossBreakSmokeEmitter::UpdateEmitter(EmitterData& emitterData, const std::v
 		// 待機時間が経過したら起動
 		if (emitterData.timer >= kRestartWaitTime_) {
 			ActivateEmitter(emitterData, inactiveParts);
+			//爆発音
+			AudioManager::GetInstance()->Play("Smoke", false, 0.05f);
 			emitterData.isWaiting = false;
 			emitterData.timer = 0.0f;
 		}

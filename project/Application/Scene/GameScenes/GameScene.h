@@ -7,6 +7,7 @@
 #include "GameField.h"
 #include "Player.h"
 #include "Boss.h"
+#include "Pause.h"
 
 
 /// <summary>
@@ -57,6 +58,10 @@ private:
 
 
 	std::unique_ptr<Sprite> sousa_;
+
+	// ポーズ
+	std::unique_ptr<Pause> pause_;
+
 	// パーティクルシステム
 	ParticleSystem* particleSystem_;
 	ParticleEditor* particleEditor_;

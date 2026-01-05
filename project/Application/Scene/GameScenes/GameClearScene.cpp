@@ -7,6 +7,8 @@ GameClearScene::GameClearScene()
 	: BaseScene("GameClearScene") // シーン名を設定
 	, cameraController_(nullptr)
 	, dxCommon_(nullptr)
+	, particleSystem_(nullptr)
+	, particleEditor_(nullptr)
 	, offscreenRenderer_(nullptr)
 	, viewProjectionMatrix{ MakeIdentity4x4() }
 {
@@ -24,7 +26,7 @@ void GameClearScene::ConfigureOffscreenEffects()
 	auto* depthFogEffect = offscreenRenderer_->GetDepthFogEffect();
 	if (depthFogEffect) {
 		depthFogEffect->SetEnabled(true);
-		depthFogEffect->SetFogDistance(0.1f, 119.0f); // 深度フォグの距離を設定
+		depthFogEffect->SetFogDistance(0.1f, 110.0f); // 深度フォグの距離を設定
 		depthFogEffect->SetFogColor({ 0.0f,0.0f,0.0f,1.0f });
 
 	}
@@ -35,13 +37,21 @@ void GameClearScene::Initialize() {
 	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
 
+	// ParticleSystemシングルトンを取得
+	particleSystem_ = ParticleSystem::GetInstance();
+	particleSystem_->Initialize(dxCommon_);
+
+	// ParticleEditorシングルトンを取得
+	particleEditor_ = ParticleEditor::GetInstance();
+	particleEditor_->Initialize(dxCommon_);
 	///*-----------------------------------------------------------------------*///
 	///								カメラの初期化									///
 	///*-----------------------------------------------------------------------*///
 	cameraController_ = CameraController::GetInstance();
-	// 座標を指定して初期化
-	Vector3 initialPosition = { 0.0f, 0.0f, -10.0f };
-	cameraController_->Initialize(dxCommon_, initialPosition);
+	// 座標と回転を指定して初期化
+	Vector3 initialPosition = { 0.0f, 4.0f, -37.5f };
+	Vector3 initialRotation = { 0.0f, 0.0f, 0.0f };
+	cameraController_->Initialize(dxCommon_, initialPosition, initialRotation);
 	cameraController_->SetActiveCamera("normal");
 
 	// ゲームオブジェクト初期化
@@ -55,18 +65,16 @@ void GameClearScene::InitializeGameObjects() {
 	///								フォント										///
 	///*-----------------------------------------------------------------------*///
 
-	Vector3 clearPos = { 0.0f,0.9f,0.0f };
+	Vector3 clearPos = { 0.0f,5.16f,-27.9f };
 	clearFont_ = std::make_unique<ModelFont>();
 	clearFont_->Initialize(dxCommon_, "clearFont", clearPos);
-	Vector3 pressAPos = { 0.0f, -2.04f, 4.5f };
+	Vector3 pressAPos = { 0.0f, 3.37f, -25.4f };
 	pressA_ = std::make_unique<ModelFont>();
 	pressA_->Initialize(dxCommon_, "pressAFont", pressAPos);
 
-
 	///地面
-	ground_ = std::make_unique<Ground>();
-	ground_->Initialize(dxCommon_, { 0.0f,-3.0f,0.0f });
-
+	field_ = std::make_unique<GameField>();
+	field_->Initialize(dxCommon_);
 
 	///*-----------------------------------------------------------------------*///
 	///								ライト									///
@@ -74,8 +82,7 @@ void GameClearScene::InitializeGameObjects() {
 
 	// シーン内で平行光源を取得して編集
 	DirectionalLight& dirLight = LightManager::GetInstance()->GetDirectionalLight();
-	dirLight.SetDirection(Vector3{ 0.0f,1.0f,0.0f });
-	dirLight.SetIntensity(1.0f);
+	dirLight.SetIntensity(0.35f);
 
 }
 
@@ -86,10 +93,15 @@ void GameClearScene::Update() {
 	// ゲームオブジェクト更新
 	UpdateGameObjects();
 
+	// パーティクルシステムの更新
+	particleSystem_->Update(viewProjectionMatrix);
+
 	// タイトルシーンに移動
 	if (!TransitionManager::GetInstance()->IsTransitioning() &&
 		Input::GetInstance()->IsKeyTrigger(DIK_SPACE) ||
 		Input::GetInstance()->IsGamePadButtonTrigger(Input::GamePadButton::A)) {
+		//押したおと
+		AudioManager::GetInstance()->Play("PressA", false, 0.5f);
 		// フェードを使った遷移
 		SceneTransitionHelper::FadeToScene("TitleScene", 1.0f);
 		return; // 以降の処理をスキップ
@@ -102,7 +114,7 @@ void GameClearScene::UpdateGameObjects() {
 	// 球体の更新
 	clearFont_->Update(viewProjectionMatrix);
 	pressA_->Update(viewProjectionMatrix);
-	ground_->Update(viewProjectionMatrix);
+	field_->Update(viewProjectionMatrix);
 }
 
 void GameClearScene::DrawOffscreen() {
@@ -113,13 +125,14 @@ void GameClearScene::DrawOffscreen() {
 	// フォントの描画
 	clearFont_->Draw();
 	pressA_->Draw();
-	ground_->Draw();
+	field_->Draw();
 
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
 	/// 
-
+	// パーティクルシステムの描画（全グループ）
+	particleSystem_->Draw();
 }
 
 void GameClearScene::DrawBackBuffer() {
@@ -149,4 +162,13 @@ void GameClearScene::ImGui() {
 }
 
 void GameClearScene::Finalize() {
+
+	// シーン終了時にパーティクルシステムをクリア
+	if (particleSystem_) {
+		particleSystem_->Clear();
+	}
+	// シーン終了時にパーティクルインスタンスを全削除
+	if (particleEditor_) {
+		particleEditor_->DestroyAllInstance();
+	}
 }

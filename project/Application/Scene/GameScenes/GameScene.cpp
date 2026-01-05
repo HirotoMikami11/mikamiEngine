@@ -71,9 +71,13 @@ void GameScene::Initialize() {
 	sousa_->Initialize(
 		dxCommon_,
 		"sousa",
-		{640.0f,360.0f},
-		{1280.0f,720.0f}
+		{ 640.0f,360.0f },
+		{ 1280.0f,720.0f }
 	);
+
+	// ポーズの初期化
+	pause_ = std::make_unique<Pause>();
+	pause_->Initialize(dxCommon_);
 }
 
 void GameScene::InitializeGameObjects() {
@@ -114,7 +118,15 @@ void GameScene::Update() {
 
 	// GameTimerからデルタタイムを取得
 	GameTimer& gameTimer = GameTimer::GetInstance();
-	
+
+	// ポーズの更新（常に実行）
+	pause_->Update(viewProjectionMatrixSprite);
+
+	// タイトルへ戻る処理
+	if (pause_->ShouldReturnToTitle()) {
+		return; // 以降の処理をスキップ
+	}
+
 	//ポーズ中は処理を行わない
 	if (!gameTimer.IsPaused()) {
 		// カメラ更新
@@ -234,6 +246,9 @@ void GameScene::DrawBackBuffer() {
 	boss_->DrawUI();
 	player_->DrawUI();
 	sousa_->Draw();
+
+	// ポーズ画面の描画（最前面）
+	pause_->Draw();
 }
 
 void GameScene::ImGui() {
@@ -256,6 +271,9 @@ void GameScene::ImGui() {
 	ImGui::Text("Particle Editor");
 	particleEditor_->ImGui();
 	sousa_->ImGui();
+
+	// ポーズのImGui
+	pause_->ImGui();
 
 #endif
 }

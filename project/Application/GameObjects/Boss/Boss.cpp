@@ -8,7 +8,9 @@
 #include "State/SplineMove8WayShootState.h"
 #include "State/SplineMoveRotateShootState.h"
 #include "ImGui/ImGuiManager.h"
+#include "BossBulletHitEffectPool.h"	// ボス弾のヒットエフェクト
 #include "Bullet/BossBullet.h"
+#include "Audio/AudioManager.h"
 
 Boss::Boss()
 	: dxCommon_(nullptr)
@@ -752,7 +754,9 @@ void Boss::UpdateBullets(const Matrix4x4& viewProjectionMatrix) {
 	// ヒットエフェクトプールの更新
 	if (bulletHitEffectPool_) {
 		bulletHitEffectPool_->Update();
+
 	}
+
 }
 
 void Boss::DrawBullets() {

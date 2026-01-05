@@ -313,6 +313,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObjects\Emitters\PlayerExplosionEmitter.cpp" />
     <ClCompile Include="Application\GameObjects\FieldObjects\TitleWall.cpp" />
     <ClCompile Include="Application\GameObjects\FieldObjects\TitleFieldSegment.cpp" />
+    <ClCompile Include="Application\Scene\GameScenes\Pause.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -580,6 +581,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObjects\FieldObjects\TitleWall.h" />
     <ClInclude Include="Application\GameObjects\FieldObjects\TitleFieldSegment.h" />
     <ClInclude Include="Application\GameObjects\FieldObjects\GameField.h" />
+    <ClInclude Include="Application\Scene\GameScenes\Pause.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

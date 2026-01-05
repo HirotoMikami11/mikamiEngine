@@ -112,6 +112,8 @@ void TitleScene::Update() {
 	if (!TransitionManager::GetInstance()->IsTransitioning() &&
 		Input::GetInstance()->IsKeyTrigger(DIK_SPACE) ||
 		Input::GetInstance()->IsGamePadButtonTrigger(Input::GamePadButton::A)) {
+		//押したおと
+		AudioManager::GetInstance()->Play("PressA", false, 0.5f);
 		// フェードを使った遷移
 		SceneTransitionHelper::FadeToScene("GameScene", 1.0f);
 		return; // 以降の処理をスキップ
@@ -144,8 +146,6 @@ void TitleScene::DrawOffscreen() {
 	pressA_->Draw();
 
 	ground_->Draw();
-	//wall_->Draw();
-	//torch_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
