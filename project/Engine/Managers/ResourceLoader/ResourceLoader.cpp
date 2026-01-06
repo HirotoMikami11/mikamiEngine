@@ -89,6 +89,7 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Model/Boss", "Boss_Head.obj", "Boss_Head", false},
 		{"resources/Model/Boss", "Boss_Tail.obj", "Boss_Tail", false},
 		{"resources/Model/wallRock", "Boss_Tail.obj", "Boss_Tail", false},
+		{"resources/Model/treasureBox", "treasureBox.obj", "treasureBox", false},
 
 
 		// モデルはここに追加

@@ -23,13 +23,24 @@ void TitleScene::ConfigureOffscreenEffects()
 	// 全てのエフェクトを無効化
 	offscreenRenderer_->DisableAllEffects();
 	// 必要に応じてここでエフェクトを有効化
+	
 	auto* depthFogEffect = offscreenRenderer_->GetDepthFogEffect();
 	if (depthFogEffect) {
 		depthFogEffect->SetEnabled(true);
 		depthFogEffect->SetFogDistance(0.1f, 76.0f); // 深度フォグの距離を設定
 		depthFogEffect->SetFogColor({ 0.0f,0.0f,0.0f,1.0f });
-
 	}
+
+	//被写界深度
+	auto* depthOfFieldEffect = offscreenRenderer_->GetDepthOfFieldEffect();
+	if (depthOfFieldEffect) {
+		depthOfFieldEffect->SetEnabled(true);
+		depthOfFieldEffect->SetFocusDistance(6.0f);
+		depthOfFieldEffect->SetFocusRange(20.0f);
+		depthOfFieldEffect->SetBlurStrength(3.0f);
+	}
+
+
 }
 
 void TitleScene::Initialize() {
@@ -181,8 +192,7 @@ void TitleScene::DrawOffscreen() {
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	/// 
 	// 球体の描画
-	titleRogo_->Draw();
-	pressA_->Draw();
+
 	wallGround_->Draw();
 	titleField_->Draw();
 
@@ -198,7 +208,8 @@ void TitleScene::DrawBackBuffer() {
 	/// 3Dゲームオブジェクトの描画（オフスクリーンの外に描画）
 	///
 
-
+	titleRogo_->Draw();
+	pressA_->Draw();
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンの外に描画）
 	/// 

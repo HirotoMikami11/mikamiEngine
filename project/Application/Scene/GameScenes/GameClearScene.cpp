@@ -30,6 +30,15 @@ void GameClearScene::ConfigureOffscreenEffects()
 		depthFogEffect->SetFogColor({ 0.0f,0.0f,0.0f,1.0f });
 
 	}
+
+
+	//被写界深度
+	auto* depthOfFieldEffect = offscreenRenderer_->GetDepthOfFieldEffect();
+	if (depthOfFieldEffect) {
+		depthOfFieldEffect->SetEnabled(true);
+		depthOfFieldEffect->SetFocusDistance(6.0f);
+		depthOfFieldEffect->SetFocusRange(10.0f);
+	}
 }
 
 void GameClearScene::Initialize() {
@@ -60,7 +69,7 @@ void GameClearScene::Initialize() {
 	ConfigureOffscreenEffects();
 
 	//BGM
-	BGMHandle_ =AudioManager::GetInstance()->Play("ClearBGM", true, 0.3f);
+	BGMHandle_ = AudioManager::GetInstance()->Play("ClearBGM", true, 0.3f);
 }
 
 void GameClearScene::InitializeGameObjects() {
@@ -68,16 +77,20 @@ void GameClearScene::InitializeGameObjects() {
 	///								フォント										///
 	///*-----------------------------------------------------------------------*///
 
-	Vector3 clearPos = { 0.0f,5.16f,-27.9f };
+	Vector3 clearPos = { 0.0f,4.64f,-27.9f };
 	clearFont_ = std::make_unique<ModelFont>();
 	clearFont_->Initialize(dxCommon_, "clearFont", clearPos);
-	Vector3 pressAPos = { 0.0f, 3.37f, -25.4f };
+	Vector3 pressAPos = { 0.0f, 2.74f, -25.4f };
 	pressA_ = std::make_unique<ModelFont>();
 	pressA_->Initialize(dxCommon_, "pressAFont", pressAPos);
 
 	///地面
 	field_ = std::make_unique<GameField>();
 	field_->Initialize(dxCommon_);
+
+	///宝箱
+	treasureBox_ = std::make_unique<TreasureBox>();
+	treasureBox_->Initialize(dxCommon_);
 
 	///*-----------------------------------------------------------------------*///
 	///								ライト									///
@@ -121,6 +134,7 @@ void GameClearScene::UpdateGameObjects() {
 	clearFont_->Update(viewProjectionMatrix);
 	pressA_->Update(viewProjectionMatrix);
 	field_->Update(viewProjectionMatrix);
+	treasureBox_->Update(viewProjectionMatrix);
 }
 
 void GameClearScene::DrawOffscreen() {
@@ -129,9 +143,9 @@ void GameClearScene::DrawOffscreen() {
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	/// 
 	// フォントの描画
-	clearFont_->Draw();
-	pressA_->Draw();
+
 	field_->Draw();
+	treasureBox_->Draw();
 
 
 	///
@@ -145,7 +159,8 @@ void GameClearScene::DrawBackBuffer() {
 	///
 	/// 3Dゲームオブジェクトの描画（オフスクリーンの外に描画）
 	///
-
+	clearFont_->Draw();
+	pressA_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンの外に描画）
@@ -163,6 +178,8 @@ void GameClearScene::ImGui() {
 	ImGui::Text("Fonts");
 	clearFont_->ImGui();
 	pressA_->ImGui();
+	ImGui::Spacing();
+	treasureBox_->ImGui();
 
 #endif
 }
@@ -179,5 +196,5 @@ void GameClearScene::Finalize() {
 	}
 
 	// BGM停止
-	 AudioManager::GetInstance()->Stop(BGMHandle_);
+	AudioManager::GetInstance()->Stop(BGMHandle_);
 }

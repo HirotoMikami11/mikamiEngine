@@ -4,6 +4,8 @@
 #include "BaseScene.h"
 #include "ModelFont/ModelFont.h"
 #include "GameField.h"
+#include "TreasureBox.h"
+
 /// <summary>
 /// ゲームクリアシーン
 /// </summary>
@@ -48,6 +50,7 @@ private:
 	std::unique_ptr<ModelFont> pressA_;
 	//地面
 	std::unique_ptr<GameField> field_;
+	std::unique_ptr<TreasureBox> treasureBox_;
 
 	// カメラ
 	CameraController* cameraController_;
