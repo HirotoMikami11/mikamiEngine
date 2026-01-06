@@ -134,6 +134,8 @@ void BossBreakSmokeEmitter::UpdateEmitter(EmitterData& emitterData, const std::v
 		// 待機時間が経過したら起動
 		if (emitterData.timer >= kRestartWaitTime_) {
 			ActivateEmitter(emitterData, inactiveParts);
+			//爆発音
+			AudioManager::GetInstance()->Play("Smoke", false, 0.05f);
 			emitterData.isWaiting = false;
 			emitterData.timer = 0.0f;
 		}
@@ -417,4 +419,16 @@ void BossBreakSmokeEmitter::ImGui()
 		ImGui::TreePop();
 	}
 #endif
+}
+
+void BossBreakSmokeEmitter::SetAllEmittersEnabled(bool enabled)
+{
+	for (int i = 0; i < kEmitterCount; ++i) {
+		if (emitters_[i].instance) {
+			auto* emitter = emitters_[i].instance->GetEmitter(kEmitterName_);
+			if (emitter) {
+				emitter->SetEmitEnabled(enabled);
+			}
+		}
+	}
 }

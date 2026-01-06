@@ -3,7 +3,9 @@
 
 #include "BaseScene.h"
 #include "ModelFont/ModelFont.h"
-#include "Ground.h"
+#include "GameField.h"
+#include "TreasureBox.h"
+
 /// <summary>
 /// ゲームクリアシーン
 /// </summary>
@@ -47,12 +49,16 @@ private:
 	std::unique_ptr<ModelFont> clearFont_;
 	std::unique_ptr<ModelFont> pressA_;
 	//地面
-	std::unique_ptr<Ground> ground_;
+	std::unique_ptr<GameField> field_;
+	std::unique_ptr<TreasureBox> treasureBox_;
 
 	// カメラ
 	CameraController* cameraController_;
 	Matrix4x4 viewProjectionMatrix;
-
+	// パーティクルシステム
+	ParticleSystem* particleSystem_;
+	ParticleEditor* particleEditor_;
+	int BGMHandle_;
 	// システム参照
 	DirectXCommon* dxCommon_;
 	OffscreenRenderer* offscreenRenderer_;

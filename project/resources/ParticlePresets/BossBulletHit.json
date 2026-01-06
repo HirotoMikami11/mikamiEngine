@@ -1,0 +1,120 @@
+{
+    "emitters": [
+        {
+            "debugAABBColor": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "emitCount": 28,
+            "emitDirection": [
+                -0.9796138405799866,
+                -0.19344991445541382,
+                -0.054165616631507874
+            ],
+            "emitFrequency": 0.10000000149011612,
+            "emitterLifeTime": 0.10000000149011612,
+            "emitterLifeTimeLoop": false,
+            "emitterName": "BossBulletHit_Emitter",
+            "enableColorOverLifetime": true,
+            "enableRotation": false,
+            "enableSizeOverLifetime": true,
+            "initialSpeed": 6.900000095367432,
+            "isEmitting": false,
+            "particleEndColor": [
+                0.0,
+                0.3944636285305023,
+                0.8382352590560913,
+                0.0
+            ],
+            "particleEndScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "particleLifeTimeMax": 0.30000001192092896,
+            "particleLifeTimeMin": 0.10000000149011612,
+            "particleRotateMax": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "particleRotateMin": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "particleScaleMax": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "particleScaleMin": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "particleStartColor": [
+                0.9460784196853638,
+                0.0,
+                0.9460784196853638,
+                1.0
+            ],
+            "particleStartScale": [
+                0.10000000149011612,
+                0.10000000149011612,
+                0.10000000149011612
+            ],
+            "position": [
+                -6.5,
+                -2.200000047683716,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotationSpeed": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "showDebugAABB": true,
+            "spawnArea": {
+                "max": [
+                    0.90000001192092896,
+                    0.90000001192092896,
+                    0.90000001192092896
+                ],
+                "min": [
+                    -0.90000001192092896,
+                    -0.90000001192092896,
+                    -0.90000001192092896
+                ]
+            },
+            "spreadAngle": 95.02799987792969,
+            "targetGroupName": "BossBulletHit_Particle",
+            "useDirectionalEmit": true,
+            "useEmitterLifeTime": true,
+            "velocityRange": 1.0
+        }
+    ],
+    "fields": [],
+    "groups": [
+        {
+            "groupName": "BossBulletHit_Particle",
+            "maxParticles": 100,
+            "modelTag": "plane",
+            "textureName": "circle",
+            "useBillboard": true
+        }
+    ],
+    "presetName": "BossBulletHit"
+}

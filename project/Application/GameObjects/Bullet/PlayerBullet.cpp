@@ -104,7 +104,7 @@ void PlayerBullet::OnCollision(Collider* other) {
 	if (isDead_) {
 		return;
 	}
-
+	
 	// 衝突相手が敵またはオブジェクトの属性を持つかチェック
 	uint32_t otherAttribute = other->GetCollisionAttribute();
 	if ((otherAttribute & kCollisionAttributeEnemy) || (otherAttribute & kCollisionAttributeObjects)) {

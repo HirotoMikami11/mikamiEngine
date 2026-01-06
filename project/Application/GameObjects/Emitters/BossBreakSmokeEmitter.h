@@ -65,6 +65,8 @@ public:
 	/// </summary>
 	void ImGui();
 
+	void SetAllEmittersEnabled(bool enabled);
+
 private:
 	/// <summary>
 	/// パーティクルインスタンスを作成
@@ -135,7 +137,7 @@ private:
 	const std::string kEmitterName_ = "BreakSmoke_Emitter";
 
 	// 再起動待機時間（秒）
-	const float kRestartWaitTime_ = 2.0f;
+	const float kRestartWaitTime_ = 5.0f;
 
 	// デバッグ用：エミッタ情報を表示するか
 	bool showDebugInfo_;

@@ -1,0 +1,120 @@
+{
+    "emitters": [
+      {
+        "debugAABBColor": [
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "emitCount": 26,
+        "emitDirection": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "emitFrequency": 0.009999999776482582,
+        "emitterLifeTime": 0.05000000074505806,
+        "emitterLifeTimeLoop": false,
+        "emitterName": "PlayerExplosion_Emitter",
+        "enableColorOverLifetime": true,
+        "enableRotation": false,
+        "enableSizeOverLifetime": true,
+        "initialSpeed": 0.0,
+        "isEmitting": false,
+        "particleEndColor": [
+          0.07189542055130005,
+          0.07843136787414551,
+          0.07843136787414551,
+          0.0
+        ],
+        "particleEndScale": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "particleLifeTimeMax": 1.0,
+        "particleLifeTimeMin": 1.0,
+        "particleRotateMax": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "particleRotateMin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "particleScaleMax": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "particleScaleMin": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "particleStartColor": [
+          0.0033640803303569555,
+          0.053330764174461365,
+          0.343137264251709,
+          1.0
+        ],
+        "particleStartScale": [
+          8.0,
+          8.0,
+          8.0
+        ],
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotationSpeed": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "showDebugAABB": true,
+        "spawnArea": {
+          "max": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "min": [
+            -2.0,
+            -2.0,
+            -2.0
+          ]
+        },
+        "spreadAngle": 12.050000190734863,
+        "targetGroupName": "PlayerExplosion_Particle",
+        "useDirectionalEmit": true,
+        "useEmitterLifeTime": true,
+        "velocityRange": 1.0
+      }
+    ],
+    "fields": [],
+    "groups": [
+        {
+            "groupName": "PlayerExplosion_Particle",
+            "maxParticles": 345,
+            "modelTag": "plane",
+            "textureName": "circle",
+            "useBillboard": true
+        }
+    ],
+    "presetName": "PlayerExplosion"
+}

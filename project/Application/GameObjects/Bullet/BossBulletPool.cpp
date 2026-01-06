@@ -1,4 +1,5 @@
 #include "BossBulletPool.h"
+#include "BossBulletHitEffectPool.h"
 
 void BossBulletPool::Initialize(DirectXCommon* dxCommon, size_t poolSize) {
 	dxCommon_ = dxCommon;
@@ -99,5 +100,14 @@ void BossBulletPool::ResetAll() {
 	// 全スロットを空きに戻す
 	for (size_t i = 0; i < bulletPool_.size(); ++i) {
 		freeIndices_.push_back(i);
+	}
+}
+
+void BossBulletPool::SetHitEffectPool(BossBulletHitEffectPool* effectPool) {
+	// 全ての弾丸に対してエフェクトプールを設定
+	for (auto& bullet : bulletPool_) {
+		if (bullet) {
+			bullet->SetHitEffectPool(effectPool);
+		}
 	}
 }

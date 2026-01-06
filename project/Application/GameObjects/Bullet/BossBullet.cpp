@@ -1,4 +1,5 @@
 #include "BossBullet.h"
+#include "BossBulletHitEffectPool.h"
 
 BossBullet::BossBullet()
 {
@@ -111,6 +112,30 @@ void BossBullet::OnCollision(Collider* other) {
 	if ((otherAttribute & kCollisionAttributePlayer) ||
 		(otherAttribute & kCollisionAttributePlayerBullet) ||
 		(otherAttribute & kCollisionAttributeObjects)) {
+
+		// ヒットエフェクトを発動
+		if (hitEffectPool_) {
+			// 衝突位置（弾丸の現在位置）
+			Vector3 hitPosition = gameObject_->GetPosition();
+
+			// 弾丸の進行方向の逆向き（ヒットエフェクトの方向）
+			Vector3 hitDirection = velocity_;
+			float length = std::sqrt(hitDirection.x * hitDirection.x +
+				hitDirection.y * hitDirection.y +
+				hitDirection.z * hitDirection.z);
+
+			// 正規化して逆向きにする
+			if (length > 0.0f) {
+				hitDirection.x = -hitDirection.x / length;
+				hitDirection.y = -hitDirection.y / length;
+				hitDirection.z = -hitDirection.z / length;
+			}
+			//damege
+			AudioManager::GetInstance()->Play("PlayerHit", false, 0.5f);
+			// エフェクトを発動
+			hitEffectPool_->TriggerEffect(hitPosition, hitDirection);
+		}
+
 		// 弾は衝突すると非アクティブ化
 		Deactivate();
 	}

@@ -8,7 +8,9 @@
 #include "State/SplineMove8WayShootState.h"
 #include "State/SplineMoveRotateShootState.h"
 #include "ImGui/ImGuiManager.h"
+#include "BossBulletHitEffectPool.h"	// ボス弾のヒットエフェクト
 #include "Bullet/BossBullet.h"
+#include "Audio/AudioManager.h"
 
 Boss::Boss()
 	: dxCommon_(nullptr)
@@ -92,6 +94,13 @@ void Boss::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	// 弾のプールを作成
 	bulletPool_ = std::make_unique<BossBulletPool>();
 	bulletPool_->Initialize(dxCommon_, kBulletPoolSize);
+
+	// ボス弾のヒットエフェクトプールを初期化
+	bulletHitEffectPool_ = std::make_unique<BossBulletHitEffectPool>();
+	bulletHitEffectPool_->Initialize(dxCommon_, "BossBulletHit", "BossBulletHit_Emitter");
+
+	// 弾プールにエフェクトプールを設定
+	bulletPool_->SetHitEffectPool(bulletHitEffectPool_.get());
 
 	// 砂煙エミッターの初期化
 	smokeEmitter_ = std::make_unique<BossSmokeEmitter>();
@@ -182,6 +191,14 @@ void Boss::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPr
 	// 爆発エミッターの更新
 	if (explosionEmitter_) {
 		explosionEmitter_->Update();
+	}
+
+	if (currentPhase == BossPhase::Death&&
+		phaseManager_->GetDeathSubPhase() ==DeathSubPhase::Exploding||
+		phaseManager_->GetDeathSubPhase() ==DeathSubPhase::Complete
+		) {
+		smokeBreakEmitter_->SetAllEmittersEnabled(false);
+		smokeEmitter_->SetAllEmittersEnabled(false);
 	}
 
 	// UIの更新
@@ -343,7 +360,16 @@ void Boss::ImGui() {
 		if (explosionEmitter_) {
 			explosionEmitter_->ImGui();
 		}
+		ImGui::Separator();
+		if (bulletHitEffectPool_) {
+			ImGui::Text("Hit Effect Pool:");
+			ImGui::Text("Active Effects: %zu / %zu",
+				bulletHitEffectPool_->GetActiveEffectCount(),
+				bulletHitEffectPool_->GetPoolSize());
 
+			// エフェクトプールの詳細情報
+			bulletHitEffectPool_->ImGui();
+		}
 		// スプラインシステム
 		if (ImGui::CollapsingHeader("Spline System")) {
 			if (moveEditor_) {
@@ -730,7 +756,15 @@ bool Boss::FireBullet(const Vector3& position, const Vector3& velocity) {
 }
 
 void Boss::UpdateBullets(const Matrix4x4& viewProjectionMatrix) {
+	// 弾プールの更新
 	bulletPool_->Update(viewProjectionMatrix);
+
+	// ヒットエフェクトプールの更新
+	if (bulletHitEffectPool_) {
+		bulletHitEffectPool_->Update();
+
+	}
+
 }
 
 void Boss::DrawBullets() {

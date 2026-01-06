@@ -66,14 +66,21 @@ void GameScene::Initialize() {
 	//ポストエフェクトの初期設定
 	ConfigureOffscreenEffects();
 
+	//BGM
+	BGMHandle_ = AudioManager::GetInstance()->Play("GameBGM", true, 0.5f);
+
 	// 操作説明
 	sousa_ = std::make_unique<Sprite>();
 	sousa_->Initialize(
 		dxCommon_,
 		"sousa",
-		{640.0f,360.0f},
-		{1280.0f,720.0f}
+		{ 640.0f,360.0f },
+		{ 1280.0f,720.0f }
 	);
+
+	// ポーズの初期化
+	pause_ = std::make_unique<Pause>();
+	pause_->Initialize(dxCommon_);
 }
 
 void GameScene::InitializeGameObjects() {
@@ -84,14 +91,8 @@ void GameScene::InitializeGameObjects() {
 
 
 	///地面
-	ground_ = std::make_unique<Ground>();
-	ground_->Initialize(dxCommon_, { 0.0f,-0.51f,0.0f });
-
-	wall_ = std::make_unique<Wall>();
-	wall_->Initialize(dxCommon_);
-
-	torch_ = std::make_unique<Torch>();
-	torch_->Initialize(dxCommon_);
+	field_ = std::make_unique<GameField>();
+	field_->Initialize(dxCommon_);
 
 	///ボス
 	boss_ = std::make_unique<Boss>();
@@ -113,41 +114,53 @@ void GameScene::InitializeGameObjects() {
 	// シーン内で平行光源を取得して編集
 	DirectionalLight& dirLight = LightManager::GetInstance()->GetDirectionalLight();
 	dirLight.SetIntensity(0.35f);
-	// 地面ライトの生成
-	groundLight_ = std::make_unique<GroundLight>();
-	groundLight_->Initialize(LightManager::GetInstance());
+
 }
 
 void GameScene::Update() {
-	// カメラ更新
-	cameraController_->Update();
 
-	// ゲームオブジェクト更新
-	UpdateGameObjects();
+	// GameTimerからデルタタイムを取得
+	GameTimer& gameTimer = GameTimer::GetInstance();
 
-	//当たり判定の更新
-	UpdateCollison();
+	// ポーズの更新（常に実行）
+	pause_->Update(viewProjectionMatrixSprite);
 
-
-	// パーティクルシステムの更新
-	particleSystem_->Update(viewProjectionMatrix);
-
-	//クリア・デス判定
-
-	if (boss_->GetCurrentPhase() == BossPhase::Death &&
-		boss_->GetDeathSubPhase() == DeathSubPhase::Complete) {
-		// フェードを使った遷移
-		SceneTransitionHelper::FadeToScene("GameClearScene", 1.0f);
+	// タイトルへ戻る処理
+	if (pause_->ShouldReturnToTitle()) {
 		return; // 以降の処理をスキップ
 	}
 
-	if (!player_->GetIsAlive()) {
-		// フェードを使った遷移
-		SceneTransitionHelper::FadeToScene("GameOverScene", 1.0f);
-		return; // 以降の処理をスキップ
+	//ポーズ中は処理を行わない
+	if (!gameTimer.IsPaused()) {
+		// カメラ更新
+		cameraController_->Update();
+
+		// ゲームオブジェクト更新
+		UpdateGameObjects();
+
+		//当たり判定の更新
+		UpdateCollison();
+
+
+		// パーティクルシステムの更新
+		particleSystem_->Update(viewProjectionMatrix);
+
+		//クリア・デス判定
+
+		if (boss_->GetCurrentPhase() == BossPhase::Death &&
+			boss_->GetDeathSubPhase() == DeathSubPhase::Complete) {
+			// フェードを使った遷移
+			SceneTransitionHelper::FadeToScene("GameClearScene", 1.0f);
+			return; // 以降の処理をスキップ
+		}
+
+		if (player_->IsDeathSequenceComplete()) {
+			// フェードを使った遷移
+			SceneTransitionHelper::FadeToScene("GameOverScene", 1.0f);
+			return; // 以降の処理をスキップ
+		}
+
 	}
-
-
 
 }
 
@@ -162,10 +175,7 @@ void GameScene::UpdateGameObjects() {
 	// ボスの更新
 	boss_->Update(viewProjectionMatrix, viewProjectionMatrixSprite);
 
-	ground_->Update(viewProjectionMatrix);
-	wall_->Update(viewProjectionMatrix);
-	torch_->Update(viewProjectionMatrix);
-	groundLight_->Update();
+	field_->Update(viewProjectionMatrix);
 	sousa_->Update(viewProjectionMatrixSprite);
 
 }
@@ -216,9 +226,7 @@ void GameScene::DrawOffscreen() {
 	boss_->Draw();
 
 
-	ground_->Draw();
-	wall_->Draw();
-	torch_->Draw();
+	field_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -241,6 +249,9 @@ void GameScene::DrawBackBuffer() {
 	boss_->DrawUI();
 	player_->DrawUI();
 	sousa_->Draw();
+
+	// ポーズ画面の描画（最前面）
+	pause_->Draw();
 }
 
 void GameScene::ImGui() {
@@ -257,27 +268,15 @@ void GameScene::ImGui() {
 	ImGui::Text("Boss");
 	boss_->ImGui();
 
+	field_->ImGui();
 
-	ImGui::Spacing();
-	ImGui::Text("Ground");
-	ground_->ImGui();
-
-	ImGui::Spacing();
-	ImGui::Text("Wall");
-	wall_->ImGui();
-
-	ImGui::Spacing();
-	ImGui::Text("Torch");
-	torch_->ImGui();
-
-	ImGui::Spacing();
-	groundLight_->ImGui();
-
-	ImGui::Spacing();
 	// パーティクルエディタ（統合UI）
 	ImGui::Text("Particle Editor");
 	particleEditor_->ImGui();
 	sousa_->ImGui();
+
+	// ポーズのImGui
+	pause_->ImGui();
 
 #endif
 }
@@ -292,5 +291,8 @@ void GameScene::Finalize() {
 	if (particleEditor_) {
 		particleEditor_->DestroyAllInstance();
 	}
+
+	// BGM停止
+	AudioManager::GetInstance()->Stop(BGMHandle_);
 
 }

@@ -15,8 +15,15 @@ void BodyParts::Initialize(DirectXCommon* dxCommon, const Vector3& position, con
 }
 
 void BodyParts::OnCollision(Collider* other) {
+
+	// 可視性フラグがfalseなら描画しない
+	if (!isVisible_) {
+		return;
+	}
 	// 非アクティブの場合はダメージを受けない
 	if (!isActive_) {
+		//damege
+		AudioManager::GetInstance()->Play("EnemyHitMuteki", false, 0.25f);
 		return;
 	}
 
@@ -34,6 +41,8 @@ void BodyParts::OnCollision(Collider* other) {
 		// Bossに実際に減ったHP分のダメージを与える
 		if (boss_ && actualDamage > 0.0f) {
 			boss_->TakeDamageFromPart(actualDamage);
+			//damege
+			AudioManager::GetInstance()->Play("EnemyHit", false, 0.25f);
 		}
 	}
 }

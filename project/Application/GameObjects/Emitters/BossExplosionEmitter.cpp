@@ -147,6 +147,8 @@ void BossExplosionEmitter::ExecuteNextExplosion()
 	emitter->SetEmitEnabled(true);
 	// カメラシェイク
 	CameraController::GetInstance()->StartCameraShake(0.8f, 0.6f);
+	//爆発音
+	AudioManager::GetInstance()->Play("Explosion",false, 0.8f);
 
 	// 爆発済みフラグを立てる
 	data.hasExploded = true;

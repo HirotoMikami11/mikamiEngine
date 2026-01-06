@@ -30,6 +30,7 @@ void BaseParts::Update(const Matrix4x4& viewProjectionMatrix) {
 void BaseParts::Draw() {
 	// 可視性フラグがfalseなら描画しない
 	if (!isVisible_) {
+		radius_ = 0.0f; // 当たり判定も無効化
 		return;
 	}
 
@@ -140,7 +141,7 @@ float BaseParts::TakeDamage(float damage) {
 
 	// ダメージ前のHP
 	float previousHP = currentHP_;
-
+	
 	// ダメージを適用
 	currentHP_ -= damage;
 

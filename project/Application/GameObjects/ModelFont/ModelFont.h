@@ -38,6 +38,21 @@ public:
 	/// </summary>
 	void ImGui();
 
+	//座標Setter
+	void SetPosition(const Vector3& position) {
+		if (gameObject_) {
+			gameObject_->SetPosition(position);
+		}
+	};
+	//座標Getter
+	Vector3 GetPosition() const {
+		if (gameObject_) {
+			return gameObject_->GetPosition();
+		}
+		return { 0.0f, 0.0f, 0.0f };
+	};
+
+
 private:
 	// ゲームオブジェクト
 	std::unique_ptr<Object3D> gameObject_;

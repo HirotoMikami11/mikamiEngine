@@ -23,13 +23,24 @@ void TitleScene::ConfigureOffscreenEffects()
 	// 全てのエフェクトを無効化
 	offscreenRenderer_->DisableAllEffects();
 	// 必要に応じてここでエフェクトを有効化
+	
 	auto* depthFogEffect = offscreenRenderer_->GetDepthFogEffect();
 	if (depthFogEffect) {
 		depthFogEffect->SetEnabled(true);
-		depthFogEffect->SetFogDistance(0.1f, 119.0f); // 深度フォグの距離を設定
+		depthFogEffect->SetFogDistance(0.1f, 76.0f); // 深度フォグの距離を設定
 		depthFogEffect->SetFogColor({ 0.0f,0.0f,0.0f,1.0f });
-
 	}
+
+	//被写界深度
+	auto* depthOfFieldEffect = offscreenRenderer_->GetDepthOfFieldEffect();
+	if (depthOfFieldEffect) {
+		depthOfFieldEffect->SetEnabled(true);
+		depthOfFieldEffect->SetFocusDistance(6.0f);
+		depthOfFieldEffect->SetFocusRange(20.0f);
+		depthOfFieldEffect->SetBlurStrength(3.0f);
+	}
+
+
 }
 
 void TitleScene::Initialize() {
@@ -50,13 +61,24 @@ void TitleScene::Initialize() {
 	///*-----------------------------------------------------------------------*///
 	cameraController_ = CameraController::GetInstance();
 	// 座標を指定して初期化
-	Vector3 initialPosition = { 0.0f, 0.0f, -10.0f };
+	Vector3 initialPosition = { 0.0f, 4.6f, -50.0f };
 	cameraController_->Initialize(dxCommon_, initialPosition);
 	cameraController_->SetActiveCamera("normal");
+
+	cameraMoveSpeed_ = 0.1f;
+
 	// ゲームオブジェクト初期化
 	InitializeGameObjects();
 	//ポストエフェクトの初期設定
 	ConfigureOffscreenEffects();
+
+	//BGM
+	BGMHandle_ = AudioManager::GetInstance()->Play("TitleBGM", true, 0.3f);
+	//ボイスタイマー
+	voiceTimer_ = 0.0f;
+	voiceInterval_ = 20.0f;
+
+
 }
 
 void TitleScene::InitializeGameObjects() {
@@ -64,27 +86,26 @@ void TitleScene::InitializeGameObjects() {
 	///								モデル										///
 	///*-----------------------------------------------------------------------*///
 
-	Vector3 titleRogoPos = { 0.0f,0.8f,-1.74f };
+	Vector3 titleRogoPos = { 0.0f,5.36f,cameraController_->GetCamera("normal")->GetPosition().z + 10.0f };
 	titleRogo_ = std::make_unique<ModelFont>();
 	titleRogo_->Initialize(dxCommon_, "titleFont", titleRogoPos);
 
-	Vector3 pressAPos = { 0.0f,-2.04f,4.5f };
+	Vector3 pressAPos = { 0.0f,3.410f,cameraController_->GetCamera("normal")->GetPosition().z + (50.0f - 36.15f) };
 	pressA_ = std::make_unique<ModelFont>();
 	pressA_->Initialize(dxCommon_, "pressAFont", pressAPos);
 
 
 
-
 	///地面
-	ground_ = std::make_unique<Ground>();
-	ground_->Initialize(dxCommon_, { 0.0f,-3.0f,0.0f });
+	titleField_ = std::make_unique<TitleField>();
+	titleField_->Initialize(dxCommon_);
 
-	//wall_ = std::make_unique<Wall>();
-	//wall_->Initialize(dxCommon_);
-
-	//torch_ = std::make_unique<Torch>();
-	//torch_->Initialize(dxCommon_);
-
+	//深度対策硫黄
+	Vector3 wallPos = { 0.0f,0.0f,cameraController_->GetCamera("normal")->GetPosition().z + 60.0f };
+	wallGround_ = std::make_unique<Object3D>();
+	wallGround_->Initialize(dxCommon_, "titleWall");
+	wallGround_->SetPosition(wallPos);
+	wallGround_->SetScale({ 5.0f,1.0f,5.0f });
 
 	//フィールドパーティクル
 	particleEditor_->CreateInstance("FieldEffect", "Field_circle");
@@ -102,9 +123,22 @@ void TitleScene::InitializeGameObjects() {
 void TitleScene::Update() {
 	// カメラ更新
 	cameraController_->Update();
+	cameraController_->GetCamera("normal")->SetPosition(
+		{ 0.0f,4.6f,
+		cameraController_->GetCamera("normal")->GetPosition().z + cameraMoveSpeed_ }
+	);
 
 	// ゲームオブジェクト更新
 	UpdateGameObjects();
+
+
+	voiceTimer_ += GameTimer::GetInstance().GetDeltaTime();
+
+	if (voiceTimer_ >= voiceInterval_) {
+		//ボイス再生
+		voiceHandle_ = AudioManager::GetInstance()->Play("TitleVoice", false, 0.1f);
+		voiceTimer_ = 0.0f;
+	}
 
 	// パーティクルシステムの更新
 	particleSystem_->Update(viewProjectionMatrix);
@@ -112,8 +146,15 @@ void TitleScene::Update() {
 	if (!TransitionManager::GetInstance()->IsTransitioning() &&
 		Input::GetInstance()->IsKeyTrigger(DIK_SPACE) ||
 		Input::GetInstance()->IsGamePadButtonTrigger(Input::GamePadButton::A)) {
-		// フェードを使った遷移
-		SceneTransitionHelper::FadeToScene("GameScene", 1.0f);
+
+		if (!AudioManager::GetInstance()->IsPlayingByTag("PressA"))
+		{
+			//押したおと
+			AudioManager::GetInstance()->Play("PressA", false, 0.5f);
+			// フェードを使った遷移
+			SceneTransitionHelper::FadeToScene("GameScene", 1.0f);
+		}
+
 		return; // 以降の処理をスキップ
 	}
 
@@ -122,14 +163,25 @@ void TitleScene::Update() {
 void TitleScene::UpdateGameObjects() {
 	// 行列更新
 	viewProjectionMatrix = cameraController_->GetViewProjectionMatrix();
+
+
+	Vector3 titleRogoPos = { 0.0f,5.36f,cameraController_->GetCamera("normal")->GetPosition().z + 10.0f };
+	titleRogo_->SetPosition(titleRogoPos);
+
+	Vector3 pressAPos = { 0.0f,3.410f,cameraController_->GetCamera("normal")->GetPosition().z + (50.0f - 36.15f) };
+	pressA_->SetPosition(pressAPos);
+
+	Vector3 wallPos = { 0.0f,0.0f,cameraController_->GetCamera("normal")->GetPosition().z + 80.0f };
+	wallGround_->SetPosition(wallPos);
+
 	// 球体の更新
 	titleRogo_->Update(viewProjectionMatrix);
 	pressA_->Update(viewProjectionMatrix);
+	wallGround_->Update(viewProjectionMatrix);
 
-
-	ground_->Update(viewProjectionMatrix);
-	//wall_->Update(viewProjectionMatrix);
-	//torch_->Update(viewProjectionMatrix);
+	// カメラのZ座標を取得してTitleFieldに渡す
+	float cameraZ = cameraController_->GetCamera("normal")->GetPosition().z;
+	titleField_->Update(viewProjectionMatrix, cameraZ);
 
 
 }
@@ -140,12 +192,9 @@ void TitleScene::DrawOffscreen() {
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
 	/// 
 	// 球体の描画
-	titleRogo_->Draw();
-	pressA_->Draw();
 
-	ground_->Draw();
-	//wall_->Draw();
-	//torch_->Draw();
+	wallGround_->Draw();
+	titleField_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -159,7 +208,8 @@ void TitleScene::DrawBackBuffer() {
 	/// 3Dゲームオブジェクトの描画（オフスクリーンの外に描画）
 	///
 
-
+	titleRogo_->Draw();
+	pressA_->Draw();
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンの外に描画）
 	/// 
@@ -176,7 +226,14 @@ void TitleScene::ImGui() {
 	ImGui::Text("titleRogo");
 	titleRogo_->ImGui();
 	pressA_->ImGui();
-	ground_->ImGui();
+
+	titleField_->ImGui();
+
+	wallGround_->ImGui();
+	// パーティクルエディタ（統合UI）
+	ImGui::Text("Particle Editor");
+	particleEditor_->ImGui();
+
 #endif
 }
 
@@ -189,5 +246,9 @@ void TitleScene::Finalize() {
 	if (particleEditor_) {
 		particleEditor_->DestroyAllInstance();
 	}
+
+	// BGM停止
+	AudioManager::GetInstance()->Stop(BGMHandle_);
+	AudioManager::GetInstance()->Stop(voiceHandle_);
 
 }

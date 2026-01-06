@@ -9,6 +9,7 @@ Player::Player()
 	, input_(nullptr)
 	, velocity_({ 0.0f, 0.0f, 0.0f })
 	, fireTimer_(0)
+	, hasStartedDeathSequence_(false)  // 追加
 {
 }
 
@@ -25,7 +26,7 @@ void Player::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 
 	// トランスフォームの設定
 	Vector3Transform transform;
-	transform.scale = { 0.5f, 0.5f, 0.5f };		// スケール0.5f
+	transform.scale = { modelScale_, modelScale_, modelScale_ };		// スケール
 	transform.rotate = { 0.0f, 0.0f, 0.0f };
 	transform.translate = position;
 	gameObject_->SetTransform(transform);
@@ -58,35 +59,59 @@ void Player::Initialize(DirectXCommon* dxCommon, const Vector3& position) {
 	damageVignette_ = std::make_unique<DamageVignette>();
 	damageVignette_->Initialize();
 
+	// 爆発演出の初期化（追加）
+	explosionEmitter_ = std::make_unique<PlayerExplosionEmitter>();
+	explosionEmitter_->Initialize(this);
+
 	// 衝突判定の設定
-	SetRadius(0.5f);  // 半径を0.5fに設定
+	SetRadius(modelScale_);  // 半径を設定
 	SetCollisionAttribute(kCollisionAttributePlayer);	// 自分の属性をPlayerに設定
 	SetCollisionMask(kCollisionAttributeEnemyBullet);	// 敵弾と衝突するように設定
+
+	// フラグの初期化（追加）
+	hasStartedDeathSequence_ = false;
 }
 
 void Player::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewProjectionMatirxSprite) {
-	// 移動処理
-	ProcessMovement();
-
-	// 回転処理
-	ProcessRotation();
-
-	// 弾の発射処理
-	ProcessFire();
-
 	// GameTimerからデルタタイムを取得
 	GameTimer& gameTimer = GameTimer::GetInstance();
 	float deltaTime = gameTimer.GetDeltaTime();
 
-	// 速度を位置に反映
-	Vector3 currentPosition = gameObject_->GetPosition();
-	currentPosition.x += velocity_.x * deltaTime;
-	currentPosition.z += velocity_.z * deltaTime;
+	if (isAlive_) {
+		/// 生きてるときの更新処理
 
-	currentPosition.x = std::clamp(currentPosition.x, (-limitArea_.x / 2) + gameObject_->GetTransform().GetScale().x, (limitArea_.x / 2) - gameObject_->GetTransform().GetScale().x);
-	currentPosition.z = std::clamp(currentPosition.z, (-limitArea_.y / 2) + gameObject_->GetTransform().GetScale().z, (limitArea_.y / 2) - gameObject_->GetTransform().GetScale().z);
+		// 移動処理
+		ProcessMovement();
 
-	gameObject_->SetPosition(currentPosition);
+		// 回転処理
+		ProcessRotation();
+
+		// 弾の発射処理
+		ProcessFire();
+
+		// 速度を位置に反映
+		Vector3 currentPosition = gameObject_->GetPosition();
+		currentPosition.x += velocity_.x * deltaTime;
+		currentPosition.z += velocity_.z * deltaTime;
+
+		currentPosition.x = std::clamp(currentPosition.x, (-limitArea_.x / 2) + gameObject_->GetTransform().GetScale().x, (limitArea_.x / 2) - gameObject_->GetTransform().GetScale().x);
+		currentPosition.z = std::clamp(currentPosition.z, (-limitArea_.y / 2) + gameObject_->GetTransform().GetScale().z, (limitArea_.y / 2) - gameObject_->GetTransform().GetScale().z);
+
+		gameObject_->SetPosition(currentPosition);
+	} else {
+		/// 死亡演出（修正）
+
+		// 死亡演出をまだ開始していない場合、開始する
+		if (!hasStartedDeathSequence_) {
+			explosionEmitter_->StartExplosionSequence();
+			//爆発音
+			AudioManager::GetInstance()->Play("Explosion", false, 0.8f);
+			hasStartedDeathSequence_ = true;
+		}
+
+		// 爆発演出の更新
+		explosionEmitter_->Update();
+	}
 
 	// 弾プールの更新
 	bulletPool_->Update(viewProjectionMatrix);
@@ -96,8 +121,10 @@ void Player::Update(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& view
 
 	// 行列更新
 	gameObject_->Update(viewProjectionMatrix);
+
 	// UIの更新
 	playerUI_->Update(HP_, maxHP_, viewProjectionMatirxSprite);
+
 	// ダメージエフェクトの更新
 	if (damageVignette_) {
 		damageVignette_->Update(deltaTime);
@@ -127,11 +154,18 @@ void Player::TakeDamage(float damage)
 	}
 }
 
-void Player::ProcessMovement() {
-	// GameTimerからデルタタイムを取得
-	GameTimer& gameTimer = GameTimer::GetInstance();
-	float deltaTime = gameTimer.GetDeltaTime();
+// 演出完了チェック関数
+bool Player::IsDeathSequenceComplete() const
+{
+	if (isAlive_) {
+		return false;
+	}
 
+	// 死亡演出を開始していて、かつ完了している場合
+	return hasStartedDeathSequence_ && explosionEmitter_->IsExplosionComplete();
+}
+
+void Player::ProcessMovement() {
 	// 入力を統合（キーボード + ゲームパッド）
 	Vector2 moveInput = { 0.0f, 0.0f };
 
@@ -244,9 +278,7 @@ void Player::ProcessRotation() {
 
 
 	// 右スティック入力（向き制御用）
-	if (input_->IsGamePadConnected(0) 
-		//&&input_->IsUseAnalogStick(Input::AnalogStick::RIGHT_X, 0)
-		) {
+	if (input_->IsGamePadConnected(0)) {
 		float stickX = input_->GetAnalogStick(Input::AnalogStick::RIGHT_X, 0);
 		float stickY = input_->GetAnalogStick(Input::AnalogStick::RIGHT_Y, 0);
 		rotateInput.x = stickX;
@@ -305,6 +337,8 @@ void Player::ProcessFire() {
 
 		// プールから弾を発射
 		if (bulletPool_->FireBullet(position, velocity)) {
+			//発射音
+			AudioManager::GetInstance()->Play("PlayerShot", false, 0.1f);
 			// 発射タイマーをリセット
 			fireTimer_ = fireInterval_;
 		}
@@ -312,9 +346,11 @@ void Player::ProcessFire() {
 }
 
 void Player::Draw() {
-	// 球体の描画
-	gameObject_->Draw();
-
+	if (isAlive_)
+	{
+		// 球体の描画
+		gameObject_->Draw();
+	}
 	// 弾プールの描画
 	bulletPool_->Draw();
 }
@@ -337,15 +373,23 @@ void Player::ImGui() {
 			// HPのリセットボタン
 			if (ImGui::Button("Reset HP")) {
 				HP_ = maxHP_;
+				isAlive_ = true;
+				hasStartedDeathSequence_ = false;
 			}
 
 			// HPダメージ
 			if (ImGui::Button("Take Damage 50")) {
 				TakeDamage(50);
 			}
+
+			// 状態表示（追加）
+			ImGui::Separator();
+			ImGui::Text("Is Alive: %s", isAlive_ ? "Yes" : "No");
+			ImGui::Text("Death Sequence Started: %s", hasStartedDeathSequence_ ? "Yes" : "No");
+			ImGui::Text("Death Sequence Complete: %s", IsDeathSequenceComplete() ? "Yes" : "No");
+
 			//UI情報
 			playerUI_->ImGui();
-
 		}
 
 		// 移動パラメータ 
@@ -358,7 +402,6 @@ void Player::ImGui() {
 
 			//回転
 			ImGui::DragFloat("Rotation Speed", &rotationSpeed_, 0.01f, 0.0f, 1.0f, "%.2f");
-
 		}
 
 		// 弾パラメータ
@@ -384,8 +427,13 @@ void Player::ImGui() {
 			ImGui::Text("Collision Radius: %.2f", GetRadius());
 			ImGui::Checkbox("Show Collider", &isColliderVisible_);
 			damageVignette_->ImGui();
-
 		}
+
+		// 爆発演出情報（追加）
+		if (ImGui::CollapsingHeader("Death Explosion")) {
+			explosionEmitter_->ImGui();
+		}
+
 		// ゲームオブジェクトのImGui
 		gameObject_->ImGui();
 		ImGui::TreePop();
@@ -394,6 +442,11 @@ void Player::ImGui() {
 }
 
 void Player::OnCollision(Collider* other) {
+	if (!isAlive_)
+	{
+		return;
+	}
+
 	// 衝突時の処理
 	uint32_t otherAttribute = other->GetCollisionAttribute();
 
@@ -402,7 +455,6 @@ void Player::OnCollision(Collider* other) {
 		//敵弾攻撃力分のダメージを受ける
 		TakeDamage(other->GetAttackPower());
 	}
-
 }
 
 Vector3 Player::GetWorldPosition() {

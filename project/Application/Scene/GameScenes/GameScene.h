@@ -4,12 +4,11 @@
 #include "BaseScene.h"
 #include "CollisionManager.h"
 
-#include "Ground.h"
+#include "GameField.h"
 #include "Player.h"
 #include "Boss.h"
-#include "Wall.h"
-#include "torch.h"
-#include "GroundLight.h"
+#include "Pause.h"
+
 
 /// <summary>
 /// ゲームシーン
@@ -53,18 +52,21 @@ private:
 	void UpdateCollison();
 
 	// ゲームオブジェクト
-	std::unique_ptr<Ground> ground_;
+	std::unique_ptr<GameField> field_;
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<Boss> boss_;
-	std::unique_ptr<Wall> wall_;
-	std::unique_ptr<Torch> torch_;
-	std::unique_ptr<GroundLight> groundLight_;
+
 
 	std::unique_ptr<Sprite> sousa_;
+
+	// ポーズ
+	std::unique_ptr<Pause> pause_;
+
 	// パーティクルシステム
 	ParticleSystem* particleSystem_;
 	ParticleEditor* particleEditor_;
 
+	int BGMHandle_;
 
 
 	// カメラ

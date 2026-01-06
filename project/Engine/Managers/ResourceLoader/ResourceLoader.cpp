@@ -52,6 +52,8 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Texture/gaugeLight.png", "gaugeLight"},
 		{"resources/Texture/field.png", "field"},
 		{"resources/Texture/sousa.png", "sousa"},
+		{"resources/Texture/pause1.png", "pause1"},
+		{"resources/Texture/pause2.png", "pause2"}
 
 		// テクスチャここに追加
 		// {"resources/Texture/example.png", "example"},
@@ -74,17 +76,20 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Model/terrain", "terrain.obj", "model_terrain", false},
 		{"resources/Model/Player", "Player.obj", "model_Player", false},
 		{"resources/Model/PlayerBullet", "playerBullet.obj", "playerBullet", false},
-		{"resources/Model/FontModel", "TitleFont.obj", "titleFont", false},
+		{"resources/Model/FontModel", "TitleFont2.obj", "titleFont", false},
 		{"resources/Model/FontModel", "GameOverFont.obj", "overFont", false},
 		{"resources/Model/FontModel", "GameClearFont.obj", "clearFont", false},
 		{"resources/Model/FontModel", "PressA.obj", "pressAFont", false},
+		{"resources/Model/titleWallRock", "titleWallRock.obj", "titleWall", false},
 		{"resources/Model/wallRock", "wallRock.obj", "wall", false},
 		{"resources/Model/fieldRock", "fieldRock.obj", "field", false},
+		{"resources/Model/titleFieldRock", "titleFieldRock.obj", "titleField", false},
 		{"resources/Model/torch", "torch.obj", "torch", false},
 		{"resources/Model/Boss", "Boss_Body.obj", "Boss_Body", false},
 		{"resources/Model/Boss", "Boss_Head.obj", "Boss_Head", false},
 		{"resources/Model/Boss", "Boss_Tail.obj", "Boss_Tail", false},
 		{"resources/Model/wallRock", "Boss_Tail.obj", "Boss_Tail", false},
+		{"resources/Model/treasureBox", "treasureBox.obj", "treasureBox", false},
 
 
 		// モデルはここに追加
@@ -96,9 +101,24 @@ void ResourceLoader::RegisterAllResources() {
 	///*-----------------------------------------------------------------------*///
 	audios_ = {
 		// 音声ここに追加
-		 {"resources/Audio/Alarm01.wav", "Alarm"},
-		 {"resources/Audio/Bgm01.mp3", "BGM"},
-		 {"resources/Audio/Se01.mp3", "SE"},
+		 //{"resources/Audio/Alarm01.wav", "Alarm"},
+		 //{"resources/Audio/Bgm01.mp3", "BGM"},
+		 //{"resources/Audio/Se01.mp3", "SE"},
+		 {"resources/Audio/Explosion.mp3", "Explosion"},
+		 {"resources/Audio/Smoke.mp3", "Smoke"},
+		 {"resources/Audio/PressA.mp3", "PressA"},
+		 {"resources/Audio/GameBGM.mp3", "GameBGM"},
+		 {"resources/Audio/TitleBGM.mp3", "TitleBGM"},
+		 {"resources/Audio/ClearBGM.mp3", "ClearBGM"},
+		 {"resources/Audio/TitleVoice.mp3", "TitleVoice"},
+		 {"resources/Audio/PlayerHit.mp3", "PlayerHit"},
+		 {"resources/Audio/EnemyHit.mp3", "EnemyHit"},
+		 {"resources/Audio/EnemyHitMuteki.mp3", "EnemyHitMuteki"},
+		 {"resources/Audio/PauseMove.mp3", "PauseMove"},
+		 {"resources/Audio/PlayerShot.mp3", "PlayerShot"},
+		 {"resources/Audio/EnemyShot.mp3", "EnemyShot"},
+		 {"resources/Audio/EnemyShot2.mp3", "EnemyShot2"},
+
 	};
 }
 

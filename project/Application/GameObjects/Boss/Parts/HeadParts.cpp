@@ -17,13 +17,20 @@ void HeadParts::Initialize(DirectXCommon* dxCommon, const Vector3& position, con
 }
 
 void HeadParts::OnCollision(Collider* other) {
+
+
+	// 可視性フラグがfalseなら描画しない
+	if (!isVisible_) {
+		return;
+	}
 	// 頭は衝突判定はあるが、ダメージは受けない
 	// 衝突相手の属性を取得
 	uint32_t otherAttribute = other->GetCollisionAttribute();
 
 	// プレイヤーの弾との衝突
 	if (otherAttribute & kCollisionAttributePlayerBullet) {
-
+		//damege
+		AudioManager::GetInstance()->Play("EnemyHitMuteki", false, 0.25f);
 	}
 
 	// プレイヤーとの衝突
