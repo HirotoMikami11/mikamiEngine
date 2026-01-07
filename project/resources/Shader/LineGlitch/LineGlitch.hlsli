@@ -7,6 +7,8 @@ struct LineGlitchParameters
     float32_t noiseIntensity; // グリッチの強度
     float32_t noiseInterval; // ノイズが起こる頻度(0近ければ近いほど起こりやすく、増やすほど起こりにくくなる)
     float32_t animationSpeed; // 全体に適応する時間(内部時間にかける値)
+    float32_t lineCount; // 縦の分割数（小さい値=粗いライン、大きい値=細かいライン）
+    float32_t3 padding; // 16バイト境界調整用
 };
 
 // timeを使いつつ、値が大きくならないようにするために使うハッシュ関数

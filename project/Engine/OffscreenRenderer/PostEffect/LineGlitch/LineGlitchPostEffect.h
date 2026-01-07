@@ -5,6 +5,7 @@
 
 /// <summary>
 /// ラインをずらすグリッチエフェクト（OffscreenTriangle使用版）
+/// lineCount対応：粗い/細かいライングリッチを選択可能
 /// </summary>
 class LineGlitchPostEffect : public PostEffect {
 public:
@@ -16,6 +17,8 @@ public:
 		float noiseIntensity = 1.0f;		// グリッチの強度 (0.0f～10.0f)
 		float noiseInterval = 0.8f;			// ノイズが起こる頻度(0近ければ近いほど起こりやすく、増やすほど起こりにくくなる)
 		float animationSpeed = 1.0f;		// 全体に適応する時間(内部時間にかける値)
+		float lineCount = 20.0f;			// 縦の分割数（小さい値=粗いライン、大きい値=細かいライン）
+		float padding[3] = { 0.0f, 0.0f, 0.0f };  // 16バイト境界調整用
 	};
 
 	/// <summary>
@@ -23,9 +26,10 @@ public:
 	/// </summary>
 	enum class EffectPreset {
 		OFF,			// エフェクトなし
-		SUBTLE,			// 軽微なライングリッチ
-		MEDIUM,			// 中程度のライングリッチ
-		INTENSE,		// 強烈なライングリッチ
+		COARSE,			// 粗いライングリッチ（5-10本）
+		SUBTLE,			// 軽微なライングリッチ（20-30本）
+		MEDIUM,			// 中程度のライングリッチ（50-100本）
+		INTENSE,		// 強烈なライングリッチ（200-400本）
 	};
 
 public:
@@ -46,6 +50,7 @@ public:
 	void ApplyPreset(EffectPreset preset);
 	void SetNoiseIntensity(float intensity);
 	void SetNoiseInterval(float interval);
+	void SetLineCount(float count);
 
 private:
 	void CreatePSO();

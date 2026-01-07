@@ -30,8 +30,9 @@ FullscreenPixelOutput main(FullscreenVertexOutput input)
  
     if (glitchIntensity > 0.0)
     {
+        // ハードコードされた400.0をlineCountパラメータに変更
         // 水平ピクセルずれ（Horizontal displacement）
-        float lineNoise = random(floor(uv.y * 400.0) + floor(animTime * 20.0), LineGlitchParameter.time);
+        float lineNoise = random(floor(uv.y * LineGlitchParameter.lineCount) + floor(animTime * 20.0), LineGlitchParameter.time);
         float displacement = (lineNoise - 0.5) * glitchIntensity * 0.1;
         uv.x += displacement;
         
