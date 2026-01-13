@@ -58,7 +58,7 @@ void Game::InitializeScenes() {
 	sceneManager_->RegisterScene("GameOverScene", std::move(gameOverScene));
 
 	// デフォルトシーンを設定（最初に表示するシーン）
-	sceneManager_->ChangeScene("TitleScene");
+	sceneManager_->ChangeScene("DebugScene");
 }
 
 void Game::RegisterTransitionEffects()
