@@ -12,7 +12,7 @@ void LineGlitchPostEffect::Initialize(DirectXCommon* dxCommon) {
 
 	isInitialized_ = true;
 
-	Logger::Log(Logger::GetStream(), "LineGlitchPostEffect initialized successfully (OffscreenTriangle version)!\n");
+	Logger::Log(Logger::GetStream(), "LineGlitchPostEffect initialized successfully (OffscreenTriangle version with lineCount)!\n");
 }
 
 void LineGlitchPostEffect::Finalize() {
@@ -88,7 +88,7 @@ void LineGlitchPostEffect::CreatePSO() {
 	rootSignature_ = psoInfo.rootSignature;
 	pipelineState_ = psoInfo.pipelineState;
 
-	Logger::Log(Logger::GetStream(), "Complete create LineGlitch PSO (PSOFactory version)!!\n");
+	Logger::Log(Logger::GetStream(), "Complete create LineGlitch PSO (PSOFactory version with lineCount)!!\n");
 }
 
 
@@ -108,7 +108,7 @@ void LineGlitchPostEffect::CreateParameterBuffer() {
 	// 初期データを設定
 	UpdateParameterBuffer();
 
-	Logger::Log(Logger::GetStream(), "Complete create LineGlitch parameter buffer (OffscreenTriangle version)!!\n");
+	Logger::Log(Logger::GetStream(), "Complete create LineGlitch parameter buffer (OffscreenTriangle version with lineCount)!!\n");
 }
 
 Microsoft::WRL::ComPtr<IDxcBlob> LineGlitchPostEffect::CompileShader(
@@ -135,10 +135,19 @@ void LineGlitchPostEffect::ApplyPreset(EffectPreset preset) {
 		SetEnabled(false);
 		break;
 
+	case EffectPreset::COARSE:  // 粗いグリッチプリセット
+		parameters_.noiseIntensity = 2.0f;
+		parameters_.noiseInterval = 0.85f;
+		parameters_.animationSpeed = 1.0f;
+		parameters_.lineCount = 8.0f;  // 8本の太いライン
+		SetEnabled(true);
+		break;
+
 	case EffectPreset::SUBTLE:
 		parameters_.noiseIntensity = 0.5f;
 		parameters_.noiseInterval = 0.9f;
 		parameters_.animationSpeed = 1.0f;
+		parameters_.lineCount = 25.0f;  // 25本のライン
 		SetEnabled(true);
 		break;
 
@@ -146,6 +155,7 @@ void LineGlitchPostEffect::ApplyPreset(EffectPreset preset) {
 		parameters_.noiseIntensity = 1.5f;
 		parameters_.noiseInterval = 0.8f;
 		parameters_.animationSpeed = 1.2f;
+		parameters_.lineCount = 80.0f;  // 80本のライン
 		SetEnabled(true);
 		break;
 
@@ -153,6 +163,7 @@ void LineGlitchPostEffect::ApplyPreset(EffectPreset preset) {
 		parameters_.noiseIntensity = 3.0f;
 		parameters_.noiseInterval = 0.6f;
 		parameters_.animationSpeed = 1.5f;
+		parameters_.lineCount = 300.0f;  // 300本の細かいライン
 		SetEnabled(true);
 		break;
 	}
@@ -170,6 +181,11 @@ void LineGlitchPostEffect::SetNoiseInterval(float interval) {
 	UpdateParameterBuffer();
 }
 
+void LineGlitchPostEffect::SetLineCount(float count) {
+	parameters_.lineCount = std::clamp(count, 1.0f, 1000.0f);  // 1～1000本の範囲
+	UpdateParameterBuffer();
+}
+
 void LineGlitchPostEffect::ImGui() {
 #ifdef USEIMGUI
 	if (ImGui::TreeNode(name_.c_str())) {
@@ -181,6 +197,8 @@ void LineGlitchPostEffect::ImGui() {
 		if (isEnabled_) {
 			// プリセット選択
 			if (ImGui::TreeNode("Presets")) {
+				if (ImGui::Button("Coarse")) ApplyPreset(EffectPreset::COARSE);
+				ImGui::SameLine();
 				if (ImGui::Button("Subtle")) ApplyPreset(EffectPreset::SUBTLE);
 				ImGui::SameLine();
 				if (ImGui::Button("Medium")) ApplyPreset(EffectPreset::MEDIUM);
@@ -192,6 +210,15 @@ void LineGlitchPostEffect::ImGui() {
 
 			// 個別パラメータ調整
 			if (ImGui::TreeNode("Manual Settings")) {
+
+				float lineCount = parameters_.lineCount;
+				if (ImGui::SliderFloat("Line Count", &lineCount, 1.0f, 500.0f, "%.0f lines")) {
+					SetLineCount(lineCount);
+				}
+				if (ImGui::IsItemHovered()) {
+					ImGui::SetTooltip("Number of horizontal lines\nLower = Coarser glitch\nHigher = Finer glitch");
+				}
+
 				float noiseIntensity = parameters_.noiseIntensity;
 				if (ImGui::SliderFloat("Noise Intensity", &noiseIntensity, 0.0f, 3.0f)) {
 					SetNoiseIntensity(noiseIntensity);
@@ -213,6 +240,7 @@ void LineGlitchPostEffect::ImGui() {
 			// 情報表示
 			ImGui::Separator();
 			ImGui::Text("Current Time: %.2f", parameters_.time);
+			ImGui::Text("Line Count: %.0f", parameters_.lineCount);
 			ImGui::Text("Noise Intensity: %.2f", parameters_.noiseIntensity);
 			ImGui::Text("Noise Interval: %.2f", parameters_.noiseInterval);
 			ImGui::Text("Animation Speed: %.2f", parameters_.animationSpeed);

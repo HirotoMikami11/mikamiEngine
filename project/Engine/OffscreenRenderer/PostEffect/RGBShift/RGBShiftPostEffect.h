@@ -46,7 +46,7 @@ public:
 	void ApplyPreset(EffectPreset preset);
 	void SetRGBShiftStrength(float strength);
 	float GetRGBShiftStrength() const { return parameters_.rgbShiftStrength; }
-
+	void SetAnimationSpeed(float speed) { animationSpeed_ = speed; }
 private:
 	void CreatePSO();
 	void CreateParameterBuffer();

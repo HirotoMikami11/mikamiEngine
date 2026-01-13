@@ -60,7 +60,7 @@ bool TextureManager::LoadTexture(const std::string& filename, const std::string&
 	// マップに登録
 	textures_[tagName] = std::move(texture);
 
-	Logger::Log(Logger::GetStream(), std::format("Texture '{}' loaded successfully with tag '{}' (SRV Index: {})\n", filename, tagName, descriptorHandle.index));
+	Logger::Log(Logger::GetStream(), std::format("Texture '{}' loaded successfully with tag '{}' (SRV Index: {})\n\n", filename, tagName, descriptorHandle.index));
 	return true;
 }
 

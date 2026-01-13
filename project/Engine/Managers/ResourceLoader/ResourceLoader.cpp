@@ -50,7 +50,6 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Texture/white2x2.png", "white"},
 		{"resources/Texture/circle.png", "circle"},
 		{"resources/Texture/gaugeLight.png", "gaugeLight"},
-		{"resources/Texture/field.png", "field"},
 		{"resources/Texture/sousa.png", "sousa"},
 		{"resources/Texture/pause1.png", "pause1"},
 		{"resources/Texture/pause2.png", "pause2"}
@@ -72,7 +71,6 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Model/Cube", "Cube.obj", "cube", false},
 		{"resources/Model/MultiMesh", "multiMesh.obj", "model_MultiMesh", false},
 		{"resources/Model/MultiMaterial", "multiMaterial.obj", "model_MultiMaterial", false},
-		{"resources/Model/Goldfish", "Mesh_Goldfish.obj", "modelfish", false},
 		{"resources/Model/terrain", "terrain.obj", "model_terrain", false},
 		{"resources/Model/Player", "Player.obj", "model_Player", false},
 		{"resources/Model/PlayerBullet", "playerBullet.obj", "playerBullet", false},
@@ -88,7 +86,6 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Model/Boss", "Boss_Body.obj", "Boss_Body", false},
 		{"resources/Model/Boss", "Boss_Head.obj", "Boss_Head", false},
 		{"resources/Model/Boss", "Boss_Tail.obj", "Boss_Tail", false},
-		{"resources/Model/wallRock", "Boss_Tail.obj", "Boss_Tail", false},
 		{"resources/Model/treasureBox", "treasureBox.obj", "treasureBox", false},
 
 
@@ -110,6 +107,7 @@ void ResourceLoader::RegisterAllResources() {
 		 {"resources/Audio/GameBGM.mp3", "GameBGM"},
 		 {"resources/Audio/TitleBGM.mp3", "TitleBGM"},
 		 {"resources/Audio/ClearBGM.mp3", "ClearBGM"},
+		 {"resources/Audio/OverBGM.mp3", "OverBGM"},
 		 {"resources/Audio/TitleVoice.mp3", "TitleVoice"},
 		 {"resources/Audio/PlayerHit.mp3", "PlayerHit"},
 		 {"resources/Audio/EnemyHit.mp3", "EnemyHit"},
@@ -175,6 +173,10 @@ bool ResourceLoader::LoadResources() {
 		if (modelInfo.isPrimitive) {
 			success = modelManager_->LoadPrimitive(modelInfo.meshType, modelInfo.tag);
 		} else {
+			if (modelInfo.tag == "wall") {
+				int a =1;
+			}
+
 			success = modelManager_->LoadModel(
 				modelInfo.directoryPath,
 				modelInfo.filename,

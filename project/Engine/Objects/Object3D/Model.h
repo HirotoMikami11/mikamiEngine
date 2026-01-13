@@ -35,13 +35,13 @@ public:
 		const std::string& directoryPath = "", const std::string& filename = "");
 
 	/// <summary>
-	/// OBJファイルからモデルを読み込み
+	/// OBJファイルからモデルを読み込み（Assimpを使用）
 	/// </summary>
 	/// <param name="directoryPath">ディレクトリパス</param>
 	/// <param name="filename">ファイル名</param>
 	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <returns>読み込み成功かどうか</returns>
-	bool LoadFromOBJ(const std::string& directoryPath, const std::string& filename,DirectXCommon* dxCommon);
+	bool LoadFromOBJ(const std::string& directoryPath, const std::string& filename, DirectXCommon* dxCommon);
 
 	/// <summary>
 	/// プリミティブメッシュから読み込み
@@ -49,7 +49,7 @@ public:
 	/// <param name="meshType">メッシュタイプ</param>
 	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <returns>読み込み成功かどうか</returns>
-	bool LoadFromPrimitive(MeshType meshType,DirectXCommon* dxCommon);
+	bool LoadFromPrimitive(MeshType meshType, DirectXCommon* dxCommon);
 
 	/// <summary>
 	/// モデルをアンロード
@@ -87,9 +87,7 @@ public:
 	// マテリアル関連
 	MaterialGroup& GetMaterialGroup() { return materialGroup_; }
 	const MaterialGroup& GetMaterialGroup() const { return materialGroup_; }
-
 	size_t GetMaterialCount() const { return materialGroup_.GetMaterialCount(); }
-
 	Material& GetMaterial(size_t index = 0) { return materialGroup_.GetMaterial(index); }
 	const Material& GetMaterial(size_t index = 0) const { return materialGroup_.GetMaterial(index); }
 
@@ -175,14 +173,12 @@ private:
 	std::string filePath_;
 
 	/// <summary>
-	/// OBJファイルを読み込む
+	/// Assimpを使用してモデルデータを読み込む
 	/// </summary>
-	std::vector<ModelData> LoadObjFileMulti(const std::string& directoryPath, const std::string& filename);
-
-	/// <summary>
-	/// マテリアルファイルを読み込む
-	/// </summary>
-	std::map<std::string, MaterialDataModel> LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
+	/// <param name="directoryPath">ディレクトリパス</param>
+	/// <param name="filename">ファイル名</param>
+	/// <returns>読み込んだモデルデータのリスト</returns>
+	std::vector<ModelData> LoadModelWithAssimp(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
 	/// ファイル名から拡張子を除去

@@ -1,6 +1,12 @@
 #define NOMINMAX
 #include "Model.h"
 #include "MaterialGroup.h"
+
+// Assimpのインクルード
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include <fstream>
 #include <sstream>
 
@@ -14,8 +20,8 @@ void Model::Initialize(DirectXCommon* dxCommon, const MeshType meshType, const s
 
 	///モデルの場合は、ファイルパスなどを入れる
 	if (meshType == MeshType::MODEL_OBJ) {
-		//複数オブジェクト対応でデータを読み込む
-		modelDataList_ = LoadObjFileMulti(directoryPath, filename);
+		// Assimpを使用して複数オブジェクト対応でデータを読み込む
+		modelDataList_ = LoadModelWithAssimp(directoryPath, filename);
 
 		// 各ModelDataからMeshを作成
 		meshes_.clear();
@@ -49,23 +55,30 @@ void Model::Initialize(DirectXCommon* dxCommon, const MeshType meshType, const s
 		TextureManager* textureManager = TextureManager::GetInstance();
 
 		// マテリアルを設定
-		size_t materialIndex = 0;
-		for (const auto& materialName : uniqueMaterials) {
-			Material& material = materialGroup_.GetMaterial(materialIndex);
-			material.SetLitObjectSettings(); // デフォルトでライティング有効
+		if (uniqueMaterials.empty()) {
+			// マテリアルが1つもない場合は、デフォルトマテリアルを使用
+			Logger::Log(Logger::GetStream(),
+				std::format("  No materials found, using default material\n"));
+		} else {
+			// マテリアルが存在する場合は、各マテリアルを設定
+			size_t materialIndex = 0;
+			for (const auto& materialName : uniqueMaterials) {
+				Material& material = materialGroup_.GetMaterial(materialIndex);
+				material.SetLitObjectSettings(); // デフォルトでライティング有効
 
-			// テクスチャを読み込み
-			const auto& materialData = materialMap[materialName];
-			if (!materialData.textureFilePath.empty()) {
-				std::string textureTag = GetTextureFileNameFromPath(materialData.textureFilePath);
-				if (textureManager->LoadTexture(materialData.textureFilePath, textureTag)) {
-					textureTagNames_[materialIndex] = textureTag;
-					Logger::Log(Logger::GetStream(), std::format("Loaded texture: {} as {}\n", materialData.textureFilePath, textureTag));
-				} else {
-					Logger::Log(Logger::GetStream(), std::format("Failed to load texture: {}\n", materialData.textureFilePath));
+				// テクスチャを読み込み
+				const auto& materialData = materialMap[materialName];
+				if (!materialData.textureFilePath.empty()) {
+					std::string textureTag = GetTextureFileNameFromPath(materialData.textureFilePath);
+					if (textureManager->LoadTexture(materialData.textureFilePath, textureTag)) {
+						textureTagNames_[materialIndex] = textureTag;
+						Logger::Log(Logger::GetStream(), std::format("Loaded texture: {} as {}\n", materialData.textureFilePath, textureTag));
+					} else {
+						Logger::Log(Logger::GetStream(), std::format("Failed to load texture: {}\n", materialData.textureFilePath));
+					}
 				}
+				materialIndex++;
 			}
-			materialIndex++;
 		}
 
 		filePath_ = directoryPath + "/" + filename;
@@ -92,7 +105,7 @@ void Model::Initialize(DirectXCommon* dxCommon, const MeshType meshType, const s
 	}
 }
 
-bool Model::LoadFromOBJ(const std::string& directoryPath, const std::string& filename,DirectXCommon* dxCommon) {
+bool Model::LoadFromOBJ(const std::string& directoryPath, const std::string& filename, DirectXCommon* dxCommon) {
 	// 既に読み込み済みの場合はスキップ
 	if (IsValid() && filePath_ == directoryPath + "/" + filename) {
 		return true;
@@ -101,8 +114,8 @@ bool Model::LoadFromOBJ(const std::string& directoryPath, const std::string& fil
 	dxCommon_ = dxCommon;
 	filePath_ = directoryPath + "/" + filename;
 
-	// 複数オブジェクト対応でOBJファイルを読み込み
-	modelDataList_ = LoadObjFileMulti(directoryPath, filename);
+	// Assimpを使用して複数オブジェクト対応でファイルを読み込み
+	modelDataList_ = LoadModelWithAssimp(directoryPath, filename);
 
 	if (modelDataList_.empty()) {
 		Logger::Log(Logger::GetStream(), std::format("Failed to load model data from: {}\n", filename));
@@ -141,31 +154,38 @@ bool Model::LoadFromOBJ(const std::string& directoryPath, const std::string& fil
 	TextureManager* textureManager = TextureManager::GetInstance();
 
 	// マテリアルを設定
-	size_t materialIndex = 0;
-	for (const auto& materialName : uniqueMaterials) {
-		Material& material = materialGroup_.GetMaterial(materialIndex);
-		material.SetLitObjectSettings(); // デフォルトでライティング有効
+	if (uniqueMaterials.empty()) {
+		// マテリアルが1つもない場合は、デフォルトマテリアルを使用
+		Logger::Log(Logger::GetStream(),
+			std::format("  No materials found, using default material\n"));
+	} else {
+		// マテリアルが存在する場合は、各マテリアルを設定
+		size_t materialIndex = 0;
+		for (const auto& materialName : uniqueMaterials) {
+			Material& material = materialGroup_.GetMaterial(materialIndex);
+			material.SetLitObjectSettings(); // デフォルトでライティング有効
 
-		// テクスチャを読み込み
-		const auto& materialData = materialMap[materialName];
-		if (!materialData.textureFilePath.empty()) {
-			std::string textureTag = GetTextureFileNameFromPath(materialData.textureFilePath);
-			if (textureManager->LoadTexture(materialData.textureFilePath, textureTag)) {
-				textureTagNames_[materialIndex] = textureTag;
-				Logger::Log(Logger::GetStream(), std::format("Loaded texture: {} as {}\n", materialData.textureFilePath, textureTag));
-			} else {
-				Logger::Log(Logger::GetStream(), std::format("Failed to load texture: {}\n", materialData.textureFilePath));
+			// テクスチャを読み込み
+			const auto& materialData = materialMap[materialName];
+			if (!materialData.textureFilePath.empty()) {
+				std::string textureTag = GetTextureFileNameFromPath(materialData.textureFilePath);
+				if (textureManager->LoadTexture(materialData.textureFilePath, textureTag)) {
+					textureTagNames_[materialIndex] = textureTag;
+					Logger::Log(Logger::GetStream(), std::format("Loaded texture: {} as {}\n", materialData.textureFilePath, textureTag));
+				} else {
+					Logger::Log(Logger::GetStream(), std::format("Failed to load texture: {}\n", materialData.textureFilePath));
+				}
 			}
+			materialIndex++;
 		}
-		materialIndex++;
 	}
 
-	Logger::Log(Logger::GetStream(), std::format("Model loaded from OBJ: {} ({} meshes, {} materials)\n",
+	Logger::Log(Logger::GetStream(), std::format("Model loaded from file with Assimp: {} ({} meshes, {} materials)\n",
 		filename, meshes_.size(), materialGroup_.GetMaterialCount()));
 	return true;
 }
 
-bool Model::LoadFromPrimitive(MeshType meshType,DirectXCommon* dxCommon) {
+bool Model::LoadFromPrimitive(MeshType meshType, DirectXCommon* dxCommon) {
 	dxCommon_ = dxCommon;
 
 	// プリミティブメッシュを作成
@@ -237,203 +257,248 @@ std::string Model::GetTextureFileNameFromPath(const std::string& texturePath) {
 	return GetFileNameWithoutExtension(fileName);
 }
 
-std::map<std::string, MaterialDataModel> Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename)
-{
-	//1.中で必要となる変数の宣言
-	std::map<std::string, MaterialDataModel> materials;	//構築するMaterialDataのマップ
-	std::string line;					//ファイルから読んだ1行を格納するもの
-	std::string currentMaterialName;	//現在処理中のマテリアル名
-	MaterialDataModel currentMaterial;	//現在処理中のマテリアルデータ
+///*---------------------------------------------------------------------------*///
+///					Assimpを使用したモデルデータの読み込み					///
+///*---------------------------------------------------------------------------*///
 
-	//2.ファイルを開く
-	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
-	assert(file.is_open());//開けなかった場合は停止する
+std::vector<ModelData> Model::LoadModelWithAssimp(const std::string& directoryPath, const std::string& filename) {
+	std::vector<ModelData> modelDataList;
 
-	//3.実際にファイルを読み、MaterialDataを構築していく
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;	//先頭の識別子を読む
+	//																			//
+	//							Importerの作成									//
+	//																			//
 
-		//identifierに応じた処理
-		if (identifier == "newmtl") {
-			// 前のマテリアルがあれば保存
-			if (!currentMaterialName.empty()) {
-				materials[currentMaterialName] = currentMaterial;
+	Assimp::Importer importer;
+	std::string filePath = directoryPath + "/" + filename;
+
+	Logger::Log(Logger::GetStream(), std::format("Loading model with Assimp: {}\n", filePath));
+
+	//																			//
+	//						ファイルの読み込みとオプション設定						//
+	//																			//
+
+	// Assimpでファイルを読み込む
+	// オプション:
+	// - aiProcess_Triangulate: 四角形以上のポリゴンを三角形に分割
+	// - aiProcess_FlipWindingOrder: 三角形の巻き順を反転（DirectX用）
+	// - aiProcess_FlipUVs: UVのY座標を反転（DirectX用）
+	const aiScene* scene = importer.ReadFile(
+		filePath.c_str(),
+		aiProcess_Triangulate |
+		aiProcess_FlipWindingOrder |
+		aiProcess_FlipUVs 
+	);
+
+	//																			//
+	//							読み込み失敗のチェック								//
+	//																			//
+
+	// エラーチェック1: sceneがnullptr
+	if (!scene) {
+		Logger::Log(Logger::GetStream(),
+			std::format("Assimp Error: Failed to load scene\n  Error: {}\n", importer.GetErrorString()));
+		return modelDataList;
+	}
+
+	// エラーチェック2: シーンが不完全
+	if (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) {
+		Logger::Log(Logger::GetStream(),
+			std::format("Assimp Error: Scene is incomplete\n  Error: {}\n", importer.GetErrorString()));
+		return modelDataList;
+	}
+
+	// エラーチェック3: ルートノードがない
+	if (!scene->mRootNode) {
+		Logger::Log(Logger::GetStream(),
+			std::format("Assimp Error: No root node\n  Error: {}\n", importer.GetErrorString()));
+		return modelDataList;
+	}
+
+	// エラーチェック4: メッシュがない
+	if (!scene->HasMeshes()) {
+		Logger::Log(Logger::GetStream(),
+			std::format("Assimp Warning: Model has no meshes: {}\n", filePath));
+		return modelDataList;
+	}
+
+	//																			//
+	//						マテリアルデータの事前収集								//
+	//																			//
+
+	// マテリアル名とインデックスのマッピング
+	std::map<uint32_t, std::string> materialNames;
+	std::map<std::string, MaterialDataModel> materialDataMap;
+	std::map<std::string, size_t> materialIndexMap;
+	size_t materialIndexCounter = 0;
+
+	// Assimpのマテリアルを処理
+	for (uint32_t matIndex = 0; matIndex < scene->mNumMaterials; ++matIndex) {
+		aiMaterial* material = scene->mMaterials[matIndex];
+
+		// マテリアル名を取得
+		aiString materialName;
+		material->Get(AI_MATKEY_NAME, materialName);
+		std::string matName = materialName.C_Str();
+
+		materialNames[matIndex] = matName;
+
+		// マテリアルインデックスを割り当て
+		if (materialIndexMap.find(matName) == materialIndexMap.end()) {
+			materialIndexMap[matName] = materialIndexCounter++;
+		}
+
+		// Diffuseテクスチャを取得
+		MaterialDataModel matData;
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
+			aiString texturePath;
+			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS) {
+				// テクスチャのパスを設定
+				matData.textureFilePath = directoryPath + "/" + std::string(texturePath.C_Str());
+			}
+		}
+
+		materialDataMap[matName] = matData;
+
+		Logger::Log(Logger::GetStream(),
+			std::format("  Material {}: {} -> texture: {}\n",
+				matIndex, matName, matData.textureFilePath.empty() ? "none" : matData.textureFilePath));
+	}
+
+	//																			//
+	//							メッシュの解析										//
+	//																			//
+
+	// オブジェクト名をクリア
+	objectNames_.clear();
+
+	// 各メッシュを処理
+	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
+		aiMesh* mesh = scene->mMeshes[meshIndex];
+
+		Logger::Log(Logger::GetStream(),
+			std::format("  Processing mesh {}/{}: {}\n",
+				meshIndex + 1, scene->mNumMeshes, mesh->mName.C_Str()));
+
+
+		//					必須データのチェック（法線のみ）					//
+		// 法線のチェック
+		if (!mesh->HasNormals()) {
+			Logger::Log(Logger::GetStream(),
+				std::format("    Warning: Mesh '{}' has no normals, skipping\n", mesh->mName.C_Str()));
+			continue;
+		}
+
+		// テクスチャ座標のチェック（警告のみ、継続可能）
+		bool hasTexCoords = mesh->HasTextureCoords(0);
+		if (!hasTexCoords) {
+			Logger::Log(Logger::GetStream(),
+				std::format("    Info: Mesh '{}' has no texture coordinates, using default (0,0)\n",
+					mesh->mName.C_Str()));
+		}
+
+
+		//						ModelDataの準備									//
+		ModelData modelData;
+
+		// オブジェクト名を保存
+		std::string objectName = mesh->mName.C_Str();
+		if (objectName.empty()) {
+			objectName = "mesh_" + std::to_string(meshIndex);
+		}
+		objectNames_.push_back(objectName);
+
+		//																		//
+		//							Faceの解析									//
+		//																		//
+
+		// 面を処理
+		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
+			const aiFace& face = mesh->mFaces[faceIndex];
+
+			// 三角形のみサポート（aiProcess_Triangulateで保証される）
+			if (face.mNumIndices != 3) {
+				Logger::Log(Logger::GetStream(),
+					std::format("    Warning: Face {} is not a triangle (indices: {}), skipping\n",
+						faceIndex, face.mNumIndices));
+				continue;
 			}
 
-			// 新しいマテリアルを開始
-			s >> currentMaterialName;
-			currentMaterial = MaterialDataModel(); // リセット
+			//						各頂点の処理									//
 
-		} else if (identifier == "map_Kd") {
-			std::string textureFilename;
-			s >> textureFilename;
-			//連結してファイルパスにする
-			currentMaterial.textureFilePath = directoryPath + "/" + textureFilename;
-		}
-	}
+			// 各頂点を処理
+			for (uint32_t i = 0; i < face.mNumIndices; ++i) {
+				uint32_t vertexIndex = face.mIndices[i];
 
-	// 最後のマテリアルを保存
-	if (!currentMaterialName.empty()) {
-		materials[currentMaterialName] = currentMaterial;
-	}
+				VertexData vertex;
 
-	Logger::Log(Logger::GetStream(), std::format("Loaded {} materials from {}\n", materials.size(), filename));
-	for (const auto& pair : materials) {
-		Logger::Log(Logger::GetStream(), std::format("  Material: {} -> texture: {}\n",
-			pair.first, pair.second.textureFilePath.empty() ? "none" : pair.second.textureFilePath));
-	}
 
-	//4.MaterialDataのマップを返す
-	return materials;
-}
+				//						頂点位置の取得						//
+				const aiVector3D& position = mesh->mVertices[vertexIndex];
+				vertex.position = {
+					-position.x,  // 左手座標系への変換（X軸を反転）
+					position.y,
+					position.z,
+					1.0f
+				};
 
-std::vector<ModelData> Model::LoadObjFileMulti(const std::string& directoryPath, const std::string& filename) {
-	//1.中で必要となる変数の宣言
-	std::vector<ModelData> modelDataList;	//構築するModelDataのリスト
-	std::vector<Vector4> positions;			//位置（全オブジェクト共通）
-	std::vector<Vector3> normals;			//法線（全オブジェクト共通）
-	std::vector<Vector2> texcoords;			//テクスチャ座標（全オブジェクト共通）
+				//						法線の取得							//
 
-	std::string line;						//ファイルから読んだ1行を格納するもの
+				const aiVector3D& normal = mesh->mNormals[vertexIndex];
+				vertex.normal = {
+					-normal.x,    // 左手座標系への変換（X軸を反転）
+					normal.y,
+					normal.z
+				};
 
-	// マルチマテリアル対応
-	std::map<std::string, MaterialDataModel> materials;	// マテリアル名 -> マテリアルデータ
-	std::map<std::string, size_t> materialIndexMap;		// マテリアル名 -> インデックス
-	std::string currentMaterialName = "";				// 現在使用中のマテリアル名
-	size_t materialIndexCounter = 0;					// マテリアルインデックスカウンター
 
-	ModelData currentModel;					//現在処理中のモデル
-	std::string currentObjectName = "default"; // 現在のオブジェクト名
-	bool hasCurrentObject = false;			//現在処理中のオブジェクトがあるか
-	bool hasExplicitObjects = false;		//明示的にオブジェクト名が指定されているか
-
-	//2.ファイルを開く
-	std::ifstream file(directoryPath + "/" + filename);
-	assert(file.is_open());
-
-	//3.実際にファイルを読み、ModelDataを構築していく
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;
-
-		if (identifier == "v") {		//識別子がvの場合	頂点位置
-			Vector4 position;
-			s >> position.x >> position.y >> position.z;
-			position.w = 1.0f;
-			positions.push_back(position);
-
-		} else if (identifier == "vt") {//識別子がvtの場合	頂点テクスチャ
-			Vector2 texcoord;
-			s >> texcoord.x >> texcoord.y;
-			texcoords.push_back(texcoord);
-
-		} else if (identifier == "vn") {//識別子がvnの場合	頂点法線
-			Vector3 normal;
-			s >> normal.x >> normal.y >> normal.z;
-			normals.push_back(normal);
-
-		} else if (identifier == "o") {	//識別子がoの場合	オブジェクト名
-			hasExplicitObjects = true; // 明示的なオブジェクト定義があることを記録
-
-			// 前のオブジェクトがあれば保存
-			if (hasCurrentObject && !currentModel.vertices.empty()) {
-				// 現在のマテリアル情報を設定
-				if (!currentMaterialName.empty() && materials.find(currentMaterialName) != materials.end()) {
-					currentModel.material = materials[currentMaterialName];
-					currentModel.materialName = currentMaterialName;
-					currentModel.materialIndex = materialIndexMap[currentMaterialName];
+				//					テクスチャ座標の取得						//
+				// テクスチャ座標を取得（aiProcess_FlipUVsで既にY反転済み）
+				// テクスチャ座標がない場合はデフォルト値(0, 0)を使用
+				if (hasTexCoords) {
+					const aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+					vertex.texcoord = {
+						texcoord.x,
+						texcoord.y
+					};
+				} else {
+					// テクスチャ座標がない場合はデフォルト値
+					vertex.texcoord = { 0.0f, 0.0f };
 				}
-				modelDataList.push_back(currentModel);
-				objectNames_.push_back(currentObjectName);
+
+				// 頂点を追加
+				modelData.vertices.push_back(vertex);
 			}
+		}
 
-			// 新しいオブジェクトを開始
-			s >> currentObjectName;
-			currentModel = ModelData(); // リセット
-			hasCurrentObject = true;
 
-		} else if (identifier == "usemtl") { // マテリアル切り替え
-			s >> currentMaterialName;
+		//						マテリアル情報の設定							//
+		// マテリアル情報を設定
+		if (mesh->mMaterialIndex < scene->mNumMaterials) {
+			std::string matName = materialNames[mesh->mMaterialIndex];
+			modelData.materialName = matName;
+			modelData.materialIndex = materialIndexMap[matName];
+			modelData.material = materialDataMap[matName];
 
-			// 新しいマテリアルの場合はインデックスを割り当て
-			if (materialIndexMap.find(currentMaterialName) == materialIndexMap.end()) {
-				materialIndexMap[currentMaterialName] = materialIndexCounter++;
-				Logger::Log(Logger::GetStream(), std::format("Material assigned: {} -> index {}\n",
-					currentMaterialName, materialIndexMap[currentMaterialName]));
-			}
+			Logger::Log(Logger::GetStream(),
+				std::format("    Mesh '{}': {} vertices, material: '{}' (index: {})\n",
+					objectName, modelData.vertices.size(), matName, modelData.materialIndex));
+		} else {
+			Logger::Log(Logger::GetStream(),
+				std::format("    Mesh '{}': {} vertices, no material\n",
+					objectName, modelData.vertices.size()));
+		}
 
-		} else if (identifier == "f") {	//識別子がfの場合	面
-			// オブジェクト名が指定されていない場合はデフォルトオブジェクトを作成
-			if (!hasCurrentObject) {
-				hasCurrentObject = true;
-				// 明示的なオブジェクト定義がない場合は "default" を使用
-				currentObjectName = hasExplicitObjects ? "unnamed" : "default";
-			}
 
-			//面は三角形限定
-			VertexData triangle[3];
-
-			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
-				std::string vertexDefinition;
-				s >> vertexDefinition;
-
-				std::stringstream v(vertexDefinition);
-				uint32_t elementIndices[3];
-				for (int32_t element = 0; element < 3; ++element) {
-					std::string index;
-					std::getline(v, index, '/');
-					if (!index.empty()) {
-						elementIndices[element] = std::stoi(index);
-					} else {
-						elementIndices[element] = 1; // デフォルト値
-					}
-				}
-
-				//要素へのindexから、実際の要素の値を取得して頂点を構成する
-				Vector4 position = positions[elementIndices[0] - 1];
-				Vector2 texcoord = (elementIndices[1] <= texcoords.size()) ? texcoords[elementIndices[1] - 1] : Vector2{ 0.0f, 0.0f };
-				Vector3 normal = (elementIndices[2] <= normals.size()) ? normals[elementIndices[2] - 1] : Vector3{ 0.0f, 0.0f, -1.0f };
-
-				//右手座標系から左手座標系に変換する
-				position.x *= -1.0f;
-				normal.x *= -1.0f;
-				texcoord.y = 1.0f - texcoord.y;
-				triangle[faceVertex] = { position, texcoord, normal };
-			}
-			currentModel.vertices.push_back(triangle[2]);
-			currentModel.vertices.push_back(triangle[1]);
-			currentModel.vertices.push_back(triangle[0]);
-
-		} else if (identifier == "mtllib") {
-			//materialTemplateLibraryファイルの名前を取得する
-			std::string materialFilename;
-			s >> materialFilename;
-			materials = LoadMaterialTemplateFile(directoryPath, materialFilename);
+		//					ModelDataをリストに追加							//
+		// モデルデータをリストに追加
+		if (!modelData.vertices.empty()) {
+			modelDataList.push_back(modelData);
 		}
 	}
-
-	// 最後のオブジェクトを保存
-	if (hasCurrentObject && !currentModel.vertices.empty()) {
-		// 現在のマテリアル情報を設定
-		if (!currentMaterialName.empty() && materials.find(currentMaterialName) != materials.end()) {
-			currentModel.material = materials[currentMaterialName];
-			currentModel.materialName = currentMaterialName;
-			currentModel.materialIndex = materialIndexMap[currentMaterialName];
-		}
-		modelDataList.push_back(currentModel);
-		objectNames_.push_back(currentObjectName);
-	}
-
-	Logger::Log(Logger::GetStream(), std::format("Loaded {} objects from {} with {} materials\n",
-		modelDataList.size(), filename, materials.size()));
-	for (size_t i = 0; i < objectNames_.size(); ++i) {
-		Logger::Log(Logger::GetStream(), std::format("  Object {}: {} ({} vertices, material: {})\n",
-			i, objectNames_[i], modelDataList[i].vertices.size(),
-			modelDataList[i].materialName.empty() ? "none" : modelDataList[i].materialName));
-	}
+	//読み込み結果のログ
+	Logger::Log(Logger::GetStream(),
+		std::format("Successfully loaded {} meshes with {} materials from {}\n\n",
+			modelDataList.size(), materialIndexMap.size(), filename));
 
 	return modelDataList;
 }

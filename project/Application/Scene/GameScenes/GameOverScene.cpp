@@ -28,6 +28,11 @@ void GameOverScene::ConfigureOffscreenEffects()
 		depthFogEffect->SetFogColor({ 0.0f,0.0f,0.0f,1.0f });
 
 	}
+
+	auto* RGBShiftEffect = offscreenRenderer_->GetRGBShiftEffect();
+	RGBShiftEffect->SetEnabled(true);
+	RGBShiftEffect->SetRGBShiftStrength(0.0f);
+	RGBShiftEffect->SetAnimationSpeed(0.33f);
 }
 
 void GameOverScene::Initialize() {
@@ -50,7 +55,7 @@ void GameOverScene::Initialize() {
 	ConfigureOffscreenEffects();
 
 	//BGM
-	BGMHandle_ = AudioManager::GetInstance()->Play("ClearBGM", true, 0.3f);
+	BGMHandle_ = AudioManager::GetInstance()->Play("OverBGM", true, 0.3f);
 }
 
 void GameOverScene::InitializeGameObjects() {
