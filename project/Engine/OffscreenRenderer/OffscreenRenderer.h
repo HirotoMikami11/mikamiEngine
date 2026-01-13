@@ -20,6 +20,7 @@
 #include "PostEffect/DepthOfField/DepthOfFieldPostEffect.h"	// 深度ぼかしエフェクト
 #include "PostEffect/DepthFog/DepthFogPostEffect.h"	// 深度フォグエフェクト
 #include "PostEffect/Outline/OutlinePostEffect.h"
+#include "PostEffect/Binarization/BinarizationPostEffect.h"
 
 
 
@@ -237,4 +238,5 @@ private:
 	DepthFogPostEffect* depthFogEffect_ = nullptr;
 	DepthOfFieldPostEffect* depthOfFieldEffect_ = nullptr;
 	OutlinePostEffect* outlineEffect_ = nullptr;
+	BinarizationPostEffect* binarizationEffect_ = nullptr;
 };

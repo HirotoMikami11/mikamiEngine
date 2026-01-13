@@ -663,6 +663,9 @@
     <ClCompile Include="Application\GameObjects\FieldObjects\TreasureBox.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Binarization\BinarizationPostEffect.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -708,6 +711,7 @@
       <Filter>リソース ファイル\Shader\Particle</Filter>
     </FxCompile>
     <FxCompile Include="resources\Shader\Outline\Outline.PS.hlsl" />
+    <FxCompile Include="resources\Shader\Binarization\Binarization.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Game.h">
@@ -1169,6 +1173,9 @@
     <ClInclude Include="Application\GameObjects\FieldObjects\TreasureBox.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Binarization\BinarizationPostEffect.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli">
@@ -1202,6 +1209,7 @@
       <Filter>リソース ファイル\Shader\Particle</Filter>
     </None>
     <None Include="resources\Shader\Outline\Outline.hlsli" />
+    <None Include="resources\Shader\Binarization\Binarization.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

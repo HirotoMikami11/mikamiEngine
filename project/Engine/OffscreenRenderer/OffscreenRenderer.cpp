@@ -57,9 +57,8 @@ void OffscreenRenderer::Initialize(DirectXCommon* dxCommon, uint32_t width, uint
 	vignetteEffect_ = postProcessChain_->AddEffect<VignettePostEffect>();
 	// ダメージエフェクトを追加
 	damageEffect_ = postProcessChain_->AddEffect<VignettePostEffect>();
-
-
-
+	//二値化エフェクトを追加
+	binarizationEffect_ = postProcessChain_->AddEffect<BinarizationPostEffect>();
 
 	// 初期化完了のログを出す
 	Logger::Log(Logger::GetStream(), "Complete OffscreenRenderer initialized (PostProcess Chain with OffscreenTriangle)!!\n");
@@ -86,6 +85,7 @@ void OffscreenRenderer::Finalize() {
 	lineGlitchEffect_ = nullptr;
 	depthOfFieldEffect_ = nullptr;
 	outlineEffect_ = nullptr;
+	binarizationEffect_ = nullptr;
 
 	// オフスクリーンOffscreenTriangle削除（Sprite置き換え）
 	if (offscreenTriangle_) {
