@@ -61,6 +61,8 @@ void OffscreenRenderer::Initialize(DirectXCommon* dxCommon, uint32_t width, uint
 	binarizationEffect_ = postProcessChain_->AddEffect<BinarizationPostEffect>();
 	// 溶岩エフェクトを追加
 	lavaEffect_ = postProcessChain_->AddEffect<LavaPostEffect>();
+	// 溶岩エフェクト
+	lavaMagmaEffect_ = postProcessChain_->AddEffect<LavaMagmaPostEffect>();
 
 	// 初期化完了のログを出す
 	Logger::Log(Logger::GetStream(), "Complete OffscreenRenderer initialized (PostProcess Chain with OffscreenTriangle)!!\n");
@@ -89,6 +91,7 @@ void OffscreenRenderer::Finalize() {
 	outlineEffect_ = nullptr;
 	binarizationEffect_ = nullptr;
 	lavaEffect_ = nullptr;
+	lavaMagmaEffect_ = nullptr;
 
 	// オフスクリーンOffscreenTriangle削除（Sprite置き換え）
 	if (offscreenTriangle_) {

@@ -285,6 +285,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Framework\Framework.cpp" />
     <ClCompile Include="Application\GameObjects\FieldObjects\GroundLight.cpp" />
     <ClCompile Include="Application\GameObjects\FieldObjects\GameField.cpp" />
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Lava\LavaMagmaPostEffect.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -341,6 +342,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="resources\Shader\Lava\Lava.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\Lava\LavaMagma.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="resources\Shader\LineGlitch\LineGlitch.PS.hlsl">
@@ -600,6 +604,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Scene\GameScenes\Pause.h" />
     <ClInclude Include="Application\GameObjects\FieldObjects\TitleGround.h" />
     <ClInclude Include="Application\GameObjects\FieldObjects\TreasureBox.h" />
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Lava\LavaMagmaPostEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
@@ -615,6 +620,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="resources\Shader\DepthOfField\DepthOfField.hlsli" />
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli" />
     <None Include="resources\Shader\Lava\Lava.hlsli" />
+    <None Include="resources\Shader\Lava\LavaMagma.hlsli" />
     <None Include="resources\Shader\LineGlitch\LineGlitch.hlsli" />
     <None Include="resources\Shader\Line\Line.hlsli" />
     <None Include="resources\Shader\Object3d\Object3d.hlsli" />

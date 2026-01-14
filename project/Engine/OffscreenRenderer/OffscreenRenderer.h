@@ -22,6 +22,7 @@
 #include "PostEffect/Outline/OutlinePostEffect.h"				// アウトラインエフェクト
 #include "PostEffect/Binarization/BinarizationPostEffect.h"		// 二値化ティザリングエフェクト
 #include "PostEffect/Lava/LavaPostEffect.h"						// 溶岩エフェクト
+#include "PostEffect/Lava/LavaMagmaPostEffect.h"				// 溶岩エフェクト
 
 
 
@@ -241,4 +242,5 @@ private:
 	OutlinePostEffect* outlineEffect_ = nullptr;
 	BinarizationPostEffect* binarizationEffect_ = nullptr;
 	LavaPostEffect* lavaEffect_ = nullptr;
+	LavaMagmaPostEffect* lavaMagmaEffect_ = nullptr;
 };

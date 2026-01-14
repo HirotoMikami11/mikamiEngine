@@ -714,6 +714,9 @@
     <ClCompile Include="Application\Scene\GameScenes\Pause.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Lava\LavaMagmaPostEffect.cpp">
+      <Filter>Engine\OffScreenRenderer\PostEffect\Lava</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -767,6 +770,7 @@
     <FxCompile Include="resources\Shader\Binarization\Binarization.PS.hlsl">
       <Filter>リソース ファイル\Shader\Binarization</Filter>
     </FxCompile>
+    <FxCompile Include="resources\Shader\Lava\LavaMagma.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Game.h">
@@ -1234,6 +1238,9 @@
     <ClInclude Include="Application\Scene\GameScenes\Pause.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Lava\LavaMagmaPostEffect.h">
+      <Filter>Engine\OffScreenRenderer\PostEffect\Lava</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli">
@@ -1275,6 +1282,7 @@
     <None Include="resources\Shader\Binarization\Binarization.hlsli">
       <Filter>リソース ファイル\Shader\Binarization</Filter>
     </None>
+    <None Include="resources\Shader\Lava\LavaMagma.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
