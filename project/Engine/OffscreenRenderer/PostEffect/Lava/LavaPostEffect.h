@@ -14,18 +14,18 @@ public:
 	/// </summary>
 	struct LavaParameters {
 		float time = 0.0f;					// 時間（アニメーション用）
-		float speed = 1.0f;					// 流れる速度（0.1～3.0）
-		float scale = 2.0f;					// ノイズスケール（大きい=細かい模様）
+		float speed = 1.8f;					// 流れる速度（0.1～3.0）
+		float scale = 8.0f;					// ノイズスケール（大きい=細かい模様）
 		float distortionStrength = 0.3f;	// 歪みの強度（0.0～1.0）
 		
-		float brightnessMultiplier = 1.0f;	// 明るさ（0.5～2.0）
-		float octaves = 4.0f;				// ノイズのオクターブ数（1～8）
+		float brightnessMultiplier = 1.6f;	// 明るさ（0.5～2.0）
+		float octaves = 2.0f;				// ノイズのオクターブ数（1～8）
 		float blendMode = 0.0f;				// ブレンドモード（0=上書き, 1=加算, 2=乗算）
 		float mixRatio = 1.0f;				// 元画像との混合比（0=元画像, 1=溶岩のみ）
 		
-		float colorHot[4] = { 1.0f, 1.0f, 0.8f, 1.0f };		// 高温部の色（黄-白）
-		float colorMid[4] = { 1.0f, 0.4f, 0.1f, 1.0f };		// 中温部の色（オレンジ）
-		float colorCool[4] = { 0.5f, 0.0f, 0.0f, 1.0f };	// 低温部の色（暗い赤）
+		float colorHot[4] = { 0.96f, 0.2f, 0.0f, 1.0f };		// 高温部の色（濃いオレンジ）
+		float colorMid[4] = { 1.0f, 0.36f, 0.04f, 1.0f };		// 中温部の色（明るめのオレンジ）
+		float colorCool[4] = { 0.0f, 0.0f, 0.0f, 1.0f };	// 低温部の色（暗い赤）
 		float padding[3] = { 0.0f, 0.0f, 0.0f };			// 16バイト境界調整用
 	};
 
@@ -39,8 +39,6 @@ public:
 		FIERY_FLOW,			// 炎のような流れ
 		MOLTEN_METAL,		// 溶けた金属風
 		BLUE_LAVA,			// 青い溶岩（ファンタジー）
-		GREEN_TOXIC,		// 緑の毒液風
-		OVERLAY_SUBTLE,		// オーバーレイ（控えめ）
 	};
 
 public:

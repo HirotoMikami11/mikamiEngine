@@ -103,15 +103,16 @@ void AudioData::LoadFromFile(const std::string& filename) {
 	///							データをメンバ変数に渡す							///
 	///*-----------------------------------------------------------------------*///
 	soundData.bufferSize = static_cast<unsigned int>(mediaData.size());
-	soundData.pBuffer = new BYTE[soundData.bufferSize];
-	memcpy(soundData.pBuffer, mediaData.data(), soundData.bufferSize);
+	soundData.pBuffer = std::make_unique<BYTE[]>(soundData.bufferSize);
+	memcpy(soundData.pBuffer.get(), mediaData.data(), soundData.bufferSize);
+
 }
 
 void AudioData::Unload() {
 	// バッファのメモリを解放
 	if (soundData.pBuffer) {
-		delete[] soundData.pBuffer;
-		soundData.pBuffer = nullptr;
+		soundData.bufferSize = 0;
+		soundData.wfex = {};
 	}
 
 	soundData.bufferSize = 0;
@@ -146,7 +147,7 @@ AudioInstance::AudioInstance(IXAudio2* xAudio2, const AudioData* audioData, int 
 
 	// 再生する波型データの設定
 	XAUDIO2_BUFFER buf{};
-	buf.pAudioData = soundData.pBuffer;
+	buf.pAudioData = soundData.pBuffer.get();
 	buf.AudioBytes = soundData.bufferSize;
 	buf.Flags = XAUDIO2_END_OF_STREAM;
 
@@ -241,7 +242,7 @@ void AudioInstance::SetLoop(bool loop) {
 		// 新しい設定でバッファを再設定
 		const SoundData& soundData = pAudioData->GetSoundData();
 		XAUDIO2_BUFFER buf{};
-		buf.pAudioData = soundData.pBuffer;
+		buf.pAudioData = soundData.pBuffer.get();
 		buf.AudioBytes = soundData.bufferSize;
 		buf.Flags = XAUDIO2_END_OF_STREAM;
 

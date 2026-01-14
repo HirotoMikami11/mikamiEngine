@@ -213,35 +213,6 @@ void LavaPostEffect::ApplyPreset(EffectPreset preset) {
 		SetColorCool(0.0f, 0.1f, 0.5f);
 		SetEnabled(true);
 		break;
-
-	case EffectPreset::GREEN_TOXIC:
-		parameters_.speed = 1.3f;
-		parameters_.scale = 3.0f;
-		parameters_.distortionStrength = 0.5f;
-		parameters_.brightnessMultiplier = 1.1f;
-		parameters_.octaves = 5.0f;
-		parameters_.mixRatio = 1.0f;
-		// 毒々しい緑
-		SetColorHot(0.8f, 1.0f, 0.5f);
-		SetColorMid(0.3f, 0.8f, 0.1f);
-		SetColorCool(0.1f, 0.3f, 0.0f);
-		SetEnabled(true);
-		break;
-
-	case EffectPreset::OVERLAY_SUBTLE:
-		parameters_.speed = 0.7f;
-		parameters_.scale = 2.0f;
-		parameters_.distortionStrength = 0.2f;
-		parameters_.brightnessMultiplier = 0.8f;
-		parameters_.octaves = 4.0f;
-		parameters_.mixRatio = 0.3f;  // 元画像と混合
-		parameters_.blendMode = 1.0f;  // 加算ブレンド
-		// 控えめなオレンジ
-		SetColorHot(1.0f, 0.8f, 0.5f);
-		SetColorMid(1.0f, 0.4f, 0.1f);
-		SetColorCool(0.3f, 0.0f, 0.0f);
-		SetEnabled(true);
-		break;
 	}
 
 	UpdateParameterBuffer();
@@ -315,11 +286,6 @@ void LavaPostEffect::ImGui() {
 				if (ImGui::Button("Molten Metal")) ApplyPreset(EffectPreset::MOLTEN_METAL);
 
 				if (ImGui::Button("Blue Lava")) ApplyPreset(EffectPreset::BLUE_LAVA);
-				ImGui::SameLine();
-				if (ImGui::Button("Green Toxic")) ApplyPreset(EffectPreset::GREEN_TOXIC);
-
-				if (ImGui::Button("Overlay Subtle")) ApplyPreset(EffectPreset::OVERLAY_SUBTLE);
-
 				ImGui::TreePop();
 			}
 

@@ -139,15 +139,6 @@
     <Filter Include="Application\GameObjects">
       <UniqueIdentifier>{39d2f99b-c186-45a8-b11d-ef563071d073}</UniqueIdentifier>
     </Filter>
-    <Filter Include="extarnals">
-      <UniqueIdentifier>{a2cbc42b-5b69-4b9f-a5a2-270cac2e45fa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="extarnals\imgui">
-      <UniqueIdentifier>{09ed2eb8-a2f2-4001-8a92-88fb361709f3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="extarnals\json">
-      <UniqueIdentifier>{205b905a-f9db-4743-acb1-63e639e3db9a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Application\GameObjects\Boss">
       <UniqueIdentifier>{b4031b65-2470-46c3-bc77-70970755e4b2}</UniqueIdentifier>
     </Filter>
@@ -288,6 +279,15 @@
     </Filter>
     <Filter Include="リソース ファイル\Shader\Binarization">
       <UniqueIdentifier>{162656b8-356e-4d94-a705-699b5534ee4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="externals">
+      <UniqueIdentifier>{a2cbc42b-5b69-4b9f-a5a2-270cac2e45fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="externals\imgui">
+      <UniqueIdentifier>{09ed2eb8-a2f2-4001-8a92-88fb361709f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="externals\json">
+      <UniqueIdentifier>{205b905a-f9db-4743-acb1-63e639e3db9a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -448,25 +448,25 @@
       <Filter>Engine\Objects\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui_tables.cpp">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui_draw.cpp">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui_demo.cpp">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Objects\Particle\ParticleSystem.cpp">
       <Filter>Engine\Objects\Particle</Filter>
@@ -941,28 +941,28 @@
       <Filter>Engine\Objects\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imconfig.h">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui.h">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui_impl_win32.h">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui_internal.h">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imstb_rectpack.h">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imstb_textedit.h">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imstb_truetype.h">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Objects\Particle\Field\AccelerationField.h">
       <Filter>Engine\Objects\Particle\ParticleObjects\Field</Filter>
@@ -1010,10 +1010,10 @@
       <Filter>Engine\Objects\Line</Filter>
     </ClInclude>
     <ClInclude Include="externals\nlohmann\json_fwd.hpp">
-      <Filter>extarnals\json</Filter>
+      <Filter>externals\json</Filter>
     </ClInclude>
     <ClInclude Include="externals\nlohmann\json.hpp">
-      <Filter>extarnals\json</Filter>
+      <Filter>externals\json</Filter>
     </ClInclude>
     <ClInclude Include="Application\GameObjects\Boss\Boss.h">
       <Filter>Application\GameObjects\Boss</Filter>
@@ -1278,7 +1278,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
-      <Filter>extarnals\imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </Text>
   </ItemGroup>
 </Project>

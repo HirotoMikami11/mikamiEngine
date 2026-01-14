@@ -28,10 +28,11 @@ struct SoundData {
 	// 波形フォーマット
 	WAVEFORMATEX wfex;
 	// バッファの先頭アドレス
-	BYTE* pBuffer;
+	std::unique_ptr<BYTE[]> pBuffer;
 	// バッファサイズ
 	unsigned int bufferSize;
 };
+
 
 /// <summary>
 /// チャンクヘッダ
