@@ -116,7 +116,6 @@ void Game::ImGui()
 	}
 	// トランジションマネージャーのImGui
 	if (transitionManager_) {
-		//　TODO:imgui必要に応じて作成
 		// 	transitionManager_->ImGui();
 	}
 
