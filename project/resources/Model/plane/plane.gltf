@@ -21,7 +21,7 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"\u30de\u30c6\u30ea\u30a2\u30eb",
+			"name":"Material.001",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
@@ -33,7 +33,7 @@
 	],
 	"meshes":[
 		{
-			"name":"\u5e73\u9762",
+			"name":"\u5e73\u9762.001",
 			"primitives":[
 				{
 					"attributes":{
@@ -66,14 +66,14 @@
 			"componentType":5126,
 			"count":4,
 			"max":[
-				1,
-				1,
-				1.7484555314695172e-07
+				1.0000003576278687,
+				1.000000238418579,
+				2.972795698497066e-07
 			],
 			"min":[
-				-1,
-				-1,
-				-1.7484555314695172e-07
+				-1.0000003576278687,
+				-1.000000238418579,
+				-2.972795698497066e-07
 			],
 			"type":"VEC3"
 		},

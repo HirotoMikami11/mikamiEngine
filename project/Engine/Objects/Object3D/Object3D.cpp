@@ -39,6 +39,38 @@ void Object3D::Draw() {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 	object3DCommon_->setCommonRenderSettings();
 
+	//																			//
+	//					rootNode.localMatrixの取得と適用						//
+	//																			//
+
+	// モデルデータからrootNode.localMatrixを取得
+	const auto& modelDataList = sharedModel_->GetModelData();
+	Matrix4x4 rootNodeLocalMatrix = MakeIdentity4x4(); // デフォルトは単位行列
+
+	// ModelDataが存在する場合はrootNode.localMatrixを取得
+	if (!modelDataList.empty()) {
+		rootNodeLocalMatrix = modelDataList[0].rootNode.localMatrix;
+	}
+
+	// TransformationMatrixデータを取得（GPU側のデータ）
+	TransformationMatrix* transformData = transform_.GetTransformDataPtr();
+
+	// 元のWorldマトリックスを保存
+	Matrix4x4 originalWorld = transformData->World;
+	Matrix4x4 originalWVP = transformData->WVP;
+
+	// rootNode.localMatrixを適用した新しいWorldマトリックスを計算
+	// World = rootNode.localMatrix * originalWorld
+	transformData->World = Matrix4x4Multiply(rootNodeLocalMatrix, originalWorld);
+
+	// WVPも再計算（描画時に使用される）
+	// WVP = rootNode.localMatrix * originalWVP
+	transformData->WVP = Matrix4x4Multiply(rootNodeLocalMatrix, originalWVP);
+
+	//																			//
+	//							通常の描画処理									//
+	//																			//
+
 	// トランスフォームを設定
 	commandList->SetGraphicsRootConstantBufferView(1, transform_.GetResource()->GetGPUVirtualAddress());
 
@@ -69,8 +101,16 @@ void Object3D::Draw() {
 		const_cast<Mesh&>(mesh).Bind(commandList);
 		const_cast<Mesh&>(mesh).Draw(commandList);
 	}
-}
 
+	//																			//
+	//					元のマトリックスに戻す（重要）							//
+	//																			//
+
+	// 描画後、元のWorldマトリックスに戻す
+	// （次のフレームのUpdate()で正しく更新されるようにするため）
+	transformData->World = originalWorld;
+	transformData->WVP = originalWVP;
+}
 void Object3D::ImGui() {
 #ifdef USEIMGUI
 	if (ImGui::TreeNode(name_.c_str())) {

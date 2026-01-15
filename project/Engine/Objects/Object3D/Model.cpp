@@ -286,7 +286,7 @@ std::vector<ModelData> Model::LoadModelWithAssimp(const std::string& directoryPa
 		filePath.c_str(),
 		aiProcess_Triangulate |
 		aiProcess_FlipWindingOrder |
-		aiProcess_FlipUVs 
+		aiProcess_FlipUVs
 	);
 
 	//																			//
@@ -495,10 +495,72 @@ std::vector<ModelData> Model::LoadModelWithAssimp(const std::string& directoryPa
 			modelDataList.push_back(modelData);
 		}
 	}
+
+	//																			//
+	//						RootNodeの読み込みと設定							//
+	//																			//
+
+	// scene->mRootNodeを読み込んでNode階層を作成
+	Node rootNode = ReadNode(scene->mRootNode);
+
+	// 全てのModelDataにrootNodeを設定
+	for (auto& modelData : modelDataList) {
+		modelData.rootNode = rootNode;
+	}
+
 	//読み込み結果のログ
 	Logger::Log(Logger::GetStream(),
 		std::format("Successfully loaded {} meshes with {} materials from {}\n\n",
 			modelDataList.size(), materialIndexMap.size(), filename));
 
 	return modelDataList;
+}
+///*---------------------------------------------------------------------------*///
+///						assimpのaiNodeを読み込む関数						///
+///*---------------------------------------------------------------------------*///
+
+Node Model::ReadNode(const aiNode* node) {
+	// 結果のNode構造体を作成
+	Node result;
+
+	//																			//
+	//							NodeのLocalMatrixを取得							//
+	//																			//
+
+	// aiNodeのTransformationから行列を取得
+	aiMatrix4x4 aiLocalMatrix = node->mTransformation;
+
+	// aiMatrix4x4をMyMath::Matrix4x4に変換
+	// assimpの行列は列優先、DirectXは行優先なので転置が必要
+	result.localMatrix.m[0][0] = aiLocalMatrix.a1; result.localMatrix.m[0][1] = aiLocalMatrix.b1;
+	result.localMatrix.m[0][2] = aiLocalMatrix.c1; result.localMatrix.m[0][3] = aiLocalMatrix.d1;
+
+	result.localMatrix.m[1][0] = aiLocalMatrix.a2; result.localMatrix.m[1][1] = aiLocalMatrix.b2;
+	result.localMatrix.m[1][2] = aiLocalMatrix.c2; result.localMatrix.m[1][3] = aiLocalMatrix.d2;
+
+	result.localMatrix.m[2][0] = aiLocalMatrix.a3; result.localMatrix.m[2][1] = aiLocalMatrix.b3;
+	result.localMatrix.m[2][2] = aiLocalMatrix.c3; result.localMatrix.m[2][3] = aiLocalMatrix.d3;
+
+	result.localMatrix.m[3][0] = aiLocalMatrix.a4; result.localMatrix.m[3][1] = aiLocalMatrix.b4;
+	result.localMatrix.m[3][2] = aiLocalMatrix.c4; result.localMatrix.m[3][3] = aiLocalMatrix.d4;
+
+	//																			//
+	//								Nodeの名前を取得							//
+	//																			//
+
+	// Node名を設定
+	result.name = node->mName.C_Str();
+
+	//																			//
+	//							子Nodeを再帰的に読み込む						//
+	//																			//
+
+	// 子供のNodeを再帰的に読み込む
+	result.children.resize(node->mNumChildren);
+	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex) {
+		// 再帰的にReadNodeを呼び出して子供のNodeを作成
+		result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
+	}
+
+	return result;
 }
