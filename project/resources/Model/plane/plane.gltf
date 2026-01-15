@@ -21,7 +21,7 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"\u30de\u30c6\u30ea\u30a2\u30eb.001",
+			"name":"\u30de\u30c6\u30ea\u30a2\u30eb",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
@@ -68,12 +68,12 @@
 			"max":[
 				1,
 				1,
-				4.371138828673793e-08
+				1.7484555314695172e-07
 			],
 			"min":[
 				-1,
 				-1,
-				-4.371138828673793e-08
+				-1.7484555314695172e-07
 			],
 			"type":"VEC3"
 		},
