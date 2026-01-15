@@ -62,7 +62,7 @@ void DebugScene::InitializeGameObjects() {
 	};
 
 	terrain_ = std::make_unique<Model3D>();
-	terrain_->Initialize(dxCommon_, "model_terrain");
+	terrain_->Initialize(dxCommon_, "glftPlane");
 	terrain_->SetTransform(transformTerrain);
 	///*-----------------------------------------------------------------------*///
 	///								ライト									///
