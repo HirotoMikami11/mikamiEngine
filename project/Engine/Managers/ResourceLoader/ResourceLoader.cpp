@@ -88,6 +88,7 @@ void ResourceLoader::RegisterAllResources() {
 		{"resources/Model/Boss", "Boss_Tail.obj", "Boss_Tail", false},
 		{"resources/Model/treasureBox", "treasureBox.obj", "treasureBox", false},
 		{"resources/Model/plane", "plane.gltf", "glftPlane", false},
+		{"resources/Model/plane", "plane.obj", "objPlane", false},
 
 
 		// モデルはここに追加

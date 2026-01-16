@@ -46,7 +46,8 @@ private:
 
 	// ゲームオブジェクト
 	std::unique_ptr<DebugSphere> sphere_;
-	std::unique_ptr<Model3D> terrain_;
+	std::unique_ptr<Model3D> gltfPlane_;
+	std::unique_ptr<Model3D> objPlane_;
 
 
 	// カメラ

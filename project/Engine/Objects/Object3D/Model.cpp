@@ -9,6 +9,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 void Model::Initialize(DirectXCommon* dxCommon, const MeshType meshType, const std::string& directoryPath, const std::string& filename)
 {
@@ -274,20 +275,34 @@ std::vector<ModelData> Model::LoadModelWithAssimp(const std::string& directoryPa
 	Logger::Log(Logger::GetStream(), std::format("Loading model with Assimp: {}\n", filePath));
 
 	//																			//
+
+	//																			//
 	//						ファイルの読み込みとオプション設定						//
 	//																			//
+
+	// ファイル拡張子を取得して小文字に変換
+	std::string fileExtension = filename.substr(filename.find_last_of(".") + 1);
+	std::transform(fileExtension.begin(), fileExtension.end(), fileExtension.begin(), ::tolower);
+
+	// glTF/glbファイルかどうかを判定
+	bool isGLTF = (fileExtension == "gltf" || fileExtension == "glb");
 
 	// Assimpでファイルを読み込む
 	// オプション:
 	// - aiProcess_Triangulate: 四角形以上のポリゴンを三角形に分割
-	// - aiProcess_FlipWindingOrder: 三角形の巻き順を反転（DirectX用）
+	// - aiProcess_FlipWindingOrder: 三角形の巻き順を反転（OBJ/FBX用、glTFでは不要）
 	// - aiProcess_FlipUVs: UVのY座標を反転（DirectX用）
-	const aiScene* scene = importer.ReadFile(
-		filePath.c_str(),
-		aiProcess_Triangulate |
-		aiProcess_FlipWindingOrder |
-		aiProcess_FlipUVs
-	);
+
+	// 基本フラグ
+	// 全てのファイル形式に対してFlipWindingOrderを適用
+	// glTFの場合は頂点のX軸反転を行わないことで正しい向きになる
+	uint32_t flags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FlipWindingOrder;
+
+	const aiScene* scene = importer.ReadFile(filePath.c_str(), flags);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("  File type: {}, X-axis flip: {}\n",
+			fileExtension, !isGLTF ? "enabled" : "disabled"));
 
 	//																			//
 	//							読み込み失敗のチェック								//
@@ -434,21 +449,45 @@ std::vector<ModelData> Model::LoadModelWithAssimp(const std::string& directoryPa
 
 				//						頂点位置の取得						//
 				const aiVector3D& position = mesh->mVertices[vertexIndex];
-				vertex.position = {
-					-position.x,  // 左手座標系への変換（X軸を反転）
-					position.y,
-					position.z,
-					1.0f
-				};
+
+				// glTFの場合は座標系変換済みなのでX軸反転不要
+				// OBJ等の場合はOpenGL座標系なのでX軸を反転して左手座標系に変換
+				if (isGLTF) {
+					vertex.position = {
+						position.x,
+						position.y,
+						position.z,
+						1.0f
+					};
+				} else {
+					vertex.position = {
+						-position.x,  // 左手座標系への変換（X軸を反転）
+						position.y,
+						position.z,
+						1.0f
+					};
+				}
 
 				//						法線の取得							//
 
 				const aiVector3D& normal = mesh->mNormals[vertexIndex];
-				vertex.normal = {
-					-normal.x,    // 左手座標系への変換（X軸を反転）
-					normal.y,
-					normal.z
-				};
+
+				// glTFの場合は座標系変換済みなのでX軸反転不要
+				// OBJ等の場合はOpenGL座標系なのでX軸を反転して左手座標系に変換
+				if (isGLTF) {
+					vertex.normal = {
+						normal.x,
+						normal.y,
+						normal.z
+					};
+				} else {
+					vertex.normal = {
+						-normal.x,    // 左手座標系への変換（X軸を反転）
+						normal.y,
+						normal.z
+					};
+				}
+
 
 
 				//					テクスチャ座標の取得						//
