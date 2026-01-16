@@ -21,6 +21,15 @@ struct MaterialDataModel {
 };
 
 /// <summary>
+/// Node構造体（glTFの階層構造をサポート）
+/// </summary>
+struct Node {
+	Matrix4x4 localMatrix;			// このNodeのローカル変換行列（Transform）
+	std::string name;				// Nodeの名前
+	std::vector<Node> children;		// 子供のNode
+};
+
+/// <summary>
 /// モデルデータ
 /// </summary>
 struct ModelData {
@@ -28,6 +37,7 @@ struct ModelData {
 	MaterialDataModel material;
 	std::string materialName = "";	// マテリアル名
 	size_t materialIndex = 0;		// マテリアルインデックス
+	Node rootNode;					// ルートNode（glTF対応）
 };
 
 /// <summary>

@@ -55,15 +55,27 @@ void DebugScene::InitializeGameObjects() {
 	///*-----------------------------------------------------------------------*///
 	///								地面									///
 	///*-----------------------------------------------------------------------*///
-	Vector3Transform transformTerrain{
+	Vector3Transform transformgltf{
 		{1.0f, 1.0f, 1.0f},
 		{0.0f, 0.0f, 0.0f},
 		{0.0f, 0.0f, 0.0f}
 	};
 
-	terrain_ = std::make_unique<Model3D>();
-	terrain_->Initialize(dxCommon_, "glftPlane");
-	terrain_->SetTransform(transformTerrain);
+	gltfPlane_ = std::make_unique<Model3D>();
+	gltfPlane_->Initialize(dxCommon_, "glftPlane");
+	gltfPlane_->SetTransform(transformgltf);
+
+	Vector3Transform transformobj{
+	{1.0f, 1.0f, 1.0f},
+	{0.0f, 0.0f, 0.0f},
+	{2.0f, 0.0f, 0.0f}
+	};
+
+	objPlane_ = std::make_unique<Model3D>();
+	objPlane_->Initialize(dxCommon_, "objPlane");
+	objPlane_->SetTransform(transformobj);
+
+
 	///*-----------------------------------------------------------------------*///
 	///								ライト									///
 	///*-----------------------------------------------------------------------*///
@@ -109,10 +121,11 @@ void DebugScene::UpdateGameObjects() {
 	// 球体の更新
 	sphere_->Update(viewProjectionMatrix);
 	// 地面の更新
-	terrain_->Update(viewProjectionMatrix);
+	gltfPlane_->Update(viewProjectionMatrix);
+	objPlane_->Update(viewProjectionMatrix);
 	//ポイントライトの座標を地面に合わせる
 	if (pointLight_) {
-		pointLight_->SetPosition(terrain_->GetPosition());
+		pointLight_->SetPosition(gltfPlane_->GetPosition());
 	}
 
 }
@@ -125,7 +138,8 @@ void DebugScene::DrawOffscreen() {
 	// 球体の描画
 	sphere_->Draw();
 	// 地面の描画
-	terrain_->Draw();
+	gltfPlane_->Draw();
+	objPlane_->Draw();
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -157,8 +171,9 @@ void DebugScene::ImGui() {
 	sphere_->ImGui();
 
 	ImGui::Spacing();
-	ImGui::Text("Terrain");
-	terrain_->ImGui();
+	ImGui::Text("plane");
+	gltfPlane_->ImGui();
+	objPlane_->ImGui();
 #endif
 }
 

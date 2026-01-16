@@ -571,7 +571,7 @@ DirectXCommon::ComPtr<IDxcBlob>DirectXCommon::CompileShader(
 		filePath.c_str(),		//コンパイル対象のhlslファイル名
 		L"-E",L"main",			//エントリーポイントの指定。基本的にmain以外にはしない
 		L"-T",profile,			//ShaderProfileの設定
-		L"-Zi",L"Qembed_debug"	//デバッグの情報を埋め込む	(L"-Qembed_debug"でエラー)
+		L"-Zi",L"Qembed_debug",	//デバッグの情報を埋め込む
 		L"-Od",					//最適化を外しておく
 		L"-Zpr",				//メモリレイアウトは行優先
 	};
@@ -589,8 +589,9 @@ DirectXCommon::ComPtr<IDxcBlob>DirectXCommon::CompileShader(
 	assert(SUCCEEDED(hr));
 
 	///警告・エラーがでていないか確認する
-		//警告・エラーが出ていたらログに出して停止する
+	//警告・エラーが出ていたらログに出して停止する
 	IDxcBlobUtf8* shaderError = nullptr;
+	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
 	if (shaderError != nullptr && shaderError->GetStringLength() != 0)
 	{
 		Logger::Log(shaderError->GetStringPointer());

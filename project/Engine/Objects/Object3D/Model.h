@@ -13,6 +13,10 @@
 
 //マテリアルの情報をtextureManagerの送るため
 #include "Texture/TextureManager.h"
+
+// Assimp前方宣言
+struct aiNode;
+
 using namespace MyMath;
 
 /// <summary>
@@ -193,4 +197,11 @@ private:
 	/// <param name="texturePath">テクスチャファイルのフルパス</param>
 	/// <returns>画像ファイル名（拡張子なし）</returns>
 	std::string GetTextureFileNameFromPath(const std::string& texturePath);
+
+	/// <summary>
+	/// assimpのaiNodeを再帰的に読み込んで、独自のNode階層構造を作成する
+	/// </summary>
+	/// <param name="node">assimpのaiNode</param>
+	/// <returns>変換されたNode</returns>
+	Node ReadNode(const aiNode* node);
 };
