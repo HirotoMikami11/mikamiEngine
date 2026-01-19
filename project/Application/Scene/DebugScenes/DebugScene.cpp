@@ -53,12 +53,26 @@ void DebugScene::InitializeGameObjects() {
 
 
 	///*-----------------------------------------------------------------------*///
-	///								地面									///
+	///									地面										///
 	///*-----------------------------------------------------------------------*///
-	Vector3Transform transformgltf{
+	Vector3Transform transformTerrain{
 		{1.0f, 1.0f, 1.0f},
 		{0.0f, 0.0f, 0.0f},
 		{0.0f, 0.0f, 0.0f}
+	};
+
+	terrain_ = std::make_unique<Model3D>();
+	terrain_->Initialize(dxCommon_, "model_terrain");
+	terrain_->SetTransform(transformTerrain);
+
+
+	///*-----------------------------------------------------------------------*///
+	///									平面										///
+	///*-----------------------------------------------------------------------*///
+	Vector3Transform transformgltf{
+		{1.0f, 1.0f, 1.0f},
+		{0.0f, std::numbers::pi_v<float>, 0.0f},
+		{-1.5f, 2.0f, 0.0f}
 	};
 
 	gltfPlane_ = std::make_unique<Model3D>();
@@ -67,8 +81,8 @@ void DebugScene::InitializeGameObjects() {
 
 	Vector3Transform transformobj{
 	{1.0f, 1.0f, 1.0f},
-	{0.0f, 0.0f, 0.0f},
-	{2.0f, 0.0f, 0.0f}
+	{0.0f, std::numbers::pi_v<float>, 0.0f},
+	{1.5f, 2.0f, 0.0f}
 	};
 
 	objPlane_ = std::make_unique<Model3D>();
@@ -121,12 +135,11 @@ void DebugScene::UpdateGameObjects() {
 	// 球体の更新
 	sphere_->Update(viewProjectionMatrix);
 	// 地面の更新
+	terrain_->Update(viewProjectionMatrix);
+
+	//平面の更新
 	gltfPlane_->Update(viewProjectionMatrix);
 	objPlane_->Update(viewProjectionMatrix);
-	//ポイントライトの座標を地面に合わせる
-	if (pointLight_) {
-		pointLight_->SetPosition(gltfPlane_->GetPosition());
-	}
 
 }
 
@@ -138,6 +151,8 @@ void DebugScene::DrawOffscreen() {
 	// 球体の描画
 	sphere_->Draw();
 	// 地面の描画
+	terrain_->Draw();
+	// 平面の描画
 	gltfPlane_->Draw();
 	objPlane_->Draw();
 
@@ -171,8 +186,15 @@ void DebugScene::ImGui() {
 	sphere_->ImGui();
 
 	ImGui::Spacing();
-	ImGui::Text("plane");
+	ImGui::Text("terrain");
+	terrain_->ImGui();
+
+	ImGui::Spacing();
+	ImGui::Text("gltfplane");
 	gltfPlane_->ImGui();
+
+	ImGui::Spacing();
+	ImGui::Text("gltfplane");
 	objPlane_->ImGui();
 #endif
 }

@@ -11,31 +11,31 @@
 /// </summary>
 class DebugSphere {
 public:
-    DebugSphere();
-    ~DebugSphere() = default;
+	DebugSphere();
+	~DebugSphere() = default;
 
-    void Initialize(DirectXCommon* dxCommon);
+	void Initialize(DirectXCommon* dxCommon);
 
-    // 更新・描画処理
-    void Update(const Matrix4x4& viewProj);
-    void Draw();
-    void ImGui();
+	// 更新・描画処理
+	void Update(const Matrix4x4& viewProj);
+	void Draw();
+	void ImGui();
 
-    // Sphere のリストを再生成
-    void Regenerate();
-
-private:
-    void GenerateSpheres();
+	// Sphere のリストを再生成
+	void Regenerate();
 
 private:
-    DirectXCommon* directXCommon_;
+	void GenerateSpheres();
 
-    // スフィア
-    std::vector<std::unique_ptr<Sphere>> spheres_;
+private:
+	DirectXCommon* directXCommon_;
 
-    // パラメータ
-    int sphereCount_ = 10;
-    int sphereCountPerRow_ = 10;
-    float sphereSpacing_ = 3.0f;
-    bool autoRotate_ = true;
+	// スフィア
+	std::vector<std::unique_ptr<Sphere>> spheres_;
+
+	// パラメータ
+	int sphereCount_ = 10;
+	int sphereCountPerRow_ = 10;
+	float sphereSpacing_ = 3.0f;
+	bool autoRotate_ = true;
 };
