@@ -48,10 +48,16 @@ void DebugScene::InitializeGameObjects() {
 	///									球体										///
 	///*-----------------------------------------------------------------------*///
 
-	sphere_ = std::make_unique<DebugSphere>();
-	sphere_->Initialize(dxCommon_);
+	Vector3Transform transformSphere{
+	{1.0f, 1.0f, 1.0f},
+	{0.0f, -std::numbers::pi_v<float> / 2.0f, 0.0f},
+	{0.0f, 0.0f, 0.0f}
+	};
 
-
+	sphere_ = std::make_unique<Sphere>();
+	sphere_->Initialize(dxCommon_, "sphere", "monsterBall");
+	sphere_->SetTransform(transformSphere);
+	sphere_->SetLightingMode(LightingMode::PhongSpecular);
 	///*-----------------------------------------------------------------------*///
 	///									地面										///
 	///*-----------------------------------------------------------------------*///
@@ -100,11 +106,11 @@ void DebugScene::InitializeGameObjects() {
 
 	// ポイントライト: 青い光
 	pointLight_ = LightManager::GetInstance()->AddPointLight(
-		{ -5.0f, 2.0f, 0.0f },			//座標
-		{ 0.3f, 0.3f, 1.0f, 1.0f },		// 青色
+		{ -5.0f, 0.0f, 0.0f },			//座標
+		{ 1.0f, 1.0f, 0.0f, 1.0f },		// 白色
 		2.0f,							// 強度
-		15.0f,							// 影響範囲
-		2.0f							// 減衰率
+		10.0f,							// 影響範囲
+		10.0f							// 減衰率
 	);
 
 	// スポットライト: 白い光（真上から下向き）
@@ -190,11 +196,11 @@ void DebugScene::ImGui() {
 	terrain_->ImGui();
 
 	ImGui::Spacing();
-	ImGui::Text("gltfplane");
+	ImGui::Text("gltfPlane");
 	gltfPlane_->ImGui();
 
 	ImGui::Spacing();
-	ImGui::Text("gltfplane");
+	ImGui::Text("objPlane");
 	objPlane_->ImGui();
 #endif
 }

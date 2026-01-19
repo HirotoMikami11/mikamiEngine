@@ -1,8 +1,7 @@
 #pragma once
 #include <memory>
-
 #include "BaseScene.h"
-#include "DebugSphere.h"
+
 
 /// <summary>
 /// デバッグ用シーン
@@ -45,7 +44,7 @@ private:
 	void UpdateGameObjects();
 
 	// ゲームオブジェクト
-	std::unique_ptr<DebugSphere> sphere_;
+	std::unique_ptr<Sphere> sphere_;
 
 	std::unique_ptr<Model3D> terrain_;
 	std::unique_ptr<Model3D> gltfPlane_;
