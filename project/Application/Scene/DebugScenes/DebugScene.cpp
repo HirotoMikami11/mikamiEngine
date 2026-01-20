@@ -124,7 +124,16 @@ void DebugScene::InitializeGameObjects() {
 		30.0f,							// スポット角度（度）
 		20.0f							// フォールオフ開始角度（度）
 	);
-
+	// エリアライト: 赤色の面光源
+	rectLight_ = LightManager::GetInstance()->AddRectLight(
+		{ -2.4f, 0.1f, -5.0f },			// 位置（右側上方）
+		{ 90.0f, 0.0f, 0.0f },			// 回転（X軸90度=下向き）
+		{ 1.0f, 0.0f, 0.0f, 1.0f },		// オレンジ色
+		1.0f,							// 強度
+		4.5f,							// 幅
+		2.1f,							// 高さ
+		10.0f							// 減衰率
+	);
 }
 
 void DebugScene::Update() {

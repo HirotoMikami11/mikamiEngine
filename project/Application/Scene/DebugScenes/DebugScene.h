@@ -58,6 +58,7 @@ private:
 	//ライティング
 	PointLight* pointLight_;
 	SpotLight* spotLight_;
+	RectLight* rectLight_;
 
 	// システム参照
 	DirectXCommon* dxCommon_;

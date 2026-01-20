@@ -1,6 +1,4 @@
 #pragma once
-#include <d3d12.h>
-#include <wrl.h>
 #include "DirectXCommon.h"
 #include "Structures.h"
 #include "LightBase.h"

@@ -37,6 +37,9 @@ void LightManager::ResetToDefault()
 	// 全スポットライトをクリア
 	ClearSpotLights();
 
+	// 全エリアライトをクリア
+	ClearRectLights();
+
 	// LightingDataを更新
 	UpdateLightingData();
 
@@ -112,6 +115,38 @@ SpotLight* LightManager::AddSpotLight(
 	return ptr;
 }
 
+RectLight* LightManager::AddRectLight(
+	const Vector3& position,
+	const Vector3& rotation,
+	const Vector4& color,
+	float intensity,
+	float width,
+	float height,
+	float decay)
+{
+	// 上限チェック
+	if (rectLights_.size() >= MAX_RECT_LIGHTS) {
+		return nullptr;
+	}
+
+	// ID割り当て（単調増加）
+	uint32_t id = nextLightID_++;
+
+	// ライト作成
+	auto light = std::make_unique<RectLight>();
+	light->Initialize(position, rotation, color, intensity, width, height, decay);
+	light->lightID_ = id;  // 内部管理用IDを設定
+
+	RectLight* ptr = light.get();
+	rectLights_[id] = std::move(light);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("LightManager: Added rect light ID={} ({}/{})\n",
+			id, rectLights_.size(), MAX_RECT_LIGHTS));
+
+	return ptr;
+}
+
 void LightManager::RemovePointLight(PointLight* light)
 {
 	if (!light) {
@@ -160,6 +195,30 @@ void LightManager::RemoveSpotLight(SpotLight* light)
 	spotLights_.erase(it);
 }
 
+void LightManager::RemoveRectLight(RectLight* light)
+{
+	if (!light) {
+		Logger::Log(Logger::GetStream(),
+			"LightManager: Warning - Attempted to remove nullptr light\n");
+		return;
+	}
+
+	uint32_t id = light->lightID_;
+
+	// ID検証
+	auto it = rectLights_.find(id);
+	if (it == rectLights_.end()) {
+		return;
+	}
+
+	// ポインタ一致確認（安全性チェック）
+	if (it->second.get() != light) {
+		return;
+	}
+
+	rectLights_.erase(it);
+}
+
 void LightManager::ClearPointLights()
 {
 	pointLights_.clear();
@@ -170,6 +229,12 @@ void LightManager::ClearSpotLights()
 {
 	spotLights_.clear();
 	Logger::Log(Logger::GetStream(), "LightManager: Cleared all spot lights\n");
+}
+
+void LightManager::ClearRectLights()
+{
+	rectLights_.clear();
+	Logger::Log(Logger::GetStream(), "LightManager: Cleared all rect lights\n");
 }
 
 void LightManager::ImGui()
@@ -320,6 +385,76 @@ void LightManager::ImGui()
 			"Maximum spot light limit reached");
 	}
 
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	// ===== エリアライト（矩形ライト） =====
+	// 使用状況表示
+	int activeRectLights = 0;
+	for (const auto& [id, light] : rectLights_) {
+		if (light && light->IsActive()) {
+			activeRectLights++;
+		}
+	}
+
+	ImGui::Text("Rect Lights: %d / %d (Active: %d)",
+		static_cast<int>(rectLights_.size()),
+		MAX_RECT_LIGHTS,
+		activeRectLights);
+
+	ImGui::Separator();
+
+	// 削除対象を記録（ループ中に削除できないため）
+	RectLight* rectLightToRemove = nullptr;
+
+	// 使用中のエリアライトのみ表示
+	for (auto& [id, light] : rectLights_) {
+		if (light) {
+			std::string label = std::format("Rect Light [ID:{}]", id);
+
+			if (ImGui::TreeNode(label.c_str())) {
+				// ライトの編集UI
+				light->ImGui(label);
+
+				// 削除ボタン
+				ImGui::Separator();
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.1f, 0.1f, 1.0f));
+
+				if (ImGui::Button("Remove This Light", ImVec2(-1, 0))) {
+					rectLightToRemove = light.get();
+				}
+
+				ImGui::PopStyleColor(3);
+
+				ImGui::TreePop();
+			}
+		}
+	}
+
+	// ループ外で削除（イテレーション中の削除を避ける）
+	if (rectLightToRemove) {
+		RemoveRectLight(rectLightToRemove);
+	}
+
+	ImGui::Separator();
+
+	// 追加ボタン（上限チェック）
+	if (rectLights_.size() >= MAX_RECT_LIGHTS) {
+		ImGui::BeginDisabled();
+	}
+
+	if (ImGui::Button("Add Rect Light", ImVec2(-1, 0))) {
+		AddRectLight({ 0.0f, 4.0f, 0.0f }, { 90.0f, 0.0f, 0.0f });
+	}
+
+	if (rectLights_.size() >= MAX_RECT_LIGHTS) {
+		ImGui::EndDisabled();
+		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f),
+			"Maximum rect light limit reached");
+	}
+
 	ImGui::End();
 
 #endif
@@ -383,6 +518,27 @@ void LightManager::UpdateLightingData()
 	// 有効なスポットライト数を設定
 	lightingData_->numSpotLights = gpuSpotLightCount;
 
+	// アクティブなエリアライトを収集
+	std::vector<RectLight*> activeRectLights;
+	activeRectLights.reserve(rectLights_.size());
+
+	for (auto& [id, light] : rectLights_) {
+		if (light && light->IsActive()) {
+			activeRectLights.push_back(light.get());
+		}
+	}
+
+	// GPU送信上限数まで
+	int gpuRectLightCount = std::min(static_cast<int>(activeRectLights.size()), MAX_RECT_LIGHTS);
+
+	// GPU配列にコピー
+	for (int i = 0; i < gpuRectLightCount; ++i) {
+		lightingData_->rectLights[i] = activeRectLights[i]->GetData();
+	}
+
+	// 有効なエリアライト数を設定
+	lightingData_->numRectLights = gpuRectLightCount;
+
 	// パディングをゼロで埋める
 	lightingData_->padding1[0] = 0.0f;
 	lightingData_->padding1[1] = 0.0f;
@@ -390,6 +546,9 @@ void LightManager::UpdateLightingData()
 	lightingData_->padding2[0] = 0.0f;
 	lightingData_->padding2[1] = 0.0f;
 	lightingData_->padding2[2] = 0.0f;
+	lightingData_->padding3[0] = 0.0f;
+	lightingData_->padding3[1] = 0.0f;
+	lightingData_->padding3[2] = 0.0f;
 
 	//それぞれ最大数を超えた場合の警告
 	if (activePointLights.size() > MAX_POINT_LIGHTS) {
@@ -409,6 +568,16 @@ void LightManager::UpdateLightingData()
 				std::format("LightManager: Warning - {} active spot lights, but only {} sent to GPU\n",
 					activeSpotLights.size(), MAX_SPOT_LIGHTS));
 			warnedSpot = true;
+		}
+	}
+
+	if (activeRectLights.size() > MAX_RECT_LIGHTS) {
+		static bool warnedRect = false;
+		if (!warnedRect) {
+			Logger::Log(Logger::GetStream(),
+				std::format("LightManager: Warning - {} active rect lights, but only {} sent to GPU\n",
+					activeRectLights.size(), MAX_RECT_LIGHTS));
+			warnedRect = true;
 		}
 	}
 }

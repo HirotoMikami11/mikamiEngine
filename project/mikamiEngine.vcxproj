@@ -317,6 +317,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Scene\GameScenes\Pause.cpp" />
     <ClCompile Include="Application\GameObjects\FieldObjects\TitleGround.cpp" />
     <ClCompile Include="Application\GameObjects\FieldObjects\TreasureBox.cpp" />
+    <ClCompile Include="Engine\Objects\Light\RectLight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
@@ -588,6 +589,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Scene\GameScenes\Pause.h" />
     <ClInclude Include="Application\GameObjects\FieldObjects\TitleGround.h" />
     <ClInclude Include="Application\GameObjects\FieldObjects\TreasureBox.h" />
+    <ClInclude Include="Engine\Objects\Light\RectLight.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

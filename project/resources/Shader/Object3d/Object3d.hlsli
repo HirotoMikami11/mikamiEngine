@@ -38,6 +38,20 @@ struct SpotLight
     float32_t padding; // アライメント調整
 };
 
+// エリアライト（矩形ライト）
+struct RectLight
+{
+    float32_t4 color; // 色
+    float32_t3 position; // 矩形の中心位置
+    float32_t intensity; // 輝度
+    float32_t3 normal; // 矩形の法線（面の向き）
+    float32_t width; // 矩形の幅
+    float32_t3 tangent; // 矩形のローカルX軸（横方向）
+    float32_t height; // 矩形の高さ
+    float32_t3 bitangent; // 矩形のローカルY軸（縦方向）
+    float32_t decay; // 減衰率
+};
+
 // 統合ライティングデータ
 struct LightingData
 {
@@ -48,6 +62,9 @@ struct LightingData
     SpotLight spotLights[16]; // スポットライト（最大16個）
     int32_t numSpotLights; // 有効なスポットライト数
     float32_t3 padding2; // アライメント調整
+    RectLight rectLights[8]; // エリアライト（最大8個）
+    int32_t numRectLights; // 有効なエリアライト数
+    float32_t3 padding3; // アライメント調整
 };
 
 struct VertexShaderOutput

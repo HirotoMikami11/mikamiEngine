@@ -687,6 +687,9 @@
     <ClCompile Include="Engine\Framework\Framework.cpp">
       <Filter>Engine\Framework</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Objects\Light\RectLight.cpp">
+      <Filter>Engine\Objects\Light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -1191,6 +1194,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Framework\Framework.h">
       <Filter>Engine\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Light\RectLight.h">
+      <Filter>Engine\Objects\Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

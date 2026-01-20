@@ -69,6 +69,84 @@ float3 CalculateSpecular(float32_t3 normal, float32_t3 lightDir, float32_t3 toEy
     return float3(1.0f, 1.0f, 1.0f) * specularPow * lightColor * lightIntensity;
 }
 
+// エリアライト（矩形ライト）の計算関数
+float3 CalculateRectLightContribution(
+    RectLight rectLight,
+    float3 worldPos,
+    float3 normal,
+    float3 toEye)
+{
+    // 矩形の4つの頂点を計算
+    float3 halfWidth = rectLight.tangent * (rectLight.width * 0.5f);
+    float3 halfHeight = rectLight.bitangent * (rectLight.height * 0.5f);
+    
+    // 矩形の中心から各頂点への位置
+    float3 corners[4];
+    corners[0] = rectLight.position - halfWidth - halfHeight; // 左下
+    corners[1] = rectLight.position + halfWidth - halfHeight; // 右下
+    corners[2] = rectLight.position + halfWidth + halfHeight; // 右上
+    corners[3] = rectLight.position - halfWidth + halfHeight; // 左上
+    
+    // 矩形の最も近い点を見つける（簡易近似）
+    float3 toLight = rectLight.position - worldPos;
+    float distToCenter = length(toLight);
+    
+    // 矩形のローカル座標系での位置を計算
+    float3 localPos = worldPos - rectLight.position;
+    float xProj = dot(localPos, rectLight.tangent);
+    float yProj = dot(localPos, rectLight.bitangent);
+    float zProj = dot(localPos, rectLight.normal);
+    
+    // 矩形上の最も近い点を計算（クランプ）
+    float clampedX = clamp(xProj, -rectLight.width * 0.5f, rectLight.width * 0.5f);
+    float clampedY = clamp(yProj, -rectLight.height * 0.5f, rectLight.height * 0.5f);
+    
+    // 矩形上の最も近い点のワールド座標
+    float3 closestPoint = rectLight.position + rectLight.tangent * clampedX + rectLight.bitangent * clampedY;
+    
+    // 最も近い点への方向ベクトル
+    float3 toLightFromClosest = closestPoint - worldPos;
+    float distance = length(toLightFromClosest);
+    float3 lightDir = toLightFromClosest / distance;
+    
+    // 両面ライティング: 法線の向きに関係なくライティング
+    float NdotL = dot(rectLight.normal, -lightDir);
+    
+    // 矩形の裏側からの照明は無効
+    if (NdotL < 0.0f)
+    {
+        return float3(0.0f, 0.0f, 0.0f);
+    }
+    
+    // 距離減衰を計算（最大距離を矩形の対角線 + α として計算）
+    float maxDistance = sqrt(rectLight.width * rectLight.width + rectLight.height * rectLight.height) * 2.0f;
+    float attenuation = pow(saturate(1.0f - distance / maxDistance), rectLight.decay);
+    
+    // 矩形の面積による強度補正（面積が大きいほど明るい）
+    float area = rectLight.width * rectLight.height;
+    float areaFactor = sqrt(area) * 0.5f; // 面積係数（調整可能）
+    
+    // 拡散反射を計算
+    float3 diffuse = CalculateDiffuse(
+        normal,
+        lightDir,
+        rectLight.color.rgb,
+        rectLight.intensity * areaFactor
+    );
+    
+    // 鏡面反射を計算
+    float3 specular = CalculateSpecular(
+        normal,
+        lightDir,
+        toEye,
+        rectLight.color.rgb,
+        rectLight.intensity * areaFactor
+    );
+    
+    // 距離減衰を適用して返す
+    return (diffuse + specular) * attenuation;
+}
+
 PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput output;
@@ -187,6 +265,23 @@ PixelShaderOutput main(VertexShaderOutput input)
             // 距離減衰とフォールオフを適用して合計に加算
             totalDiffuse += diffuse * distanceAttenuation * falloffFactor;
             totalSpecular += specular * distanceAttenuation * falloffFactor;
+        }
+        
+        // 4. エリアライト（矩形ライト）の計算（有効な数だけループ）
+        for (int k = 0; k < gLighting.numRectLights; k++)
+        {
+            RectLight rectLight = gLighting.rectLights[k];
+            
+            // エリアライトの寄与を計算
+            float3 rectLightContribution = CalculateRectLightContribution(
+                rectLight,
+                input.worldPosition,
+                normal,
+                toEye
+            );
+            
+            // 合計に加算
+            totalDiffuse += rectLightContribution;
         }
         
         // 拡散反射にマテリアル色とテクスチャ色を適用

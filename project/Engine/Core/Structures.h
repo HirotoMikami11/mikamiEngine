@@ -96,6 +96,21 @@ struct SpotLightData final {
 };
 
 /// <summary>
+/// エリアライト（矩形ライト）（GPU用）
+/// </summary>
+struct RectLightData final {
+	Vector4 color;			// 色
+	Vector3 position;		// 矩形の中心位置
+	float intensity;		// 輝度
+	Vector3 normal;			// 矩形の法線（面の向き）
+	float width;			// 矩形の幅
+	Vector3 tangent;		// 矩形のローカルX軸（横方向）
+	float height;			// 矩形の高さ
+	Vector3 bitangent;		// 矩形のローカルY軸（縦方向）
+	float decay;			// 減衰率
+};
+
+/// <summary>
 /// 統合ライティングデータ（GPU用）
 /// 全てのライト情報を1つのConstantBufferにまとめる
 /// </summary>
@@ -107,4 +122,7 @@ struct LightingData final {
 	SpotLightData spotLights[16];			// スポットライト（最大16個）
 	int32_t numSpotLights;					// 有効なスポットライト数
 	float padding2[3];						// アライメント調整
+	RectLightData rectLights[8];			// エリアライト（最大8個）
+	int32_t numRectLights;					// 有効なエリアライト数
+	float padding3[3];						// アライメント調整
 };
