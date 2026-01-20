@@ -64,6 +64,20 @@ public:
 	/// <returns>親のTransform3Dへのポインタ</returns>
 	const Transform3D* GetParent() const { return parent_; }
 
+	/// <summary>
+	/// モデルオフセット行列を設定（glTFのrootNode.localMatrix用）
+	/// モデル空間での初期姿勢を表す行列を設定する
+	/// OBJの場合は単位行列、glTFの場合はrootNode.localMatrixを設定
+	/// </summary>
+	/// <param name="offset">モデルオフセット行列</param>
+	void SetModelOffset(const Matrix4x4& offset) { modelOffset_ = offset; }
+
+	/// <summary>
+	/// モデルオフセット行列を取得
+	/// </summary>
+	/// <returns>現在のモデルオフセット行列</returns>
+	const Matrix4x4& GetModelOffset() const { return modelOffset_; }
+
 	///指定した値で回転
 	void AddPosition(const Vector3& Position);
 	void AddRotation(const Vector3& rotation);
@@ -84,4 +98,9 @@ private:
 
 	// 親となるTransform3Dへのポインタ
 	const Transform3D* parent_ = nullptr;
+
+	// モデルオフセット行列
+	// glTFのrootNode.localMatrixなど、モデル空間での初期姿勢を表す
+	// デフォルトは単位行列（変換なし）
+	Matrix4x4 modelOffset_ = MakeIdentity4x4();
 };

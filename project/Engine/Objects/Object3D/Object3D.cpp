@@ -15,16 +15,14 @@ void Object3D::Initialize(DirectXCommon* dxCommon, const std::string& modelTag, 
 		{0.0f, 0.0f, 0.0f}   // translate
 	};
 	transform_.SetTransform(defaultTransform);
-
-
-
-
+	
 	// モデルとマテリアル、テクスチャを設定
 	SetModel(modelTag, textureName);
 }
 
 void Object3D::Update(const Matrix4x4& viewProjectionMatrix) {
 	// トランスフォーム行列の更新
+	// UpdateMatrix内でモデルオフセットが自動的に適用される
 	transform_.UpdateMatrix(viewProjectionMatrix);
 
 	// マテリアル更新（常に自分のマテリアルを更新）
@@ -39,39 +37,7 @@ void Object3D::Draw() {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 	object3DCommon_->setCommonRenderSettings();
 
-	//																			//
-	//					rootNode.localMatrixの取得と適用						//
-	//																			//
-
-	// モデルデータからrootNode.localMatrixを取得
-	const auto& modelDataList = sharedModel_->GetModelData();
-	Matrix4x4 rootNodeLocalMatrix = MakeIdentity4x4(); // デフォルトは単位行列
-
-	// ModelDataが存在する場合はrootNode.localMatrixを取得
-	if (!modelDataList.empty()) {
-		rootNodeLocalMatrix = modelDataList[0].rootNode.localMatrix;
-	}
-
-	// TransformationMatrixデータを取得（GPU側のデータ）
-	TransformationMatrix* transformData = transform_.GetTransformDataPtr();
-
-	// 元のWorldマトリックスを保存
-	Matrix4x4 originalWorld = transformData->World;
-	Matrix4x4 originalWVP = transformData->WVP;
-
-	// rootNode.localMatrixを適用した新しいWorldマトリックスを計算
-	// World = rootNode.localMatrix * originalWorld
-	transformData->World = Matrix4x4Multiply(rootNodeLocalMatrix, originalWorld);
-
-	// WVPも再計算（描画時に使用される）
-	// WVP = rootNode.localMatrix * originalWVP
-	transformData->WVP = Matrix4x4Multiply(rootNodeLocalMatrix, originalWVP);
-
-	//																			//
-	//							通常の描画処理									//
-	//																			//
-
-	// トランスフォームを設定
+	// トランスフォームを設定（rootNode.localMatrix適用済み）
 	commandList->SetGraphicsRootConstantBufferView(1, transform_.GetResource()->GetGPUVirtualAddress());
 
 	// 全メッシュを描画
@@ -101,16 +67,8 @@ void Object3D::Draw() {
 		const_cast<Mesh&>(mesh).Bind(commandList);
 		const_cast<Mesh&>(mesh).Draw(commandList);
 	}
-
-	//																			//
-	//					元のマトリックスに戻す（重要）							//
-	//																			//
-
-	// 描画後、元のWorldマトリックスに戻す
-	// （次のフレームのUpdate()で正しく更新されるようにするため）
-	transformData->World = originalWorld;
-	transformData->WVP = originalWVP;
 }
+
 void Object3D::ImGui() {
 #ifdef USEIMGUI
 	if (ImGui::TreeNode(name_.c_str())) {
@@ -288,6 +246,26 @@ void Object3D::SetModel(const std::string& modelTag, const std::string& textureN
 		return;
 	}
 
+	//																			//
+	//				モデルのrootNode.localMatrixをオフセットとして設定				//
+	//																			//
+	
+	// glTFモデルの場合: rootNode.localMatrixが存在し、モデル空間での初期姿勢を表す
+	// OBJモデルの場合: rootNode.localMatrixは単位行列なので影響なし
+	const auto& modelDataList = sharedModel_->GetModelData();
+	if (!modelDataList.empty()) {
+		// モデルのrootNode.localMatrixをTransformのモデルオフセットとして設定
+		// これにより、Update()時に自動的にオフセットが適用される
+		transform_.SetModelOffset(modelDataList[0].rootNode.localMatrix);
+	} else {
+		// モデルデータがない場合は単位行列を設定（変換なし）
+		transform_.SetModelOffset(MakeIdentity4x4());
+	}
+
+	//																			//
+	//						マテリアルの初期化とコピー							//
+	//																			//
+
 	// 個別マテリアルを初期化（モデルからコピー）
 	size_t materialCount = sharedModel_->GetMaterialCount();
 	materials_.Initialize(dxCommon_, materialCount);
@@ -297,5 +275,6 @@ void Object3D::SetModel(const std::string& modelTag, const std::string& textureN
 		materials_.GetMaterial(i).CopyFrom(sharedModel_->GetMaterial(i));
 	}
 
+	// テクスチャ設定
 	SetTexture(textureName.c_str());
 }
