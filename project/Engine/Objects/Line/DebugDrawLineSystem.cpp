@@ -42,10 +42,6 @@ void DebugDrawLineSystem::Reset()
 	// LineRendererの線分をクリア
 	lineRenderer_->Reset();
 
-	// グリッドが有効なら自動生成
-	if (isGridVisible_ && isUse_) {
-		GenerateGridLines();
-	}
 }
 
 void DebugDrawLineSystem::Draw(const Matrix4x4& viewProjectionMatrix)
@@ -205,6 +201,149 @@ void DebugDrawLineSystem::DrawCross(const Vector3& position, float size, const V
 	);
 }
 
+void DebugDrawLineSystem::DrawCone(
+	const Vector3& apex,
+	const Vector3& direction,
+	float height,
+	float angle,
+	const Vector4& color,
+	uint32_t subdivision)
+{
+	if (!isInitialized_ || !isUse_) {
+		return;
+	}
+
+	// 円錐の底面の半径を計算
+	float radius = height * std::tan(angle);
+
+	// 方向ベクトルに垂直な2つのベクトルを計算（円錐の底面を形成）
+	Vector3 tangent, bitangent;
+	if (std::abs(direction.y) < 0.999f) {
+		// Y軸との外積で垂直ベクトルを生成
+		tangent = Normalize(Cross({ 0.0f, 1.0f, 0.0f }, direction));
+	} else {
+		// directionがY軸に近い場合はX軸を使用
+		tangent = Normalize(Cross({ 1.0f, 0.0f, 0.0f }, direction));
+	}
+	bitangent = Normalize(Cross(direction, tangent));
+
+	// 底面の中心位置を計算
+	Vector3 baseCenter = Add(apex, Multiply(direction, height));
+
+	const float pi = std::numbers::pi_v<float>;
+	const float angleStep = (2.0f * pi) / static_cast<float>(subdivision);
+
+	// 底面の円周上の点を計算
+	std::vector<Vector3> circlePoints;
+	circlePoints.reserve(subdivision);
+
+	for (uint32_t i = 0; i < subdivision; ++i) {
+		float theta = angleStep * i;
+		float cosTheta = std::cos(theta);
+		float sinTheta = std::sin(theta);
+
+		// 円周上の点を計算
+		Vector3 offset = Add(
+			Multiply(tangent, radius * cosTheta),
+			Multiply(bitangent, radius * sinTheta)
+		);
+		Vector3 point = Add(baseCenter, offset);
+		circlePoints.push_back(point);
+
+		// 底面の円周を描画
+		if (i > 0) {
+			AddLine(circlePoints[i - 1], point, color);
+		}
+	}
+
+	// 最後の点と最初の点を接続して円周を閉じる
+	if (!circlePoints.empty()) {
+		AddLine(circlePoints.back(), circlePoints.front(), color);
+	}
+
+	// 頂点から底面の4点（上下左右）への線を描画
+	if (subdivision >= 4) {
+		// 上下左右のインデックスを計算（円周を4分割）
+		uint32_t quarterStep = subdivision / 4;
+
+		// 右側の点（0度方向）
+		AddLine(apex, circlePoints[0], color);
+
+		// 上側の点（90度方向）
+		AddLine(apex, circlePoints[quarterStep], color);
+
+		// 左側の点（180度方向）
+		AddLine(apex, circlePoints[quarterStep * 2], color);
+
+		// 下側の点（270度方向）
+		AddLine(apex, circlePoints[quarterStep * 3], color);
+	}
+}
+
+void DebugDrawLineSystem::DrawCone(const Vector3& apex, const Vector3& direction, float height, float angle, const uint32_t& color, uint32_t subdivision)
+{
+	DrawCone(apex, direction, height, angle, Uint32ToColorVector(color), subdivision);
+}
+
+void DebugDrawLineSystem::DrawRectangle(
+	const Vector3& center,
+	const Vector3& normal,
+	const Vector3& tangent,
+	const Vector3& bitangent,
+	float width,
+	float height,
+	const Vector4& color)
+{
+	if (!isInitialized_ || !isUse_) {
+		return;
+	}
+
+	float halfWidth = width * 0.5f;
+	float halfHeight = height * 0.5f;
+
+	// 矩形の4つの頂点を計算
+	Vector3 vertices[4];
+
+	// 右上
+	vertices[0] = Add(center, Add(
+		Multiply(tangent, halfWidth),
+		Multiply(bitangent, halfHeight)
+	));
+
+	// 右下
+	vertices[1] = Add(center, Add(
+		Multiply(tangent, halfWidth),
+		Multiply(bitangent, -halfHeight)
+	));
+
+	// 左下
+	vertices[2] = Add(center, Add(
+		Multiply(tangent, -halfWidth),
+		Multiply(bitangent, -halfHeight)
+	));
+
+	// 左上
+	vertices[3] = Add(center, Add(
+		Multiply(tangent, -halfWidth),
+		Multiply(bitangent, halfHeight)
+	));
+
+	// 矩形の4辺を描画
+	AddLine(vertices[0], vertices[1], color);  // 右辺
+	AddLine(vertices[1], vertices[2], color);  // 下辺
+	AddLine(vertices[2], vertices[3], color);  // 左辺
+	AddLine(vertices[3], vertices[0], color);  // 上辺
+
+	// 中心から法線方向への線を描画（方向を表示）
+	Vector3 directionEnd = Add(center, normal);
+	AddLine(center, directionEnd, color);
+}
+
+void DebugDrawLineSystem::DrawRectangle(const Vector3& center,const Vector3& normal,const Vector3& tangent,const Vector3& bitangent,float width,	float height,const uint32_t& color){
+	DrawRectangle(center, normal, tangent, bitangent, width, height, Uint32ToColorVector(color));
+}
+
+
 void DebugDrawLineSystem::ConfigureGrid(
 	const GridLineType& gridType,
 	float size,
@@ -252,9 +391,13 @@ void DebugDrawLineSystem::CalculateAABBVertices(const AABB& aabb, Vector3 vertic
 	vertices[7] = { aabb.min.x, aabb.max.y, aabb.max.z };	// 7: 左上奥
 }
 
+
+
+
 void DebugDrawLineSystem::GenerateGridLines()
 {
-	if (!isGridVisible_ || !lineRenderer_) {
+	// isUse_とisGridVisible_が有効でない場合は描画しない
+	if (!isUse_ || !isGridVisible_ || !lineRenderer_) {
 		return;
 	}
 

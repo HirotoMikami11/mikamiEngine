@@ -15,6 +15,11 @@ void DirectionalLight::SetDefaultSettings()
 	lightData_.intensity = 1.0f; // 強度1.0
 }
 
+void DirectionalLight::DebugLineAdd()
+{
+	// 平行光源のデバッグ表示しない
+}
+
 void DirectionalLight::ImGui(const std::string& label)
 {
 #ifdef USEIMGUI

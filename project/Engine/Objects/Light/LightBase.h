@@ -1,5 +1,6 @@
 #pragma once
 #include "Structures.h"
+#include"DebugDrawLineSystem.h"
 #include <string>
 
 /// <summary>
@@ -34,6 +35,11 @@ public:
 	// 共通Setter
 	virtual void SetColor(const Vector4& color) = 0;
 	virtual void SetIntensity(float intensity) = 0;
+
+	/// <summary>
+	/// デバッグ用のライト表示
+	/// </summary>
+	virtual void DebugLineAdd() = 0;
 
 	/// <summary>
 	/// ImGui用の編集UI

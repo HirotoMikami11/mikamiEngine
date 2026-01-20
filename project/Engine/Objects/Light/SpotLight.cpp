@@ -1,6 +1,7 @@
 #include "SpotLight.h"
 #include "ImGui/ImGuiManager.h"
 #include "MyMath.h"
+#include "Engine.h"
 #include <algorithm>
 
 void SpotLight::Initialize(
@@ -119,6 +120,28 @@ void SpotLight::UpdateDirection()
 	// 初期方向ベクトル（Z軸正方向）を回転
 	Vector3 forward = { 0.0f, 0.0f, 1.0f };
 	lightData_.direction = Normalize(Transform(forward, rotationMatrix));
+}
+
+
+void SpotLight::DebugLineAdd()
+{
+#ifdef USEIMGUI
+	// DebugDrawLineSystemのインスタンスを取得
+	DebugDrawLineSystem* debugDrawLineSystem = Engine::GetInstance()->GetDebugDrawManager();
+	if (!debugDrawLineSystem) {
+		return;
+	}
+
+	// スポットライトの形にラインを描画
+	debugDrawLineSystem->DrawCone(
+		lightData_.position,
+		lightData_.direction,
+		lightData_.distance,
+		DegToRad(angle_),
+		{ 1.0f, 1.0f, 1.0f, 1.0f }, // 黄色
+		12);
+#endif
+
 }
 
 void SpotLight::ImGui(const std::string& label)

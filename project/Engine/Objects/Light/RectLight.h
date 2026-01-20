@@ -59,6 +59,11 @@ public:
 	void SetDecay(float decay) { lightData_.decay = decay; }
 
 	/// <summary>
+	/// デバッグ用のライト表示
+	/// </summary>
+	void DebugLineAdd() override;
+
+	/// <summary>
 	/// ImGui用の編集UI
 	/// </summary>
 	/// <param name="label">UIのラベル</param>

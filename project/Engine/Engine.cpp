@@ -127,9 +127,11 @@ void Engine::StartDrawOffscreen() {
 	// フレーム開始
 	dxCommon_->BeginFrame();
 
-	// デバッグ描画のリセット（前フレームの線分をクリア、グリッド自動生成）
+	// デバッグ描画
 	if (debugDrawManager_) {
-		debugDrawManager_->Reset();
+		debugDrawManager_->Reset();					// フレーム開始時にリセット
+		debugDrawManager_->GenerateGridLines();		// グリッド線自動生成
+		lightManager_->DebugDrawLight();			// ライトの描画
 	}
 
 	/// オフスクリーンの描画準備（3D描画用）

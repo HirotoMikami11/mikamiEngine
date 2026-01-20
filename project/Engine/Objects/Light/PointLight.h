@@ -54,6 +54,11 @@ public:
 	void ImGui(const std::string& label) override;
 
 	/// <summary>
+	/// デバッグ用のライト表示
+	/// </summary>
+	void DebugLineAdd() override;
+
+	/// <summary>
 	/// ライトが有効かどうか
 	/// </summary>
 	bool IsActive() const { return isActive_; }

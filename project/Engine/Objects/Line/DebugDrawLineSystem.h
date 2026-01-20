@@ -86,7 +86,42 @@ public:
 	/// <param name="color">色</param>
 	void DrawCross(const Vector3& position, float size = 0.5f, const Vector4& color = { 1.0f, 1.0f, 0.0f, 1.0f });
 
+	/// <summary>
+	/// 円錐を描画（スポットライト可視化用）
+	/// </summary>
+	/// <param name="apex">円錐の頂点位置</param>
+	/// <param name="direction">円錐の方向（正規化済み）</param>
+	/// <param name="height">円錐の高さ</param>
+	/// <param name="angle">円錐の半角（ラジアン）</param>
+	/// <param name="color">描画色</param>
+	/// <param name="subdivision">円周分割数（デフォルト16）</param>
+	void DrawCone(const Vector3& apex,const Vector3& direction,float height,float angle,const Vector4& color,uint32_t subdivision = 16);
+	void DrawCone(const Vector3& apex,const Vector3& direction,float height,float angle,const uint32_t& color,uint32_t subdivision = 16);
+
+	/// <summary>
+	/// 矩形を描画
+	/// </summary>
+	/// <param name="center">矩形の中心位置</param>
+	/// <param name="normal">矩形の法線（面の向き）</param>
+	/// <param name="tangent">矩形のローカルX軸（横方向）</param>
+	/// <param name="bitangent">矩形のローカルY軸（縦方向）</param>
+	/// <param name="width">矩形の幅</param>
+	/// <param name="height">矩形の高さ</param>
+	/// <param name="color">描画色</param>
+	void DrawRectangle(const Vector3& center,const Vector3& normal,const Vector3& tangent,const Vector3& bitangent,float width,float height,const Vector4& color);
+	void DrawRectangle(const Vector3& center,const Vector3& normal,const Vector3& tangent,const Vector3& bitangent,float width,float height,const uint32_t& color);
+
+
+
+
+
+
 	// ===== グリッド設定API =====
+
+	/// <summary>
+	/// グリッド線を生成
+	/// </summary>
+	void GenerateGridLines();
 
 	/// <summary>
 	/// グリッド設定を変更
@@ -140,11 +175,6 @@ private:
 	/// AABBの8頂点を計算
 	/// </summary>
 	void CalculateAABBVertices(const AABB& aabb, Vector3 vertices[8]) const;
-
-	/// <summary>
-	/// グリッド線を生成
-	/// </summary>
-	void GenerateGridLines();
 
 	/// <summary>
 	/// 各平面のグリッドを描画

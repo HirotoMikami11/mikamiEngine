@@ -104,16 +104,16 @@ void DebugScene::InitializeGameObjects() {
 	DirectionalLight& dirLight = LightManager::GetInstance()->GetDirectionalLight();
 	dirLight.SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });	// 黒い光（無効化）
 
-	// ポイントライト: 青い光
+	// ポイントライト
 	pointLight_ = LightManager::GetInstance()->AddPointLight(
 		{ -5.0f, 0.0f, 0.0f },			//座標
-		{ 1.0f, 1.0f, 0.0f, 1.0f },		// 白色
+		{ 1.0f, 1.0f, 0.0f, 1.0f },		// 黄色
 		2.0f,							// 強度
-		10.0f,							// 影響範囲
-		10.0f							// 減衰率
+		2.5f,							// 影響範囲
+		1.6f							// 減衰率
 	);
 
-	// スポットライト: 白い光（真上から下向き）
+	// スポットライト（真上から下向き）
 	spotLight_ = LightManager::GetInstance()->AddSpotLight(
 		{ 0.0f, 5.0f, 0.0f },			// 位置（上方）
 		{ 90.0f, 0.0f, 0.0f },			// 回転（X軸90度=下向き）
@@ -124,7 +124,7 @@ void DebugScene::InitializeGameObjects() {
 		30.0f,							// スポット角度（度）
 		20.0f							// フォールオフ開始角度（度）
 	);
-	// エリアライト: 赤色の面光源
+	// エリアライト
 	rectLight_ = LightManager::GetInstance()->AddRectLight(
 		{ -2.4f, 0.1f, -5.0f },			// 位置（右側上方）
 		{ 90.0f, 0.0f, 0.0f },			// 回転（X軸90度=下向き）

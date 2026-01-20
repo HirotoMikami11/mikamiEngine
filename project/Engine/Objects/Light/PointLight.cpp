@@ -1,4 +1,5 @@
 #include "PointLight.h"
+#include "Engine.h"
 #include "ImGui/ImGuiManager.h" 
 
 void PointLight::Initialize(
@@ -72,5 +73,23 @@ void PointLight::ImGui(const std::string& label)
 		ImGui::TreePop();
 	}
 
+#endif
+}
+
+void PointLight::DebugLineAdd()
+{
+#ifdef USEIMGUI
+	// DebugDrawLineSystemのインスタンスを取得
+	DebugDrawLineSystem* debugDrawLineSystem = Engine::GetInstance()->GetDebugDrawManager();
+	if (!debugDrawLineSystem) {
+		return;
+	}
+
+	// スポットライトの形にラインを描画
+	debugDrawLineSystem->DrawSphere(
+		lightData_.position,
+		lightData_.radius,
+		{ 1.0f, 1.0f, 1.0f, 1.0f },
+		12);
 #endif
 }

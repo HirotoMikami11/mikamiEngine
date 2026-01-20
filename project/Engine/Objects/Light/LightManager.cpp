@@ -43,6 +43,9 @@ void LightManager::ResetToDefault()
 	// LightingDataを更新
 	UpdateLightingData();
 
+	// デバッグ描画を行うかどうか
+	isDebugDraw_ = false;
+
 	Logger::Log(Logger::GetStream(), "LightManager: Reset to default (Directional light only)\n");
 }
 
@@ -50,6 +53,41 @@ void LightManager::Update()
 {
 	// LightingDataを更新
 	UpdateLightingData();
+
+}
+
+void LightManager::DebugDrawLight()
+{
+
+	// デバッグ描画が無効なら何もしない
+	if (!isDebugDraw_) {
+		return;
+	}
+	//ポイントライトのライト表示
+	for (auto& [id, light] : pointLights_) {
+		if (!light || !light->IsActive()) {
+			continue;
+		}
+		light->DebugLineAdd();
+	}
+
+	//スポットライトのライト表示
+	for (auto& [id, light] : spotLights_) {
+		if (!light || !light->IsActive()) {
+			continue;
+		}
+
+		light->DebugLineAdd();
+	}
+
+	// エリアライト（矩形ライト）のライト表示
+	for (auto& [id, light] : rectLights_) {
+		if (!light || !light->IsActive()) {
+			continue;
+		}
+		light->DebugLineAdd();
+	}
+
 }
 
 PointLight* LightManager::AddPointLight(
@@ -242,6 +280,9 @@ void LightManager::ImGui()
 #ifdef USEIMGUI
 
 	ImGui::Begin("Light Manager");
+
+	// 有効/無効切り替え
+	ImGui::Checkbox("isDebugDraw", &isDebugDraw_);
 
 	// 平行光源
 	directionalLight_.ImGui("Directional Light");
@@ -581,3 +622,4 @@ void LightManager::UpdateLightingData()
 		}
 	}
 }
+

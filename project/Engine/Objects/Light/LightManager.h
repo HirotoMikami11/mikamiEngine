@@ -42,6 +42,11 @@ public:
 	void Update();
 
 	/// <summary>
+	/// デバッグ用のライト表示
+	/// </summary>
+	void DebugDrawLight();
+
+	/// <summary>
 	/// ポイントライトを追加
 	/// </summary>
 	/// <param name="position">位置</param>
@@ -191,4 +196,7 @@ private:
 	// GPU送信用リソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> lightingResource_;
 	LightingData* lightingData_ = nullptr;
+
+	//デバッグ描画を行うか
+	bool isDebugDraw_ ;
 };

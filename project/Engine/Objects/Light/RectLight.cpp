@@ -1,5 +1,6 @@
 #include "RectLight.h"
 #include "ImGui/ImGuiManager.h"
+#include "Engine.h"
 #include "MyMath.h"
 
 void RectLight::Initialize(
@@ -70,6 +71,67 @@ void RectLight::UpdateVectors()
 	// バイタンジェントベクトル（Y軸正方向 = 上方向）
 	Vector3 up = { 0.0f, 1.0f, 0.0f };
 	lightData_.bitangent = Normalize(Transform(up, rotationMatrix));
+}
+
+void RectLight::DebugLineAdd()
+{
+	if (!isActive_) {
+		return;
+	}
+
+	// エリアライトの形状を矩形で描画
+	Vector4 debugColor = { 1.0f, 1.0f, 1.0f, 1.0f };	//白
+	float directionLength = 1.5f;						// 法線方向の線の長さ
+
+	// 方向線の長さを考慮した法線ベクトルを作成
+	Vector3 scaledNormal = Multiply(lightData_.normal, directionLength);
+
+	// 矩形を描画
+	DebugDrawLineSystem::GetInstance()->DrawRectangle(
+		lightData_.position,
+		scaledNormal,
+		lightData_.tangent,
+		lightData_.bitangent,
+		lightData_.width,
+		lightData_.height,
+		debugColor
+	);
+
+	// 対角線を描画して面をより明確にする
+	float halfWidth = lightData_.width * 0.5f;
+	float halfHeight = lightData_.height * 0.5f;
+
+	// 右上
+	Vector3 topRight = Add(lightData_.position, Add(
+		Multiply(lightData_.tangent, halfWidth),
+		Multiply(lightData_.bitangent, halfHeight)
+	));
+
+	// 左下
+	Vector3 bottomLeft = Add(lightData_.position, Add(
+		Multiply(lightData_.tangent, -halfWidth),
+		Multiply(lightData_.bitangent, -halfHeight)
+	));
+
+	// 対角線を半透明で描画
+	Vector4 diagonalColor = debugColor;
+	diagonalColor.w *= 0.3f;
+	DebugDrawLineSystem::GetInstance()->AddLine(topRight, bottomLeft, diagonalColor);
+
+	// 右下
+	Vector3 bottomRight = Add(lightData_.position, Add(
+		Multiply(lightData_.tangent, halfWidth),
+		Multiply(lightData_.bitangent, -halfHeight)
+	));
+
+	// 左上
+	Vector3 topLeft = Add(lightData_.position, Add(
+		Multiply(lightData_.tangent, -halfWidth),
+		Multiply(lightData_.bitangent, halfHeight)
+	));
+
+	DebugDrawLineSystem::GetInstance()->AddLine(bottomRight, topLeft, diagonalColor);
+
 }
 
 void RectLight::ImGui(const std::string& label)
