@@ -244,6 +244,9 @@
     <Filter Include="Engine\OffScreenRenderer\EffectFunc\DamageVignette">
       <UniqueIdentifier>{5554fb4d-9afb-489e-91a4-b72c13488342}</UniqueIdentifier>
     </Filter>
+    <Filter Include="リソース ファイル\Shader\Outline">
+      <UniqueIdentifier>{815dc09e-279f-4bd3-a005-22fa2fcf5b2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -707,7 +710,9 @@
     <FxCompile Include="resources\Shader\Particle\Particle.VS.hlsl">
       <Filter>リソース ファイル\Shader\Particle</Filter>
     </FxCompile>
-    <FxCompile Include="resources\Shader\Outline\Outline.PS.hlsl" />
+    <FxCompile Include="resources\Shader\Outline\Outline.PS.hlsl">
+      <Filter>リソース ファイル\Shader\Outline</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\Game.h">
@@ -1201,7 +1206,9 @@
     <None Include="resources\Shader\Particle\Particle.hlsli">
       <Filter>リソース ファイル\Shader\Particle</Filter>
     </None>
-    <None Include="resources\Shader\Outline\Outline.hlsli" />
+    <None Include="resources\Shader\Outline\Outline.hlsli">
+      <Filter>リソース ファイル\Shader\Outline</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
