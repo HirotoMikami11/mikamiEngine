@@ -271,6 +271,12 @@
     <Filter Include="Engine\Framework">
       <UniqueIdentifier>{1901f8c1-f4b6-4b78-b3d1-37c0b6892451}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\OffScreenRenderer\PostEffect\Binarization">
+      <UniqueIdentifier>{86544365-61d3-4cbc-97e9-dd1852d0b7bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\Binarization">
+      <UniqueIdentifier>{da0ced86-728e-4267-a5de-a3d1b11543e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -690,6 +696,9 @@
     <ClCompile Include="Engine\Objects\Light\RectLight.cpp">
       <Filter>Engine\Objects\Light</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Binarization\BinarizationPostEffect.cpp">
+      <Filter>Engine\OffScreenRenderer\PostEffect\Binarization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -736,6 +745,9 @@
     </FxCompile>
     <FxCompile Include="resources\Shader\Outline\Outline.PS.hlsl">
       <Filter>リソース ファイル\Shader\Outline</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\Binarization\Binarization.PS.hlsl">
+      <Filter>リソース ファイル\Shader\Binarization</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1198,6 +1210,9 @@
     <ClInclude Include="Engine\Objects\Light\RectLight.h">
       <Filter>Engine\Objects\Light</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Binarization\BinarizationPostEffect.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli">
@@ -1232,6 +1247,9 @@
     </None>
     <None Include="resources\Shader\Outline\Outline.hlsli">
       <Filter>リソース ファイル\Shader\Outline</Filter>
+    </None>
+    <None Include="resources\Shader\Binarization\Binarization.hlsli">
+      <Filter>リソース ファイル\Shader\Binarization</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

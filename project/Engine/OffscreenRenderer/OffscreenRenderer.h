@@ -10,18 +10,17 @@
 #include "MyFunction.h"
 
 #include "OffscreenTriangle/OffscreenTriangle.h"				// OffscreenTriangleクラスを使用
-#include "PostProcessChain.h"	// ポストプロセスチェーン
+#include "PostProcessChain.h"									// ポストプロセスチェーン
 
-#include "PostEffect/RGBShift/RGBShiftPostEffect.h"	// RGBシフトエフェクト
-#include "PostEffect/LineGlitch/LineGlitchPostEffect.h"	// ラインズラシ
-#include "PostEffect/Grayscale/GrayscalePostEffect.h"	// グレースケールエフェクト
-#include "PostEffect/Vignette/VignettePostEffect.h"	// ビネットエフェクト
+#include "PostEffect/RGBShift/RGBShiftPostEffect.h"				// RGBシフトエフェクト
+#include "PostEffect/LineGlitch/LineGlitchPostEffect.h"			// ラインズラシ
+#include "PostEffect/Grayscale/GrayscalePostEffect.h"			// グレースケールエフェクト
+#include "PostEffect/Vignette/VignettePostEffect.h"				// ビネットエフェクト
 
-#include "PostEffect/DepthOfField/DepthOfFieldPostEffect.h"	// 深度ぼかしエフェクト
-#include "PostEffect/DepthFog/DepthFogPostEffect.h"	// 深度フォグエフェクト
-#include "PostEffect/Outline/OutlinePostEffect.h"
-
-
+#include "PostEffect/DepthOfField/DepthOfFieldPostEffect.h"		// 深度ぼかしエフェクト
+#include "PostEffect/DepthFog/DepthFogPostEffect.h"				// 深度フォグエフェクト
+#include "PostEffect/Outline/OutlinePostEffect.h"				// アウトラインエフェクト
+#include "PostEffect/Binarization/BinarizationPostEffect.h"		// 二値化ティザリングエフェクト
 
 /// <summary>
 /// オフスクリーンレンダリングを管理するクラス
@@ -157,6 +156,12 @@ public:
 	OutlinePostEffect* GetOutlineEffect() { return outlineEffect_; }
 
 	/// <summary>
+	/// 二値化ポストエフェクトを取得します。
+	/// </summary>
+	/// <returns>二値化ポストエフェクトへのポインタ</returns>
+	BinarizationPostEffect* GetBinarizationEffect() { return binarizationEffect_; }
+
+	/// <summary>
 	/// ポストプロセスチェーンを取得
 	/// </summary>
 	/// <returns>ポストプロセスチェーンのポインタ</returns>
@@ -237,4 +242,5 @@ private:
 	DepthFogPostEffect* depthFogEffect_ = nullptr;
 	DepthOfFieldPostEffect* depthOfFieldEffect_ = nullptr;
 	OutlinePostEffect* outlineEffect_ = nullptr;
+	BinarizationPostEffect* binarizationEffect_ = nullptr;
 };

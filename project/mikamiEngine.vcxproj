@@ -183,6 +183,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Objects\Light\PointLight.cpp" />
     <ClCompile Include="Engine\OffscreenRenderer\EffectFunc\DamageVignette.cpp" />
     <ClCompile Include="Engine\Core\JsonSettings\JsonSettings.cpp" />
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Binarization\BinarizationPostEffect.cpp" />
     <ClCompile Include="Engine\Utility\CSVUtility.cpp" />
     <ClCompile Include="Engine\Objects\Line\DebugDrawLineSystem.cpp" />
     <ClCompile Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.cpp" />
@@ -320,6 +321,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Objects\Light\RectLight.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="resources\Shader\Binarization\Binarization.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="resources\Shader\DepthFog\DepthFog.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -435,6 +441,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Objects\Light\PointLight.h" />
     <ClInclude Include="Engine\OffscreenRenderer\EffectFunc\DamageVignette.h" />
     <ClInclude Include="Engine\Core\JsonSettings\JsonSettings.h" />
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Binarization\BinarizationPostEffect.h" />
     <ClInclude Include="Engine\Utility\CSVUtility.h" />
     <ClInclude Include="Engine\Objects\Line\DebugDrawLineSystem.h" />
     <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.h" />
@@ -600,6 +607,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="resources\Shader\Binarization\Binarization.hlsli" />
     <None Include="resources\Shader\DepthFog\DepthFog.hlsli" />
     <None Include="resources\Shader\DepthOfField\DepthOfField.hlsli" />
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli" />
