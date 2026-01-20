@@ -31,6 +31,21 @@ void GameScene::ConfigureOffscreenEffects()
 		depthFogEffect->SetFogColor({ 0.0f,0.0f,0.0f,1.0f });
 
 	}
+
+	//二値化
+	auto* BinarizationEffect = offscreenRenderer_->GetBinarizationEffect();
+	if (BinarizationEffect) {
+		BinarizationEffect->SetEnabled(true);
+		BinarizationEffect->ApplyPreset(BinarizationPostEffect::EffectPreset::BLACK_WHITE);
+	}
+
+
+	// ビネット
+	auto* vignetteEffect = offscreenRenderer_->GetVignetteEffect();
+	if (vignetteEffect) {
+		vignetteEffect->SetEnabled(true);
+		vignetteEffect->ApplyPreset(VignettePostEffect::EffectPreset::INTENSE);
+	}
 }
 
 void GameScene::Initialize() {
