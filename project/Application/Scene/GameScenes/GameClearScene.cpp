@@ -27,7 +27,7 @@ void GameClearScene::ConfigureOffscreenEffects()
 	if (depthFogEffect) {
 		depthFogEffect->SetEnabled(true);
 		depthFogEffect->SetFogDistance(0.1f, 110.0f); // 深度フォグの距離を設定
-		depthFogEffect->SetFogColor({ 0.0f,0.0f,0.0f,1.0f });
+		depthFogEffect->SetFogColor({ 0.055f,0.0f,0.0f,1.0f });
 
 	}
 
