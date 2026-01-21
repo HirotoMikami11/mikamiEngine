@@ -23,7 +23,7 @@ void TitleScene::ConfigureOffscreenEffects()
 	// 全てのエフェクトを無効化
 	offscreenRenderer_->DisableAllEffects();
 	// 必要に応じてここでエフェクトを有効化
-	
+
 	auto* depthFogEffect = offscreenRenderer_->GetDepthFogEffect();
 	if (depthFogEffect) {
 		depthFogEffect->SetEnabled(true);
@@ -38,23 +38,6 @@ void TitleScene::ConfigureOffscreenEffects()
 		depthOfFieldEffect->SetFocusDistance(6.0f);
 		depthOfFieldEffect->SetFocusRange(20.0f);
 		depthOfFieldEffect->SetBlurStrength(3.0f);
-	}
-
-	//二値化
-	auto* BinarizationEffect = offscreenRenderer_->GetBinarizationEffect();
-	if (BinarizationEffect) {
-		BinarizationEffect->SetEnabled(true);
-		BinarizationEffect->ApplyPreset(BinarizationPostEffect::EffectPreset::BLACK_WHITE);
-		BinarizationEffect->SetThreshold(0.035f);
-	}
-
-
-	// ビネット
-	auto* vignetteEffect = offscreenRenderer_->GetVignetteEffect();
-	if (vignetteEffect) {
-		vignetteEffect->SetEnabled(true);
-		vignetteEffect->ApplyPreset(VignettePostEffect::EffectPreset::INTENSE);
-		vignetteEffect->SetVignetteStrength(0.505f);
 	}
 }
 
