@@ -58,7 +58,9 @@ ScaffoldingReadMe.txt
 StyleCopReport.xml
 
 # Files built by Visual Studio
-
+*.pdb
+*.ipdb
+*.log
 
 # Chutzpah Test files
 _Chutzpah*
@@ -325,4 +327,12 @@ MigrationBackup/
 FodyWeavers.xsd
 
 
+# Custom: C++ build output folders
+x64/
+x86/
 Dumps/
+
+# Custom: Blender backup files
+*.blend
+*.blend1
+
