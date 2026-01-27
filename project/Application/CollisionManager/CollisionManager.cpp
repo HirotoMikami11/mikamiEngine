@@ -56,14 +56,6 @@ void CollisionManager::CheckAllCollision() {
 }
 
 void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
-	/// 判定対象A,Bの座標
-	Vector3 posA, posB;
-
-	posA = colliderA->GetWorldPosition();
-	posB = colliderB->GetWorldPosition();
-
-	float length = Length(posA - posB);
-
 	// 衝突フィルタリング
 	// コライダーAとコライダーBで衝突属性とマスクを確認
 	if ((colliderA->GetCollisionAttribute() & colliderB->GetCollisionMask()) == 0 ||
@@ -72,8 +64,71 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 		return;
 	}
 
-	// 球と球の交差判定
-	if (length < colliderA->GetRadius() + colliderB->GetRadius()) {
+	// コライダーの種類に応じて衝突判定を行う
+	bool isColliding = false;
+
+	ColliderType typeA = colliderA->GetColliderType();
+	ColliderType typeB = colliderB->GetColliderType();
+
+	// 球体 vs 球体
+	if (typeA == ColliderType::SPHERE && typeB == ColliderType::SPHERE) {
+		Vector3 posA = colliderA->GetWorldPosition();
+		Vector3 posB = colliderB->GetWorldPosition();
+		float length = Length(posA - posB);
+		
+		if (length < colliderA->GetRadius() + colliderB->GetRadius()) {
+			isColliding = true;
+		}
+	}
+	// 球体 vs AABB
+	else if (typeA == ColliderType::SPHERE && typeB == ColliderType::AABB) {
+		SphereMath sphere;
+		sphere.center = colliderA->GetWorldPosition();
+		sphere.radius = colliderA->GetRadius();
+
+		AABB aabb = colliderB->GetAABB();
+		Vector3 posB = colliderB->GetWorldPosition();
+		aabb.min = aabb.min + posB;
+		aabb.max = aabb.max + posB;
+
+		if (IsCollision(aabb, sphere)) {
+			isColliding = true;
+		}
+	}
+	// AABB vs 球体
+	else if (typeA == ColliderType::AABB && typeB == ColliderType::SPHERE) {
+		AABB aabb = colliderA->GetAABB();
+		Vector3 posA = colliderA->GetWorldPosition();
+		aabb.min = aabb.min + posA;
+		aabb.max = aabb.max + posA;
+
+		SphereMath sphere;
+		sphere.center = colliderB->GetWorldPosition();
+		sphere.radius = colliderB->GetRadius();
+
+		if (IsCollision(aabb, sphere)) {
+			isColliding = true;
+		}
+	}
+	// AABB vs AABB
+	else if (typeA == ColliderType::AABB && typeB == ColliderType::AABB) {
+		AABB aabbA = colliderA->GetAABB();
+		Vector3 posA = colliderA->GetWorldPosition();
+		aabbA.min = aabbA.min + posA;
+		aabbA.max = aabbA.max + posA;
+
+		AABB aabbB = colliderB->GetAABB();
+		Vector3 posB = colliderB->GetWorldPosition();
+		aabbB.min = aabbB.min + posB;
+		aabbB.max = aabbB.max + posB;
+
+		if (IsCollision(aabbA, aabbB)) {
+			isColliding = true;
+		}
+	}
+
+	// 衝突していた場合の処理
+	if (isColliding) {
 		// コールバック関数を呼び出す（相手のコライダー情報を渡す）
 		colliderA->OnCollision(colliderB);
 		colliderB->OnCollision(colliderA);

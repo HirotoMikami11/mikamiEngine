@@ -1,7 +1,54 @@
 #pragma once
 #include "Object3D.h"
 #include "DirectXCommon.h"
+#include "Collider.h"
 #include <array>
+
+/// <summary>
+/// 壁の個別コライダークラス
+/// 各壁がColliderを継承し、独立した衝突判定を持つ
+/// </summary>
+class WallCollider : public Collider {
+public:
+	WallCollider() = default;
+	~WallCollider() = default;
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="position">壁の位置</param>
+	/// <param name="aabbSize">AABBのサイズ</param>
+	void Initialize(const Vector3& position, const Vector3& aabbSize);
+
+	/// <summary>
+	/// 位置を更新
+	/// </summary>
+	void SetPosition(const Vector3& position) { position_ = position; }
+
+	/// <summary>
+	/// AABBサイズを更新
+	/// </summary>
+	void SetAABBSize(const Vector3& size);
+
+	/// <summary>
+	/// 現在のAABBサイズを取得
+	/// </summary>
+	Vector3 GetAABBSize() const { return aabbSize_; }
+
+	/// <summary>
+	/// 衝突時に呼ばれる関数（オーバーライド）
+	/// </summary>
+	void OnCollision(Collider* other) override;
+
+	/// <summary>
+	/// ワールド座標を取得（オーバーライド）
+	/// </summary>
+	Vector3 GetWorldPosition() override { return position_; }
+
+private:
+	Vector3 position_ = { 0.0f, 0.0f, 0.0f };
+	Vector3 aabbSize_ = { 1.0f, 1.0f, 1.0f };  // 現在のAABBサイズを保存
+};
 
 /// <summary>
 /// 壁クラス
@@ -63,6 +110,11 @@ public:
 	/// </summary>
 	void ApplyParameters();
 
+	/// <summary>
+	/// 全ての壁のコライダーを取得（CollisionManagerに登録するため）
+	/// </summary>
+	std::vector<Collider*> GetColliders();
+
 private:
 	/// <summary>
 	/// 壁オブジェクトの構造体
@@ -71,6 +123,9 @@ private:
 	struct WallObject {
 		std::unique_ptr<Model3D> obj;
 		Vector3Transform transform;
+		std::array<std::unique_ptr<WallCollider>, 3> colliders;  // 各壁に3つのコライダー
+		std::array<Vector3, 3> colliderOffsets;  // 各コライダーの中心座標オフセット
+		std::array<Vector3, 3> colliderSizes;    // 各コライダーのサイズ
 	};
 
 	/// <summary>
@@ -78,6 +133,11 @@ private:
 	/// areaSize_とmodelSizeに基づいて4面の壁を適切に配置
 	/// </summary>
 	void UpdateTransforms();
+
+	/// <summary>
+	/// コライダーを更新
+	/// </summary>
+	void UpdateColliders();
 
 	// システム参照
 	DirectXCommon* dxCommon_;

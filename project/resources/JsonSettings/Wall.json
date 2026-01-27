@@ -4,6 +4,126 @@
             60.0,
             60.0
         ],
+        "colliderOffset_0_0": [
+            -20.0,
+            0.0,
+            0.0
+        ],
+        "colliderOffset_0_1": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "colliderOffset_0_2": [
+            20.0,
+            0.0,
+            0.0
+        ],
+        "colliderOffset_1_0": [
+            -25.5,
+            0.0,
+            0.0
+        ],
+        "colliderOffset_1_1": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "colliderOffset_1_2": [
+            25.5,
+            0.0,
+            0.0
+        ],
+        "colliderOffset_2_0": [
+            -25.5,
+            0.0,
+            0.0
+        ],
+        "colliderOffset_2_1": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "colliderOffset_2_2": [
+            25.5,
+            0.0,
+            0.0
+        ],
+        "colliderOffset_3_0": [
+            -25.5,
+            0.0,
+            0.0
+        ],
+        "colliderOffset_3_1": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "colliderOffset_3_2": [
+            25.5,
+            0.0,
+            0.0
+        ],
+        "colliderSize_0_0": [
+            20.0,
+            30.0,
+            1.0
+        ],
+        "colliderSize_0_1": [
+            20.0,
+            30.0,
+            1.0
+        ],
+        "colliderSize_0_2": [
+            20.0,
+            30.0,
+            1.0
+        ],
+        "colliderSize_1_0": [
+            1.0,
+            30.0,
+            11.5
+        ],
+        "colliderSize_1_1": [
+            1.0,
+            30.0,
+            20.0
+        ],
+        "colliderSize_1_2": [
+            1.0,
+            30.0,
+            11.5
+        ],
+        "colliderSize_2_0": [
+            11.5,
+            30.0,
+            1.0
+        ],
+        "colliderSize_2_1": [
+            20.0,
+            30.0,
+            1.0
+        ],
+        "colliderSize_2_2": [
+            11.5,
+            30.0,
+            1.0
+        ],
+        "colliderSize_3_0": [
+            1.0,
+            30.0,
+            11.5
+        ],
+        "colliderSize_3_1": [
+            1.0,
+            30.0,
+            20.0
+        ],
+        "colliderSize_3_2": [
+            1.0,
+            30.0,
+            11.5
+        ],
         "modelSize": [
             60.0,
             30.0,

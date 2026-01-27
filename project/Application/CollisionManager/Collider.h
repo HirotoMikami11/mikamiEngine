@@ -4,6 +4,14 @@
 #include "Engine.h"
 #include "CollisionManager/CollisionConfig.h"  // 衝突属性のフラグを定義
 
+/// <summary>
+/// コライダーの種類
+/// </summary>
+enum class ColliderType {
+	SPHERE,	// 球体
+	AABB	// 軸並行境界箱
+};
+
 
 /// <summary>
 /// 衝突判定オブジェクト
@@ -30,11 +38,34 @@ public:
 	/// </summary>
 	virtual void DebugLineAdd();
 
-	// 半径を取得
+	// コライダーの種類を取得
+	ColliderType GetColliderType() const { return colliderType_; }
+	// コライダーの種類を設定
+	void SetColliderType(ColliderType type) { colliderType_ = type; }
+
+	// 半径を取得（Sphere用）
 	virtual float GetRadius() const { return radius_; }
 
-	// 半径を設定
+	// 半径を設定（Sphere用）
 	virtual void SetRadius(float radius) { radius_ = radius; }
+
+	// AABBを取得
+	virtual AABB GetAABB() const { return aabb_; }
+
+	// AABBを設定
+	virtual void SetAABB(const AABB& aabb) { 
+		aabb_ = aabb;
+		FixAABBMinMax(aabb_);
+	}
+
+	// AABBをサイズで設定（中心からのオフセット）
+	void SetAABBSize(const Vector3& size) {
+		Vector3 center = GetWorldPosition();
+		Vector3 halfSize = { size.x * 0.5f, size.y * 0.5f, size.z * 0.5f };
+		aabb_.min = center - halfSize;
+		aabb_.max = center + halfSize;
+		FixAABBMinMax(aabb_);
+	}
 
 	/// 衝突属性の取得設定
 
@@ -66,8 +97,14 @@ public:
 	void SetAttackPower(float power) { attackPower_ = power; }
 
 protected:
-	// 衝突半径
+	// コライダーの種類（デフォルトはSphere）
+	ColliderType colliderType_ = ColliderType::SPHERE;
+
+	// 衝突半径（Sphere用）
 	float radius_ = 1.0f; // 当たり判定用半径
+
+	// AABB（軸並行境界箱用）
+	AABB aabb_ = { {-1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f} };
 
 	// 衝突属性(自分)
 	uint32_t collisionAttribute_ = 0xffffffff;

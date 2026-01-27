@@ -198,6 +198,11 @@ void GameScene::UpdateCollison()
 		collisionManager_->AddCollider(collider);
 	}
 
+	// 壁のコライダーを追加
+	auto wallColliders = field_->GetWall()->GetColliders();
+	for (auto* collider : wallColliders) {
+		collisionManager_->AddCollider(collider);
+	}
 
 	// プレイヤーの弾のコライダーを追加
 	for (auto* bullet : playerBullets) {
