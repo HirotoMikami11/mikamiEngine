@@ -5,14 +5,15 @@
 #include <filesystem>
 
 TitleWall::TitleWall()
-	: dxCommon_(nullptr) {
-
+	: dxCommon_(nullptr)
+	, zOffset_(0.0f)
+{
 	// 壁モデルサイズ（scale が 1 のときの実寸法）
 	// {長さ（X方向に対応）, 高さ, 厚み（Z方向）}
-	modelSize = { 60.0f, 30.0f, 1.0f };
+	modelSize_ = { 60.0f, 30.0f, 1.0f };
 
-	// 囲みたい領域（フルサイズ）。デフォルトは modelSize.x を幅・奥行きに使う
-	areaSize_ = { modelSize.x, modelSize.x };
+	// 囲みたい領域（フルサイズ）。デフォルトは modelSize_.x を幅・奥行きに使う
+	areaSize_ = { modelSize_.x, modelSize_.x };
 }
 
 TitleWall::~TitleWall() {}
@@ -21,23 +22,23 @@ void TitleWall::Initialize(DirectXCommon* dxCommon)
 {
 	dxCommon_ = dxCommon;
 	JsonSettings* json = JsonSettings::GetInstance();
-	// JsonSettingsのグループを作成
-	json->CreateGroup(kGroupPath_);
+
+	// グローバル変数グループを作成
+	auto groupName = GetGlobalVariableGroupName();
+	json->CreateGroup(groupName);
 	json->LoadFiles();
+
 	// デフォルト値を追加（既に存在する場合は追加されない）
-	json->AddItem(kGroupPath_, "modelSize", modelSize);
-	json->AddItem(kGroupPath_, "areaSize", areaSize_);
-
-	// JSONファイルから値を読み込み
-	modelSize = json->GetValue<Vector3>(kGroupPath_, "modelSize").value_or(modelSize);
-	areaSize_ = json->GetValue<Vector2>(kGroupPath_, "areaSize").value_or(areaSize_);
-
+	json->AddItem(groupName, "modelSize", modelSize_);
+	json->AddItem(groupName, "areaSize", areaSize_);
+	json->AddItem(groupName, "zOffset", zOffset_);
 
 	// 各壁モデルを初期化して transform をセットする
 	for (int i = 0; i < 4; ++i) {
 		walls_[i].obj = std::make_unique<Model3D>();
 		walls_[i].obj->Initialize(dxCommon_, "titleWall");
 		walls_[i].obj->SetColor(0x3F3A38FF);
+
 		// SetName にインデックスを反映
 		char nameBuf[32];
 		snprintf(nameBuf, sizeof(nameBuf), "TitleWall[%d]", i);
@@ -47,26 +48,19 @@ void TitleWall::Initialize(DirectXCommon* dxCommon)
 		walls_[i].transform.scale = { 1.0f, 1.0f, 1.0f };
 	}
 
-	// 初回 transform 計算＆適用
-	UpdateTransforms();
+	// グローバル変数から値を適用
+	ApplyGlobalVariables();
 }
 
-void TitleWall::SaveToJson()
+void TitleWall::ApplyGlobalVariables()
 {
 	JsonSettings* json = JsonSettings::GetInstance();
-	json->SetValue(kGroupPath_, "modelSize", modelSize);
-	json->SetValue(kGroupPath_, "areaSize", areaSize_);
-	json->SaveFile(kGroupPath_);
-}
+	auto groupName = GetGlobalVariableGroupName();
 
-void TitleWall::ApplyParameters()
-{
-	// JsonSettingsから現在の値を取得して適用
-	JsonSettings* json = JsonSettings::GetInstance();
-
-	// value_or()でデフォルト値を指定
-	modelSize = json->GetValue<Vector3>(kGroupPath_, "modelSize").value_or(modelSize);
-	areaSize_ = json->GetValue<Vector2>(kGroupPath_, "areaSize").value_or(areaSize_);
+	// パラメータを取得
+	modelSize_ = json->GetVector3Value(groupName, "modelSize");
+	areaSize_ = json->GetVector2Value(groupName, "areaSize");
+	zOffset_ = json->GetFloatValue(groupName, "zOffset");
 
 	// transformを再計算
 	UpdateTransforms();
@@ -75,22 +69,33 @@ void TitleWall::ApplyParameters()
 void TitleWall::SetAreaSize(const Vector2& areaSize)
 {
 	// 0 や負の値は受け付けない（最低値を設定）
-	areaSize_.x = (areaSize.x > 0.0001f) ? areaSize.x : modelSize.x;
-	areaSize_.y = (areaSize.y > 0.0001f) ? areaSize.y : modelSize.x;
+	areaSize_.x = (areaSize.x > 0.0001f) ? areaSize.x : modelSize_.x;
+	areaSize_.y = (areaSize.y > 0.0001f) ? areaSize.y : modelSize_.x;
 
 	// JsonSettingsに反映
-	JsonSettings::GetInstance()->SetValue(kGroupPath_, "areaSize", areaSize_);
+	JsonSettings::GetInstance()->SetValue(GetGlobalVariableGroupName(), "areaSize", areaSize_);
 
 	// 変更があったら transform を再計算して反映
 	UpdateTransforms();
 }
 
+void TitleWall::SetZOffset(float zOffset)
+{
+	zOffset_ = zOffset;
+
+	// JsonSettingsに反映
+	JsonSettings::GetInstance()->SetValue(GetGlobalVariableGroupName(), "zOffset", zOffset_);
+
+	// オフセットが変更されたら transform を再計算
+	UpdateTransforms();
+}
+
 void TitleWall::UpdateTransforms()
 {
-	// modelSize: scale==1 のときの実寸
-	const float modelHalfX = modelSize.x * 0.5f;
-	const float modelHalfY = modelSize.y * 0.5f;
-	const float modelHalfZ = modelSize.z * 0.5f;
+	// modelSize_: scale==1 のときの実寸
+	const float modelHalfX = modelSize_.x * 0.5f;
+	const float modelHalfY = modelSize_.y * 0.5f;
+	const float modelHalfZ = modelSize_.z * 0.5f;
 
 	// area の半分
 	const float areaHalfX = areaSize_.x * 0.5f;
@@ -141,64 +146,54 @@ void TitleWall::Update(const Matrix4x4& viewProjectionMatrix)
 
 void TitleWall::Draw()
 {
-
-
-		if (walls_[1].obj) walls_[1].obj->Draw();
-		if (walls_[3].obj) walls_[3].obj->Draw();
-	
+	// 右側と左側の壁のみ描画（手前と奥は描画しない）
+	if (walls_[1].obj) walls_[1].obj->Draw();
+	if (walls_[3].obj) walls_[3].obj->Draw();
 }
 
 void TitleWall::ImGui()
 {
 #ifdef USEIMGUI
-
 	JsonSettings* json = JsonSettings::GetInstance();
+	auto groupName = GetGlobalVariableGroupName();
 
-	if (ImGui::TreeNode("Walls")) {
-		// areaSize の表示/編集
-		Vector2 a = areaSize_;
+	if (ImGui::TreeNode("TitleWalls")) {
 		bool changed = false;
 
-
-		if (ImGui::DragFloat2("Area", &a.x, 0.1f, 0.0f, 100.0f, "%.2f")) {
-			json->SetValue(kGroupPath_, "areaSize", a);
+		// エリアサイズの調整
+		if (ImGui::DragFloat2("Area", &areaSize_.x, 0.1f, 0.0f, 100.0f, "%.2f")) {
+			json->SetValue(groupName, "areaSize", areaSize_);
 			changed = true;
 		}
 
+		// モデルサイズの調整
+		if (ImGui::DragFloat3("ModelSize", &modelSize_.x, 0.1f, 0.0f, 100.0f, "%.2f")) {
+			json->SetValue(groupName, "modelSize", modelSize_);
+			changed = true;
+		}
 
-		if (ImGui::DragFloat3("ModelSize", &modelSize.x, 0.1f, 0.0f, 100.0f, "%.2f")) {
-			json->SetValue(kGroupPath_, "modelSize", modelSize);
+		// Z座標オフセットの調整
+		if (ImGui::DragFloat("Z Offset", &zOffset_, 0.1f, -100.0f, 100.0f, "%.2f")) {
+			json->SetValue(groupName, "zOffset", zOffset_);
 			changed = true;
 		}
 
 		if (changed) {
 			// 入力を検証して適用
-			if (a.x <= 0.0f) a.x = modelSize.x;
-			if (a.y <= 0.0f) a.y = modelSize.x;
-			areaSize_.x = a.x;
-			areaSize_.y = a.y;
+			if (areaSize_.x <= 0.0f) areaSize_.x = modelSize_.x;
+			if (areaSize_.y <= 0.0f) areaSize_.y = modelSize_.x;
 
-			// modelSize の変更に合わせて area デフォルトを変える等するならここで処理
-			UpdateTransforms();
-		}
-		// 保存ボタン
-		if (ImGui::Button("Save TitleWall Settings")) {
-			SaveToJson();
+			ApplyGlobalVariables();
 		}
 
+		ImGui::Separator();
+
+		// モデル情報
 		for (int i = 0; i < 4; ++i) {
 			if (walls_[i].obj) walls_[i].obj->ImGui();
 		}
 
 		ImGui::TreePop();
 	}
-
 #endif
 }
-void TitleWall::SetZOffset(float zOffset) {
-	zOffset_ = zOffset;
-	// オフセットが変更されたら transform を再計算
-	UpdateTransforms();
-}
-
-

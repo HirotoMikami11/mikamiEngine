@@ -4,6 +4,7 @@
 #include <string>
 #include <json.hpp>
 #include <optional>
+#include <any>
 
 #include "MyMath.h"
 
@@ -12,17 +13,15 @@ using namespace MyMath;
 
 /// <summary>
 /// ゲームの設定値やパラメータをグループごとに管理するクラス
+/// GlobalVariablesパターンを採用し、使いやすさを向上
 /// </summary>
 class JsonSettings
 {
 public:
-	// 項目の値の型
-	using ItemValue = std::variant<int32_t, float, bool, Vector2, Vector3, Vector4>;
-
 	// グループ
 	struct Group
 	{
-		std::unordered_map<std::string, ItemValue> items;
+		std::unordered_map<std::string, std::any> items;
 		std::unordered_map<std::string, Group> subGroups;
 	};
 
@@ -42,27 +41,20 @@ public:
 	/// <returns></returns>
 	const Group* FindGroup(const std::vector<std::string>& groupPath) const;
 
-	// 値の取得
-	template<typename T>
-	std::optional<T> GetValue(const std::vector<std::string>& groupPath, const std::string& key) const
-	{
-		const Group* group = FindGroup(groupPath);
-		if (!group) return std::nullopt;
+	/// <summary>
+	/// ネストしたグループに対して値をセットさせる関数
+	/// </summary>
+	Group& FindOrCreateGroup(const std::vector<std::string>& groupPath);
 
-		auto itItem = group->items.find(key);
-		if (itItem == group->items.end()) return std::nullopt;
+	// 型安全な値の取得（GlobalVariablesパターン）
+	int32_t GetIntValue(const std::vector<std::string>& groupPath, const std::string& key) const;
+	float GetFloatValue(const std::vector<std::string>& groupPath, const std::string& key) const;
+	bool GetBoolValue(const std::vector<std::string>& groupPath, const std::string& key) const;
+	Vector2 GetVector2Value(const std::vector<std::string>& groupPath, const std::string& key) const;
+	Vector3 GetVector3Value(const std::vector<std::string>& groupPath, const std::string& key) const;
+	Vector4 GetVector4Value(const std::vector<std::string>& groupPath, const std::string& key) const;
 
-		// std::variantから値を取得
-		try
-		{
-			return std::get<T>(itItem->second);
-		} catch (const std::bad_variant_access&)
-		{
-			return std::nullopt;
-		}
-	}
-
-	// 値のセット
+	// 値のセット（テンプレート版）
 	template<typename T>
 	void SetValue(const std::vector<std::string>& groupPath, const std::string& key, const T& value)
 	{
@@ -70,10 +62,7 @@ public:
 		group.items[key] = value;
 	}
 
-	// ネストしたグループに対して値をセットさせる関数
-	Group& FindOrCreateGroup(const std::vector<std::string>& groupPath);
-
-	// 項目の追加
+	// 項目の追加（既に存在する場合は追加されない）
 	template<typename T>
 	void AddItem(const std::vector<std::string>& groupPath, const std::string& key, const T& value)
 	{
@@ -102,10 +91,15 @@ public:
 	void DrawGroupRecursive(const std::vector<std::string>& groupPath, Group& group);
 
 	/// <summary>
-	/// ファイルに書き出し
+	/// ファイルに書き出し（階層パスを受け取り、JSONファイルの一部だけを更新）
 	/// </summary>
 	/// <param name="groupPath">グループパス</param>
 	void SaveFile(const std::vector<std::string>& groupPath);
+
+	/// <summary>
+	/// 全ファイルを保存
+	/// </summary>
+	void SaveAllFiles();
 
 	// GroupをJSON に変換する再帰関数
 	json GroupToJson(const Group& group) const;
@@ -138,7 +132,8 @@ private:
 	static constexpr const char* kDirectoryPath_ = "resources/JsonSettings/";
 
 	// ドラッグの感度
-	int dragSensitivityInt_ = 1;
 	float dragSensitivity_ = 0.1f;
-	float dragSensitivityVector3_ = 0.1f;
+
+	// 画面表示用のステータスメッセージ
+	std::string statusMessage_;
 };

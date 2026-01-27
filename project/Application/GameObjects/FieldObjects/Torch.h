@@ -48,14 +48,14 @@ public:
 	void ImGui();
 
 	/// <summary>
-	/// 現在の設定をJsonファイルに保存
+	/// グローバル変数の変更内容を反映する（Fieldパターン）
 	/// </summary>
-	void SaveToJson();
+	void ApplyGlobalVariables();
 
 	/// <summary>
-	/// JsonSettingsから設定を読み込んで適用
+	/// グローバル変数のグループ名を取得
 	/// </summary>
-	void ApplyParameters();
+	std::vector<std::string> GetGlobalVariableGroupName() const { return { "Torch" }; }
 
 private:
 	/// <summary>
@@ -71,7 +71,6 @@ private:
 	/// 各トーチのトランスフォームを更新
 	/// </summary>
 	void UpdateTransforms();
-
 
 	// システム参照
 	DirectXCommon* dxCommon_;
@@ -91,7 +90,7 @@ private:
 	// 各トーチの回転（個別設定）
 	std::array<Vector3, kTorchCount_> rotations_;
 
-	//torchのちらつきイージング用
+	// トーチのちらつきイージング用
 	PointLight* torchLights_[kTorchCount_];
 	std::array<float, kTorchCount_> flickerTime_;
 	std::array<float, kTorchCount_> flickerSpeed_;
@@ -99,7 +98,5 @@ private:
 	float baseIntensity_ = 1.5f;
 	float flickerAmount_ = 0.3f;
 
-	// JsonSettingsのグループパス
-	const std::vector<std::string> kGroupPath_ = { "Torch" };
 	ParticlePresetInstance* particleInstance_[12];
 };

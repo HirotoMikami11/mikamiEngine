@@ -50,20 +50,20 @@ public:
 	void ImGui();
 
 	/// <summary>
-	/// 現在の設定をJsonファイルに保存
-	/// </summary>
-	void SaveToJson();
-
-	/// <summary>
-	/// JsonSettingsから設定を読み込んで適用
-	/// </summary>
-	void ApplyParameters();
-
-	/// <summary>
 	/// Z座標オフセットを設定（セグメント移動時に使用）
 	/// </summary>
 	/// <param name="zOffset">Z座標のオフセット値</param>
 	void SetZOffset(float zOffset);
+
+	/// <summary>
+	/// グローバル変数の変更内容を反映する（Fieldパターン）
+	/// </summary>
+	void ApplyGlobalVariables();
+
+	/// <summary>
+	/// グローバル変数のグループ名を取得
+	/// </summary>
+	std::vector<std::string> GetGlobalVariableGroupName() const { return { "TitleTorch" }; }
 
 private:
 	/// <summary>
@@ -104,25 +104,22 @@ private:
 	std::array<Vector3, kTorchCount_> rotations_;
 
 	// Z座標オフセット（セグメント移動用）
-	float zOffset_ = 0.0f;
+	float zOffset_;
 
 	// セグメントインデックス（パーティクル名の一意性確保用）
-	int segmentIndex_ = 0;
+	int segmentIndex_;
 
 	// トーチのちらつき効果用
 	PointLight* torchLights_[kTorchCount_];
 	std::array<float, kTorchCount_> flickerTime_;
 	std::array<float, kTorchCount_> flickerSpeed_;
 	std::array<float, kTorchCount_> flickerOffset_;
-	float baseIntensity_ = 1.5f;
-	float flickerAmount_ = 0.3f;
+	float baseIntensity_;
+	float flickerAmount_;
 
 	// パーティクルインスタンス（炎のエフェクト）
 	ParticlePresetInstance* particleInstance_[kTorchCount_];
 
 	// 壁からの距離（トーチを壁の内側に配置）
-	float distanceFromWall_ = 1.5f;
-
-	// JsonSettingsのグループパス
-	const std::vector<std::string> kGroupPath_ = { "TitleTorch" };
+	float distanceFromWall_;
 };

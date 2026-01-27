@@ -4,7 +4,7 @@
 #include <array>
 
 /// <summary>
-/// 壁クラス
+/// タイトルシーン用の壁クラス
 /// 指定した領域を4面の壁で囲むオブジェクト
 /// </summary>
 class TitleWall
@@ -36,7 +36,7 @@ public:
 
 	/// <summary>
 	/// 描画処理
-	/// 4面の壁を描画（手前の壁は除く）
+	/// 4面の壁を描画（手前と奥の壁は除く）
 	/// </summary>
 	void Draw();
 
@@ -54,23 +54,30 @@ public:
 	void SetAreaSize(const Vector2& areaSize);
 
 	/// <summary>
-	/// 現在の設定をJsonファイルに保存
-	/// </summary>
-	void SaveToJson();
-
-	/// <summary>
-	/// JsonSettingsから設定を読み込んで適用
-	/// </summary>
-	void ApplyParameters();
-
-	/// <summary>
-	/// Z座標オフセットを設定
+	/// Z座標オフセットを設定（セグメント移動時に使用）
 	/// </summary>
 	/// <param name="zOffset">Z座標のオフセット値</param>
 	void SetZOffset(float zOffset);
 
-	//スケール設定
-	void SetScale(const Vector3& scale);
+	/// <summary>
+	/// グローバル変数の変更内容を反映する（Fieldパターン）
+	/// </summary>
+	void ApplyGlobalVariables();
+
+	/// <summary>
+	/// グローバル変数のグループ名を取得
+	/// </summary>
+	std::vector<std::string> GetGlobalVariableGroupName() const { return { "TitleWall" }; }
+
+	/// <summary>
+	/// エリアサイズを取得（TitleTorchの配置計算用）
+	/// </summary>
+	Vector2 GetAreaSize() const { return areaSize_; }
+
+	/// <summary>
+	/// モデルサイズを取得（TitleTorchの配置計算用）
+	/// </summary>
+	Vector3 GetModelSize() const { return modelSize_; }
 
 private:
 	/// <summary>
@@ -84,7 +91,7 @@ private:
 
 	/// <summary>
 	/// 各壁のトランスフォームを計算して更新
-	/// areaSize_とmodelSizeに基づいて4面の壁を適切に配置
+	/// areaSize_とmodelSize_に基づいて4面の壁を適切に配置
 	/// </summary>
 	void UpdateTransforms();
 
@@ -92,7 +99,7 @@ private:
 	DirectXCommon* dxCommon_;
 
 	// 壁モデルサイズ（scale が 1 のときの実寸法）
-	Vector3 modelSize;
+	Vector3 modelSize_;
 
 	// 4方向の壁（前, 右, 後, 左）
 	std::array<WallObject, 4> walls_;
@@ -100,9 +107,6 @@ private:
 	// 囲みたい領域（フルサイズ)
 	Vector2 areaSize_;
 
-	// Z座標オフセット
-	float zOffset_ = 0.0f;
-
-	// JsonSettingsのグループパス
-	const std::vector<std::string> kGroupPath_ = { "TitleWall" };
+	// Z座標オフセット（セグメント移動用）
+	float zOffset_;
 };

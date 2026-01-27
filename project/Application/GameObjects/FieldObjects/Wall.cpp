@@ -5,8 +5,6 @@
 #include <numbers>
 #include <filesystem>
 
-
-
 void WallCollider::Initialize(const Vector3& position, const Vector3& aabbSize) {
 	position_ = position;
 
@@ -39,16 +37,15 @@ void WallCollider::OnCollision(Collider* other) {
 	// 特に何もしない（弾が既にエフェクトを出し、自身を非アクティブ化するから）
 }
 
-
 Wall::Wall()
 	: dxCommon_(nullptr) {
 
 	// 壁モデルサイズ（scale が 1 のときの実寸法）
 	// {長さ（X方向に対応）, 高さ, 厚み（Z方向）}
-	modelSize = { 60.0f, 30.0f, 1.0f };
+	modelSize_ = { 60.0f, 30.0f, 1.0f };
 
-	// 囲みたい領域（フルサイズ）。デフォルトは modelSize.x を幅・奥行きに使う
-	areaSize_ = { modelSize.x, modelSize.x };
+	// 囲みたい領域（フルサイズ）。デフォルトは modelSize_.x を幅・奥行きに使う
+	areaSize_ = { modelSize_.x, modelSize_.x };
 }
 
 Wall::~Wall() {}
@@ -57,22 +54,22 @@ void Wall::Initialize(DirectXCommon* dxCommon)
 {
 	dxCommon_ = dxCommon;
 	JsonSettings* json = JsonSettings::GetInstance();
-	// JsonSettingsのグループを作成
-	json->CreateGroup(kGroupPath_);
-	json->LoadFiles();
-	// デフォルト値を追加（既に存在する場合は追加されない）
-	json->AddItem(kGroupPath_, "modelSize", modelSize);
-	json->AddItem(kGroupPath_, "areaSize", areaSize_);
 
-	// JSONファイルから値を読み込み
-	modelSize = json->GetValue<Vector3>(kGroupPath_, "modelSize").value_or(modelSize);
-	areaSize_ = json->GetValue<Vector2>(kGroupPath_, "areaSize").value_or(areaSize_);
+	// グローバル変数グループを作成
+	auto groupName = GetGlobalVariableGroupName();
+	json->CreateGroup(groupName);
+	json->LoadFiles();
+
+	// デフォルト値を追加（既に存在する場合は追加されない）
+	json->AddItem(groupName, "modelSize", modelSize_);
+	json->AddItem(groupName, "areaSize", areaSize_);
 
 	// 各壁モデルを初期化して transform をセットする
 	for (int i = 0; i < 4; ++i) {
 		walls_[i].obj = std::make_unique<Model3D>();
 		walls_[i].obj->Initialize(dxCommon_, "wall");
 		walls_[i].obj->SetColor(0x3F3A38FF);
+
 		// SetName にインデックスを反映
 		char nameBuf[32];
 		snprintf(nameBuf, sizeof(nameBuf), "Wall[%d]", i);
@@ -92,14 +89,14 @@ void Wall::Initialize(DirectXCommon* dxCommon)
 			if (i == 0 || i == 2) {
 				// 前と後ろの壁（X軸方向に長い）
 				// 壁を3分割して、左、中央、右に配置
-				float sectionWidth = modelSize.x / 3.0f;
-				defaultSize = { sectionWidth, modelSize.y, modelSize.z };
+				float sectionWidth = modelSize_.x / 3.0f;
+				defaultSize = { sectionWidth, modelSize_.y, modelSize_.z };
 				defaultOffset.x = (j - 1) * sectionWidth; // -1, 0, 1 * sectionWidth
 			} else {
 				// 左と右の壁（Z軸方向に長い）
 				// 壁を3分割して、手前、中央、奥に配置
 				float sectionDepth = areaSize_.y / 3.0f;
-				defaultSize = { modelSize.z, modelSize.y, sectionDepth };
+				defaultSize = { modelSize_.z, modelSize_.y, sectionDepth };
 				defaultOffset.z = (j - 1) * sectionDepth; // -1, 0, 1 * sectionDepth
 			}
 
@@ -107,58 +104,38 @@ void Wall::Initialize(DirectXCommon* dxCommon)
 			std::string colliderSizeKey = "colliderSize_" + std::to_string(i) + "_" + std::to_string(j);
 			std::string colliderOffsetKey = "colliderOffset_" + std::to_string(i) + "_" + std::to_string(j);
 
-			walls_[i].colliderSizes[j] = json->GetValue<Vector3>(kGroupPath_, colliderSizeKey).value_or(defaultSize);
-			walls_[i].colliderOffsets[j] = json->GetValue<Vector3>(kGroupPath_, colliderOffsetKey).value_or(defaultOffset);
+			walls_[i].colliderSizes[j] = defaultSize;
+			walls_[i].colliderOffsets[j] = defaultOffset;
 
-			json->AddItem(kGroupPath_, colliderSizeKey, walls_[i].colliderSizes[j]);
-			json->AddItem(kGroupPath_, colliderOffsetKey, walls_[i].colliderOffsets[j]);
+			json->AddItem(groupName, colliderSizeKey, walls_[i].colliderSizes[j]);
+			json->AddItem(groupName, colliderOffsetKey, walls_[i].colliderOffsets[j]);
 		}
 	}
 
-	// 初回 transform 計算＆適用
-	UpdateTransforms();
+	// グローバル変数から値を適用
+	ApplyGlobalVariables();
 
 	// コライダーを初期化
 	UpdateColliders();
 }
 
-void Wall::SaveToJson()
+void Wall::ApplyGlobalVariables()
 {
 	JsonSettings* json = JsonSettings::GetInstance();
-	json->SetValue(kGroupPath_, "modelSize", modelSize);
-	json->SetValue(kGroupPath_, "areaSize", areaSize_);
+	auto groupName = GetGlobalVariableGroupName();
 
-	// 各壁の3つのコライダーサイズとオフセットを保存
-	for (int i = 0; i < 4; ++i) {
-		for (int j = 0; j < 3; ++j) {
-			std::string colliderSizeKey = "colliderSize_" + std::to_string(i) + "_" + std::to_string(j);
-			std::string colliderOffsetKey = "colliderOffset_" + std::to_string(i) + "_" + std::to_string(j);
-			
-			json->SetValue(kGroupPath_, colliderSizeKey, walls_[i].colliderSizes[j]);
-			json->SetValue(kGroupPath_, colliderOffsetKey, walls_[i].colliderOffsets[j]);
-		}
-	}
-
-	json->SaveFile(kGroupPath_);
-}
-
-void Wall::ApplyParameters()
-{
-	// JsonSettingsから現在の値を取得して適用
-	JsonSettings* json = JsonSettings::GetInstance();
-
-	// value_or()でデフォルト値を指定
-	modelSize = json->GetValue<Vector3>(kGroupPath_, "modelSize").value_or(modelSize);
-	areaSize_ = json->GetValue<Vector2>(kGroupPath_, "areaSize").value_or(areaSize_);
+	// 基本パラメータを取得
+	modelSize_ = json->GetVector3Value(groupName, "modelSize");
+	areaSize_ = json->GetVector2Value(groupName, "areaSize");
 
 	// 各壁の3つのコライダーサイズとオフセットを読み込み
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 3; ++j) {
 			std::string colliderSizeKey = "colliderSize_" + std::to_string(i) + "_" + std::to_string(j);
 			std::string colliderOffsetKey = "colliderOffset_" + std::to_string(i) + "_" + std::to_string(j);
-			
-			walls_[i].colliderSizes[j] = json->GetValue<Vector3>(kGroupPath_, colliderSizeKey).value_or(walls_[i].colliderSizes[j]);
-			walls_[i].colliderOffsets[j] = json->GetValue<Vector3>(kGroupPath_, colliderOffsetKey).value_or(walls_[i].colliderOffsets[j]);
+
+			walls_[i].colliderSizes[j] = json->GetVector3Value(groupName, colliderSizeKey);
+			walls_[i].colliderOffsets[j] = json->GetVector3Value(groupName, colliderOffsetKey);
 		}
 	}
 
@@ -172,11 +149,11 @@ void Wall::ApplyParameters()
 void Wall::SetAreaSize(const Vector2& areaSize)
 {
 	// 0 や負の値は受け付けない（最低値を設定）
-	areaSize_.x = (areaSize.x > 0.0001f) ? areaSize.x : modelSize.x;
-	areaSize_.y = (areaSize.y > 0.0001f) ? areaSize.y : modelSize.x;
+	areaSize_.x = (areaSize.x > 0.0001f) ? areaSize.x : modelSize_.x;
+	areaSize_.y = (areaSize.y > 0.0001f) ? areaSize.y : modelSize_.x;
 
 	// JsonSettingsに反映
-	JsonSettings::GetInstance()->SetValue(kGroupPath_, "areaSize", areaSize_);
+	JsonSettings::GetInstance()->SetValue(GetGlobalVariableGroupName(), "areaSize", areaSize_);
 
 	// 変更があったら transform を再計算して反映
 	UpdateTransforms();
@@ -187,10 +164,10 @@ void Wall::SetAreaSize(const Vector2& areaSize)
 
 void Wall::UpdateTransforms()
 {
-	// modelSize: scale==1 のときの実寸
-	const float modelHalfX = modelSize.x * 0.5f;
-	const float modelHalfY = modelSize.y * 0.5f;
-	const float modelHalfZ = modelSize.z * 0.5f;
+	// modelSize_: scale==1 のときの実寸
+	const float modelHalfX = modelSize_.x * 0.5f;
+	const float modelHalfY = modelSize_.y * 0.5f;
+	const float modelHalfZ = modelSize_.z * 0.5f;
 
 	// area の半分
 	const float areaHalfX = areaSize_.x * 0.5f;
@@ -240,22 +217,22 @@ void Wall::UpdateColliders()
 			if (walls_[i].colliders[j]) {
 				// 壁のベース位置にオフセットを加えて配置
 				Vector3 colliderPosition = walls_[i].transform.translate;
-				
+
 				// オフセットを回転に合わせて適用
 				float rotY = walls_[i].transform.rotate.y;
 				float cosRot = std::cos(rotY);
 				float sinRot = std::sin(rotY);
-				
+
 				Vector3 offset = walls_[i].colliderOffsets[j];
 				Vector3 rotatedOffset;
 				rotatedOffset.x = offset.x * cosRot - offset.z * sinRot;
 				rotatedOffset.y = offset.y;
 				rotatedOffset.z = offset.x * sinRot + offset.z * cosRot;
-				
+
 				colliderPosition.x += rotatedOffset.x;
 				colliderPosition.y += rotatedOffset.y;
 				colliderPosition.z += rotatedOffset.z;
-				
+
 				// コライダーを初期化
 				walls_[i].colliders[j]->Initialize(colliderPosition, walls_[i].colliderSizes[j]);
 			}
@@ -289,8 +266,7 @@ void Wall::Update(const Matrix4x4& viewProjectionMatrix)
 void Wall::Draw()
 {
 	for (int i = 0; i < 4; ++i) {
-
-		if (i == 0) continue;
+		if (i == 0) continue; // 手前の壁は描画しない
 
 		if (walls_[i].obj) walls_[i].obj->Draw();
 #ifdef USEIMGUI
@@ -307,41 +283,30 @@ void Wall::Draw()
 void Wall::ImGui()
 {
 #ifdef USEIMGUI
-
 	JsonSettings* json = JsonSettings::GetInstance();
+	auto groupName = GetGlobalVariableGroupName();
 
 	if (ImGui::TreeNode("Walls")) {
-		// areaSize の表示/編集
-		Vector2 a = areaSize_;
 		bool changed = false;
 
-
-		if (ImGui::DragFloat2("Area", &a.x, 0.1f, 0.0f, 100.0f, "%.2f")) {
-			json->SetValue(kGroupPath_, "areaSize", a);
+		// エリアサイズの調整
+		if (ImGui::DragFloat2("Area", &areaSize_.x, 0.1f, 0.0f, 100.0f, "%.2f")) {
+			json->SetValue(groupName, "areaSize", areaSize_);
 			changed = true;
 		}
 
-
-		if (ImGui::DragFloat3("ModelSize", &modelSize.x, 0.1f, 0.0f, 100.0f, "%.2f")) {
-			json->SetValue(kGroupPath_, "modelSize", modelSize);
+		// モデルサイズの調整
+		if (ImGui::DragFloat3("ModelSize", &modelSize_.x, 0.1f, 0.0f, 100.0f, "%.2f")) {
+			json->SetValue(groupName, "modelSize", modelSize_);
 			changed = true;
 		}
 
 		if (changed) {
 			// 入力を検証して適用
-			if (a.x <= 0.0f) a.x = modelSize.x;
-			if (a.y <= 0.0f) a.y = modelSize.x;
-			areaSize_.x = a.x;
-			areaSize_.y = a.y;
+			if (areaSize_.x <= 0.0f) areaSize_.x = modelSize_.x;
+			if (areaSize_.y <= 0.0f) areaSize_.y = modelSize_.x;
 
-			// modelSize の変更に合わせて area デフォルトを変える等するならここで処理
-			UpdateTransforms();
-			UpdateColliders();
-		}
-
-		// 保存ボタン
-		if (ImGui::Button("Save Wall Settings")) {
-			SaveToJson();
+			ApplyGlobalVariables();
 		}
 
 		ImGui::Separator();
@@ -358,22 +323,23 @@ void Wall::ImGui()
 					// 各壁の3つのコライダーを調整
 					for (int j = 0; j < 3; ++j) {
 						ImGui::PushID(j);
-						
+
 						char colliderName[64];
 						snprintf(colliderName, sizeof(colliderName), "Collider [%d]", j);
-						
+
 						if (ImGui::TreeNode(colliderName)) {
+							std::string colliderSizeKey = "colliderSize_" + std::to_string(i) + "_" + std::to_string(j);
+							std::string colliderOffsetKey = "colliderOffset_" + std::to_string(i) + "_" + std::to_string(j);
+
 							// コライダーの中心座標オフセット調整
-							Vector3 offset = walls_[i].colliderOffsets[j];
-							if (ImGui::DragFloat3("Center Offset (X,Y,Z)", &offset.x, 0.1f, -100.0f, 100.0f, "%.2f")) {
-								walls_[i].colliderOffsets[j] = offset;
+							if (ImGui::DragFloat3("Center Offset (X,Y,Z)", &walls_[i].colliderOffsets[j].x, 0.1f, -100.0f, 100.0f, "%.2f")) {
+								json->SetValue(groupName, colliderOffsetKey, walls_[i].colliderOffsets[j]);
 								colliderChanged = true;
 							}
 
 							// コライダーサイズの調整
-							Vector3 size = walls_[i].colliderSizes[j];
-							if (ImGui::DragFloat3("Size (X,Y,Z)", &size.x, 0.1f, 0.1f, 100.0f, "%.2f")) {
-								walls_[i].colliderSizes[j] = size;
+							if (ImGui::DragFloat3("Size (X,Y,Z)", &walls_[i].colliderSizes[j].x, 0.1f, 0.1f, 100.0f, "%.2f")) {
+								json->SetValue(groupName, colliderSizeKey, walls_[i].colliderSizes[j]);
 								colliderChanged = true;
 							}
 
@@ -396,7 +362,7 @@ void Wall::ImGui()
 
 							ImGui::TreePop();
 						}
-						
+
 						ImGui::PopID();
 					}
 
@@ -423,6 +389,5 @@ void Wall::ImGui()
 
 		ImGui::TreePop();
 	}
-
 #endif
 }

@@ -101,14 +101,14 @@ public:
 	void SetAreaSize(const Vector2& areaSize);
 
 	/// <summary>
-	/// 現在の設定をJsonファイルに保存
+	/// グローバル変数の変更内容を反映する（Fieldパターン）
 	/// </summary>
-	void SaveToJson();
+	void ApplyGlobalVariables();
 
 	/// <summary>
-	/// JsonSettingsから設定を読み込んで適用
+	/// グローバル変数のグループ名を取得
 	/// </summary>
-	void ApplyParameters();
+	std::vector<std::string> GetGlobalVariableGroupName() const { return { "Wall" }; }
 
 	/// <summary>
 	/// 全ての壁のコライダーを取得（CollisionManagerに登録するため）
@@ -143,14 +143,11 @@ private:
 	DirectXCommon* dxCommon_;
 
 	// 壁モデルサイズ（scale が 1 のときの実寸法）
-	Vector3 modelSize;
+	Vector3 modelSize_;
 
 	// 4方向の壁（前, 右, 後, 左）
 	std::array<WallObject, 4> walls_;
 
 	// 囲みたい領域（フルサイズ)
 	Vector2 areaSize_;
-
-	// JsonSettingsのグループパス
-	const std::vector<std::string> kGroupPath_ = { "Wall" };
 };
