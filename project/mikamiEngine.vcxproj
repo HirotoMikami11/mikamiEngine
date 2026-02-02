@@ -172,6 +172,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObjects\Boss\State\BossStateManager.cpp" />
     <ClCompile Include="Application\GameObjects\Bullet\BossBulletPool.cpp" />
     <ClCompile Include="Application\GameObjects\Emitters\BossBulletHitEffectPool.cpp" />
+    <ClCompile Include="Application\GameObjects\Enemy\EnemyWorm.cpp" />
+    <ClCompile Include="Application\GameObjects\Enemy\Parts\BaseEnemyParts.cpp" />
+    <ClCompile Include="Application\GameObjects\Enemy\Parts\WormBodyParts.cpp" />
+    <ClCompile Include="Application\GameObjects\Enemy\Parts\WormHeadParts.cpp" />
+    <ClCompile Include="Application\GameObjects\Enemy\Parts\WormTailParts.cpp" />
     <ClCompile Include="Application\GameObjects\FieldObjects\TitleField.cpp" />
     <ClCompile Include="Application\GameObjects\FieldObjects\TitleTorch.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp" />
@@ -429,6 +434,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObjects\Boss\State\BossStateConfig.h" />
     <ClInclude Include="Application\GameObjects\Bullet\BossBulletPool.h" />
     <ClInclude Include="Application\GameObjects\Emitters\BossBulletHitEffectPool.h" />
+    <ClInclude Include="Application\GameObjects\Enemy\EnemyWorm.h" />
+    <ClInclude Include="Application\GameObjects\Enemy\Parts\BaseEnemyParts.h" />
+    <ClInclude Include="Application\GameObjects\Enemy\Parts\WormBodyParts.h" />
+    <ClInclude Include="Application\GameObjects\Enemy\Parts\WormHeadParts.h" />
+    <ClInclude Include="Application\GameObjects\Enemy\Parts\WormTailParts.h" />
     <ClInclude Include="Application\GameObjects\FieldObjects\TitleField.h" />
     <ClInclude Include="Application\GameObjects\FieldObjects\TitleTorch.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DebugSphere.h" />

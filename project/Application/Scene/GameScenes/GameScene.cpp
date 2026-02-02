@@ -97,6 +97,12 @@ void GameScene::InitializeGameObjects() {
 	///ボス
 	boss_ = std::make_unique<Boss>();
 	boss_->Initialize(dxCommon_, { -10.0f,1.5f, 0.0f });
+
+
+	// 初期化
+	enemyWorm_ = std::make_unique<EnemyWorm>();
+	enemyWorm_->Initialize(dxCommon_, { 0.0f, 0.0f, 0.0f });
+
 	///*-----------------------------------------------------------------------*///
 	///			パーティクル										///
 	///*-----------------------------------------------------------------------*///
@@ -175,6 +181,10 @@ void GameScene::UpdateGameObjects() {
 	// ボスの更新
 	boss_->Update(viewProjectionMatrix, viewProjectionMatrixSprite);
 
+	// 更新
+	enemyWorm_->Update(viewProjectionMatrix);
+
+
 	field_->Update(viewProjectionMatrix);
 	sousa_->Update(viewProjectionMatrixSprite);
 
@@ -214,6 +224,11 @@ void GameScene::UpdateCollison()
 		collisionManager_->AddCollider(bullet);
 	}
 
+	auto colliders = enemyWorm_->GetColliders();
+	for (auto* collider : colliders) {
+		collisionManager_->AddCollider(collider);
+	}
+
 	// 衝突判定と応答
 	collisionManager_->Update();
 
@@ -232,6 +247,10 @@ void GameScene::DrawOffscreen() {
 
 
 	field_->Draw();
+
+	enemyWorm_->Draw();
+
+
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
@@ -275,6 +294,7 @@ void GameScene::ImGui() {
 
 	field_->ImGui();
 
+	enemyWorm_->ImGui();
 	// パーティクルエディタ（統合UI）
 	ImGui::Text("Particle Editor");
 	particleEditor_->ImGui();
