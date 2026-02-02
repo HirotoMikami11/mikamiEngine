@@ -1,6 +1,8 @@
 #include "ImGuiManager.h"
 
+#ifdef USEIMGUI
 ImFont* ImGuiManager::defaultFont_ = nullptr;
+#endif
 
 ImGuiManager* ImGuiManager::GetInstance() {
 	static ImGuiManager instance;

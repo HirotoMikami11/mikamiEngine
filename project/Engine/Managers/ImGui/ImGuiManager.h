@@ -72,11 +72,12 @@ public:
 	/// 日本語フォントを読み込む
 	/// </summary>
 	static void LoadJapaneseFont();
-
+#ifdef USEIMGUI
 	/// <summary>
 	/// デフォルトフォントを取得
 	/// </summary>
 	static ImFont* GetDefaultFont() { return defaultFont_; }
+#endif
 
 private:
 	/// <summary>
@@ -89,6 +90,8 @@ private:
 	~ImGuiManager() = default;
 	ImGuiManager(const ImGuiManager&) = delete;
 	ImGuiManager& operator=(const ImGuiManager&) = delete;
-
+#ifdef USEIMGUI
 	static ImFont* defaultFont_;
+#endif
+
 };
