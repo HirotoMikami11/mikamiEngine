@@ -1,5 +1,6 @@
 #include "ImGuiManager.h"
 
+ImFont* ImGuiManager::defaultFont_ = nullptr;
 
 ImGuiManager* ImGuiManager::GetInstance() {
 	static ImGuiManager instance;
@@ -28,6 +29,9 @@ void ImGuiManager::Initialize([[maybe_unused]] WinApp* winApp, [[maybe_unused]] 
 		directXCommon->GetSRVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart(),
 		directXCommon->GetSRVDescriptorHeap()->GetGPUDescriptorHandleForHeapStart()
 	);
+
+	// 日本語フォントを読み込む
+	LoadJapaneseFont();
 
 	// スタイルを設定
 	SetupImGuiStyle();
@@ -83,13 +87,46 @@ void ImGuiManager::SceneName([[maybe_unused]] const char* SceneName)
 #endif
 }
 
+void ImGuiManager::LoadJapaneseFont() {
+#ifdef USEIMGUI
+	ImGuiIO& io = ImGui::GetIO();
 
+	// 日本語グリフ範囲を取得
+	const ImWchar* glyphRanges = io.Fonts->GetGlyphRangesJapanese();
 
+	// フォントファイルのパス候補（優先度順）
+	const char* fontPaths[] = {
+		"C:/Windows/Fonts/meiryo.ttc",			// メイリオ
+	};
 
+	const char* selectedFontPath = nullptr;
 
+	// 存在するフォントファイルを探す
+	for (const char* path : fontPaths) {
+		// ファイルが存在するかチェック
+		DWORD fileAttr = GetFileAttributesA(path);
+		if (fileAttr != INVALID_FILE_ATTRIBUTES && !(fileAttr & FILE_ATTRIBUTE_DIRECTORY)) {
+			selectedFontPath = path;
+			break;
+		}
+	}
 
+	if (selectedFontPath == nullptr) {
+		return;
+	}
 
+	// デフォルトフォント（18px）
+	defaultFont_ = io.Fonts->AddFontFromFileTTF(
+		selectedFontPath,
+		18.0f,
+		nullptr,
+		glyphRanges
+	);
 
+	// フォントアトラスを構築
+	io.Fonts->Build();
+#endif
+}
 
 void ImGuiManager::SetupImGuiStyle()
 {

@@ -57,7 +57,7 @@ public:
 	void End();
 
 	/// <summary>
-	/// 画面への描画
+	/// 描画
 	/// </summary>
 	/// <param name="commandList">コマンドリスト</param>
 	void Draw(ID3D12GraphicsCommandList* commandList);
@@ -67,6 +67,16 @@ public:
 	/// シーンの名前を表示する
 	/// </summary>
 	void SceneName(const char* SceneName);
+
+	/// <summary>
+	/// 日本語フォントを読み込む
+	/// </summary>
+	static void LoadJapaneseFont();
+
+	/// <summary>
+	/// デフォルトフォントを取得
+	/// </summary>
+	static ImFont* GetDefaultFont() { return defaultFont_; }
 
 private:
 	/// <summary>
@@ -79,4 +89,6 @@ private:
 	~ImGuiManager() = default;
 	ImGuiManager(const ImGuiManager&) = delete;
 	ImGuiManager& operator=(const ImGuiManager&) = delete;
+
+	static ImFont* defaultFont_;
 };

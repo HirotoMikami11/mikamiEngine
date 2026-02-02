@@ -245,7 +245,7 @@ void Engine::ImGui() {
 #ifdef USEIMGUI
 
 	//開発用UIの処理
-	ImGui::Begin("Engine");
+	ImGui::Begin("エンジン");
 
 	//FPS関連
 	frameTimer_->ImGui();
