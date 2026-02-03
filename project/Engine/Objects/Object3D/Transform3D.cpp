@@ -37,7 +37,7 @@ void Transform3D::UpdateMatrix(const Matrix4x4& viewProjectionMatrix)
 	}
 
 	//																			//
-	//					WVP行列と法線変換行列の計算							//
+	//					WVP行列と法線変換行列の計算									//
 	//																			//
 
 	// 4. ビュープロジェクション行列を掛け算してWVP行列を計算

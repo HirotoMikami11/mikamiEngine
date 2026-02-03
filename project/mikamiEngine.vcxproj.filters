@@ -1226,7 +1226,7 @@
       <Filter>Engine\Objects\Light</Filter>
     </ClInclude>
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Binarization\BinarizationPostEffect.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>Engine\OffScreenRenderer\PostEffect\Binarization</Filter>
     </ClInclude>
     <ClInclude Include="Application\GameObjects\Enemy\Parts\BaseEnemyParts.h">
       <Filter>ヘッダー ファイル</Filter>

@@ -5,8 +5,8 @@ void HeadParts::Initialize(DirectXCommon* dxCommon, const Vector3& position, con
 	// 基底クラスの初期化
 	BaseParts::Initialize(dxCommon, position, modelName, textureName);
 	// 黄色に設定
-	SetColor(0xFFFF00FF);
-	SetDefaultColor(0xFFFF00FF);
+	SetColor(0x333333FF);
+	SetDefaultColor(0x333333FF);
 
 	// Objects属性で、弾と衝突判定する
 	SetCollisionAttribute(kCollisionAttributeObjects);

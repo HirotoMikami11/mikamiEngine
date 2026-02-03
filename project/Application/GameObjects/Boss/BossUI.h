@@ -35,7 +35,7 @@ public:
 
 	// UI設定
 	void SetGaugePosition(const Vector2& hpPosition);
-	void SetGaugeSize(const Vector2& size,const Vector2 frameOffset);
+	void SetGaugeSize(const Vector2& size, const Vector2 frameOffset);
 	void SetGaugeColors(const Vector4& hpColor, const Vector4& backgroundColor);
 
 private:
@@ -54,7 +54,7 @@ private:
 	Vector2 frameOffset_;
 	float LightScrollSpeed_;
 	float originalLightWidth_;
-	Vector4 hpNormalColor_{ 1.0f, 1.0f, 0.0f, 1.0f };	//黄色
+	Vector4 hpNormalColor_{ 0.5f, 0.0f, 0.0f, 1.0f };
 	Vector4 backgroundColor_{ 0.2f, 0.2f, 0.2f, 1.0f };	 // 暗い灰色
 
 	/// <summary>
