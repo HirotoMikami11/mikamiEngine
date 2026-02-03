@@ -182,7 +182,7 @@ void GameScene::UpdateGameObjects() {
 	boss_->Update(viewProjectionMatrix, viewProjectionMatrixSprite);
 
 	// 更新
-	enemyWorm_->Update(viewProjectionMatrix);
+	//enemyWorm_->Update(viewProjectionMatrix);
 
 
 	field_->Update(viewProjectionMatrix);
@@ -224,10 +224,10 @@ void GameScene::UpdateCollison()
 		collisionManager_->AddCollider(bullet);
 	}
 
-	auto colliders = enemyWorm_->GetColliders();
-	for (auto* collider : colliders) {
-		collisionManager_->AddCollider(collider);
-	}
+	//auto colliders = enemyWorm_->GetColliders();
+	//for (auto* collider : colliders) {
+	//	collisionManager_->AddCollider(collider);
+	//}
 
 	// 衝突判定と応答
 	collisionManager_->Update();
@@ -248,7 +248,7 @@ void GameScene::DrawOffscreen() {
 
 	field_->Draw();
 
-	enemyWorm_->Draw();
+	//enemyWorm_->Draw();
 
 
 
