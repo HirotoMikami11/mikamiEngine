@@ -8,7 +8,6 @@
 #include "Player.h"
 #include "Boss.h"
 #include "Pause.h"
-#include "Enemy/EnemyWorm.h"
 
 /// <summary>
 /// ゲームシーン
@@ -55,9 +54,6 @@ private:
 	std::unique_ptr<GameField> field_;
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<Boss> boss_;
-
-	std::unique_ptr<EnemyWorm> enemyWorm_;
-
 
 
 	std::unique_ptr<Sprite> sousa_;

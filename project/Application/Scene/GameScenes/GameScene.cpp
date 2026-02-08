@@ -113,11 +113,6 @@ void GameScene::InitializeGameObjects() {
 	boss_ = std::make_unique<Boss>();
 	boss_->Initialize(dxCommon_, { -10.0f,1.5f, 0.0f });
 
-
-	///雑魚敵（EnemyWorm）
-	enemyWorm_ = std::make_unique<EnemyWorm>();
-	enemyWorm_->Initialize(dxCommon_, { 10.0f, 5.0f, 0.0f });  // ボスの反対側に配置
-
 	///*-----------------------------------------------------------------------*///
 	///			パーティクル										///
 	///*-----------------------------------------------------------------------*///
@@ -196,12 +191,6 @@ void GameScene::UpdateGameObjects() {
 	// ボスの更新
 	boss_->Update(viewProjectionMatrix, viewProjectionMatrixSprite);
 
-	// 雑魚敵の更新
-	if (enemyWorm_) {
-		enemyWorm_->SetPlayerPosition(player_->GetWorldPosition());  // プレイヤー位置を設定
-		enemyWorm_->Update(viewProjectionMatrix);
-	}
-
 	field_->Update(viewProjectionMatrix);
 	sousa_->Update(viewProjectionMatrixSprite);
 
@@ -223,14 +212,6 @@ void GameScene::UpdateCollison()
 	auto bossColliders = boss_->GetColliders();
 	for (auto* collider : bossColliders) {
 		collisionManager_->AddCollider(collider);
-	}
-
-	// EnemyWormのコライダーを追加
-	if (enemyWorm_ && enemyWorm_->IsActive()) {
-		auto enemyColliders = enemyWorm_->GetColliders();
-		for (auto* collider : enemyColliders) {
-			collisionManager_->AddCollider(collider);
-		}
 	}
 
 	// 壁のコライダーを追加
@@ -264,11 +245,6 @@ void GameScene::DrawOffscreen() {
 
 	// ボスの描画
 	boss_->Draw();
-
-	// 雑魚敵の描画
-	if (enemyWorm_) {
-		enemyWorm_->Draw();
-	}
 
 	field_->Draw();
 
@@ -312,13 +288,6 @@ void GameScene::ImGui() {
 	ImGui::Spacing();
 	ImGui::Text("Boss");
 	boss_->ImGui();
-
-	ImGui::Spacing();
-	ImGui::Text("Enemy Worm");
-	if (enemyWorm_) {
-		enemyWorm_->ImGui();
-	}
-
 	field_->ImGui();
 
 	// パーティクルエディタ（統合UI）
