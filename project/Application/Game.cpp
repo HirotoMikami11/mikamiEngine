@@ -2,12 +2,6 @@
 //最初から用意されているシーン
 #include "DebugScenes/DemoScene.h"
 #include "DebugScenes/DebugScene.h"
-//必要なシーン郡
-#include "GameScenes/TitleScene.h"
-#include "GameScenes/SelectScene.h"
-#include "GameScenes/GameScene.h"
-#include "GameScenes/GameClearScene.h"
-#include "GameScenes/GameOverScene.h"
 //必要なトランジションエフェクト
 #include "TransitionEffect/SlideEffect.h"
 
@@ -41,24 +35,9 @@ void Game::InitializeScenes() {
 
 	auto debugScene = std::make_unique<DebugScene>();
 	sceneManager_->RegisterScene("DebugScene", std::move(debugScene));
-	
-	auto titleScene = std::make_unique<TitleScene>();
-	sceneManager_->RegisterScene("TitleScene", std::move(titleScene));
-
-	auto selectScene = std::make_unique<SelectScene>();
-	sceneManager_->RegisterScene("SelectScene", std::move(selectScene));
-
-	auto gameScene = std::make_unique<GameScene>();
-	sceneManager_->RegisterScene("GameScene", std::move(gameScene));
-
-	auto gameClearScene = std::make_unique<GameClearScene>();
-	sceneManager_->RegisterScene("GameClearScene", std::move(gameClearScene));
-
-	auto gameOverScene = std::make_unique<GameOverScene>();
-	sceneManager_->RegisterScene("GameOverScene", std::move(gameOverScene));
 
 	// デフォルトシーンを設定（最初に表示するシーン）
-	sceneManager_->ChangeScene("TitleScene");
+	sceneManager_->ChangeScene("DebugScene");
 }
 
 void Game::RegisterTransitionEffects()

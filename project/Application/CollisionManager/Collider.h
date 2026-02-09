@@ -9,7 +9,9 @@
 /// </summary>
 enum class ColliderType {
 	SPHERE,	// 球体
-	AABB	// 軸並行境界箱
+	AABB,	// AABB
+	OBB,	// OBB（未実装）
+	Capsule	// カプセル（未実装）
 };
 
 
@@ -53,7 +55,7 @@ public:
 	virtual AABB GetAABB() const { return aabb_; }
 
 	// AABBを設定
-	virtual void SetAABB(const AABB& aabb) { 
+	virtual void SetAABB(const AABB& aabb) {
 		aabb_ = aabb;
 		FixAABBMinMax(aabb_);
 	}
@@ -92,10 +94,6 @@ public:
 	// 色をデフォルトにリセット
 	void ResetColliderColor() { currentColliderColor_ = defaultColliderColor_; }
 
-	// 攻撃力の取得・設定
-	float GetAttackPower() const { return attackPower_; }
-	void SetAttackPower(float power) { attackPower_ = power; }
-
 protected:
 	// コライダーの種類（デフォルトはSphere）
 	ColliderType colliderType_ = ColliderType::SPHERE;
@@ -111,11 +109,8 @@ protected:
 	// 衝突マスク(相手)
 	uint32_t collisionMask_ = 0xffffffff;
 
-	// 攻撃力
-	float attackPower_ = 0.0f;
-
 	// デバッグ表示設定
-	bool isColliderVisible_ = true;							// デバッグ表示フラグ
+	bool isColliderVisible_ = true;					// デバッグ表示フラグ
 	uint32_t defaultColliderColor_ = 0x00FF00FF;	// デフォルトデバッグカラー（緑）
 	uint32_t currentColliderColor_ = 0x00FF00FF;	// 現在のデバッグカラー
 };

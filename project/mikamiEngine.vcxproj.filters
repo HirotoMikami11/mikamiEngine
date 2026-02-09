@@ -474,9 +474,6 @@
     <ClCompile Include="Application\CollisionManager\CollisionManager.cpp">
       <Filter>Application\CollisionManager</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\GameScenes\TitleScene.cpp">
-      <Filter>Application\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Managers\ResourceLoader\ResourceLoader.cpp">
       <Filter>Engine\Managers\Loder</Filter>
     </ClCompile>
@@ -488,45 +485,6 @@
     </ClCompile>
     <ClCompile Include="Engine\Utility\StringUtility.cpp">
       <Filter>Engine\BaseSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\Boss.cpp">
-      <Filter>Application\GameObjects\Boss</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\BossMoveEditor.cpp">
-      <Filter>Application\GameObjects\Boss</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\BossSplineDebugger.cpp">
-      <Filter>Application\GameObjects\Boss</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\BossSplineMovement.cpp">
-      <Filter>Application\GameObjects\Boss</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\BossSplineTrack.cpp">
-      <Filter>Application\GameObjects\Boss</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\BossUI.cpp">
-      <Filter>Application\GameObjects\Boss</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Bullet\BaseBullet.cpp">
-      <Filter>Application\GameObjects\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Bullet\BossBullet.cpp">
-      <Filter>Application\GameObjects\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Bullet\BossBulletPool.cpp">
-      <Filter>Application\GameObjects\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Player\Player.cpp">
-      <Filter>Application\GameObjects\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\ModelFont\ModelFont.cpp">
-      <Filter>Application\GameObjects\ModelFont</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Bullet\PlayerBullet.cpp">
-      <Filter>Application\GameObjects\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Player\PlayerUI.cpp">
-      <Filter>Application\GameObjects\Player</Filter>
     </ClCompile>
     <ClCompile Include="Application\CollisionManager\Collider.cpp">
       <Filter>Application\CollisionManager</Filter>
@@ -546,12 +504,6 @@
     <ClCompile Include="Engine\Utility\CSVUtility.cpp">
       <Filter>Engine\MyMath</Filter>
     </ClCompile>
-    <ClCompile Include="Application\GameObjects\FieldObjects\Ground.cpp">
-      <Filter>Application\GameObjects\FieldObjects\Ground</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\FieldObjects\Wall.cpp">
-      <Filter>Application\GameObjects\FieldObjects\Wall</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Objects\Particle\ParticlePresetInstance.cpp">
       <Filter>Engine\Objects\Particle\ParticleObjects</Filter>
     </ClCompile>
@@ -570,107 +522,11 @@
     <ClCompile Include="Engine\CameraController\CameraFunc\CameraShake.cpp">
       <Filter>Engine\CameraController\CameraFunc</Filter>
     </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\Parts\BaseParts.cpp">
-      <Filter>Application\GameObjects\Boss\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\Parts\BodyParts.cpp">
-      <Filter>Application\GameObjects\Boss\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\Parts\TailParts.cpp">
-      <Filter>Application\GameObjects\Boss\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\Parts\HeadParts.cpp">
-      <Filter>Application\GameObjects\Boss\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\Phase\BossPhaseManager.cpp">
-      <Filter>Application\GameObjects\Boss\Phase</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\State\BossState.cpp">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\State\BossStateManager.cpp">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\State\DebugMoveState.cpp">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\State\IdleState.cpp">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\State\SplineMove8WayShootState.cpp">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\State\SplineMoveRotateShootState.cpp">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Boss\State\SplineMoveState.cpp">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Emitters\BossBreakSmokeEmitter.cpp">
-      <Filter>Application\GameObjects\Emitters</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Emitters\BossBulletHitEffectPool.cpp">
-      <Filter>Application\GameObjects\Emitters</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Emitters\BossExplosionEmitter.cpp">
-      <Filter>Application\GameObjects\Emitters</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Emitters\BossSmokeEmitter.cpp">
-      <Filter>Application\GameObjects\Emitters</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Emitters\PlayerBulletHitEffectPool.cpp">
-      <Filter>Application\GameObjects\Emitters</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Emitters\PlayerExplosionEmitter.cpp">
-      <Filter>Application\GameObjects\Emitters</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\FieldObjects\TitleFieldSegment.cpp">
-      <Filter>Application\GameObjects\FieldObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\FieldObjects\TitleField.cpp">
-      <Filter>Application\GameObjects\FieldObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\FieldObjects\GameField.cpp">
-      <Filter>Application\GameObjects\FieldObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\FieldObjects\GroundLight.cpp">
-      <Filter>Application\GameObjects\FieldObjects\Ground</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\FieldObjects\TitleGround.cpp">
-      <Filter>Application\GameObjects\FieldObjects\Ground</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\FieldObjects\TitleWall.cpp">
-      <Filter>Application\GameObjects\FieldObjects\Wall</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\FieldObjects\Torch.cpp">
-      <Filter>Application\GameObjects\FieldObjects\Torch</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\FieldObjects\TitleTorch.cpp">
-      <Filter>Application\GameObjects\FieldObjects\Torch</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\FieldObjects\TreasureBox.cpp">
-      <Filter>Application\GameObjects\FieldObjects\TreasureBox</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Scene\DebugScenes\DemoScene.cpp">
-      <Filter>Application\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScenes\GameClearScene.cpp">
-      <Filter>Application\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScenes\GameOverScene.cpp">
-      <Filter>Application\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScenes\GameScene.cpp">
-      <Filter>Application\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScenes\SelectScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Outline\OutlinePostEffect .cpp">
       <Filter>Engine\OffScreenRenderer\PostEffect\Outline</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\GameObjects\Bullet\PlayerBulletPool.cpp">
-      <Filter>Application\GameObjects\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Objects\Light\LightManager.cpp">
       <Filter>Engine\Objects\Light</Filter>
@@ -683,9 +539,6 @@
     </ClCompile>
     <ClCompile Include="Engine\Objects\Light\SpotLight.cpp">
       <Filter>Engine\Objects\Light</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Scene\GameScenes\Pause.cpp">
-      <Filter>Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp">
       <Filter>Application\Scene</Filter>
@@ -964,9 +817,6 @@
     <ClInclude Include="Application\CollisionManager\CollisionManager.h">
       <Filter>Application\CollisionManager</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\GameScenes\TitleScene.h">
-      <Filter>Application\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Managers\ResourceLoader\ResourceLoader.h">
       <Filter>Engine\Managers\Loder</Filter>
     </ClInclude>
@@ -997,45 +847,6 @@
     <ClInclude Include="externals\nlohmann\json.hpp">
       <Filter>extarnals\json</Filter>
     </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\Boss.h">
-      <Filter>Application\GameObjects\Boss</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\BossMoveEditor.h">
-      <Filter>Application\GameObjects\Boss</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\BossSplineDebugger.h">
-      <Filter>Application\GameObjects\Boss</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\BossSplineTrack.h">
-      <Filter>Application\GameObjects\Boss</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\BossSplineMovement.h">
-      <Filter>Application\GameObjects\Boss</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\BossUI.h">
-      <Filter>Application\GameObjects\Boss</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Bullet\BossBullet.h">
-      <Filter>Application\GameObjects\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Bullet\BossBulletPool.h">
-      <Filter>Application\GameObjects\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Bullet\BaseBullet.h">
-      <Filter>Application\GameObjects\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Player\Player.h">
-      <Filter>Application\GameObjects\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\ModelFont\ModelFont.h">
-      <Filter>Application\GameObjects\ModelFont</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Bullet\PlayerBullet.h">
-      <Filter>Application\GameObjects\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Player\PlayerUI.h">
-      <Filter>Application\GameObjects\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Application\Scene\BaseScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
@@ -1053,12 +864,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Utility\CSVUtility.h">
       <Filter>Engine\MyMath</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\FieldObjects\Ground.h">
-      <Filter>Application\GameObjects\FieldObjects\Ground</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\FieldObjects\Wall.h">
-      <Filter>Application\GameObjects\FieldObjects\Wall</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Objects\Particle\ParticlePresetInstance.h">
       <Filter>Engine\Objects\Particle\ParticleObjects</Filter>
@@ -1078,110 +883,11 @@
     <ClInclude Include="Engine\CameraController\CameraFunc\CameraShake.h">
       <Filter>Engine\CameraController\CameraFunc</Filter>
     </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\Parts\BaseParts.h">
-      <Filter>Application\GameObjects\Boss\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\Parts\BodyParts.h">
-      <Filter>Application\GameObjects\Boss\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\Parts\TailParts.h">
-      <Filter>Application\GameObjects\Boss\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\Parts\HeadParts.h">
-      <Filter>Application\GameObjects\Boss\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\Phase\BossPhaseManager.h">
-      <Filter>Application\GameObjects\Boss\Phase</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\State\BossStateConfig.h">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\State\BossState.h">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\State\BossStateManager.h">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\State\DebugMoveState.h">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\State\IdleState.h">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\State\SplineMove8WayShootState.h">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\State\SplineMoveRotateShootState.h">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Boss\State\SplineMoveState.h">
-      <Filter>Application\GameObjects\Boss\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Emitters\BossBreakSmokeEmitter.h">
-      <Filter>Application\GameObjects\Emitters</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Emitters\BossBulletHitEffectPool.h">
-      <Filter>Application\GameObjects\Emitters</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Emitters\BossExplosionEmitter.h">
-      <Filter>Application\GameObjects\Emitters</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Emitters\BossSmokeEmitter.h">
-      <Filter>Application\GameObjects\Emitters</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Emitters\PlayerExplosionEmitter.h">
-      <Filter>Application\GameObjects\Emitters</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Emitters\PlayerBulletHitEffectPool.h">
-      <Filter>Application\GameObjects\Emitters</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\FieldObjects\GameField.h">
-      <Filter>Application\GameObjects\FieldObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\FieldObjects\TitleField.h">
-      <Filter>Application\GameObjects\FieldObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\FieldObjects\TitleFieldSegment.h">
-      <Filter>Application\GameObjects\FieldObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\FieldObjects\GroundLight.h">
-      <Filter>Application\GameObjects\FieldObjects\Ground</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\FieldObjects\TitleGround.h">
-      <Filter>Application\GameObjects\FieldObjects\Ground</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\FieldObjects\TitleWall.h">
-      <Filter>Application\GameObjects\FieldObjects\Wall</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\FieldObjects\Torch.h">
-      <Filter>Application\GameObjects\FieldObjects\Torch</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\FieldObjects\TitleTorch.h">
-      <Filter>Application\GameObjects\FieldObjects\Torch</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\FieldObjects\TreasureBox.h">
-      <Filter>Application\GameObjects\FieldObjects\TreasureBox</Filter>
-    </ClInclude>
     <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h">
-      <Filter>Application\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScenes\GameClearScene.h">
-      <Filter>Application\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScenes\GameOverScene.h">
-      <Filter>Application\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScenes\GameScene.h">
-      <Filter>Application\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScenes\SelectScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Outline\OutlinePostEffect.h">
       <Filter>Engine\OffScreenRenderer\PostEffect\Outline</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\GameObjects\Bullet\PlayerBulletPool.h">
-      <Filter>Application\GameObjects\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Objects\Light\DirectionalLight.h">
       <Filter>Engine\Objects\Light</Filter>
@@ -1197,9 +903,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Objects\Light\SpotLight.h">
       <Filter>Engine\Objects\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Scene\GameScenes\Pause.h">
-      <Filter>Application\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\DebugScenes\DebugSphere.h">
       <Filter>Application\Scene</Filter>

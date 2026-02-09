@@ -156,34 +156,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="Application\CollisionManager\Collider.cpp" />
     <ClCompile Include="Application\CollisionManager\CollisionManager.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\Parts\BaseParts.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\Boss.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\Parts\BodyParts.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\Parts\HeadParts.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\Parts\TailParts.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\State\DebugMoveState.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\BossSplineMovement.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\BossSplineTrack.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\BossMoveEditor.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\BossSplineDebugger.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\BossUI.cpp" />
-    <ClCompile Include="Application\GameObjects\Bullet\BaseBullet.cpp" />
-    <ClCompile Include="Application\GameObjects\Bullet\BossBullet.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\State\BossStateManager.cpp" />
-    <ClCompile Include="Application\GameObjects\Bullet\BossBulletPool.cpp" />
-    <ClCompile Include="Application\GameObjects\Emitters\BossBulletHitEffectPool.cpp" />
-    <ClCompile Include="Application\GameObjects\FieldObjects\TitleField.cpp" />
-    <ClCompile Include="Application\GameObjects\FieldObjects\TitleTorch.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\DemoScene.cpp" />
-    <ClCompile Include="Application\Scene\GameScenes\GameClearScene.cpp" />
-    <ClCompile Include="Application\Scene\GameScenes\GameOverScene.cpp" />
-    <ClCompile Include="Application\Scene\GameScenes\GameScene.cpp" />
-    <ClCompile Include="Application\Scene\GameScenes\SelectScene.cpp" />
-    <ClCompile Include="Application\GameObjects\Emitters\BossSmokeEmitter.cpp" />
-    <ClCompile Include="Application\GameObjects\Emitters\BossBreakSmokeEmitter.cpp" />
-    <ClCompile Include="Application\GameObjects\Emitters\BossExplosionEmitter.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\Phase\BossPhaseManager.cpp" />
     <ClCompile Include="Engine\CameraController\CameraFunc\CameraShake.cpp" />
     <ClCompile Include="Engine\Objects\Light\DirectionalLight.cpp" />
     <ClCompile Include="Engine\Objects\Light\PointLight.cpp" />
@@ -281,14 +255,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClCompile>
     <ClCompile Include="Application\Game.cpp" />
     <ClCompile Include="Engine\Objects\Particle\Field\GravityField.cpp" />
-    <ClCompile Include="Application\GameObjects\FieldObjects\Ground.cpp" />
     <ClCompile Include="Engine\Timers\GameTimer.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\State\BossState.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\State\IdleState.cpp" />
     <ClCompile Include="Engine\Objects\Light\LightManager.cpp" />
     <ClCompile Include="Engine\Framework\Framework.cpp" />
-    <ClCompile Include="Application\GameObjects\FieldObjects\GroundLight.cpp" />
-    <ClCompile Include="Application\GameObjects\FieldObjects\GameField.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -301,29 +270,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Objects\Particle\ParticleGroup.cpp" />
     <ClCompile Include="Engine\Objects\Particle\ParticleSystem.cpp" />
     <ClCompile Include="Engine\Managers\ResourceLoader\ResourceLoader.cpp" />
-    <ClCompile Include="Application\Scene\GameScenes\TitleScene.cpp" />
-    <ClCompile Include="Application\GameObjects\Player\Player.cpp" />
-    <ClCompile Include="Application\GameObjects\Bullet\PlayerBullet.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\State\SplineMoveState.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\State\SplineMove8WayShootState.cpp" />
-    <ClCompile Include="Application\GameObjects\Boss\State\SplineMoveRotateShootState.cpp" />
-    <ClCompile Include="Application\GameObjects\ModelFont\ModelFont.cpp" />
-    <ClCompile Include="Application\GameObjects\FieldObjects\Wall.cpp" />
-    <ClCompile Include="Application\GameObjects\Player\PlayerUI.cpp" />
     <ClCompile Include="Engine\Objects\Particle\ParticlePreset.cpp" />
     <ClCompile Include="Engine\Objects\Particle\ParticlePresetInstance.cpp" />
     <ClCompile Include="Engine\Objects\Particle\ParticleEditor.cpp" />
-    <ClCompile Include="Application\GameObjects\FieldObjects\Torch.cpp" />
-    <ClCompile Include="Application\GameObjects\Bullet\PlayerBulletPool.cpp" />
-    <ClCompile Include="Application\GameObjects\Emitters\PlayerBulletHitEffectPool.cpp" />
     <ClCompile Include="Engine\Objects\Light\SpotLight.cpp" />
     <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Outline\OutlinePostEffect .cpp" />
-    <ClCompile Include="Application\GameObjects\Emitters\PlayerExplosionEmitter.cpp" />
-    <ClCompile Include="Application\GameObjects\FieldObjects\TitleWall.cpp" />
-    <ClCompile Include="Application\GameObjects\FieldObjects\TitleFieldSegment.cpp" />
-    <ClCompile Include="Application\Scene\GameScenes\Pause.cpp" />
-    <ClCompile Include="Application\GameObjects\FieldObjects\TitleGround.cpp" />
-    <ClCompile Include="Application\GameObjects\FieldObjects\TreasureBox.cpp" />
     <ClCompile Include="Engine\Objects\Light\RectLight.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -412,35 +363,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\CollisionManager\Collider.h" />
     <ClInclude Include="Application\CollisionManager\CollisionConfig.h" />
     <ClInclude Include="Application\CollisionManager\CollisionManager.h" />
-    <ClInclude Include="Application\GameObjects\Boss\Parts\BaseParts.h" />
-    <ClInclude Include="Application\GameObjects\Boss\Boss.h" />
-    <ClInclude Include="Application\GameObjects\Boss\Parts\BodyParts.h" />
-    <ClInclude Include="Application\GameObjects\Boss\Parts\HeadParts.h" />
-    <ClInclude Include="Application\GameObjects\Boss\Parts\TailParts.h" />
-    <ClInclude Include="Application\GameObjects\Boss\State\DebugMoveState.h" />
-    <ClInclude Include="Application\GameObjects\Boss\BossSplineMovement.h" />
-    <ClInclude Include="Application\GameObjects\Boss\BossSplineTrack.h" />
-    <ClInclude Include="Application\GameObjects\Boss\BossMoveEditor.h" />
-    <ClInclude Include="Application\GameObjects\Boss\BossSplineDebugger.h" />
-    <ClInclude Include="Application\GameObjects\Boss\BossUI.h" />
-    <ClInclude Include="Application\GameObjects\Bullet\BaseBullet.h" />
-    <ClInclude Include="Application\GameObjects\Bullet\BossBullet.h" />
-    <ClInclude Include="Application\GameObjects\Boss\State\BossStateManager.h" />
-    <ClInclude Include="Application\GameObjects\Boss\State\BossStateConfig.h" />
-    <ClInclude Include="Application\GameObjects\Bullet\BossBulletPool.h" />
-    <ClInclude Include="Application\GameObjects\Emitters\BossBulletHitEffectPool.h" />
-    <ClInclude Include="Application\GameObjects\FieldObjects\TitleField.h" />
-    <ClInclude Include="Application\GameObjects\FieldObjects\TitleTorch.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DebugSphere.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h" />
-    <ClInclude Include="Application\Scene\GameScenes\GameClearScene.h" />
-    <ClInclude Include="Application\Scene\GameScenes\GameOverScene.h" />
-    <ClInclude Include="Application\Scene\GameScenes\GameScene.h" />
-    <ClInclude Include="Application\Scene\GameScenes\SelectScene.h" />
-    <ClInclude Include="Application\GameObjects\Emitters\BossSmokeEmitter.h" />
-    <ClInclude Include="Application\GameObjects\Emitters\BossBreakSmokeEmitter.h" />
-    <ClInclude Include="Application\GameObjects\Emitters\BossExplosionEmitter.h" />
-    <ClInclude Include="Application\GameObjects\Boss\Phase\BossPhaseManager.h" />
     <ClInclude Include="Engine\CameraController\CameraFunc\CameraShake.h" />
     <ClInclude Include="Engine\Objects\Light\DirectionalLight.h" />
     <ClInclude Include="Engine\Objects\Light\LightBase.h" />
@@ -561,19 +485,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Objects\Particle\ParticleSystem.h" />
     <ClInclude Include="Engine\Objects\Particle\Field\GravityField.h" />
     <ClInclude Include="Engine\Managers\ResourceLoader\ResourceLoader.h" />
-    <ClInclude Include="Application\Scene\GameScenes\TitleScene.h" />
-    <ClInclude Include="Application\GameObjects\Player\Player.h" />
-    <ClInclude Include="Application\GameObjects\FieldObjects\Ground.h" />
     <ClInclude Include="Engine\Timers\GameTimer.h" />
-    <ClInclude Include="Application\GameObjects\Boss\State\BossState.h" />
-    <ClInclude Include="Application\GameObjects\Boss\State\IdleState.h" />
-    <ClInclude Include="Application\GameObjects\Bullet\PlayerBullet.h" />
-    <ClInclude Include="Application\GameObjects\Boss\State\SplineMoveState.h" />
-    <ClInclude Include="Application\GameObjects\Boss\State\SplineMove8WayShootState.h" />
-    <ClInclude Include="Application\GameObjects\Boss\State\SplineMoveRotateShootState.h" />
-    <ClInclude Include="Application\GameObjects\ModelFont\ModelFont.h" />
-    <ClInclude Include="Application\GameObjects\FieldObjects\Wall.h" />
-    <ClInclude Include="Application\GameObjects\Player\PlayerUI.h" />
     <ClInclude Include="externals\nlohmann\json.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -588,20 +500,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Objects\Particle\ParticlePresetInstance.h" />
     <ClInclude Include="Engine\Objects\Particle\ParticleEditor.h" />
     <ClInclude Include="Engine\Objects\Light\LightManager.h" />
-    <ClInclude Include="Application\GameObjects\FieldObjects\Torch.h" />
-    <ClInclude Include="Application\GameObjects\Bullet\PlayerBulletPool.h" />
-    <ClInclude Include="Application\GameObjects\Emitters\PlayerBulletHitEffectPool.h" />
     <ClInclude Include="Engine\Framework\Framework.h" />
     <ClInclude Include="Engine\Objects\Light\SpotLight.h" />
-    <ClInclude Include="Application\GameObjects\FieldObjects\GroundLight.h" />
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Outline\OutlinePostEffect.h" />
-    <ClInclude Include="Application\GameObjects\Emitters\PlayerExplosionEmitter.h" />
-    <ClInclude Include="Application\GameObjects\FieldObjects\TitleWall.h" />
-    <ClInclude Include="Application\GameObjects\FieldObjects\TitleFieldSegment.h" />
-    <ClInclude Include="Application\GameObjects\FieldObjects\GameField.h" />
-    <ClInclude Include="Application\Scene\GameScenes\Pause.h" />
-    <ClInclude Include="Application\GameObjects\FieldObjects\TitleGround.h" />
-    <ClInclude Include="Application\GameObjects\FieldObjects\TreasureBox.h" />
     <ClInclude Include="Engine\Objects\Light\RectLight.h" />
   </ItemGroup>
   <ItemGroup>
