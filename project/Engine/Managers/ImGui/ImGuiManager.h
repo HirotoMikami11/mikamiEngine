@@ -69,6 +69,12 @@ public:
 	void SceneName(const char* SceneName);
 
 	/// <summary>
+	/// ImGuiのスタイルエディタを表示する
+	/// </summary>
+	/// <param name="isOpen">ウィンドウの開閉状態</param>
+	void ShowStyleEditor(bool* isOpen = nullptr);
+
+	/// <summary>
 	/// 日本語フォントを読み込む
 	/// </summary>
 	static void LoadJapaneseFont();
