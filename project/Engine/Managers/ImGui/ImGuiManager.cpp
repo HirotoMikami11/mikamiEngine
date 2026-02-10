@@ -32,6 +32,7 @@ void ImGuiManager::Initialize([[maybe_unused]] WinApp* winApp, [[maybe_unused]] 
 		directXCommon->GetSRVDescriptorHeap()->GetGPUDescriptorHandleForHeapStart()
 	);
 
+
 	// 日本語フォントを読み込む
 	LoadJapaneseFont();
 
