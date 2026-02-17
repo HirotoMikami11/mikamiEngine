@@ -35,43 +35,38 @@ void PointLight::SetDefaultSettings()
 void PointLight::ImGui(const std::string& label)
 {
 #ifdef USEIMGUI
+	// 有効/無効切り替え
+	ImGui::Checkbox("Active", &isActive_);
 
-	if (ImGui::TreeNode(label.c_str())) {
-		// 有効/無効切り替え
-		ImGui::Checkbox("Active", &isActive_);
+	ImGui::Separator();
 
-		ImGui::Separator();
+	// ライトの色
+	if (ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&lightData_.color.x))) {
 
-		// ライトの色
-		if (ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&lightData_.color.x))) {
-
-		}
-
-		// ライトの位置
-		if (ImGui::DragFloat3("Position", &lightData_.position.x, 0.1f)) {
-
-		}
-
-		// ライトの強度
-		if (ImGui::DragFloat("Intensity", &lightData_.intensity, 0.01f, 0.0f, 10.0f)) {
-
-		}
-
-		// 影響範囲
-		if (ImGui::DragFloat("Radius", &lightData_.radius, 0.1f, 0.1f, 100.0f)) {
-
-		}
-
-		// 減衰率
-		if (ImGui::DragFloat("Decay", &lightData_.decay, 0.1f, 0.1f, 10.0f)) {
-
-		}
-
-		// ライトの種類表示（読み取り専用）
-		ImGui::Text("Type: Point");
-
-		ImGui::TreePop();
 	}
+
+	// ライトの位置
+	if (ImGui::DragFloat3("Position", &lightData_.position.x, 0.1f)) {
+
+	}
+
+	// ライトの強度
+	if (ImGui::DragFloat("Intensity", &lightData_.intensity, 0.01f, 0.0f, 10.0f)) {
+
+	}
+
+	// 影響範囲
+	if (ImGui::DragFloat("Radius", &lightData_.radius, 0.1f, 0.1f, 100.0f)) {
+
+	}
+
+	// 減衰率
+	if (ImGui::DragFloat("Decay", &lightData_.decay, 0.1f, 0.1f, 10.0f)) {
+
+	}
+
+	// ライトの種類表示（読み取り専用）
+	ImGui::Text("Type: Point");
 
 #endif
 }

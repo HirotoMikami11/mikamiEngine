@@ -53,12 +53,10 @@ void LightManager::Update()
 {
 	// LightingDataを更新
 	UpdateLightingData();
-
 }
 
 void LightManager::DebugDrawLight()
 {
-
 	// デバッグ描画が無効なら何もしない
 	if (!isDebugDraw_) {
 		return;
@@ -87,7 +85,6 @@ void LightManager::DebugDrawLight()
 		}
 		light->DebugLineAdd();
 	}
-
 }
 
 PointLight* LightManager::AddPointLight(
@@ -275,28 +272,45 @@ void LightManager::ClearRectLights()
 	Logger::Log(Logger::GetStream(), "LightManager: Cleared all rect lights\n");
 }
 
+#ifdef USEIMGUI
+namespace {
+	// アクティブなライト数をカウントするヘルパー関数
+	template<typename T>
+	int CountActiveLights(const std::unordered_map<uint32_t, std::unique_ptr<T>>& lights)
+	{
+		int count = 0;
+		for (const auto& [id, light] : lights) {
+			if (light && light->IsActive()) {
+				count++;
+			}
+		}
+		return count;
+	}
+}
+#endif
+
 void LightManager::ImGui()
 {
 #ifdef USEIMGUI
 
-	ImGui::Begin("Light Manager");
+	ImGui::Begin("ライトマネージャー");
 
 	// 有効/無効切り替え
-	ImGui::Checkbox("isDebugDraw", &isDebugDraw_);
+	ImGui::Checkbox("デバッグ表示有効", &isDebugDraw_);
 
-	// 平行光源
+
+	// ===== 平行光源 =====
+	ImGui::Separator();
+	ImGui::Text("Directional Lights (Active: 1)");
+	ImGui::Separator();
+
 	directionalLight_.ImGui("Directional Light");
 
 	ImGui::Separator();
 
 	// ===== ポイントライト =====
 	// 使用状況表示
-	int activePointLights = 0;
-	for (const auto& [id, light] : pointLights_) {
-		if (light && light->IsActive()) {
-			activePointLights++;
-		}
-	}
+	int activePointLights = CountActiveLights(pointLights_);
 
 	ImGui::Text("Point Lights: %d / %d (Active: %d)",
 		static_cast<int>(pointLights_.size()),
@@ -361,12 +375,7 @@ void LightManager::ImGui()
 
 	// ===== スポットライト =====
 	// 使用状況表示
-	int activeSpotLights = 0;
-	for (const auto& [id, light] : spotLights_) {
-		if (light && light->IsActive()) {
-			activeSpotLights++;
-		}
-	}
+	int activeSpotLights = CountActiveLights(spotLights_);
 
 	ImGui::Text("Spot Lights: %d / %d (Active: %d)",
 		static_cast<int>(spotLights_.size()),
@@ -431,12 +440,7 @@ void LightManager::ImGui()
 
 	// ===== エリアライト（矩形ライト） =====
 	// 使用状況表示
-	int activeRectLights = 0;
-	for (const auto& [id, light] : rectLights_) {
-		if (light && light->IsActive()) {
-			activeRectLights++;
-		}
-	}
+	int activeRectLights = CountActiveLights(rectLights_);
 
 	ImGui::Text("Rect Lights: %d / %d (Active: %d)",
 		static_cast<int>(rectLights_.size()),
@@ -622,4 +626,3 @@ void LightManager::UpdateLightingData()
 		}
 	}
 }
-

@@ -159,7 +159,7 @@ void ImGuiManager::SetupImGuiStyle()
 
 
 	//赤色
-//#pragma region 赤
+#pragma region 赤
 //
 //	colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 //	colors[ImGuiCol_TextDisabled] = ImVec4(0.97f, 0.97f, 0.97f, 1.00f);
@@ -220,7 +220,7 @@ void ImGuiManager::SetupImGuiStyle()
 //	colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 //	colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 //
-//#pragma endregion 
+#pragma endregion 
 
 
 	//キーボードカラー
@@ -268,10 +268,10 @@ void ImGuiManager::SetupImGuiStyle()
 	colors[ImGuiCol_TabDimmedSelectedOverline] = ImVec4(0.50f, 0.50f, 0.50f, 0.00f);
 	colors[ImGuiCol_DockingPreview] = ImVec4(0.94f, 0.44f, 0.05f, 0.70f);
 	colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-	colors[ImGuiCol_PlotLines] = ImVec4(0.40f, 0.40f, 0.12f, 1.00f);
-	colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.50f, 0.18f, 0.18f, 1.00f);
-	colors[ImGuiCol_PlotHistogram] = ImVec4(0.45f, 0.15f, 0.15f, 1.00f);
-	colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.55f, 0.20f, 0.20f, 1.00f);
+	colors[ImGuiCol_PlotLines] = ImVec4(0.83f, 0.45f, 0.00f, 0.80f);
+	colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.83f, 0.30f, 0.00f, 0.80f);
+	colors[ImGuiCol_PlotHistogram] = ImVec4(0.83f, 0.45f, 0.00f, 0.80f);
+	colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.83f, 0.30f, 0.00f, 0.80f);
 	colors[ImGuiCol_TableHeaderBg] = ImVec4(0.19f, 0.19f, 0.20f, 1.00f);
 	colors[ImGuiCol_TableBorderStrong] = ImVec4(0.31f, 0.31f, 0.35f, 1.00f);
 	colors[ImGuiCol_TableBorderLight] = ImVec4(0.23f, 0.23f, 0.25f, 1.00f);
@@ -280,11 +280,10 @@ void ImGuiManager::SetupImGuiStyle()
 	colors[ImGuiCol_TextLink] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
 	colors[ImGuiCol_TextSelectedBg] = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
 	colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
-	colors[ImGuiCol_NavCursor] = ImVec4(0.98f, 0.26f, 0.26f, 1.00f);
+	colors[ImGuiCol_NavCursor] = ImVec4(0.83f, 0.30f, 0.00f, 0.80f);
 	colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
 	colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 	colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
-
 
 #pragma endregion
 

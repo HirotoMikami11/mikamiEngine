@@ -137,8 +137,6 @@ void RectLight::DebugLineAdd()
 void RectLight::ImGui(const std::string& label)
 {
 #ifdef USEIMGUI
-
-	if (ImGui::TreeNode(label.c_str())) {
 		// 有効/無効切り替え
 		ImGui::Checkbox("Active", &isActive_);
 
@@ -195,9 +193,6 @@ void RectLight::ImGui(const std::string& label)
 		// 矩形の面積を表示
 		float area = lightData_.width * lightData_.height;
 		ImGui::Text("Area: %.2f units²", area);
-
-		ImGui::TreePop();
-	}
 
 #endif
 }
