@@ -2,6 +2,8 @@
 //最初から用意されているシーン
 #include "DebugScenes/DemoScene.h"
 #include "DebugScenes/DebugScene.h"
+#include "GameScenes/MojiTestScene.h"
+
 //必要なトランジションエフェクト
 #include "TransitionEffect/SlideEffect.h"
 
@@ -36,8 +38,11 @@ void Game::InitializeScenes() {
 	auto debugScene = std::make_unique<DebugScene>();
 	sceneManager_->RegisterScene("DebugScene", std::move(debugScene));
 
+	auto mojiTestScene = std::make_unique<MojiTestScene>();
+	sceneManager_->RegisterScene("MojiTestScene", std::move(mojiTestScene));
+		
 	// デフォルトシーンを設定（最初に表示するシーン）
-	sceneManager_->ChangeScene("DebugScene");
+	sceneManager_->ChangeScene("MojiTestScene");
 }
 
 void Game::RegisterTransitionEffects()

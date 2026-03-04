@@ -552,6 +552,9 @@
     <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Binarization\BinarizationPostEffect.cpp">
       <Filter>Engine\OffScreenRenderer\PostEffect\Binarization</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Scene\GameScenes\MojiTestScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -915,6 +918,9 @@
     </ClInclude>
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Binarization\BinarizationPostEffect.h">
       <Filter>Engine\OffScreenRenderer\PostEffect\Binarization</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\GameScenes\MojiTestScene.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
