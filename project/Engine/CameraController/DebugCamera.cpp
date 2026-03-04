@@ -423,7 +423,7 @@ void DebugCamera::ImGui() {
 	ImGui::Separator();
 
 	// 移動・操作設定
-	if (ImGui::CollapsingHeader("Movement & Control Settings", ImGuiTreeNodeFlags_DefaultOpen)) {
+	if (ImGui::CollapsingHeader("移動&操作設定", ImGuiTreeNodeFlags_DefaultOpen)) {
 		ImGui::DragFloat("Keyboard Speed", &keyboardSpeed_, 0.01f, 0.01f, 2.0f);
 		ImGui::DragFloat("Mouse Pan Speed", &mousePanSpeed_, 0.001f, 0.001f, 0.1f);
 		ImGui::DragFloat("Rotation Sensitivity", &rotationSensitivity_, 0.0001f, 0.001f, 0.01f);
@@ -433,21 +433,20 @@ void DebugCamera::ImGui() {
 	ImGui::Separator();
 
 	// リセットボタン
-	if (ImGui::Button("Reset Camera")) {
+	if (ImGui::Button("カメラの初期化")) {
 		SetDefaultCamera(initialPosition_, initialRotation_);
 	}
 
 	ImGui::Separator();
 
 	// 操作説明
-	if (ImGui::CollapsingHeader("Controls", ImGuiTreeNodeFlags_DefaultOpen)) {
-		ImGui::Text("TAB: Toggle camera control");
-		ImGui::Text("Shift + Enter: Toggle camera control");
-		ImGui::Text("Shift + Middle Mouse: Pan camera");
-		ImGui::Text("Shift + Mouse Wheel: Zoom in/out");
-		ImGui::Text("Middle Mouse: Orbit around target");
-		ImGui::Text("WASD: Move camera and target");
-		ImGui::Text("QE: Move up/down");
+	if (ImGui::CollapsingHeader("カメラ操作説明", ImGuiTreeNodeFlags_DefaultOpen)) {
+		ImGui::Text("TABキー: カメラの固定・固定解除");
+		ImGui::Text("Shift + Middle Mouse: Pan移動 ");
+		ImGui::Text("Middle Mouse: 球面座標状にカメラ移動");
+		ImGui::Text("Shift + Mouse Wheel: ズームインアウト");
+		ImGui::Text("WASD: 前後左右移動");
+		ImGui::Text("QE: 上下移動");
 	}
 
 #endif

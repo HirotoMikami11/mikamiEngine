@@ -48,7 +48,7 @@ void FrameTimer::ImGui()
 #ifdef USEIMGUI
 
 	//FPS関連の情報を描画
-	ImGui::Text("Frame Timer Info");
+	ImGui::Text("FPS関連");
 
 	//FPS
 	ImGui::Text("FPS: %.1f", fps_);
