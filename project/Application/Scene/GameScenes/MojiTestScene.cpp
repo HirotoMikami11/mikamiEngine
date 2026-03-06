@@ -74,9 +74,9 @@ void MojiTestScene::ImGui() {
 	// ================================================================
 	constexpr float CANVAS_W = 440.f;
 	constexpr float CANVAS_H = 340.f;
-	constexpr float GUIDE_H = 140.f;
+	constexpr float GUIDE_H = 260.f;
 
-	ImGui::SetNextWindowSize(ImVec2(480.f, 680.f), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(480.f, 780.f), ImGuiCond_Once);
 	ImGui::Begin("図形認識テスト");
 
 	ImDrawList* dl = ImGui::GetWindowDrawList();
@@ -92,6 +92,8 @@ void MojiTestScene::ImGui() {
 		else if (lastResult_.name == "triangle") highlight = 1;
 		else if (lastResult_.name == "square")   highlight = 2;
 		else if (lastResult_.name == "star")     highlight = 3;
+		else if (lastResult_.name == "spiral")   highlight = 4;
+		else if (lastResult_.name == "omega")    highlight = 5;
 	}
 
 	ImVec2 guideOrigin = ImGui::GetCursorScreenPos();
@@ -135,6 +137,8 @@ void MojiTestScene::ImGui() {
 			else if (lastResult_.name == "triangle") borderCol = IM_COL32(100, 220, 130, 200);
 			else if (lastResult_.name == "square")   borderCol = IM_COL32(100, 160, 255, 200);
 			else if (lastResult_.name == "star")     borderCol = IM_COL32(230, 130, 255, 200);
+			else if (lastResult_.name == "spiral")   borderCol = IM_COL32(60, 210, 200, 200);
+			else if (lastResult_.name == "omega")    borderCol = IM_COL32(230, 160, 80, 200);
 			borderW = 2.f;
 		} else {
 			borderCol = IM_COL32(200, 70, 70, 200);
@@ -185,6 +189,8 @@ void MojiTestScene::ImGui() {
 				else if (lastResult_.name == "triangle") strokeCol = IM_COL32(100, 220, 130, 255);
 				else if (lastResult_.name == "square")   strokeCol = IM_COL32(100, 160, 255, 255);
 				else if (lastResult_.name == "star")     strokeCol = IM_COL32(230, 130, 255, 255);
+				else if (lastResult_.name == "spiral")   strokeCol = IM_COL32(60, 210, 200, 255);
+				else if (lastResult_.name == "omega")    strokeCol = IM_COL32(230, 160, 80, 255);
 			} else {
 				strokeCol = IM_COL32(210, 65, 65, 255);
 			}

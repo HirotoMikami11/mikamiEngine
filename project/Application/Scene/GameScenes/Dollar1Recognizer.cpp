@@ -20,6 +20,8 @@ Dollar1Recognizer::Dollar1Recognizer() {
 	AddTemplate("triangle", MakeTriangleTemplate());
 	AddTemplate("square", MakeSquareTemplate());
 	AddTemplate("star", MakeStarTemplate());
+	AddTemplate("spiral", MakeSpiralTemplate());
+	AddTemplate("omega", MakeOmegaTemplate());
 }
 
 // ================================================================
@@ -112,6 +114,64 @@ std::vector<ImVec2> Dollar1Recognizer::MakeStarTemplate() {
 			pts.push_back({ from.x + (to.x - from.x) * t,
 							from.y + (to.y - from.y) * t });
 		}
+	}
+	return pts;
+}
+
+// ★: 省略（既存）
+
+// ～: 上の外側からスタート → 反時計回りに 2 周しながら中心へ収束
+std::vector<ImVec2> Dollar1Recognizer::MakeSpiralTemplate() {
+	static constexpr float PI_L = 3.14159265f;
+	float maxR = 100.f;
+	float minR = 6.f;
+	float turns = 2.f;
+	int   n = 200;
+
+	std::vector<ImVec2> pts;
+	for (int i = 0; i <= n; i++) {
+		float t = float(i) / float(n);
+		float r = maxR + (minR - maxR) * t;              // 外→内
+		float angle = -PI_L / 2.f - (2.f * PI_L * turns * t); // 反時計回り
+		pts.push_back({ r * std::cos(angle), r * std::sin(angle) });
+	}
+	return pts;
+}
+
+// Ω: 左足先 → 左足付け根 → 弧（下左から時計回りで上を通って下右へ）→ 右足先
+std::vector<ImVec2> Dollar1Recognizer::MakeOmegaTemplate() {
+	static constexpr float PI_L = 3.14159265f;
+	float r = 80.f;
+	float footLen = 30.f;
+	// 開口部半角 45° → 弧は 135°〜405°（スクリーン座標で時計回り）
+	float startA = 135.f * PI_L / 180.f;
+	float endA = startA + 270.f * PI_L / 180.f; // 405°
+
+	// 弧の始点・終点（スクリーン座標: Y 下向き）
+	ImVec2 arcStart = { r * std::cos(startA), r * std::sin(startA) }; // 左下
+	ImVec2 arcEnd = { r * std::cos(endA),   r * std::sin(endA) }; // 右下
+	ImVec2 leftTip = { arcStart.x - footLen,  arcStart.y };
+	ImVec2 rightTip = { arcEnd.x + footLen,  arcEnd.y };
+
+	std::vector<ImVec2> pts;
+	int seg = 25;
+
+	// 左足: tip → 弧スタート
+	for (int i = 0; i <= seg; i++) {
+		float t = float(i) / float(seg);
+		pts.push_back({ leftTip.x + (arcStart.x - leftTip.x) * t, leftTip.y });
+	}
+	// 弧: 135°→ 405° (増加 = スクリーン時計回り = 上を通る)
+	int arcSeg = 100;
+	for (int i = 0; i <= arcSeg; i++) {
+		float t = float(i) / float(arcSeg);
+		float angle = startA + (endA - startA) * t;
+		pts.push_back({ r * std::cos(angle), r * std::sin(angle) });
+	}
+	// 右足: 弧エンド → tip
+	for (int i = 0; i <= seg; i++) {
+		float t = float(i) / float(seg);
+		pts.push_back({ arcEnd.x + (rightTip.x - arcEnd.x) * t, arcEnd.y });
 	}
 	return pts;
 }
@@ -466,84 +526,142 @@ namespace StrokeGuide {
 			DrawNumberBadge(dl, v[order[s]], s + 1, col);
 	}
 
-	// ---- 4種まとめて横並び表示 ---------------------------------------
-	// origin: パネル左上のスクリーン座標
-	// totalWidth: パネル横幅（ウィンドウ幅に合わせる）
-	// panelHeight: パネル高さ
-	void DrawAllGuides(ImDrawList* dl, ImVec2 origin, float totalWidth, float panelHeight,
-		int highlightMode) // 0=○, 1=△, 2=□, -1=ハイライトなし
+
+	// ～ うずまき: 反時計回り、外側12時スタート
+	//   ①=外側12時, ②=外側9時, ③=内側6時, ④=内側3時
+	void DrawSpiralGuide(ImDrawList* dl, ImVec2 origin, ImVec2 size)
 	{
-		// パネル背景
+		static constexpr float PI_L = 3.14159265f;
+		ImVec2 ctr = { origin.x + size.x * 0.5f, origin.y + size.y * 0.5f };
+		float  maxR = std::min(size.x, size.y) * 0.36f;
+		float  minR = maxR * 0.12f;
+		float  turns = 2.f;
+		ImU32  col = IM_COL32(60, 210, 200, 255);
+
+		// 薄いうずまき輪郭
+		int n = 120;
+		ImVec2 prev = {};
+		for (int i = 0; i <= n; i++) {
+			float t = float(i) / float(n);
+			float r = maxR + (minR - maxR) * t;
+			float angle = -PI_L / 2.f - (2.f * PI_L * turns * t);
+			ImVec2 p = { ctr.x + r * std::cos(angle), ctr.y + r * std::sin(angle) };
+			if (i > 0) dl->AddLine(prev, p, IM_COL32(60, 210, 200, 40), 1.5f);
+			prev = p;
+		}
+
+		// ①〜④: 1/4 ターンごと（2ターン中の最初の1ターンで配置）
+		const float steps[4] = { 0.f, 0.125f, 0.25f, 0.375f };
+		for (int i = 0; i < 4; i++) {
+			float t = steps[i];
+			float r = maxR + (minR - maxR) * t;
+			float angle = -PI_L / 2.f - (2.f * PI_L * turns * t);
+			ImVec2 pos = { ctr.x + r * std::cos(angle), ctr.y + r * std::sin(angle) };
+			DrawNumberBadge(dl, pos, i + 1, col);
+		}
+	}
+
+	// Ω: ①=左足先, ②=弧の頂上, ③=右足先
+	void DrawOmegaGuide(ImDrawList* dl, ImVec2 origin, ImVec2 size)
+	{
+		static constexpr float PI_L = 3.14159265f;
+		ImVec2 ctr = { origin.x + size.x * 0.5f, origin.y + size.y * 0.5f };
+		float  r = std::min(size.x, size.y) * 0.26f;
+		float  footLen = r * 0.40f;
+		ImU32  col = IM_COL32(230, 160, 80, 255);
+
+		float startA = 135.f * PI_L / 180.f;
+		float endA = startA + 270.f * PI_L / 180.f;
+
+		ImVec2 arcStart = { ctr.x + r * std::cos(startA), ctr.y + r * std::sin(startA) };
+		ImVec2 arcEnd = { ctr.x + r * std::cos(endA),   ctr.y + r * std::sin(endA) };
+		ImVec2 leftTip = { arcStart.x - footLen, arcStart.y };
+		ImVec2 rightTip = { arcEnd.x + footLen, arcEnd.y };
+		ImVec2 topPt = { ctr.x, ctr.y - r }; // 弧の頂上 (270° = -π/2)
+
+		// 薄い輪郭
+		dl->AddLine(leftTip, arcStart, IM_COL32(230, 160, 80, 45), 1.5f);
+		ImVec2 prev = arcStart;
+		for (int i = 1; i <= 60; i++) {
+			float t = float(i) / 60.f;
+			float angle = startA + (endA - startA) * t;
+			ImVec2 p = { ctr.x + r * std::cos(angle), ctr.y + r * std::sin(angle) };
+			dl->AddLine(prev, p, IM_COL32(230, 160, 80, 45), 1.5f);
+			prev = p;
+		}
+		dl->AddLine(arcEnd, rightTip, IM_COL32(230, 160, 80, 45), 1.5f);
+
+		// バッジ
+		DrawNumberBadge(dl, leftTip, 1, col);
+		DrawNumberBadge(dl, topPt, 2, col);
+		DrawNumberBadge(dl, rightTip, 3, col);
+	}
+
+	// ---- 2行 × 3列 まとめてガイドパネルを描画 ------------------
+	void DrawAllGuides(ImDrawList* dl, ImVec2 origin, float totalWidth, float panelHeight,
+		int highlightMode)
+	{
 		dl->AddRectFilled(
-			origin,
-			{ origin.x + totalWidth, origin.y + panelHeight },
-			IM_COL32(14, 14, 22, 200)
-		);
+			origin, { origin.x + totalWidth, origin.y + panelHeight },
+			IM_COL32(14, 14, 22, 200));
 		dl->AddRect(
-			origin,
-			{ origin.x + totalWidth, origin.y + panelHeight },
-			IM_COL32(60, 60, 80, 180), 3.f, 0, 1.f
-		);
+			origin, { origin.x + totalWidth, origin.y + panelHeight },
+			IM_COL32(60, 60, 80, 180), 3.f, 0, 1.f);
 
-		// タイトル行の高さ
 		float titleH = 20.f;
-		float labelH = 20.f;
-		float cellW = totalWidth / 4.f;
-		float cellH = panelHeight - titleH - labelH;
+		float labelH = 18.f;
+		int   cols = 3;
+		int   rows = 2;
+		float cellW = totalWidth / float(cols);
+		float rowH = (panelHeight - titleH) / float(rows);
+		float cellH = rowH - labelH;
 
-		// --- タイトル ---
 		const char* title = "書き順ガイド";
 		ImVec2 ts = ImGui::CalcTextSize(title);
-		dl->AddText(
-			{ origin.x + (totalWidth - ts.x) * 0.5f, origin.y + 2.f },
-			IM_COL32(180, 180, 200, 200), title
-		);
+		dl->AddText({ origin.x + (totalWidth - ts.x) * 0.5f, origin.y + 2.f },
+			IM_COL32(180, 180, 200, 200), title);
 
-		// --- 各セル ---
 		struct CellInfo {
 			const char* label;
 			ImU32       frameCol;
 			ImU32       labelCol;
 			void (*draw)(ImDrawList*, ImVec2, ImVec2);
-		} cells[4] = {
-			{ "丸",     IM_COL32(255,200,60,120),  IM_COL32(255,200,60,230),  DrawCircleGuide   },
-			{ "三角形", IM_COL32(100,220,130,120), IM_COL32(100,220,130,230), DrawTriangleGuide },
-			{ "四角形",   IM_COL32(100,160,255,120), IM_COL32(100,160,255,230), DrawSquareGuide   },
-			{ "星",     IM_COL32(230,130,255,120), IM_COL32(230,130,255,230), DrawStarGuide     },
+		} cells[6] = {
+			{ "まる",     IM_COL32(255,200, 60,120), IM_COL32(255,200, 60,230), DrawCircleGuide   },
+			{ "さんかく", IM_COL32(100,220,130,120), IM_COL32(100,220,130,230), DrawTriangleGuide },
+			{ "しかく",   IM_COL32(100,160,255,120), IM_COL32(100,160,255,230), DrawSquareGuide   },
+			{ "ほし",     IM_COL32(230,130,255,120), IM_COL32(230,130,255,230), DrawStarGuide     },
+			{ "うずまき", IM_COL32(60,210,200,120), IM_COL32(60,210,200,230), DrawSpiralGuide   },
+			{ "オメガ",   IM_COL32(230,160, 80,120), IM_COL32(230,160, 80,230), DrawOmegaGuide    },
 		};
 
-		for (int i = 0; i < 4; i++) {
-			ImVec2 cellOrigin = { origin.x + cellW * float(i), origin.y + titleH };
+		for (int i = 0; i < 6; i++) {
+			int    row = i / cols;
+			int    col = i % cols;
+			ImVec2 cellOrigin = { origin.x + cellW * float(col),
+								  origin.y + titleH + rowH * float(row) };
 			ImVec2 cellSize = { cellW, cellH };
 			ImVec2 cellBR = { cellOrigin.x + cellW, cellOrigin.y + cellH };
 
-			// ハイライト（現在のモードを明るく）
-			if (i == highlightMode) {
-				dl->AddRectFilled(cellOrigin, cellBR,
-					IM_COL32(40, 40, 60, 120), 3.f);
-			}
+			if (i == highlightMode)
+				dl->AddRectFilled(cellOrigin, cellBR, IM_COL32(40, 40, 60, 120), 3.f);
 
-			// セル枠線（ハイライト中は太く）
 			float borderThick = (i == highlightMode) ? 2.f : 0.8f;
 			ImU32 borderCol = (i == highlightMode) ? cells[i].frameCol
 				: IM_COL32(50, 50, 70, 180);
 			dl->AddRect(cellOrigin, cellBR, borderCol, 3.f, 0, borderThick);
 
-			// ガイド描画（ラベル分だけ上方向に寄せる）
 			cells[i].draw(dl, cellOrigin, cellSize);
 
-			// ラベル（セル下部）
 			const char* lbl = cells[i].label;
 			ts = ImGui::CalcTextSize(lbl);
 			dl->AddText(
-				{ cellOrigin.x + (cellW - ts.x) * 0.5f,
-				  cellOrigin.y + cellH + 2.f },
-				cells[i].labelCol, lbl
-			);
+				{ cellOrigin.x + (cellW - ts.x) * 0.5f, cellOrigin.y + cellH + 2.f },
+				cells[i].labelCol, lbl);
 		}
 	}
 
-	// ヘッダで宣言した個別関数も残す（以前との互換）
-	void DrawArrow(ImDrawList*, ImVec2, ImVec2, ImU32, float) {}  // stub（未使用）
+	// stub（互換）
+	void DrawArrow(ImDrawList*, ImVec2, ImVec2, ImU32, float) {}
 
 } // namespace StrokeGuide
