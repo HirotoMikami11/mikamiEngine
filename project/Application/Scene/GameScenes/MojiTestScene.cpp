@@ -77,7 +77,7 @@ void MojiTestScene::ImGui() {
 	constexpr float GUIDE_H = 140.f;
 
 	ImGui::SetNextWindowSize(ImVec2(480.f, 680.f), ImGuiCond_Once);
-	ImGui::Begin("図形認識");
+	ImGui::Begin("図形認識テスト");
 
 	ImDrawList* dl = ImGui::GetWindowDrawList();
 	float       contentW = ImGui::GetContentRegionAvail().x;
@@ -233,9 +233,9 @@ void MojiTestScene::ImGui() {
 
 		ImGui::Spacing();
 		// 真円度（デバッグ情報）
-		ImGui::TextDisabled("真円度: %.3f  (閾値 0.82)  %s",
+		ImGui::TextDisabled("真円度:%.3f(0.82以上で確定させる)%s",
 			lastResult_.circularity,
-			lastResult_.byCircularity ? "-> まる確定（$1未使用）" : "-> $1で判定");
+			lastResult_.byCircularity ? "丸確定（$1未使用）" : "$1で判定");
 		ImGui::Text("スコア:  %.0f%%", lastResult_.score * 100.f);
 
 		ImVec4 barCol =
