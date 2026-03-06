@@ -1,58 +1,36 @@
 #pragma once
 #include "BaseScene.h"
+#include "Dollar1Recognizer.h"
+#include <vector>
+
 class MojiTestScene : public BaseScene
 {
-
-
 public:
-	MojiTestScene();
-	~MojiTestScene() override;
+    MojiTestScene();
+    ~MojiTestScene() override;
 
-	/// <summary>
-	/// シーンに入った時のオフスクリーン設定
-	/// </summary>
-	void ConfigureOffscreenEffects() override;
-
-	/// <summary>
-	/// オブジェクト初期化（シーン切り替え毎に実行）
-	/// </summary>
-	void Initialize() override;
-
-	void Update() override;
-
-	/// <summary>
-	/// 3D描画処理（オフスクリーン内）
-	/// </summary>
-	void DrawOffscreen() override;
-
-	/// <summary>
-	/// UI描画処理（オフスクリーン外）
-	/// </summary>
-	void DrawBackBuffer() override;
-
-	void Finalize() override;
-
-	// ImGui描画
-	void ImGui() override;
+    void ConfigureOffscreenEffects() override;
+    void Initialize() override;
+    void Update() override;
+    void DrawOffscreen() override;
+    void DrawBackBuffer() override;
+    void Finalize() override;
+    void ImGui() override;
 
 private:
-	void InitializeGameObjects();
-	void UpdateGameObjects();
+    void InitializeGameObjects();
+    void UpdateGameObjects();
 
-	// ゲームオブジェクト
-	std::unique_ptr<Sphere> sphere_;
+    std::unique_ptr<Sphere>    sphere_;
+    std::unique_ptr<Model3D>   terrain_;
+    CameraController* cameraController_;
+    Matrix4x4                  viewProjectionMatrix;
+    DirectXCommon* dxCommon_;
+    OffscreenRenderer* offscreenRenderer_;
 
-	std::unique_ptr<Model3D> terrain_;
-
-
-	// カメラ
-	CameraController* cameraController_;
-	Matrix4x4 viewProjectionMatrix;
-
-	// システム参照
-	DirectXCommon* dxCommon_;
-	OffscreenRenderer* offscreenRenderer_;
-
-
+    // 図形認識キャンバスの状態
+    std::vector<ImVec2> strokePoints_;
+    bool                isDrawing_ = false;
+    bool                hasResult_ = false;
+    DollarResult        lastResult_;
 };
-
