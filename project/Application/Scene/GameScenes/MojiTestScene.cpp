@@ -91,6 +91,7 @@ void MojiTestScene::ImGui() {
 		if (lastResult_.name == "circle")   highlight = 0;
 		else if (lastResult_.name == "triangle") highlight = 1;
 		else if (lastResult_.name == "square")   highlight = 2;
+		else if (lastResult_.name == "star")     highlight = 3;
 	}
 
 	ImVec2 guideOrigin = ImGui::GetCursorScreenPos();
@@ -133,6 +134,7 @@ void MojiTestScene::ImGui() {
 			if (lastResult_.name == "circle")   borderCol = IM_COL32(255, 200, 60, 200);
 			else if (lastResult_.name == "triangle") borderCol = IM_COL32(100, 220, 130, 200);
 			else if (lastResult_.name == "square")   borderCol = IM_COL32(100, 160, 255, 200);
+			else if (lastResult_.name == "star")     borderCol = IM_COL32(230, 130, 255, 200);
 			borderW = 2.f;
 		} else {
 			borderCol = IM_COL32(200, 70, 70, 200);
@@ -182,6 +184,7 @@ void MojiTestScene::ImGui() {
 				if (lastResult_.name == "circle")   strokeCol = IM_COL32(255, 200, 60, 255);
 				else if (lastResult_.name == "triangle") strokeCol = IM_COL32(100, 220, 130, 255);
 				else if (lastResult_.name == "square")   strokeCol = IM_COL32(100, 160, 255, 255);
+				else if (lastResult_.name == "star")     strokeCol = IM_COL32(230, 130, 255, 255);
 			} else {
 				strokeCol = IM_COL32(210, 65, 65, 255);
 			}
@@ -220,7 +223,8 @@ void MojiTestScene::ImGui() {
 			ImVec4 resCol =
 				lastResult_.name == "circle" ? ImVec4(1.0f, 0.78f, 0.24f, 1.f) :
 				lastResult_.name == "triangle" ? ImVec4(0.4f, 0.86f, 0.51f, 1.f) :
-				ImVec4(0.4f, 0.63f, 1.0f, 1.f);
+				lastResult_.name == "square" ? ImVec4(0.4f, 0.63f, 1.0f, 1.f) :
+				ImVec4(0.9f, 0.51f, 1.0f, 1.f);
 			ImGui::TextColored(resCol, "%s", lastResult_.GetShapeName());
 		} else {
 			ImGui::TextColored(ImVec4(0.88f, 0.3f, 0.3f, 1.f), "認識できませんでした");

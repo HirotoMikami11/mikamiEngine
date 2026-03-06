@@ -7,17 +7,18 @@
 // $1 Recognizer の判定結果
 // ================================================================
 struct DollarResult {
-	std::string	name;						// マッチしたテンプレート名（空 = 不明）
-	float		score;						// スコア（0.0〜1.0、高いほど一致）
-	bool		matched;					// score が閾値を超えたか
-	float		circularity = 0.f;			// 真円度（デバッグ用）
-	bool		byCircularity = false;		// true = 真円度で確定（$1 未使用）
+	std::string name;					// マッチしたテンプレート名（空 = 不明）
+	float		score;					// スコア（0.0〜1.0、高いほど一致）
+	bool		matched;				// score が閾値を超えたか
+	float		circularity = 0.f;		// 真円度（デバッグ用）
+	bool		byCircularity = false;	// true = 真円度で確定（$1 未使用）
 
 	const char* GetShapeName() const {
 		if (!matched)			return "不明";
 		if (name == "circle")	return "丸";
 		if (name == "triangle")	return "三角形";
 		if (name == "square")	return "四角形";
+		if (name == "star")		return "星形";
 		return name.c_str();
 	}
 };
@@ -26,8 +27,8 @@ struct DollarResult {
 // テンプレート1件
 // ================================================================
 struct DollarTemplate {
-	std::string         name;
-	std::vector<ImVec2> points; // 正規化済み 64 点
+	std::string			name;
+	std::vector<ImVec2>	points; // 正規化済み 64 点
 };
 
 // ================================================================
@@ -58,23 +59,24 @@ private:
 	static constexpr float MATCH_THRESH = 0.75f; // これ以上なら matched=true
 	static constexpr float CIRCLE_CIRCULARITY_THRESH = 0.82f; // 真円度がこれ以上なら即まる確定
 
-	static std::vector<ImVec2> Resample(const std::vector<ImVec2>& pts, int n);
-	static float               PathLength(const std::vector<ImVec2>& pts);
+	static std::vector<ImVec2>Resample(const std::vector<ImVec2>& pts, int n);
+	static float PathLength(const std::vector<ImVec2>& pts);
 	static std::vector<ImVec2> RotateByIndicativeAngle(const std::vector<ImVec2>& pts);
 	static std::vector<ImVec2> ScaleToSquare(const std::vector<ImVec2>& pts, float size);
 	static std::vector<ImVec2> TranslateToCentroid(const std::vector<ImVec2>& pts);
-	static float               PathDistance(const std::vector<ImVec2>& a,
+	static float PathDistance(const std::vector<ImVec2>& a,
 		const std::vector<ImVec2>& b);
-	static float               DistanceAtBestAngle(const std::vector<ImVec2>& pts,
+	static float DistanceAtBestAngle(const std::vector<ImVec2>& pts,
 		const std::vector<ImVec2>& tmpl);
-	static ImVec2              Centroid(const std::vector<ImVec2>& pts);
-	static float               Dist(ImVec2 a, ImVec2 b);
-	static float               ComputeCircularity(const std::vector<ImVec2>& pts);
+	static ImVec2 Centroid(const std::vector<ImVec2>& pts);
+	static float Dist(ImVec2 a, ImVec2 b);
+	static float ComputeCircularity(const std::vector<ImVec2>& pts);
 
 	// デフォルトテンプレートを生成する関数群
 	static std::vector<ImVec2> MakeCircleTemplate();
 	static std::vector<ImVec2> MakeTriangleTemplate();
 	static std::vector<ImVec2> MakeSquareTemplate();
+	static std::vector<ImVec2> MakeStarTemplate();
 
 	std::vector<DollarTemplate> templates_;
 };
@@ -88,6 +90,7 @@ namespace StrokeGuide {
 	void DrawCircleGuide(ImDrawList* dl, ImVec2 origin, ImVec2 size);
 	void DrawTriangleGuide(ImDrawList* dl, ImVec2 origin, ImVec2 size);
 	void DrawSquareGuide(ImDrawList* dl, ImVec2 origin, ImVec2 size);
+	void DrawStarGuide(ImDrawList* dl, ImVec2 origin, ImVec2 size);
 
 	// 数字バッジ
 	void DrawNumberBadge(ImDrawList* dl, ImVec2 center, int num, ImU32 color);
@@ -96,8 +99,7 @@ namespace StrokeGuide {
 	void DrawArrow(ImDrawList* dl, ImVec2 from, ImVec2 to,
 		ImU32 color, float thickness = 1.5f);
 
-	// 3種まとめてガイドパネルを描画
-	// highlightMode: 0=○, 1=△, 2=□, -1=なし
+	// 4種まとめてガイドパネルを描画
 	void DrawAllGuides(ImDrawList* dl, ImVec2 origin,
 		float totalWidth, float panelHeight,
 		int highlightMode = -1);

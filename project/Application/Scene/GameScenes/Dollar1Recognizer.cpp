@@ -19,6 +19,7 @@ Dollar1Recognizer::Dollar1Recognizer() {
 	AddTemplate("circle", MakeCircleTemplate());
 	AddTemplate("triangle", MakeTriangleTemplate());
 	AddTemplate("square", MakeSquareTemplate());
+	AddTemplate("star", MakeStarTemplate());
 }
 
 // ================================================================
@@ -85,6 +86,33 @@ std::vector<ImVec2> Dollar1Recognizer::MakeSquareTemplate() {
 	addSeg(TR, BR);
 	addSeg(BR, BL);
 	addSeg(BL, TL);
+	return pts;
+}
+
+// ★: 上の頂点スタート → 右下 → 左上 → 右上 → 左下 → 上に戻る（一筆書き）
+//   五芒星の5頂点を1つ飛ばしで繋ぐルート
+std::vector<ImVec2> Dollar1Recognizer::MakeStarTemplate() {
+	// 5頂点を 72° 間隔で配置（12時スタート）
+	float r = 110.f;
+	ImVec2 v[5];
+	for (int i = 0; i < 5; i++) {
+		float angle = -PI_F / 2.f + (2.f * PI_F / 5.f) * float(i);
+		v[i] = { r * std::cos(angle), r * std::sin(angle) };
+	}
+	// 一筆書き順: v0→v2→v4→v1→v3→v0
+	const int order[] = { 0, 2, 4, 1, 3, 0 };
+
+	std::vector<ImVec2> pts;
+	int seg = 30;
+	for (int s = 0; s < 5; s++) {
+		ImVec2 from = v[order[s]];
+		ImVec2 to = v[order[s + 1]];
+		for (int i = 0; i <= seg; i++) {
+			float t = float(i) / float(seg);
+			pts.push_back({ from.x + (to.x - from.x) * t,
+							from.y + (to.y - from.y) * t });
+		}
+	}
 	return pts;
 }
 
@@ -413,7 +441,32 @@ namespace StrokeGuide {
 		DrawNumberBadge(dl, BL, 4, col);
 	}
 
-	// ---- 3種まとめて横並び表示 ---------------------------------------
+	// ★: ①上, ②右下, ③左上, ④右上, ⑤左下  （一筆書き順）
+	void DrawStarGuide(ImDrawList* dl, ImVec2 origin, ImVec2 size)
+	{
+		static constexpr float PI_LCL = 3.14159265f;
+		ImVec2 ctr = { origin.x + size.x * 0.5f, origin.y + size.y * 0.5f };
+		float  r = std::min(size.x, size.y) * 0.32f;
+		ImU32  col = IM_COL32(230, 130, 255, 255);
+
+		// 5頂点（画面座標）
+		ImVec2 v[5];
+		for (int i = 0; i < 5; i++) {
+			float angle = -PI_LCL / 2.f + (2.f * PI_LCL / 5.f) * float(i);
+			v[i] = { ctr.x + r * std::cos(angle), ctr.y + r * std::sin(angle) };
+		}
+
+		// 薄い星形の輪郭（一筆書きルートで描く）
+		const int order[] = { 0, 2, 4, 1, 3, 0 };
+		for (int s = 0; s < 5; s++)
+			dl->AddLine(v[order[s]], v[order[s + 1]], IM_COL32(230, 130, 255, 40), 1.5f);
+
+		// 書き順バッジ（①〜⑤を一筆書き順の頂点位置に配置）
+		for (int s = 0; s < 5; s++)
+			DrawNumberBadge(dl, v[order[s]], s + 1, col);
+	}
+
+	// ---- 4種まとめて横並び表示 ---------------------------------------
 	//
 	// DrawAllGuides: キャンバスとは別のエリアに3種を並べて描画する。
 	//
@@ -447,7 +500,7 @@ namespace StrokeGuide {
 		// タイトル行の高さ
 		float titleH = 20.f;
 		float labelH = 20.f;
-		float cellW = totalWidth / 3.f;
+		float cellW = totalWidth / 4.f;
 		float cellH = panelHeight - titleH - labelH;
 
 		// --- タイトル ---
@@ -464,13 +517,14 @@ namespace StrokeGuide {
 			ImU32       frameCol;
 			ImU32       labelCol;
 			void (*draw)(ImDrawList*, ImVec2, ImVec2);
-		} cells[3] = {
-			{ "まる",     IM_COL32(255,200,60,120),  IM_COL32(255,200,60,230),  DrawCircleGuide   },
-			{ "さんかく", IM_COL32(100,220,130,120), IM_COL32(100,220,130,230), DrawTriangleGuide },
-			{ "しかく",   IM_COL32(100,160,255,120), IM_COL32(100,160,255,230), DrawSquareGuide   },
+		} cells[4] = {
+			{ "丸",     IM_COL32(255,200,60,120),  IM_COL32(255,200,60,230),  DrawCircleGuide   },
+			{ "三角形", IM_COL32(100,220,130,120), IM_COL32(100,220,130,230), DrawTriangleGuide },
+			{ "四角形",   IM_COL32(100,160,255,120), IM_COL32(100,160,255,230), DrawSquareGuide   },
+			{ "星",     IM_COL32(230,130,255,120), IM_COL32(230,130,255,230), DrawStarGuide     },
 		};
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 4; i++) {
 			ImVec2 cellOrigin = { origin.x + cellW * float(i), origin.y + titleH };
 			ImVec2 cellSize = { cellW, cellH };
 			ImVec2 cellBR = { cellOrigin.x + cellW, cellOrigin.y + cellH };
