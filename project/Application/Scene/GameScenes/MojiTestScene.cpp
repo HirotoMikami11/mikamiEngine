@@ -70,212 +70,211 @@ void MojiTestScene::ImGui() {
 	terrain_->ImGui();
 
 	// ================================================================
-	// 図形認識ウィンドウ
-	// ================================================================
-	constexpr float CANVAS_W = 440.f;
-	constexpr float CANVAS_H = 340.f;
-	constexpr float GUIDE_H = 260.f;
-
-	ImGui::SetNextWindowSize(ImVec2(480.f, 780.f), ImGuiCond_Once);
-	ImGui::Begin("図形認識テスト");
-
-	ImDrawList* dl = ImGui::GetWindowDrawList();
-	float       contentW = ImGui::GetContentRegionAvail().x;
-
-	// ================================================================
-	// [1] 書き順ガイドパネル（常時表示・3種横並び）
-	//     -1 を渡すとハイライトなし。判定済みなら対応図形をハイライト。
+	// ハイライトインデックス計算（ガイドとキャンバス両ウィンドウで共有）
 	// ================================================================
 	int highlight = -1;
 	if (hasResult_ && lastResult_.matched) {
-		if (lastResult_.name == "circle")   highlight = 0;
-		else if (lastResult_.name == "triangle") highlight = 1;
-		else if (lastResult_.name == "square")   highlight = 2;
-		else if (lastResult_.name == "star")     highlight = 3;
-		else if (lastResult_.name == "spiral")   highlight = 4;
-		else if (lastResult_.name == "omega")    highlight = 5;
+		if (lastResult_.name == "circle")    highlight = 0;
+		else if (lastResult_.name == "triangle")  highlight = 1;
+		else if (lastResult_.name == "square")    highlight = 2;
+		else if (lastResult_.name == "star")      highlight = 3;
+		else if (lastResult_.name == "check")     highlight = 4;
+		else if (lastResult_.name == "lightning") highlight = 5;
+		else if (lastResult_.name == "spiral")    highlight = 6;
+		else if (lastResult_.name == "omega")     highlight = 7;
 	}
-
-	ImVec2 guideOrigin = ImGui::GetCursorScreenPos();
-	StrokeGuide::DrawAllGuides(dl, guideOrigin, contentW, GUIDE_H, highlight);
-	ImGui::Dummy(ImVec2(contentW, GUIDE_H));
-
-	ImGui::Spacing();
 
 	// ================================================================
-	// [2] 描画キャンバス
+	// [ウィンドウ A] 書き順ガイド
 	// ================================================================
-	ImVec2 canvasOrigin = ImGui::GetCursorScreenPos();
+	ImGui::SetNextWindowSize(ImVec2(540.f, 310.f), ImGuiCond_Once);
+	ImGui::SetNextWindowPos(ImVec2(20.f, 80.f), ImGuiCond_Once);
+	ImGui::Begin("書き順ガイド", nullptr,
+		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
-	// 背景
-	dl->AddRectFilled(
-		canvasOrigin,
-		{ canvasOrigin.x + CANVAS_W, canvasOrigin.y + CANVAS_H },
-		IM_COL32(16, 16, 26, 255)
-	);
+	{
+		ImDrawList* dl = ImGui::GetWindowDrawList();
+		ImVec2      origin = ImGui::GetCursorScreenPos();
+		ImVec2      avail = ImGui::GetContentRegionAvail();
+		float       guideH = avail.y;
 
-	// ヒントテキスト
-	if (strokePoints_.empty() && !isDrawing_) {
-		const char* hint = "ここに図形を描いてください";
-		ImVec2 hs = ImGui::CalcTextSize(hint);
-		dl->AddText(
-			{ canvasOrigin.x + (CANVAS_W - hs.x) * 0.5f,
-			  canvasOrigin.y + (CANVAS_H - hs.y) * 0.5f },
-			IM_COL32(55, 55, 75, 200), hint);
+		StrokeGuide::DrawAllGuides(dl, origin, avail.x, guideH, highlight);
+		ImGui::Dummy(ImVec2(avail.x, guideH));
 	}
+	ImGui::End();
 
-	// 枠線
-	// 判定済みなら結果に応じた色、それ以外はニュートラル
-	ImU32 borderCol = IM_COL32(70, 70, 100, 180);
-	float borderW = 1.5f;
-	if (isDrawing_) {
-		borderCol = IM_COL32(180, 180, 220, 220);
-		borderW = 2.5f;
-	} else if (hasResult_) {
-		if (lastResult_.matched) {
-			if (lastResult_.name == "circle")   borderCol = IM_COL32(255, 200, 60, 200);
-			else if (lastResult_.name == "triangle") borderCol = IM_COL32(100, 220, 130, 200);
-			else if (lastResult_.name == "square")   borderCol = IM_COL32(100, 160, 255, 200);
-			else if (lastResult_.name == "star")     borderCol = IM_COL32(230, 130, 255, 200);
-			else if (lastResult_.name == "spiral")   borderCol = IM_COL32(60, 210, 200, 200);
-			else if (lastResult_.name == "omega")    borderCol = IM_COL32(230, 160, 80, 200);
-			borderW = 2.f;
-		} else {
-			borderCol = IM_COL32(200, 70, 70, 200);
-			borderW = 2.f;
+	// ================================================================
+	// [ウィンドウ B] 描画キャンバス
+	// ================================================================
+	constexpr float CANVAS_W = 420.f;
+	constexpr float CANVAS_H = 360.f;
+
+	ImGui::SetNextWindowSize(ImVec2(460.f, 620.f), ImGuiCond_Once);
+	ImGui::SetNextWindowPos(ImVec2(570.f, 80.f), ImGuiCond_Once);
+	ImGui::Begin("描画キャンバス", nullptr, ImGuiWindowFlags_NoScrollbar);
+
+	{
+		ImDrawList* dl = ImGui::GetWindowDrawList();
+		ImVec2 canvasOrigin = ImGui::GetCursorScreenPos();
+
+		// --- 背景 ---
+		dl->AddRectFilled(canvasOrigin,
+			{ canvasOrigin.x + CANVAS_W, canvasOrigin.y + CANVAS_H },
+			IM_COL32(16, 16, 26, 255));
+
+		if (strokePoints_.empty() && !isDrawing_) {
+			const char* hint = "ここに図形を描いてください";
+			ImVec2 hs = ImGui::CalcTextSize(hint);
+			dl->AddText(
+				{ canvasOrigin.x + (CANVAS_W - hs.x) * 0.5f,
+				  canvasOrigin.y + (CANVAS_H - hs.y) * 0.5f },
+				IM_COL32(55, 55, 75, 200), hint);
 		}
-	}
-	dl->AddRect(
-		canvasOrigin,
-		{ canvasOrigin.x + CANVAS_W, canvasOrigin.y + CANVAS_H },
-		borderCol, 0.f, 0, borderW
-	);
 
-	// マウス入力
-	ImGui::InvisibleButton("canvas", { CANVAS_W, CANVAS_H });
-	bool   hovered = ImGui::IsItemHovered();
-	ImVec2 mpos = ImGui::GetMousePos();
-
-	if (hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-		isDrawing_ = true;
-		strokePoints_.clear();
-		hasResult_ = false;
-	}
-	if (isDrawing_ && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-		ImVec2 local = { mpos.x - canvasOrigin.x, mpos.y - canvasOrigin.y };
-		if (strokePoints_.empty()) {
-			strokePoints_.push_back(local);
-		} else {
-			float dx = local.x - strokePoints_.back().x;
-			float dy = local.y - strokePoints_.back().y;
-			if (dx * dx + dy * dy > 4.f) strokePoints_.push_back(local);
-		}
-	}
-	if (isDrawing_ && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
-		isDrawing_ = false;
-		if ((int)strokePoints_.size() >= 10) {
-			lastResult_ = Dollar1Recognizer::GetInstance()->Recognize(strokePoints_);
-			hasResult_ = true;
-		}
-	}
-
-	// ストローク描画
-	if ((int)strokePoints_.size() > 1) {
-		// 描画中は白、判定済みは結果色
-		ImU32 strokeCol = IM_COL32(220, 220, 220, 210);
-		if (hasResult_) {
+		// --- 枠線 ---
+		ImU32 borderCol = IM_COL32(70, 70, 100, 180);
+		float borderW = 1.5f;
+		if (isDrawing_) {
+			borderCol = IM_COL32(180, 180, 220, 220);
+			borderW = 2.5f;
+		} else if (hasResult_) {
 			if (lastResult_.matched) {
-				if (lastResult_.name == "circle")   strokeCol = IM_COL32(255, 200, 60, 255);
-				else if (lastResult_.name == "triangle") strokeCol = IM_COL32(100, 220, 130, 255);
-				else if (lastResult_.name == "square")   strokeCol = IM_COL32(100, 160, 255, 255);
-				else if (lastResult_.name == "star")     strokeCol = IM_COL32(230, 130, 255, 255);
-				else if (lastResult_.name == "spiral")   strokeCol = IM_COL32(60, 210, 200, 255);
-				else if (lastResult_.name == "omega")    strokeCol = IM_COL32(230, 160, 80, 255);
+				if (lastResult_.name == "circle")    borderCol = IM_COL32(255, 200, 60, 200);
+				else if (lastResult_.name == "triangle")  borderCol = IM_COL32(100, 220, 130, 200);
+				else if (lastResult_.name == "square")    borderCol = IM_COL32(100, 160, 255, 200);
+				else if (lastResult_.name == "star")      borderCol = IM_COL32(230, 130, 255, 200);
+				else if (lastResult_.name == "check")     borderCol = IM_COL32(60, 220, 180, 200);
+				else if (lastResult_.name == "lightning") borderCol = IM_COL32(255, 220, 40, 200);
+				else if (lastResult_.name == "spiral")    borderCol = IM_COL32(60, 210, 200, 200);
+				else if (lastResult_.name == "omega")     borderCol = IM_COL32(230, 160, 80, 200);
+				borderW = 2.f;
 			} else {
-				strokeCol = IM_COL32(210, 65, 65, 255);
+				borderCol = IM_COL32(200, 70, 70, 200);
+				borderW = 2.f;
 			}
 		}
-		for (int i = 1; i < (int)strokePoints_.size(); ++i) {
-			dl->AddLine(
-				{ canvasOrigin.x + strokePoints_[i - 1].x,
-				  canvasOrigin.y + strokePoints_[i - 1].y },
-				{ canvasOrigin.x + strokePoints_[i].x,
-				  canvasOrigin.y + strokePoints_[i].y },
-				strokeCol, 2.5f
-			);
+		dl->AddRect(canvasOrigin,
+			{ canvasOrigin.x + CANVAS_W, canvasOrigin.y + CANVAS_H },
+			borderCol, 0.f, 0, borderW);
+
+		// --- マウス入力 ---
+		ImGui::InvisibleButton("canvas", { CANVAS_W, CANVAS_H });
+		bool   hovered = ImGui::IsItemHovered();
+		ImVec2 mpos = ImGui::GetMousePos();
+
+		if (hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+			isDrawing_ = true;
+			strokePoints_.clear();
+			hasResult_ = false;
 		}
-		// スタートマーカー（緑丸）
-		dl->AddCircleFilled(
-			{ canvasOrigin.x + strokePoints_.front().x,
-			  canvasOrigin.y + strokePoints_.front().y },
-			5.f, IM_COL32(60, 215, 60, 230)
-		);
-	}
+		if (isDrawing_ && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+			ImVec2 local = { mpos.x - canvasOrigin.x, mpos.y - canvasOrigin.y };
+			if (strokePoints_.empty()) {
+				strokePoints_.push_back(local);
+			} else {
+				float dx = local.x - strokePoints_.back().x;
+				float dy = local.y - strokePoints_.back().y;
+				if (dx * dx + dy * dy > 4.f) strokePoints_.push_back(local);
+			}
+		}
+		if (isDrawing_ && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+			isDrawing_ = false;
+			if ((int)strokePoints_.size() >= 10) {
+				lastResult_ = Dollar1Recognizer::GetInstance()->Recognize(strokePoints_);
+				hasResult_ = true;
+			}
+		}
 
-	// ================================================================
-	// [3] 判定結果エリア
-	// ================================================================
-	ImGui::Spacing();
-	ImGui::Separator();
-	ImGui::Spacing();
+		// --- ストローク描画 ---
+		if ((int)strokePoints_.size() > 1) {
+			ImU32 strokeCol = IM_COL32(220, 220, 220, 210);
+			if (hasResult_) {
+				if (lastResult_.matched) {
+					if (lastResult_.name == "circle")    strokeCol = IM_COL32(255, 200, 60, 255);
+					else if (lastResult_.name == "triangle")  strokeCol = IM_COL32(100, 220, 130, 255);
+					else if (lastResult_.name == "square")    strokeCol = IM_COL32(100, 160, 255, 255);
+					else if (lastResult_.name == "star")      strokeCol = IM_COL32(230, 130, 255, 255);
+					else if (lastResult_.name == "check")     strokeCol = IM_COL32(60, 220, 180, 255);
+					else if (lastResult_.name == "lightning") strokeCol = IM_COL32(255, 220, 40, 255);
+					else if (lastResult_.name == "spiral")    strokeCol = IM_COL32(60, 210, 200, 255);
+					else if (lastResult_.name == "omega")     strokeCol = IM_COL32(230, 160, 80, 255);
+				} else {
+					strokeCol = IM_COL32(210, 65, 65, 255);
+				}
+			}
+			for (int i = 1; i < (int)strokePoints_.size(); ++i) {
+				dl->AddLine(
+					{ canvasOrigin.x + strokePoints_[i - 1].x, canvasOrigin.y + strokePoints_[i - 1].y },
+					{ canvasOrigin.x + strokePoints_[i].x, canvasOrigin.y + strokePoints_[i].y },
+					strokeCol, 2.5f);
+			}
+			// スタートマーカー
+			dl->AddCircleFilled(
+				{ canvasOrigin.x + strokePoints_.front().x,
+				  canvasOrigin.y + strokePoints_.front().y },
+				5.f, IM_COL32(60, 215, 60, 230));
+		}
 
-	if (isDrawing_) {
-		ImGui::TextDisabled("描いています...  (%d 点)", (int)strokePoints_.size());
+		// --- 判定結果 ---
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
 
-	} else if (hasResult_) {
+		if (isDrawing_) {
+			ImGui::TextDisabled("描いています... (%d 点)", (int)strokePoints_.size());
 
-		ImGui::SetWindowFontScale(1.8f);
-		if (lastResult_.matched) {
-			ImVec4 resCol =
-				lastResult_.name == "circle" ? ImVec4(1.0f, 0.78f, 0.24f, 1.f) :
-				lastResult_.name == "triangle" ? ImVec4(0.4f, 0.86f, 0.51f, 1.f) :
-				lastResult_.name == "square" ? ImVec4(0.4f, 0.63f, 1.0f, 1.f) :
-				ImVec4(0.9f, 0.51f, 1.0f, 1.f);
-			ImGui::TextColored(resCol, "%s", lastResult_.GetShapeName());
+		} else if (hasResult_) {
+			ImGui::SetWindowFontScale(1.8f);
+			if (lastResult_.matched) {
+				ImVec4 resCol =
+					lastResult_.name == "circle" ? ImVec4(1.00f, 0.78f, 0.24f, 1.f) :
+					lastResult_.name == "triangle" ? ImVec4(0.40f, 0.86f, 0.51f, 1.f) :
+					lastResult_.name == "square" ? ImVec4(0.40f, 0.63f, 1.00f, 1.f) :
+					lastResult_.name == "check" ? ImVec4(0.24f, 0.86f, 0.71f, 1.f) :
+					lastResult_.name == "lightning" ? ImVec4(1.00f, 0.86f, 0.16f, 1.f) :
+					lastResult_.name == "spiral" ? ImVec4(0.24f, 0.82f, 0.78f, 1.f) :
+					lastResult_.name == "omega" ? ImVec4(0.90f, 0.63f, 0.31f, 1.f) :
+					ImVec4(0.90f, 0.51f, 1.00f, 1.f);
+				ImGui::TextColored(resCol, "%s", lastResult_.GetShapeName());
+			} else {
+				ImGui::TextColored(ImVec4(0.88f, 0.3f, 0.3f, 1.f), "認識できませんでした");
+			}
+			ImGui::SetWindowFontScale(1.0f);
+
+			ImGui::Spacing();
+			ImGui::TextDisabled("真円度:%.3f  %s",
+				lastResult_.circularity,
+				lastResult_.byCircularity ? "[丸確定]" : "[$1判定]");
+			ImGui::Text("スコア: %.0f%%", lastResult_.score * 100.f);
+
+			ImVec4 barCol =
+				lastResult_.score > 0.90f ? ImVec4(0.2f, 0.88f, 0.3f, 1.f) :
+				lastResult_.score > 0.75f ? ImVec4(0.9f, 0.78f, 0.2f, 1.f) :
+				ImVec4(0.88f, 0.3f, 0.2f, 1.f);
+			ImGui::PushStyleColor(ImGuiCol_PlotHistogram, barCol);
+			ImGui::ProgressBar(lastResult_.score, ImVec2(-1.f, 0.f), "");
+			ImGui::PopStyleColor();
+
+			if (!lastResult_.matched) {
+				ImGui::Spacing();
+				ImGui::TextColored(ImVec4(0.75f, 0.75f, 0.45f, 1.f),
+					"ガイドの番号順に描いてみてください");
+			}
+
 		} else {
-			ImGui::TextColored(ImVec4(0.88f, 0.3f, 0.3f, 1.f), "認識できませんでした");
+			ImGui::TextColored(ImVec4(0.45f, 0.45f, 0.55f, 1.f),
+				"ガイドの番号順に図形を描いてください");
 		}
-		ImGui::SetWindowFontScale(1.0f);
 
 		ImGui::Spacing();
-		// 真円度（デバッグ情報）
-		ImGui::TextDisabled("真円度:%.3f(0.82以上で確定させる)%s",
-			lastResult_.circularity,
-			lastResult_.byCircularity ? "丸確定（$1未使用）" : "$1で判定");
-		ImGui::Text("スコア:  %.0f%%", lastResult_.score * 100.f);
-
-		ImVec4 barCol =
-			lastResult_.score > 0.90f ? ImVec4(0.2f, 0.88f, 0.3f, 1.f) :
-			lastResult_.score > 0.75f ? ImVec4(0.9f, 0.78f, 0.2f, 1.f) :
-			ImVec4(0.88f, 0.3f, 0.2f, 1.f);
-		ImGui::PushStyleColor(ImGuiCol_PlotHistogram, barCol);
-		ImGui::ProgressBar(lastResult_.score, ImVec2(-1.f, 0.f), "");
-		ImGui::PopStyleColor();
-
-		if (!lastResult_.matched) {
-			ImGui::Spacing();
-			ImGui::TextColored(
-				ImVec4(0.75f, 0.75f, 0.45f, 1.f),
-				"ガイドの番号順に描いてみてください");
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.15f, 0.15f, 0.22f, 1.f));
+		if (ImGui::Button("クリア", ImVec2(100.f, 28.f))) {
+			strokePoints_.clear();
+			hasResult_ = false;
 		}
-
-	} else {
-		ImGui::TextColored(
-			ImVec4(0.45f, 0.45f, 0.55f, 1.f),
-			"ガイドの番号順に図形を描いてください");
+		ImGui::PopStyleColor();
 	}
-
-	ImGui::Spacing();
-
-	// クリアボタン
-	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.15f, 0.15f, 0.22f, 1.f));
-	if (ImGui::Button("クリア", ImVec2(100.f, 28.f))) {
-		strokePoints_.clear();
-		hasResult_ = false;
-	}
-	ImGui::PopStyleColor();
-
-	ImGui::End();
+	ImGui::End(); // 描画キャンバス
 
 #endif
 }

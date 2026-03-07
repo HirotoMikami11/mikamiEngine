@@ -19,6 +19,8 @@ struct DollarResult {
 		if (name == "triangle")	return "三角形";
 		if (name == "square")	return "四角形";
 		if (name == "star")		return "星形";
+		if (name == "check")	return "チェック";
+		if (name == "lightning") return "稲妻";
 		if (name == "spiral")	return "うずまき";
 		if (name == "omega")	return "オメガ";
 		return name.c_str();
@@ -79,6 +81,8 @@ private:
 	static std::vector<ImVec2> MakeTriangleTemplate();
 	static std::vector<ImVec2> MakeSquareTemplate();
 	static std::vector<ImVec2> MakeStarTemplate();
+	static std::vector<ImVec2> MakeCheckTemplate();
+	static std::vector<ImVec2> MakeLightningTemplate();
 	static std::vector<ImVec2> MakeSpiralTemplate();
 	static std::vector<ImVec2> MakeOmegaTemplate();
 
@@ -95,6 +99,8 @@ namespace StrokeGuide {
 	void DrawTriangleGuide(ImDrawList* dl, ImVec2 origin, ImVec2 size);
 	void DrawSquareGuide(ImDrawList* dl, ImVec2 origin, ImVec2 size);
 	void DrawStarGuide(ImDrawList* dl, ImVec2 origin, ImVec2 size);
+	void DrawCheckGuide(ImDrawList* dl, ImVec2 origin, ImVec2 size);
+	void DrawLightningGuide(ImDrawList* dl, ImVec2 origin, ImVec2 size);
 	void DrawSpiralGuide(ImDrawList* dl, ImVec2 origin, ImVec2 size);
 	void DrawOmegaGuide(ImDrawList* dl, ImVec2 origin, ImVec2 size);
 
