@@ -77,14 +77,15 @@ void MojiTestScene::ImGui() {
 	constexpr float GUIDE_H = 140.f;
 
 	ImGui::SetNextWindowSize(ImVec2(480.f, 680.f), ImGuiCond_Once);
-	ImGui::Begin("図形認識テスト");
+	ImGui::Begin("図形認識テスト ($P)");
 
 	ImDrawList* dl = ImGui::GetWindowDrawList();
 	float       contentW = ImGui::GetContentRegionAvail().x;
 
 	// ================================================================
-	// [1] 書き順ガイドパネル（常時表示・3種横並び）
-	//     -1 を渡すとハイライトなし。判定済みなら対応図形をハイライト。
+	// [1] 書き順ガイドパネル
+	//     $P では書き順不問なので「参考表示」。
+	//     判定済みなら対応図形をハイライト。
 	// ================================================================
 	int highlight = -1;
 	if (hasResult_ && lastResult_.matched) {
@@ -113,7 +114,7 @@ void MojiTestScene::ImGui() {
 
 	// ヒントテキスト
 	if (strokePoints_.empty() && !isDrawing_) {
-		const char* hint = "ここに図形を描いてください";
+		const char* hint = "どの向きから描いても OK！";
 		ImVec2 hs = ImGui::CalcTextSize(hint);
 		dl->AddText(
 			{ canvasOrigin.x + (CANVAS_W - hs.x) * 0.5f,
@@ -122,7 +123,6 @@ void MojiTestScene::ImGui() {
 	}
 
 	// 枠線
-	// 判定済みなら結果に応じた色、それ以外はニュートラル
 	ImU32 borderCol = IM_COL32(70, 70, 100, 180);
 	float borderW = 1.5f;
 	if (isDrawing_) {
@@ -168,14 +168,13 @@ void MojiTestScene::ImGui() {
 	if (isDrawing_ && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
 		isDrawing_ = false;
 		if ((int)strokePoints_.size() >= 10) {
-			lastResult_ = Dollar1Recognizer::GetInstance()->Recognize(strokePoints_);
+			lastResult_ = DollarPRecognizer::GetInstance()->Recognize(strokePoints_);
 			hasResult_ = true;
 		}
 	}
 
 	// ストローク描画
 	if ((int)strokePoints_.size() > 1) {
-		// 描画中は白、判定済みは結果色
 		ImU32 strokeCol = IM_COL32(220, 220, 220, 210);
 		if (hasResult_) {
 			if (lastResult_.matched) {
@@ -228,15 +227,14 @@ void MojiTestScene::ImGui() {
 		ImGui::SetWindowFontScale(1.0f);
 
 		ImGui::Spacing();
-		// 真円度（デバッグ情報）
-		ImGui::TextDisabled("真円度:%.3f(0.82以上で確定させる)%s",
+		ImGui::TextDisabled("真円度:%.3f (0.82以上で確定) %s",
 			lastResult_.circularity,
-			lastResult_.byCircularity ? "丸確定（$1未使用）" : "$1で判定");
+			lastResult_.byCircularity ? "丸確定（$P 未使用）" : "$P で判定");
 		ImGui::Text("スコア:  %.0f%%", lastResult_.score * 100.f);
 
 		ImVec4 barCol =
 			lastResult_.score > 0.90f ? ImVec4(0.2f, 0.88f, 0.3f, 1.f) :
-			lastResult_.score > 0.75f ? ImVec4(0.9f, 0.78f, 0.2f, 1.f) :
+			lastResult_.score > 0.80f ? ImVec4(0.9f, 0.78f, 0.2f, 1.f) :
 			ImVec4(0.88f, 0.3f, 0.2f, 1.f);
 		ImGui::PushStyleColor(ImGuiCol_PlotHistogram, barCol);
 		ImGui::ProgressBar(lastResult_.score, ImVec2(-1.f, 0.f), "");
@@ -246,13 +244,13 @@ void MojiTestScene::ImGui() {
 			ImGui::Spacing();
 			ImGui::TextColored(
 				ImVec4(0.75f, 0.75f, 0.45f, 1.f),
-				"ガイドの番号順に描いてみてください");
+				"形をはっきり描いてみてください（書き順は自由です）");
 		}
 
 	} else {
 		ImGui::TextColored(
 			ImVec4(0.45f, 0.45f, 0.55f, 1.f),
-			"ガイドの番号順に図形を描いてください");
+			"好きな方向・順番で図形を描いてください");
 	}
 
 	ImGui::Spacing();

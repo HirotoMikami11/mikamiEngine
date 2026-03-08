@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseScene.h"
-#include "Dollar1Recognizer.h"
+#include "DollarPRecognizer.h"
 #include <vector>
 
 class MojiTestScene : public BaseScene

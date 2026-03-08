@@ -158,7 +158,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\CollisionManager\CollisionManager.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\DemoScene.cpp" />
-    <ClCompile Include="Application\Scene\GameScenes\Dollar1Recognizer.cpp" />
+    <ClCompile Include="Application\Scene\GameScenes\DollarPRecognizer.cpp" />
     <ClCompile Include="Engine\CameraController\CameraFunc\CameraShake.cpp" />
     <ClCompile Include="Engine\Objects\Light\DirectionalLight.cpp" />
     <ClCompile Include="Engine\Objects\Light\PointLight.cpp" />
@@ -368,7 +368,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\CollisionManager\CollisionManager.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DebugSphere.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h" />
-    <ClInclude Include="Application\Scene\GameScenes\Dollar1Recognizer.h" />
+    <ClInclude Include="Application\Scene\GameScenes\DollarPRecognizer.h" />
     <ClInclude Include="Engine\CameraController\CameraFunc\CameraShake.h" />
     <ClInclude Include="Engine\Objects\Light\DirectionalLight.h" />
     <ClInclude Include="Engine\Objects\Light\LightBase.h" />
