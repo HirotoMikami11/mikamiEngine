@@ -20,6 +20,11 @@ mono_crash.*
 generated/
 [Ll]ogs/
 
+# ImGui
+project/imgui.ini
+
+# Assimp static libraries
+project/externals/assimp/lib/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
