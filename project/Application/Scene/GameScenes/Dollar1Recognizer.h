@@ -26,7 +26,7 @@ struct DollarResult {
 		return name.c_str();
 	}
 };
-
+#ifdef USEIMGUI
 // ================================================================
 // テンプレート1件
 // ================================================================
@@ -116,3 +116,5 @@ namespace StrokeGuide {
 		float totalWidth, float panelHeight,
 		int highlightMode = -1);
 }
+
+#endif

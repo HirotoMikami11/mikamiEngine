@@ -7,6 +7,7 @@
 static constexpr float PI_F = 3.14159265358979323846f;
 static constexpr float PHI_F = 0.61803398874989484820f;
 
+#ifdef USEIMGUI
 // ================================================================
 // GetInstance / コンストラクタ
 // ================================================================
@@ -735,3 +736,5 @@ namespace StrokeGuide {
 	void DrawArrow(ImDrawList*, ImVec2, ImVec2, ImU32, float) {}
 
 } // namespace StrokeGuide
+
+#endif

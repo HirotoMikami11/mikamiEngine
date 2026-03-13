@@ -12,6 +12,7 @@ enum class ShapeType {
     Square     // □
 };
 
+#ifdef USEIMGUI
 struct RecognitionResult {
     ShapeType shape = ShapeType::Unknown;
 
@@ -59,3 +60,5 @@ private:
     static bool  VerifyAsTriangle(const std::vector<ImVec2>& corners);
     static bool  VerifyAsSquare(const std::vector<ImVec2>& corners);
 };
+
+#endif
