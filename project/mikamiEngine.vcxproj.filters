@@ -552,13 +552,16 @@
     <ClCompile Include="Engine\OffscreenRenderer\PostEffect\Binarization\BinarizationPostEffect.cpp">
       <Filter>Engine\OffScreenRenderer\PostEffect\Binarization</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\GameScenes\MojiTestScene.cpp">
+    <ClCompile Include="Application\Scene\DebugScenes\MojiTestScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\GameScenes\ShapeRecognizer.cpp">
+    <ClCompile Include="Application\Scene\DebugScenes\ShapeRecognizer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\GameScenes\Dollar1Recognizer.cpp">
+    <ClCompile Include="Application\Scene\DebugScenes\Dollar1Recognizer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\GameScenes\TetrisScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -925,13 +928,16 @@
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Binarization\BinarizationPostEffect.h">
       <Filter>Engine\OffScreenRenderer\PostEffect\Binarization</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\GameScenes\MojiTestScene.h">
+    <ClInclude Include="Application\Scene\DebugScenes\MojiTestScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\GameScenes\ShapeRecognizer.h">
+    <ClInclude Include="Application\Scene\DebugScenes\ShapeRecognizer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\GameScenes\Dollar1Recognizer.h">
+    <ClInclude Include="Application\Scene\DebugScenes\Dollar1Recognizer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\GameScenes\TetrisScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

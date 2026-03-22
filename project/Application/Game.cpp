@@ -2,7 +2,7 @@
 //最初から用意されているシーン
 #include "DebugScenes/DemoScene.h"
 #include "DebugScenes/DebugScene.h"
-#include "GameScenes/MojiTestScene.h"
+#include "DebugScenes/MojiTestScene.h"
 
 //必要なトランジションエフェクト
 #include "TransitionEffect/SlideEffect.h"
