@@ -64,7 +64,16 @@ public:
 	/// <summary>
 	/// オフスクリーンテクスチャを描画（ポストプロセスチェーン対応）
 	/// ポストプロセスチェーンを通して複数エフェクトを適用
+	/// デフォルトはスワップチェーン RT を使用する
 	void DrawOffscreenTexture();
+
+	/// <summary>
+	/// 描画先 RT を明示して描画する（USEIMGUI 時の FinalPass 描画用）
+	/// 呼び出し前に targetRTV はすでに RENDER_TARGET 状態にしておくこと
+	/// </summary>
+	void DrawOffscreenTexture(
+		D3D12_CPU_DESCRIPTOR_HANDLE targetRTV,
+		D3D12_CPU_DESCRIPTOR_HANDLE targetDSV);
 
 
 	/// <summary>

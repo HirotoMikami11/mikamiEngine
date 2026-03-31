@@ -20,11 +20,13 @@ void JsonBinder::Bind(const std::string& key, float* ptr, float defaultValue, fl
     js->AddItem({ groupName_ }, key, defaultValue);
     *ptr = js->GetFloatValue({ groupName_ }, key);
 
+    #ifdef USEIMGUI
     drawItems_.push_back([this, key, ptr, speed]() {
         if (ImGui::DragFloat(key.c_str(), ptr, speed)) {
             JsonSettings::GetInstance()->SetValue({ groupName_ }, key, *ptr);
         }
     });
+    #endif
 }
 
 void JsonBinder::Bind(const std::string& key, int32_t* ptr, int32_t defaultValue, float speed)
@@ -33,6 +35,7 @@ void JsonBinder::Bind(const std::string& key, int32_t* ptr, int32_t defaultValue
     js->AddItem({ groupName_ }, key, defaultValue);
     *ptr = js->GetIntValue({ groupName_ }, key);
 
+    #ifdef USEIMGUI
     drawItems_.push_back([this, key, ptr, speed]() {
         int v = static_cast<int>(*ptr);
         if (ImGui::DragInt(key.c_str(), &v, speed)) {
@@ -40,6 +43,7 @@ void JsonBinder::Bind(const std::string& key, int32_t* ptr, int32_t defaultValue
             JsonSettings::GetInstance()->SetValue({ groupName_ }, key, *ptr);
         }
     });
+    #endif
 }
 
 void JsonBinder::Bind(const std::string& key, bool* ptr, bool defaultValue)
@@ -48,11 +52,13 @@ void JsonBinder::Bind(const std::string& key, bool* ptr, bool defaultValue)
     js->AddItem({ groupName_ }, key, defaultValue);
     *ptr = js->GetBoolValue({ groupName_ }, key);
 
+    #ifdef USEIMGUI
     drawItems_.push_back([this, key, ptr]() {
         if (ImGui::Checkbox(key.c_str(), ptr)) {
             JsonSettings::GetInstance()->SetValue({ groupName_ }, key, *ptr);
         }
     });
+    #endif
 }
 
 void JsonBinder::Bind(const std::string& key, Vector2* ptr, const Vector2& defaultValue, float speed)
@@ -61,11 +67,13 @@ void JsonBinder::Bind(const std::string& key, Vector2* ptr, const Vector2& defau
     js->AddItem({ groupName_ }, key, defaultValue);
     *ptr = js->GetVector2Value({ groupName_ }, key);
 
+    #ifdef USEIMGUI
     drawItems_.push_back([this, key, ptr, speed]() {
         if (ImGui::DragFloat2(key.c_str(), &ptr->x, speed)) {
             JsonSettings::GetInstance()->SetValue({ groupName_ }, key, *ptr);
         }
     });
+    #endif
 }
 
 void JsonBinder::Bind(const std::string& key, Vector3* ptr, const Vector3& defaultValue, float speed)
@@ -74,11 +82,13 @@ void JsonBinder::Bind(const std::string& key, Vector3* ptr, const Vector3& defau
     js->AddItem({ groupName_ }, key, defaultValue);
     *ptr = js->GetVector3Value({ groupName_ }, key);
 
+    #ifdef USEIMGUI
     drawItems_.push_back([this, key, ptr, speed]() {
         if (ImGui::DragFloat3(key.c_str(), &ptr->x, speed)) {
             JsonSettings::GetInstance()->SetValue({ groupName_ }, key, *ptr);
         }
     });
+    #endif
 }
 
 void JsonBinder::Bind(const std::string& key, Vector4* ptr, const Vector4& defaultValue, float speed)
@@ -87,11 +97,13 @@ void JsonBinder::Bind(const std::string& key, Vector4* ptr, const Vector4& defau
     js->AddItem({ groupName_ }, key, defaultValue);
     *ptr = js->GetVector4Value({ groupName_ }, key);
 
+    #ifdef USEIMGUI
     drawItems_.push_back([this, key, ptr, speed]() {
         if (ImGui::DragFloat4(key.c_str(), &ptr->x, speed)) {
             JsonSettings::GetInstance()->SetValue({ groupName_ }, key, *ptr);
         }
     });
+    #endif
 }
 
 void JsonBinder::BindColor(const std::string& key, Vector4* ptr, const Vector4& defaultValue)
@@ -100,11 +112,13 @@ void JsonBinder::BindColor(const std::string& key, Vector4* ptr, const Vector4& 
     js->AddItem({ groupName_ }, key, defaultValue);
     *ptr = js->GetVector4Value({ groupName_ }, key);
 
+    #ifdef USEIMGUI
     drawItems_.push_back([this, key, ptr]() {
         if (ImGui::ColorEdit4(key.c_str(), &ptr->x)) {
             JsonSettings::GetInstance()->SetValue({ groupName_ }, key, *ptr);
         }
     });
+    #endif
 }
 
 //-----------------------------------------------------------------------
@@ -126,6 +140,7 @@ void JsonBinder::BindTransform3D(const std::string& sectionName, Transform3D* tr
     transform->SetRotation(js->GetVector3Value(path, "Rotation"));
     transform->SetScale(   js->GetVector3Value(path, "Scale"));
 
+    #ifdef USEIMGUI
     drawItems_.push_back([sectionName, transform, path]() {
         if (ImGui::CollapsingHeader(sectionName.c_str())) {
             auto* js = JsonSettings::GetInstance();
@@ -149,6 +164,7 @@ void JsonBinder::BindTransform3D(const std::string& sectionName, Transform3D* tr
             }
         }
     });
+    #endif
 }
 
 void JsonBinder::BindMaterial(const std::string& sectionName, Material* material)
@@ -164,6 +180,7 @@ void JsonBinder::BindMaterial(const std::string& sectionName, Material* material
     material->SetColor(       js->GetVector4Value(path, "Color"));
     material->SetLightingMode(static_cast<LightingMode>(js->GetIntValue(path, "LightingMode")));
 
+    #ifdef USEIMGUI
     drawItems_.push_back([sectionName, material, path]() {
         if (ImGui::CollapsingHeader(sectionName.c_str())) {
             auto* js = JsonSettings::GetInstance();
@@ -182,6 +199,7 @@ void JsonBinder::BindMaterial(const std::string& sectionName, Material* material
             }
         }
     });
+    #endif
 }
 
 //-----------------------------------------------------------------------

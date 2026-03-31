@@ -89,6 +89,11 @@ void Engine::InitializeManagers() {
 	// DebugDrawLineSystem初期化
 	debugDrawManager_ = DebugDrawLineSystem::GetInstance();
 	debugDrawManager_->Initialize(dxCommon_.get());
+
+#ifdef USEIMGUI
+	// FinalPassバッファ作成（Game View 表示用）
+	CreateFinalPassBuffer();
+#endif
 }
 
 
@@ -152,25 +157,76 @@ void Engine::EndDrawOffscreen() {
 
 void Engine::StartDrawBackBuffer() {
 
-	// 通常描画の描画準備（バックバッファ描画開始）
-	dxCommon_->PreDraw();
+#ifdef USEIMGUI
+	auto* cmdList = dxCommon_->GetCommandList();
 
-	// オフスクリーンの画面の実態描画
+	// FinalPass: SRV → RenderTarget
+	D3D12_RESOURCE_BARRIER barrier = {};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = finalPassTexture_.Get();
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	cmdList->ResourceBarrier(1, &barrier);
+
+	// FinalPass と DSV をクリア（DrawOffscreenTexture の前に行う）
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dxCommon_->GetDescriptorManager()->GetCPUHandle(
+		DescriptorHeapManager::HeapType::DSV, GraphicsConfig::kMainDSVIndex);
+	cmdList->ClearRenderTargetView(finalPassRtvHandle_.cpuHandle, kFinalPassClearColor_, 0, nullptr);
+	cmdList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+
+	// ビューポート・シザー矩形（フル解像度）
+	D3D12_VIEWPORT vp = { 0.0f, 0.0f,
+		static_cast<float>(GraphicsConfig::kClientWidth),
+		static_cast<float>(GraphicsConfig::kClientHeight),
+		0.0f, 1.0f };
+	D3D12_RECT sr = { 0, 0,
+		static_cast<LONG>(GraphicsConfig::kClientWidth),
+		static_cast<LONG>(GraphicsConfig::kClientHeight) };
+	cmdList->RSSetViewports(1, &vp);
+	cmdList->RSSetScissorRects(1, &sr);
+
+	// オフスクリーン（3D + ポストエフェクト）を FinalPass に合成
+	// DrawOffscreenTexture 内部の OMSetRenderTargets を FinalPass に向ける
+	offscreenRenderer_->DrawOffscreenTexture(finalPassRtvHandle_.cpuHandle, dsvHandle);
+
+#else
+	// 通常パス：スワップチェーンに直接描画
+	dxCommon_->PreDraw();
 	offscreenRenderer_->DrawOffscreenTexture();
+#endif
 }
 
 
 void Engine::EndDrawBackBuffer() {
-	// ImGuiの画面への描画
-	imguiManager_->Draw(dxCommon_->GetCommandList());
 
-	// 通常描画の終わり
+#ifdef USEIMGUI
+	auto* cmdList = dxCommon_->GetCommandList();
+
+	// FinalPass: RenderTarget → SRV（ImGui::Image で参照できる状態に）
+	D3D12_RESOURCE_BARRIER barrier = {};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = finalPassTexture_.Get();
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	cmdList->ResourceBarrier(1, &barrier);
+
+	// スワップチェーンを RT に設定（ImGui のみ描画）
+	dxCommon_->PreDraw();
+
+	// ImGui を スワップチェーンに描画（Game View 含む）
+	imguiManager_->Draw(cmdList);
+
 	dxCommon_->PostDraw();
-
-	// 描画そのもののEndFrame
 	dxCommon_->EndFrame();
 
-
+#else
+	// 通常パス
+	imguiManager_->Draw(dxCommon_->GetCommandList());
+	dxCommon_->PostDraw();
+	dxCommon_->EndFrame();
+#endif
 }
 
 void Engine::Finalize() {
@@ -188,6 +244,20 @@ void Engine::Finalize() {
 	if (imguiManager_) {
 		imguiManager_->Finalize();
 	}
+
+#ifdef USEIMGUI
+	// FinalPass バッファ解放
+	{
+		auto* descriptorManager = dxCommon_->GetDescriptorManager();
+		if (finalPassRtvHandle_.isValid) {
+			descriptorManager->ReleaseRTV(finalPassRtvHandle_.index);
+		}
+		if (finalPassSrvHandle_.isValid) {
+			descriptorManager->ReleaseSRV(finalPassSrvHandle_.index);
+		}
+		finalPassTexture_.Reset();
+	}
+#endif
 
 	// オフスクリーンレンダラー終了処理
 	if (offscreenRenderer_) {
@@ -244,6 +314,35 @@ void Engine::Finalize() {
 void Engine::ImGui() {
 #ifdef USEIMGUI
 
+	// Game View ウィンドウ（FinalPass テクスチャを ImGui::Image で表示）
+	ImGui::SetNextWindowSize(ImVec2(854.0f, 505.0f), ImGuiCond_FirstUseEver);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	ImGui::Begin("Game View");
+	ImGui::PopStyleVar();
+	{
+		ImVec2 region = ImGui::GetContentRegionAvail();
+		if (region.x > 0.0f && region.y > 0.0f) {
+			const float targetAspect =
+				static_cast<float>(GraphicsConfig::kClientWidth) /
+				static_cast<float>(GraphicsConfig::kClientHeight);
+			ImVec2 displaySize = region;
+			if (region.x / region.y > targetAspect) {
+				displaySize.x = region.y * targetAspect;
+			} else {
+				displaySize.y = region.x / targetAspect;
+			}
+			// 中央寄せ
+			ImGui::SetCursorPos(ImVec2(
+				ImGui::GetCursorPosX() + (region.x - displaySize.x) * 0.5f,
+				ImGui::GetCursorPosY() + (region.y - displaySize.y) * 0.5f));
+			ImGui::Image(
+				reinterpret_cast<ImTextureID>(
+					reinterpret_cast<void*>(finalPassSrvHandle_.gpuHandle.ptr)),
+				displaySize);
+		}
+	}
+	ImGui::End();
+
 	//開発用UIの処理
 	ImGui::Begin("エンジン");
 
@@ -294,3 +393,55 @@ bool Engine::ProcessMessage()
 	}
 	return !closedWindow_;
 }
+
+#ifdef USEIMGUI
+void Engine::CreateFinalPassBuffer() {
+	auto* device = dxCommon_->GetDevice();
+	auto* descriptorManager = dxCommon_->GetDescriptorManager();
+
+	// テクスチャリソース作成（RTV + SRV 兼用）
+	D3D12_HEAP_PROPERTIES heapProps = {};
+	heapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+	// TYPELESS にすることで RTV(SRGB) と SRV(UNORM) を同一リソースに作れる
+	// RTV: SRGB → OffscreenRenderer の PSO フォーマット(R8G8B8A8_UNORM_SRGB) に一致させる
+	// SRV: UNORM → ImGui::Image がガンマ変換なしでサンプリングできる
+	D3D12_RESOURCE_DESC resourceDesc = {};
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	resourceDesc.Width = GraphicsConfig::kClientWidth;
+	resourceDesc.Height = GraphicsConfig::kClientHeight;
+	resourceDesc.DepthOrArraySize = 1;
+	resourceDesc.MipLevels = 1;
+	resourceDesc.Format = DXGI_FORMAT_R8G8B8A8_TYPELESS;
+	resourceDesc.SampleDesc.Count = 1;
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+
+	// ClearValue のフォーマットは RTV フォーマット(SRGB)に合わせる
+	D3D12_CLEAR_VALUE clearValue = {};
+	clearValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	clearValue.Color[0] = kFinalPassClearColor_[0];
+	clearValue.Color[1] = kFinalPassClearColor_[1];
+	clearValue.Color[2] = kFinalPassClearColor_[2];
+	clearValue.Color[3] = kFinalPassClearColor_[3];
+
+	HRESULT hr = device->CreateCommittedResource(
+		&heapProps,
+		D3D12_HEAP_FLAG_NONE,
+		&resourceDesc,
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+		&clearValue,
+		IID_PPV_ARGS(&finalPassTexture_));
+	assert(SUCCEEDED(hr));
+	finalPassTexture_->SetName(L"FinalPassTexture");
+
+	// RTV: SRGB（OffscreenRenderer の PSO が R8G8B8A8_UNORM_SRGB を要求するため）
+	finalPassRtvHandle_ = descriptorManager->CreateRTVForTexture2D(
+		finalPassTexture_.Get(), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+
+	// SRV: UNORM（ImGui::Image でガンマ変換なしにサンプリングするため）
+	finalPassSrvHandle_ = descriptorManager->CreateSRVForTexture2D(
+		finalPassTexture_.Get(), DXGI_FORMAT_R8G8B8A8_UNORM, 1);
+
+	Logger::Log(Logger::GetStream(), "FinalPassBuffer created.\n");
+}
+#endif

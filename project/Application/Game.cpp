@@ -42,7 +42,7 @@ void Game::InitializeScenes() {
 	sceneManager_->RegisterScene("MojiTestScene", std::move(mojiTestScene));
 		
 	// デフォルトシーンを設定（最初に表示するシーン）
-	sceneManager_->ChangeScene("MojiTestScene");
+	sceneManager_->ChangeScene("DemoScene");
 }
 
 void Game::RegisterTransitionEffects()

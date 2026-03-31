@@ -220,6 +220,18 @@ void OffscreenRenderer::SetAllEffectsEnabled(bool enabled) {
 
 
 void OffscreenRenderer::DrawOffscreenTexture() {
+	// デフォルト：スワップチェーンの現在の RT に描画
+	UINT backBufferIndex = dxCommon_->GetSwapChain()->GetCurrentBackBufferIndex();
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = dxCommon_->GetRTVHandle(backBufferIndex);
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dxCommon_->GetDescriptorManager()->GetCPUHandle(
+		DescriptorHeapManager::HeapType::DSV, GraphicsConfig::kMainDSVIndex);
+	DrawOffscreenTexture(rtvHandle, dsvHandle);
+}
+
+void OffscreenRenderer::DrawOffscreenTexture(
+	D3D12_CPU_DESCRIPTOR_HANDLE targetRTV,
+	D3D12_CPU_DESCRIPTOR_HANDLE targetDSV)
+{
 	if (!offscreenTriangle_) {
 		return;
 	}
@@ -229,18 +241,12 @@ void OffscreenRenderer::DrawOffscreenTexture() {
 	// ポストプロセスチェーンを適用（深度テクスチャも渡す）
 	D3D12_GPU_DESCRIPTOR_HANDLE finalTexture = srvHandle_.gpuHandle;
 	if (postProcessChain_) {
-		// 深度テクスチャ対応版のApplyEffectsを使用
 		finalTexture = postProcessChain_->ApplyEffectsWithDepth(srvHandle_.gpuHandle, depthSrvHandle_.gpuHandle);
 	}
 
-	// PostProcessChain実行後に描画状態を完全にリセット
-	// バックバッファのレンダーターゲットを再設定
-	UINT backBufferIndex = dxCommon_->GetSwapChain()->GetCurrentBackBufferIndex();
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = dxCommon_->GetRTVHandle(backBufferIndex);
+	// PostProcessChain 実行後に描画状態をリセット：指定 RT に設定
 	/// オフスクリーンの外にも3DObjectが描画できるようにレンダーターゲットに深度も入れておく
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dxCommon_->GetDescriptorManager()->GetCPUHandle(
-		DescriptorHeapManager::HeapType::DSV, GraphicsConfig::kMainDSVIndex);
-	commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
+	commandList->OMSetRenderTargets(1, &targetRTV, false, &targetDSV);
 
 	// ディスクリプタヒープを再設定
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = {

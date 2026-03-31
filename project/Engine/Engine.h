@@ -117,6 +117,19 @@ private:
 	// オフスクリーン
 	std::unique_ptr<OffscreenRenderer> offscreenRenderer_;
 
+#ifdef USEIMGUI
+	// FinalPass バッファ（3D + スプライトを合成した後、ImGui::Image に渡すテクスチャ）
+	Microsoft::WRL::ComPtr<ID3D12Resource> finalPassTexture_;
+	DescriptorHeapManager::DescriptorHandle finalPassRtvHandle_;
+	DescriptorHeapManager::DescriptorHandle finalPassSrvHandle_;
+	static constexpr float kFinalPassClearColor_[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+	/// <summary>
+	/// FinalPassバッファを作成する
+	/// </summary>
+	void CreateFinalPassBuffer();
+#endif
+
 	// マネージャー
 	Input* inputManager_;
 	TextureManager* textureManager_;
