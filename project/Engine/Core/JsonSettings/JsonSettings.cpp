@@ -16,7 +16,7 @@ JsonSettings* JsonSettings::GetInstance()
 void JsonSettings::ImGui()
 {
 #ifdef USEIMGUI
-	if (!ImGui::Begin("Json保存", nullptr, ImGuiWindowFlags_MenuBar))
+	if (!ImGui::Begin("Json保存"))
 	{
 		ImGui::End();
 		return;

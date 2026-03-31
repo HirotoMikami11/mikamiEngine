@@ -134,13 +134,59 @@ class JsonBinder {
 | 4 | `TestPlayer.h/cpp`（WASD移動、JsonSettings 直接使用版） | ✅ 完了 |
 | 5 | `DebugScene` に TestPlayer 配置 | ✅ 完了 |
 | 6 | `vcxproj` にファイル・インクルードパスを追加 | ✅ 完了 |
-| 7 | `JsonSettings::LoadFile` クラッシュ修正（assert → Logger） | 🔲 未着手 |
-| 8 | `JsonBinder.h/cpp` 作成 | 🔲 未着手 |
-| 9 | `TestPlayer` を JsonBinder 使用に書き換え + vcxproj 追加 | 🔲 未着手 |
+| 7 | `JsonSettings::LoadFile` クラッシュ修正（assert → Logger） | ✅ 完了 |
+| 8 | `JsonBinder.h/cpp` 作成 | ✅ 完了 |
+| 9 | `TestPlayer` を JsonBinder 使用に書き換え + vcxproj 追加 | ✅ 完了 |
+| 10 | FinalPass バッファ追加 + ImGui Game View 表示（エンジンエディタ化） | 🔲 未着手 |
 
 ---
 
 ## Phase 詳細（未着手分）
+
+### Phase 10: FinalPass バッファ追加 + ImGui Game View 表示
+
+**目的：** `#ifdef USEIMGUI` 時にゲーム画面（3D + スプライト + ポストエフェクト）を ImGui ウィンドウ内に表示する。
+ドッキング機能により、Game View をウィンドウ内で自由に配置できる。
+
+**前提の問題：**
+- 現状の `StartDrawBackBuffer()` はスプライト等をスワップチェーン（バックバッファ）に直接書く
+- オフスクリーンテクスチャの SRV には 3D 描画しか含まれず、スプライトが映らない
+
+**解決策：FinalPass バッファ（RTV + SRV 兼用テクスチャ）を追加**
+
+```
+USEIMGUI 時の描画フロー（変更後）:
+
+[StartDrawBackBuffer]
+  FinalPass: SRV→RenderTarget バリア
+  OMSetRenderTargets → FinalPass
+  DrawOffscreenTexture() → FinalPass に 3D 合成
+
+[game->DrawBackBuffer()]
+  スプライト・UI → FinalPass に描画
+
+[EndDrawBackBuffer]
+  FinalPass: RenderTarget→SRV バリア
+  dxCommon_->PreDraw() → スワップチェーン RT
+  ImGui 描画（Game View ウィンドウ内に ImGui::Image）
+  dxCommon_->PostDraw / EndFrame
+
+非 USEIMGUI 時: 変更なし（スワップチェーンへ直接）
+```
+
+**変更ファイル：**
+- `Engine/Core/GraphicsConfig.h` — `kRTVHeapSize` を 5→6（FinalPass RTV 分を追加）
+- `Engine/Engine.h` — FinalPass メンバ追加（`#ifdef USEIMGUI` ガード）
+- `Engine/Engine.cpp` — `CreateFinalPassBuffer()` / `StartDrawBackBuffer()` / `EndDrawBackBuffer()` / `ImGui()` / `Finalize()` 変更
+
+**確認項目：**
+- [ ] `USEIMGUI` 定義時に "Game View" ウィンドウが表示される
+- [ ] Game View に 3D・スプライト・ポストエフェクトがすべて映る
+- [ ] ドッキングでウィンドウを自由に移動・配置できる
+- [ ] `USEIMGUI` なしのリリースパスで動作が変わらない
+- [ ] アスペクト比を保って表示される
+
+---
 
 ### Phase 7: JsonSettings::LoadFile クラッシュ修正
 

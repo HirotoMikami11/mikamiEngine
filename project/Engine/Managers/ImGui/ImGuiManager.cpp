@@ -17,9 +17,9 @@ void ImGuiManager::Initialize([[maybe_unused]] WinApp* winApp, [[maybe_unused]] 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 
-	//ドッキング用の設定
 	ImGuiIO& imguiIO = ImGui::GetIO();
-	imguiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	imguiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		//ドッキング用の設定
+	imguiIO.ConfigFlags &= ~ImGuiConfigFlags_ViewportsEnable;	//ウィンドウ用の設定
 
 	// プラットフォームとレンダラーの初期化
 	ImGui_ImplWin32_Init(winApp->GetHwnd());
@@ -60,6 +60,7 @@ void ImGuiManager::Begin() {
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());//メインウィンドウ全体をドッキングスペースにする
 	//ImGuiManager::GetInstance()->ShowStyleEditor();
 #endif
 }
