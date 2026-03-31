@@ -109,6 +109,11 @@ private:
 	/// </summary>
 	void InitializeManagers();
 
+	/// <summary>
+	/// デバッグ時のゲーム画面imGui表示
+	/// </summary>
+	void GameViewportImGui();
+
 	// 基盤システム
 	std::unique_ptr<WinApp> winApp_;
 	std::unique_ptr<DirectXCommon> dxCommon_;

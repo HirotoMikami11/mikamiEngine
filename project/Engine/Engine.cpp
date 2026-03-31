@@ -96,7 +96,6 @@ void Engine::InitializeManagers() {
 #endif
 }
 
-
 void Engine::Update() {
 
 	// FPS開始
@@ -314,34 +313,8 @@ void Engine::Finalize() {
 void Engine::ImGui() {
 #ifdef USEIMGUI
 
-	// Game View ウィンドウ（FinalPass テクスチャを ImGui::Image で表示）
-	ImGui::SetNextWindowSize(ImVec2(854.0f, 505.0f), ImGuiCond_FirstUseEver);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	ImGui::Begin("Game View");
-	ImGui::PopStyleVar();
-	{
-		ImVec2 region = ImGui::GetContentRegionAvail();
-		if (region.x > 0.0f && region.y > 0.0f) {
-			const float targetAspect =
-				static_cast<float>(GraphicsConfig::kClientWidth) /
-				static_cast<float>(GraphicsConfig::kClientHeight);
-			ImVec2 displaySize = region;
-			if (region.x / region.y > targetAspect) {
-				displaySize.x = region.y * targetAspect;
-			} else {
-				displaySize.y = region.x / targetAspect;
-			}
-			// 中央寄せ
-			ImGui::SetCursorPos(ImVec2(
-				ImGui::GetCursorPosX() + (region.x - displaySize.x) * 0.5f,
-				ImGui::GetCursorPosY() + (region.y - displaySize.y) * 0.5f));
-			ImGui::Image(
-				reinterpret_cast<ImTextureID>(
-					reinterpret_cast<void*>(finalPassSrvHandle_.gpuHandle.ptr)),
-				displaySize);
-		}
-	}
-	ImGui::End();
+	// デバッグ時のみゲーム画面をImGuiで表示
+	GameViewportImGui();
 
 	//開発用UIの処理
 	ImGui::Begin("エンジン");
@@ -445,3 +418,40 @@ void Engine::CreateFinalPassBuffer() {
 	Logger::Log(Logger::GetStream(), "FinalPassBuffer created.\n");
 }
 #endif
+
+
+void Engine::GameViewportImGui()
+{
+#ifdef USEIMGUI
+
+	// Game View ウィンドウ（FinalPass テクスチャを ImGui::Image で表示）
+	ImGui::SetNextWindowSize(ImVec2(854.0f, 505.0f), ImGuiCond_FirstUseEver);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	ImGui::Begin("ゲームビュー");
+	ImGui::PopStyleVar();
+	{
+		ImVec2 region = ImGui::GetContentRegionAvail();
+		if (region.x > 0.0f && region.y > 0.0f) {
+			const float targetAspect =
+				static_cast<float>(GraphicsConfig::kClientWidth) /
+				static_cast<float>(GraphicsConfig::kClientHeight);
+			ImVec2 displaySize = region;
+			if (region.x / region.y > targetAspect) {
+				displaySize.x = region.y * targetAspect;
+			} else {
+				displaySize.y = region.x / targetAspect;
+			}
+			// 中央寄せ
+			ImGui::SetCursorPos(ImVec2(
+				ImGui::GetCursorPosX() + (region.x - displaySize.x) * 0.5f,
+				ImGui::GetCursorPosY() + (region.y - displaySize.y) * 0.5f));
+			ImGui::Image(
+				reinterpret_cast<ImTextureID>(
+					reinterpret_cast<void*>(finalPassSrvHandle_.gpuHandle.ptr)),
+				displaySize);
+		}
+	}
+	ImGui::End();
+#endif
+}
+
