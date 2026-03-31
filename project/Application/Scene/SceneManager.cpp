@@ -165,8 +165,6 @@ void SceneManager::ImGui() {
 	// シーン管理UI
 	DrawScenesUI();
 
-	ImGui::Separator();
-
 	// 現在のシーンのUI
 	DrawCurrentSceneUI();
 
@@ -196,28 +194,22 @@ void SceneManager::DrawScenesUI() {
 				SetNextScene(sceneName);
 			}
 		}
-
-		if (isCurrent) {
-			ImGui::PopStyleColor(2);
-			ImGui::SameLine();
-			ImGui::Text("(Current)");
-		} else {
-			ImGui::SameLine();
-		}
-
 		// リセットボタン
 		ImGui::SameLine();
-		if (ImGui::SmallButton(("Reset##" + sceneName).c_str())) {
+		if (ImGui::SmallButton(("リセット##" + sceneName).c_str())) {
 			ResetScene(sceneName);
 		}
-
+		if (isCurrent) {
+			ImGui::PopStyleColor(2);
+		} else {
+		}
 		ImGui::PopID();
 	}
 
 	// 現在のシーンのリセットボタン
 	if (currentScene_) {
 		ImGui::Spacing();
-		if (ImGui::Button("Reset Current Scene", ImVec2(200, 0))) {
+		if (ImGui::Button("現在のシーンをリセットする", ImVec2(200, 0))) {
 			ResetCurrentScene();
 		}
 	}
@@ -233,14 +225,14 @@ void SceneManager::DrawScenesUI() {
 
 void SceneManager::DrawCurrentSceneUI() {
 #ifdef USEIMGUI
-	ImGui::Begin("Scene");
+	ImGui::Begin("現在のシーン情報");
 	if (currentScene_) {
 		ImGui::TextColored(ImVec4(0, 1, 0, 1), "シーン名: %s", currentSceneName_.c_str());
 		ImGui::Separator();
 		// 現在のシーンのImGuiを呼び出し
 		currentScene_->ImGui();
 	} else {
-		ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1), "No active scene");
+		ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1), "現在有効なシーンが存在しません");
 	}
 
 		ImGui::End();

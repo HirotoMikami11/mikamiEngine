@@ -7,10 +7,10 @@
 /// デバッグ用シーン
 /// このシーンで様々な機能を試す
 /// </summary>
-class TetrisScene : public BaseScene {
+class GameScene : public BaseScene {
 public:
-	TetrisScene();
-	~TetrisScene() override;
+	GameScene();
+	~GameScene() override;
 
 	/// <summary>
 	/// シーンに入った時のオフスクリーン設定

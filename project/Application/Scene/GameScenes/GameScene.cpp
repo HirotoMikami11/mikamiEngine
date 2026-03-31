@@ -1,9 +1,9 @@
-#include "TetrisScene.h"
+#include "GameScene.h"
 #include "ImGui/ImGuiManager.h" 
 #include <numbers> 
 
-TetrisScene::TetrisScene()
-	: BaseScene("TetrisScene") // シーン名を設定
+GameScene::GameScene()
+	: BaseScene("GameScene") // シーン名を設定
 	, cameraController_(nullptr)
 	, dxCommon_(nullptr)
 	, offscreenRenderer_(nullptr)
@@ -11,9 +11,9 @@ TetrisScene::TetrisScene()
 {
 }
 
-TetrisScene::~TetrisScene() = default;
+GameScene::~GameScene() = default;
 
-void TetrisScene::ConfigureOffscreenEffects()
+void GameScene::ConfigureOffscreenEffects()
 {
 	/// オフスクリーンレンダラーのエフェクト設定
 
@@ -22,7 +22,7 @@ void TetrisScene::ConfigureOffscreenEffects()
 	// 必要に応じてここでエフェクトを有効化
 }
 
-void TetrisScene::Initialize() {
+void GameScene::Initialize() {
 	// システム参照の取得
 	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
@@ -43,7 +43,7 @@ void TetrisScene::Initialize() {
 	ConfigureOffscreenEffects();
 }
 
-void TetrisScene::InitializeGameObjects() {
+void GameScene::InitializeGameObjects() {
 
 	///*-----------------------------------------------------------------------*///
 	///								ライト									///
@@ -55,7 +55,7 @@ void TetrisScene::InitializeGameObjects() {
 
 }
 
-void TetrisScene::Update() {
+void GameScene::Update() {
 	// カメラ更新
 	cameraController_->Update();
 
@@ -63,13 +63,13 @@ void TetrisScene::Update() {
 	UpdateGameObjects();
 }
 
-void TetrisScene::UpdateGameObjects() {
+void GameScene::UpdateGameObjects() {
 	// 行列更新
 	viewProjectionMatrix = cameraController_->GetViewProjectionMatrix();
 
 }
 
-void TetrisScene::DrawOffscreen() {
+void GameScene::DrawOffscreen() {
 
 	///
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
@@ -82,7 +82,7 @@ void TetrisScene::DrawOffscreen() {
 
 }
 
-void TetrisScene::DrawBackBuffer() {
+void GameScene::DrawBackBuffer() {
 	///
 	/// 3Dゲームオブジェクトの描画（オフスクリーンの外に描画）
 	///
@@ -94,12 +94,12 @@ void TetrisScene::DrawBackBuffer() {
 
 }
 
-void TetrisScene::ImGui() {
+void GameScene::ImGui() {
 #ifdef USEIMGUI
 
 	ImGui::Text("Debug Scene");
 #endif
 }
 
-void TetrisScene::Finalize() {
+void GameScene::Finalize() {
 }
