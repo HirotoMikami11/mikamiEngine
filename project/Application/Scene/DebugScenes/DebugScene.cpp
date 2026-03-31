@@ -134,6 +134,14 @@ void DebugScene::InitializeGameObjects() {
 		2.1f,							// 高さ
 		10.0f							// 減衰率
 	);
+
+	///*-----------------------------------------------------------------------*///
+	///							TestPlayer										///
+	///*-----------------------------------------------------------------------*///
+	auto testPlayer = std::make_unique<TestPlayer>();
+	testPlayer->Initialize();
+	testPlayer_ = testPlayer.get();  // 参照保持（所有権は Manager）
+	gameObjectManager_.AddObject(std::move(testPlayer));
 }
 
 void DebugScene::Update() {
@@ -156,13 +164,15 @@ void DebugScene::UpdateGameObjects() {
 	gltfPlane_->Update(viewProjectionMatrix);
 	objPlane_->Update(viewProjectionMatrix);
 
+	// GameObjectManager 更新（TestPlayer など）
+	gameObjectManager_.Update();
 }
 
 void DebugScene::DrawOffscreen() {
 
 	///
 	///3Dゲームオブジェクトの描画（オフスクリーンに描画）
-	/// 
+	///
 	// 球体の描画
 	sphere_->Draw();
 	// 地面の描画
@@ -173,9 +183,10 @@ void DebugScene::DrawOffscreen() {
 
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンに描画）
-	/// 
+	///
 
-
+	// GameObjectManager
+	gameObjectManager_.DrawOffscreen();
 }
 
 void DebugScene::DrawBackBuffer() {
@@ -187,6 +198,11 @@ void DebugScene::DrawBackBuffer() {
 	///
 	/// パーティクル・スプライトの描画（オフスクリーンの外に描画）
 	/// 
+
+
+
+	// GameObjectManager
+	gameObjectManager_.DrawBackBuffer();
 
 }
 
@@ -207,8 +223,15 @@ void DebugScene::ImGui() {
 	ImGui::Spacing();
 	ImGui::Text("objPlane");
 	objPlane_->ImGui();
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Text("TestPlayer");
+	gameObjectManager_.ImGui();
 #endif
 }
 
 void DebugScene::Finalize() {
+	gameObjectManager_.Clear();
+	testPlayer_ = nullptr;
 }

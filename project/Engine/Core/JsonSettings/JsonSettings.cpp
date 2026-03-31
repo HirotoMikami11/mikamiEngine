@@ -429,7 +429,11 @@ void JsonSettings::LoadFile(const std::string& groupName)
 	std::ifstream ifs(filePath);
 	if (ifs.fail())
 	{
-		MessageBoxA(nullptr, "Failed to open data file for write.", "JsonSettings", 0);
+		// ファイルが見つからない場合はエラーを表示
+		//　日本語表示するためにワイド文字列に変換
+		std::wstring wFilePath(filePath.begin(), filePath.end());
+		std::wstring message = L"データファイル（" + wFilePath + L"）を開くのに失敗しました。";
+		MessageBoxW(nullptr, message.c_str(), L"JsonSettings", MB_OK);
 		assert(false);
 		return;
 	}

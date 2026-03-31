@@ -9,6 +9,7 @@
 #include "CameraController.h"
 #include "ParticleSystem.h"
 #include "ParticleEditor.h"
+#include "GameObjectManager.h"
 
 
 /// <summary>
@@ -66,6 +67,12 @@ public:
 
 protected:
 	std::string sceneName_;
+
+	/// <summary>
+	/// ゲームオブジェクト管理
+	/// Initialize() 済みのオブジェクトを AddObject() して使う
+	/// </summary>
+	GameObjectManager gameObjectManager_;
 
 private:
 

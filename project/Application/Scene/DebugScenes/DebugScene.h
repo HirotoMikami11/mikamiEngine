@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "BaseScene.h"
+#include "TestPlayer.h"
 
 
 /// <summary>
@@ -59,6 +60,9 @@ private:
 	PointLight* pointLight_;
 	SpotLight* spotLight_;
 	RectLight* rectLight_;
+
+	// ゲームオブジェクト（GameObjectManager 管理）
+	TestPlayer* testPlayer_ = nullptr;  // 所有権は gameObjectManager_ が持つ
 
 	// システム参照
 	DirectXCommon* dxCommon_;
