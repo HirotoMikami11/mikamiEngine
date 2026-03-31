@@ -226,7 +226,7 @@ void DebugScene::ImGui() {
 
 	ImGui::Spacing();
 	ImGui::Separator();
-	ImGui::Text("TestPlayer");
+	ImGui::Text("ObjectManager");
 	gameObjectManager_.ImGui();
 #endif
 }

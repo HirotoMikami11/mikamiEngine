@@ -2,11 +2,12 @@
 #include <memory>
 #include "GameObject.h"
 #include "Object3D.h"
+#include "JsonBinder.h"
 
 /// <summary>
 /// テスト用プレイヤー
 /// - WASD キーで XZ 平面を移動する
-/// - Transform（Position / Scale）・Color・MoveSpeed を JsonSettings で管理
+/// - JsonBinder で Transform・Material・MoveSpeed を JSON 管理
 /// </summary>
 class TestPlayer : public GameObject
 {
@@ -21,19 +22,11 @@ public:
     void Finalize() override;
 
 private:
-    /// <summary> JsonSettings に初期値を登録してファイルから読み込む </summary>
-    void LoadFromJson();
-
-    /// <summary> JsonSettings の現在値をオブジェクトに適用する </summary>
-    void ApplyJsonValues();
-
     std::unique_ptr<Sphere> model_;
+    std::unique_ptr<JsonBinder> binder_;
 
     float moveSpeed_ = 5.0f;
 
     DirectXCommon* dxCommon_ = nullptr;
     Matrix4x4 viewProjectionMatrix_{};
-
-    // JsonSettings グループ名
-    static constexpr const char* kGroupName = "TestPlayer";
 };

@@ -23,7 +23,7 @@ void JsonSettings::ImGui()
 	}
 
 	// 全保存ボタン
-	if (ImGui::Button("Save All Global Variables"))
+	if (ImGui::Button("すべて保存"))
 	{
 		SaveAllFiles();
 	}
@@ -36,8 +36,8 @@ void JsonSettings::ImGui()
 	}
 
 	// ドラッグ感度設定
-	ImGui::Text("Drag Sensitivity Settings");
-	ImGui::DragFloat("Sensitivity", &dragSensitivity_, 0.01f, 0.001f, 10.0f, "%.3f");
+	ImGui::Text("ドラッグ感度設定");
+	ImGui::DragFloat("感度", &dragSensitivity_, 0.01f, 0.001f, 10.0f, "%.3f");
 
 	ImGui::Separator();
 
@@ -429,12 +429,11 @@ void JsonSettings::LoadFile(const std::string& groupName)
 	std::ifstream ifs(filePath);
 	if (ifs.fail())
 	{
-		// ファイルが見つからない場合はエラーを表示
-		//　日本語表示するためにワイド文字列に変換
+		// ファイルが見つからない場合はログ出力して終了（初回起動時は正常ケース）
 		std::wstring wFilePath(filePath.begin(), filePath.end());
 		std::wstring message = L"データファイル（" + wFilePath + L"）を開くのに失敗しました。";
 		MessageBoxW(nullptr, message.c_str(), L"JsonSettings", MB_OK);
-		assert(false);
+		Logger::Log("[JsonSettings] ファイルが見つかりません: " + filePath);
 		return;
 	}
 
