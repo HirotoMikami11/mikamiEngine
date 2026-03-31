@@ -193,10 +193,6 @@ void DebugScene::DrawBackBuffer() {
 void DebugScene::ImGui() {
 #ifdef USEIMGUI
 
-	ImGui::Text("Debug Scene");
-	ImGui::Separator();
-
-	ImGui::Spacing();
 	ImGui::Text("Sphere");
 	sphere_->ImGui();
 

@@ -160,7 +160,7 @@ void SceneManager::ProcessSceneChange() {
 
 void SceneManager::ImGui() {
 #ifdef USEIMGUI
-	ImGui::Begin("Scene");
+	ImGui::Begin("シーンマネージャー");
 
 	// シーン管理UI
 	DrawScenesUI();
@@ -176,9 +176,6 @@ void SceneManager::ImGui() {
 
 void SceneManager::DrawScenesUI() {
 #ifdef USEIMGUI
-	ImGui::Text("Scene Management");
-
-	ImGui::Spacing();
 
 	// 登録されているシーン一覧とボタン
 	ImGui::Text("Available Scenes (%zu):", scenes_.size());
@@ -236,16 +233,16 @@ void SceneManager::DrawScenesUI() {
 
 void SceneManager::DrawCurrentSceneUI() {
 #ifdef USEIMGUI
-	if (ImGui::CollapsingHeader("Current Scene Debug", ImGuiTreeNodeFlags_DefaultOpen)) {
-		if (currentScene_) {
-			ImGui::TextColored(ImVec4(0, 1, 0, 1), "Scene: %s", currentSceneName_.c_str());
-			ImGui::Separator();
-
-			// 現在のシーンのImGuiを呼び出し
-			currentScene_->ImGui();
-		} else {
-			ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1), "No active scene");
-		}
+	ImGui::Begin("Scene");
+	if (currentScene_) {
+		ImGui::TextColored(ImVec4(0, 1, 0, 1), "シーン名: %s", currentSceneName_.c_str());
+		ImGui::Separator();
+		// 現在のシーンのImGuiを呼び出し
+		currentScene_->ImGui();
+	} else {
+		ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1), "No active scene");
 	}
+
+		ImGui::End();
 #endif
 }

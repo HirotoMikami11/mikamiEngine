@@ -62,10 +62,6 @@ void MojiTestScene::DrawBackBuffer() {}
 // ================================================================
 void MojiTestScene::ImGui() {
 #ifdef USEIMGUI
-
-	// ---- 既存デバッグ UI ----
-	ImGui::Text("シーン: MojiTestScene");
-	ImGui::Separator();
 	sphere_->ImGui();
 	terrain_->ImGui();
 
