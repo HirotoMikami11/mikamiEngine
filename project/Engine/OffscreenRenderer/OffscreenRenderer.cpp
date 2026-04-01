@@ -416,7 +416,7 @@ void OffscreenRenderer::CreatePSO() {
 	// PSO設定を構築
 	auto psoDesc = PSODescriptor::CreatePostEffectColorOnly()
 		.SetPixelShader(L"resources/Shader/FullscreenTriangle/FullscreenTriangle.PS.hlsl")
-		.SetBlendMode(BlendMode::AlphaBlend);// アルファブレンドを有効化
+		.SetBlendMode(BlendMode::None);// アルファブレンドを有効化
 
 	// PSOFactory経由で生成
 	auto psoInfo = dxCommon_->GetPSOFactory()->CreatePSO(psoDesc, rsBuilder);

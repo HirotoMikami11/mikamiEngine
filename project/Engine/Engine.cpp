@@ -413,7 +413,7 @@ void Engine::CreateFinalPassBuffer() {
 
 	// SRV: UNORM（ImGui::Image でガンマ変換なしにサンプリングするため）
 	finalPassSrvHandle_ = descriptorManager->CreateSRVForTexture2D(
-		finalPassTexture_.Get(), DXGI_FORMAT_R8G8B8A8_UNORM, 1);
+		finalPassTexture_.Get(), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, 1);
 
 	Logger::Log(Logger::GetStream(), "FinalPassBuffer created.\n");
 }
