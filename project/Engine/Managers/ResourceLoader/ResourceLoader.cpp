@@ -231,12 +231,10 @@ void ResourceLoader::ImGui() {
 #ifdef USEIMGUI
 	if (ImGui::CollapsingHeader("ResourceLoader")) {
 		// 読み込み状態の表示
-		ImGui::Text("Status:");
-		ImGui::SameLine();
 		if (resourcesLoaded_) {
-			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Loaded");
+			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "読込済み");
 		} else {
-			ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Not Loaded");
+			ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "読込不可");
 		}
 
 		ImGui::Separator();
@@ -266,19 +264,19 @@ void ResourceLoader::ImGui() {
 		ImGui::Text("Manager Details:");
 
 		// TextureManagerのImGuiを呼び出し
-		if (ImGui::TreeNode("TextureManager")) {
+		if (ImGui::TreeNode("テクスチャマネージャー")) {
 			textureManager_->ImGui();
 			ImGui::TreePop();
 		}
 
 		// ModelManagerのImGuiを呼び出し
-		if (ImGui::TreeNode("ModelManager")) {
+		if (ImGui::TreeNode("モデルマネージャー")) {
 			modelManager_->ImGui();
 			ImGui::TreePop();
 		}
 
 		// AudioManagerのImGuiを呼び出し
-		if (ImGui::TreeNode("AudioManager")) {
+		if (ImGui::TreeNode("オーディオマネージャー")) {
 			audioManager_->ImGui();
 			ImGui::TreePop();
 		}
@@ -288,13 +286,15 @@ void ResourceLoader::ImGui() {
 		///*-------------------------------------------------------------------*///
 		///							再読み込みボタン								///
 		///*-------------------------------------------------------------------*///
-		if (!resourcesLoaded_) {
-			if (ImGui::Button("Load All Resources")) {
-				LoadAllResources();
-			}
-		} else {
-			ImGui::TextDisabled("Resources already loaded");
-		}
+		//if (!resourcesLoaded_) {
+		//	//読込完了できていない場合再読み込み
+		//	//将来動的読込など対応させる場合のために一応
+		//	if (ImGui::Button("全てのリソースを読み込む")) {
+		//		LoadAllResources();
+		//	}
+		//} else {
+		//	ImGui::TextDisabled("全てのresourceの読み込み完了");
+		//}
 	}
 #endif
 }

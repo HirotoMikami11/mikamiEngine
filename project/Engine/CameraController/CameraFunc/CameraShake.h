@@ -56,10 +56,10 @@ public:
 
 private:
 	// 揺れパラメータ
-	float shakeDuration_ = 0.0f;        // 揺れ継続時間
-	float shakeTimer_ = 0.0f;           // 経過時間
-	float shakeAmplitude_ = 0.0f;       // 揺れ強度
-	float shakeFrequency_ = 10.0f;      // 揺れ頻度（Hz）
+	float shakeDuration_ = 0.0f;		// 揺れ継続時間
+	float shakeTimer_ = 0.0f;			// 経過時間
+	float shakeAmplitude_ = 0.0f;		// 揺れ強度
+	float shakeFrequency_ = 10.0f;		// 揺れ頻度（Hz）
 
 	// 現在のオフセット
 	Vector3 shakeOffset_ = { 0.0f, 0.0f, 0.0f };

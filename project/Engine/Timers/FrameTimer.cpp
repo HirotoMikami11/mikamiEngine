@@ -57,7 +57,7 @@ void FrameTimer::ImGui()
 
 	// デルタタイムの確認
 	float dt = GetDeltaTime();
-	ImGui::Text("Delta Time: %.6f s (%.2f ms)", dt, dt * 1000.0f);
+	ImGui::Text("デルタタイム: %.6f s (%.2f ms)", dt, dt * 1000.0f);
 
 	ImGui::Separator();	//線
 #endif

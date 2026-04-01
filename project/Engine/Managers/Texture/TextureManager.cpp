@@ -164,23 +164,23 @@ uint32_t TextureManager::GetUsedSRVCount() const {
 void TextureManager::ImGui() {
 #ifdef USEIMGUI
 	// テクスチャの総数
-	ImGui::Text("Total Textures: %zu", textures_.size());
+	ImGui::Text("テクスチャの総数: %zu", textures_.size());
 
 	// SRVスロットの使用状況
 	uint32_t usedSRV = GetUsedSRVCount();
 	uint32_t availableSRV = GetAvailableSRVCount();
-	ImGui::Text("SRV Slots: %u used / %u available", usedSRV, availableSRV);
+	ImGui::Text("SRV使用状況: %u / %u", usedSRV, availableSRV);
 
 	ImGui::Separator();
 
 	// テクスチャが存在しない場合
 	if (textures_.empty()) {
-		ImGui::TextDisabled("No textures loaded");
+		ImGui::TextDisabled("テクスチャがロードされていません");
 		return;
 	}
 
 	// テクスチャ一覧の表示
-	if (ImGui::TreeNode("Texture List")) {
+	if (ImGui::TreeNode("リスト")) {
 		// アルファベット順にソート済みのリストを取得
 		auto tagList = GetTextureTagList();
 
@@ -211,10 +211,10 @@ void TextureManager::ImGui() {
 					ImGui::Text("Mip Levels: %zu", metadata.mipLevels);
 					ImGui::Text("SRV Index: %u", texture->GetSRVIndex());
 
-					// アンロードボタン
-					if (ImGui::SmallButton("Unload")) {
-						UnloadTexture(tag);
-					}
+					// アンロードボタンは現状エラー発生のためコメントアウト
+					//if (ImGui::SmallButton("Unload")) {
+					//	UnloadTexture(tag);
+					//}
 				}
 				ImGui::TreePop();
 			}

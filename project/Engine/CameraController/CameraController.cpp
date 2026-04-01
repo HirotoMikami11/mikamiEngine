@@ -173,7 +173,7 @@ Matrix4x4 CameraController::GetViewProjectionMatrix() const {
 		Vector3 shakeOffset = cameraShake_.GetOffset();
 
 		// シェイクを逆変換としてビュー行列に適用
-		Matrix4x4 inverseShakeMatrix = MakeTranslateMatrix(Multiply(shakeOffset,-1.0f));
+		Matrix4x4 inverseShakeMatrix = MakeTranslateMatrix(Multiply(shakeOffset, -1.0f));
 		viewProjection = Matrix4x4Multiply(inverseShakeMatrix, viewProjection);
 	}
 
@@ -274,23 +274,27 @@ Matrix4x4 CameraController::GetViewMatrixWithShake() const {
 
 void CameraController::ImGui() {
 #ifdef USEIMGUI
-	ImGui::Begin("CameraController");
+	ImGui::Begin("カメラ制御");
 
 	// 現在の状態表示
-	ImGui::Text("Active Camera: %s", activeCameraId_.c_str());
 	BaseCamera* activeCamera = GetActiveCamera();
-	if (activeCamera) {
-		ImGui::Text("Camera Type: %s", activeCamera->GetCameraType().c_str());
-		Vector3 pos = activeCamera->GetPosition();
-		ImGui::Text("Position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
-		Vector3 forward = GetForward();
-		ImGui::Text("Forward: (%.2f, %.2f, %.2f)", forward.x, forward.y, forward.z);
-	}
 
+	//ImGui::Text("使用しているカメラ名[%s]", activeCameraId_.c_str());
+	//if (activeCamera) {
+	//	ImGui::Text("カメラタイプ : %s", activeCamera->GetCameraType().c_str());
+	//	Vector3 pos = activeCamera->GetPosition();
+	//	ImGui::Text("座標: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
+	//	Vector3 forward = GetForward();
+	//	ImGui::Text("前方: (%.2f, %.2f, %.2f)", forward.x, forward.y, forward.z);
+	//}
+
+	//ImGui::Separator();
+
+	// 登録されているシーン一覧とボタン
+	ImGui::Separator();
+	MyImGui::CenterText("カメラ一覧");
 	ImGui::Separator();
 
-	// カメラ切り替えUI
-	ImGui::Text("Cameras:");
 	for (const auto& [id, info] : registeredCameras_) {
 		ImGui::PushID(id.c_str());
 
@@ -313,35 +317,32 @@ void CameraController::ImGui() {
 		// アクティブなカメラの場合は色をリセット
 		if (isActive) {
 			ImGui::PopStyleColor(2);
-			ImGui::SameLine();
-			ImGui::Text("(Active)");
-		} else {
-			ImGui::SameLine();
-			ImGui::Text("(%s%s)",
-				isAvailable ? "Available" : "Unavailable",
-				info.isEngineCamera ? " Engine" : "");
 		}
+
+		ImGui::SameLine();
+		ImGui::Text("[%s,%s]",
+			isAvailable ? "利用可能" : "利用不可",
+			info.isEngineCamera ? " エンジンカメラ" : "");
+
 
 		ImGui::PopID();
 	}
 
-	ImGui::Separator();
-
 	// アクティブカメラのImGui
 	if (activeCamera) {
-		MyImGui::CenterText("Camera Data");
+		ImGui::Separator();
+		MyImGui::CenterText("カメラデータ");
 		ImGui::Separator();
 		activeCamera->ImGui();
 	}
 
 	ImGui::Separator();
-	// カメラシェイクのImGui表示
-	cameraShake_.ImGui();
-
-	ImGui::Separator();
-	// 操作説明
-	ImGui::Text("Controls:");
-	ImGui::Text("Shift + TAB: Toggle Debug Camera");
+	// CameraFuncのものを表示する場所
+	if (ImGui::TreeNode("カメラ機能")) {
+		// カメラシェイクのImGui表示
+		cameraShake_.ImGui();
+		ImGui::TreePop();
+	}
 
 	ImGui::End();
 #endif

@@ -95,59 +95,46 @@ void GameTimer::ImGui() {
 
 		// 状態表示
 		ImGui::Separator();
-		ImGui::Text("Game Delta: %.6f s (%.2f ms)", gameDeltaTime_, gameDeltaTime_ * 1000.0f);
-		ImGui::Text("Time Scale: %.2fx", timeScale_);
-		ImGui::Text("Paused: %s", isPaused_ ? "Yes" : "No");
+		ImGui::Text("ゲームデルタタイム: %.6f s (%.2f ms)", gameDeltaTime_, gameDeltaTime_ * 1000.0f);
+		ImGui::Checkbox("ポーズ", &isPaused_);
 
+		ImVec4 SpeedColor;
 		// 速度インジケーター
 		if (timeScale_ == 0.0f || isPaused_) {
-			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Time: STOPPED");
+			SpeedColor = { 1,0,0,1 };			//停止
 		} else if (timeScale_ < 0.5f) {
-			ImGui::TextColored(ImVec4(1, 0.5f, 0, 1), "Time: VERY SLOW");
+			SpeedColor = { 1,0.5f,0,1 };		//低速
 		} else if (timeScale_ < 1.0f) {
-			ImGui::TextColored(ImVec4(1, 1, 0, 1), "Time: SLOW");
+			SpeedColor = { 1,1,0,1 };			//若干低速
 		} else if (timeScale_ == 1.0f) {
-			ImGui::TextColored(ImVec4(0, 1, 0, 1), "Time: NORMAL");
+			SpeedColor = { 0,1,0,1 };			//通常速度
 		} else {
-			ImGui::TextColored(ImVec4(0, 0.5f, 1, 1), "Time: FAST");
+			SpeedColor = { 0,0.5f,1,1 };		//速い
 		}
 
 		ImGui::Separator();
 		ImGui::Spacing();
-		// タイムスケール制御
-		ImGui::Text("Time Scale Control");
-
-		// タイムスケールスライダー
+		
+		// タイムスケール設定
 		float tempScale = timeScale_;
-		if (ImGui::SliderFloat("Time Scale", &tempScale, 0.0f, 3.0f, "%.2f")) {
+		ImGui::PushStyleColor(ImGuiCol_Text, SpeedColor);
+
+		if (ImGui::SliderFloat("タイムスケール", &tempScale, 0.0f, 3.0f, "%.2f")) {
 			SetTimeScale(tempScale);
 		}
 
+		ImGui::PopStyleColor();
+
 		ImGui::Spacing();
 		ImGui::Separator();
-		// 一時停止制御
-		ImGui::Text("Pause Control");
-		if (isPaused_) {
-			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Status: PAUSED");
-			if (ImGui::Button("Resume")) {
-				TogglePause();
-			}
-		} else {
-			ImGui::TextColored(ImVec4(0, 1, 0, 1), "Status: Running");
-			if (ImGui::Button("Pause")) {
-				TogglePause();
-			}
-		}
-		ImGui::Spacing();
-		ImGui::Separator();
+		
 		// スローモーション設定
-		ImGui::Text("Slow Motion");
-		ImGui::SliderFloat("Slow Motion Scale", &slowMotionScale_, 0.1f, 1.0f, "%.2f");
-		if (ImGui::Button("Start Slow Motion")) {
+		ImGui::SliderFloat("スローモーションスケール", &slowMotionScale_, 0.1f, 1.0f, "%.2f");
+		if (ImGui::Button("演出開始")) {
 			StartSlowMotion(slowMotionScale_);
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Reset to Normal")) {
+		if (ImGui::Button("通常速度に戻す")) {
 			ResetToNormalSpeed();
 		}
 

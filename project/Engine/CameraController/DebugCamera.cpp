@@ -16,6 +16,8 @@ DebugCamera::DebugCamera()
 	, spherical_{}
 	, cartesianPosition_{ 0.0f, 0.0f, -10.0f }
 	, cartesianRotation_{ 0.0f, 0.0f, 0.0f }
+	, initialPosition_{}
+	, initialRotation_{}
 	, input_(nullptr) {
 }
 
@@ -361,93 +363,89 @@ void DebugCamera::UpdateCameraForGPU() {
 
 void DebugCamera::ImGui() {
 #ifdef USEIMGUI
-	ImGui::Text("DebugCamera");
-	ImGui::Separator();
+	if (ImGui::CollapsingHeader("デバッグカメラ")) {
+		ImGui::Separator();
 
-	// カメラ操作の有効/無効
-	ImGui::Text("Camera Control: %s", enableCameraControl_ ? "ON" : "OFF");
-	if (ImGui::Button(enableCameraControl_ ? "Disable Control" : "Enable Control")) {
-		enableCameraControl_ = !enableCameraControl_;
-	}
+		// カメラ操作の有効/無効
+		ImGui::Checkbox("カメラ移動するか", &enableCameraControl_);
 
-	ImGui::Separator();
+		ImGui::Separator();
 
-	// ターゲット座標
-	ImGui::Text("Target Position: (%.2f, %.2f, %.2f)",
-		target_.x, target_.y, target_.z);
+		// デカルト座標系の設定
+		if (ImGui::CollapsingHeader("デカルト座標系設定")) {
+			bool positionChanged = false;
+			bool rotationChanged = false;
 
-	if (ImGui::DragFloat3("Target", &target_.x, 0.1f, -100.0f, 100.0f)) {
-		UpdateSphericalFromPosition();
-	}
+			if (ImGui::DragFloat3("Position", &cartesianPosition_.x, 0.1f, -1000.0f, 1000.0f)) {
+				cameraTransform_.translate = cartesianPosition_;
+				positionChanged = true;
+			}
 
-	ImGui::Separator();
+			if (ImGui::DragFloat3("Rotation", &cartesianRotation_.x, 0.01f, -std::numbers::pi_v<float>, std::numbers::pi_v<float>)) {
+				cameraTransform_.rotate = cartesianRotation_;
+				rotationChanged = true;
+			}
 
-	// デカルト座標系の設定（折りたたみ可能）
-	if (ImGui::CollapsingHeader("Cartesian Coordinates", ImGuiTreeNodeFlags_DefaultOpen)) {
-		bool positionChanged = false;
-		bool rotationChanged = false;
-
-		if (ImGui::DragFloat3("Position", &cartesianPosition_.x, 0.1f, -1000.0f, 1000.0f)) {
-			cameraTransform_.translate = cartesianPosition_;
-			positionChanged = true;
+			// 位置または回転が変更された場合、ターゲットを再計算
+			if (positionChanged || rotationChanged) {
+				target_ = CalculateTargetFromRotation(cartesianPosition_, cartesianRotation_);
+				UpdateSphericalFromPosition();
+			}
 		}
 
-		if (ImGui::DragFloat3("Rotation", &cartesianRotation_.x, 0.01f, -std::numbers::pi_v<float>, std::numbers::pi_v<float>)) {
-			cameraTransform_.rotate = cartesianRotation_;
-			rotationChanged = true;
+		ImGui::Separator();
+
+		// 球面座標系の設定
+		if (ImGui::CollapsingHeader("球面座標系設定")) {
+
+			// ターゲット座標
+			ImGui::Text("Target Position: (%.2f, %.2f, %.2f)",
+				target_.x, target_.y, target_.z);
+
+			if (ImGui::DragFloat3("Target", &target_.x, 0.1f, -100.0f, 100.0f)) {
+				UpdateSphericalFromPosition();
+			}
+
+			ImGui::Text("  Radius: %.2f", spherical_.radius);
+			ImGui::Text("  Theta: %.2f rad (%.1f deg)", spherical_.theta, spherical_.theta * 180.0f / std::numbers::pi_v<float>);
+			ImGui::Text("  Phi: %.2f rad (%.1f deg)", spherical_.phi, spherical_.phi * 180.0f / std::numbers::pi_v<float>);
+
+			ImGui::DragFloat("Distance", &spherical_.radius, 0.1f, minDistance_, maxDistance_);
+
+			if (ImGui::DragFloat("Theta", &spherical_.theta, 0.01f, -std::numbers::pi_v<float>, std::numbers::pi_v<float>) ||
+				ImGui::DragFloat("Phi", &spherical_.phi, 0.01f, minPhi_, maxPhi_)) {
+				UpdatePositionFromSpherical();
+			}
 		}
 
-		// 位置または回転が変更された場合、ターゲットを再計算
-		if (positionChanged || rotationChanged) {
-			target_ = CalculateTargetFromRotation(cartesianPosition_, cartesianRotation_);
-			UpdateSphericalFromPosition();
+		ImGui::Separator();
+
+		// リセットボタン
+		if (ImGui::Button("カメラの初期化")) {
+			SetDefaultCamera(initialPosition_, initialRotation_);
+		}
+
+		ImGui::Separator();
+
+		// 移動・操作設定
+		if (ImGui::TreeNode("移動&操作設定")) {
+			ImGui::DragFloat("キーボード移動速度", &keyboardSpeed_, 0.01f, 0.01f, 2.0f);
+			ImGui::DragFloat("マウスパン速度", &mousePanSpeed_, 0.001f, 0.001f, 0.1f);
+			ImGui::DragFloat("回転感度", &rotationSensitivity_, 0.0001f, 0.001f, 0.01f);
+			ImGui::DragFloat("ズーム感度", &zoomSensitivity_, 0.001f, 0.01f, 1.0f);
+			ImGui::TreePop();
+		}
+		// 操作説明
+		if (ImGui::TreeNode("カメラ操作説明")) {
+			ImGui::Text("TABキー: カメラの固定・固定解除");
+			ImGui::Text("Shift + Middle Mouse: Pan移動 ");
+			ImGui::Text("Middle Mouse: 球面座標状にカメラ移動");
+			ImGui::Text("Shift + Mouse Wheel: ズームインアウト");
+			ImGui::Text("WASD: 前後左右移動");
+			ImGui::Text("QE: 上下移動");
+			ImGui::Text("Shift + TAB: メインカメラと切り替え");
+			ImGui::TreePop();
 		}
 	}
-
-	ImGui::Separator();
-
-	// 球面座標系の設定（折りたたみ可能）
-	if (ImGui::CollapsingHeader("Spherical Coordinates")) {
-		ImGui::Text("  Radius: %.2f", spherical_.radius);
-		ImGui::Text("  Theta: %.2f rad (%.1f deg)", spherical_.theta, spherical_.theta * 180.0f / std::numbers::pi_v<float>);
-		ImGui::Text("  Phi: %.2f rad (%.1f deg)", spherical_.phi, spherical_.phi * 180.0f / std::numbers::pi_v<float>);
-
-		ImGui::DragFloat("Distance", &spherical_.radius, 0.1f, minDistance_, maxDistance_);
-
-		if (ImGui::DragFloat("Theta", &spherical_.theta, 0.01f, -std::numbers::pi_v<float>, std::numbers::pi_v<float>) ||
-			ImGui::DragFloat("Phi", &spherical_.phi, 0.01f, minPhi_, maxPhi_)) {
-			UpdatePositionFromSpherical();
-		}
-	}
-
-	ImGui::Separator();
-
-	// 移動・操作設定
-	if (ImGui::CollapsingHeader("移動&操作設定", ImGuiTreeNodeFlags_DefaultOpen)) {
-		ImGui::DragFloat("Keyboard Speed", &keyboardSpeed_, 0.01f, 0.01f, 2.0f);
-		ImGui::DragFloat("Mouse Pan Speed", &mousePanSpeed_, 0.001f, 0.001f, 0.1f);
-		ImGui::DragFloat("Rotation Sensitivity", &rotationSensitivity_, 0.0001f, 0.001f, 0.01f);
-		ImGui::DragFloat("Zoom Sensitivity", &zoomSensitivity_, 0.001f, 0.01f, 1.0f);
-	}
-
-	ImGui::Separator();
-
-	// リセットボタン
-	if (ImGui::Button("カメラの初期化")) {
-		SetDefaultCamera(initialPosition_, initialRotation_);
-	}
-
-	ImGui::Separator();
-
-	// 操作説明
-	if (ImGui::CollapsingHeader("カメラ操作説明", ImGuiTreeNodeFlags_DefaultOpen)) {
-		ImGui::Text("TABキー: カメラの固定・固定解除");
-		ImGui::Text("Shift + Middle Mouse: Pan移動 ");
-		ImGui::Text("Middle Mouse: 球面座標状にカメラ移動");
-		ImGui::Text("Shift + Mouse Wheel: ズームインアウト");
-		ImGui::Text("WASD: 前後左右移動");
-		ImGui::Text("QE: 上下移動");
-	}
-
 #endif
 }

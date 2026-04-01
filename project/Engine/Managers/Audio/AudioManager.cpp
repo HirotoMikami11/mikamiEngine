@@ -434,26 +434,26 @@ void AudioManager::ImGui() {
 	ImGui::Separator();
 
 	// 統計情報
-	ImGui::Text("Audio Data: %zu", audioDataMap.size());
-	ImGui::SameLine(150);
-	ImGui::Text("Active Instances: %zu", instanceMap.size());
+	ImGui::Text("オーディオデータ総数: %zu", audioDataMap.size());
+	ImGui::SameLine(250);
+	ImGui::Text("再生インスタンス数: %zu", instanceMap.size());
 
 	// 全停止ボタン
 	ImGui::SameLine();
-	if (ImGui::SmallButton("Stop All")) {
+	if (ImGui::SmallButton("すべて停止")) {
 		StopAll();
 	}
 
 	// 音声データが1つも読み込まれていない場合
 	if (audioDataMap.empty()) {
-		ImGui::TextDisabled("No audio data loaded");
+		ImGui::TextDisabled("オーディオデータがロードされていません");
 		return;
 	}
 
 	ImGui::Separator();
 
 	// 音声データ一覧
-	ImGui::Text("Audio Data List:");
+	ImGui::Text("リスト");
 
 	for (const auto& dataPair : audioDataMap) {
 		const std::string& tagName = dataPair.first;
@@ -472,25 +472,25 @@ void AudioManager::ImGui() {
 
 		// 再生ボタン
 		ImGui::SameLine(250);
-		if (ImGui::SmallButton("Play")) {
+		if (ImGui::SmallButton("再生")) {
 			Play(tagName, false);
 		}
 		ImGui::SameLine();
-		if (ImGui::SmallButton("PlayOverride")) {
+		if (ImGui::SmallButton("重複再生")) {
 			PlayOverride(tagName, false);
 		}
 		ImGui::SameLine();
-		if (ImGui::SmallButton("Loop")) {
+		if (ImGui::SmallButton("ループ")) {
 			Play(tagName, true);
 		}
 		ImGui::SameLine();
-		if (ImGui::SmallButton("LoopOverride")) {
+		if (ImGui::SmallButton("ループ多重")) {
 			PlayOverride(tagName, true);
 		}
 		// このデータの全インスタンスを停止
 		if (instanceCount > 0) {
 			ImGui::SameLine();
-			if (ImGui::SmallButton("Stop All")) {
+			if (ImGui::SmallButton("停止")) {
 				StopByTag(tagName);
 			}
 		}

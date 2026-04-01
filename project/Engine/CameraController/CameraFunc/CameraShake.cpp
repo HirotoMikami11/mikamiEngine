@@ -81,27 +81,25 @@ bool CameraShake::IsShaking() const {
 
 void CameraShake::ImGui() {
 #ifdef USEIMGUI
-	if (ImGui::CollapsingHeader("Camera Shake")) {
-		ImGui::Text("Status: %s", IsShaking() ? "Shaking" : "Idle");
-		ImGui::Text("Timer: %.2f / %.2f", shakeTimer_, shakeDuration_);
-		ImGui::Text("Amplitude: %.3f", shakeAmplitude_);
-		ImGui::Text("Offset: (%.3f, %.3f, %.3f)",
+	if (ImGui::TreeNode("カメラシェイク機能")) {
+		ImGui::Text("ステータス: %s", IsShaking() ? "シェイク中" : "停止中");
+		ImGui::Text("タイマー: %.2f / %.2f", shakeTimer_, shakeDuration_);
+		ImGui::Text("振動幅: %.3f", shakeAmplitude_);
+		ImGui::Text("オフセット: (%.3f, %.3f, %.3f)",
 			shakeOffset_.x, shakeOffset_.y, shakeOffset_.z);
-
-		ImGui::Separator();
-
 		// テスト用ボタン
-		if (ImGui::Button("Test Simple Shake")) {
+		if (ImGui::Button("シェイク")) {
 			StartShake(1.0f, 0.5f);
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Test Multi Shake")) {
+		if (ImGui::Button("強めのシェイク")) {
 			StartMultiShake(2.0f, 0.8f, 12.0f);
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Stop Shake")) {
+		if (ImGui::Button("シェイク停止")) {
 			StopShake();
 		}
+		ImGui::TreePop();
 	}
 #endif
 }

@@ -305,22 +305,14 @@ size_t PostProcessChain::GetDepthRequiredEffectCount() const {
 
 void PostProcessChain::ImGui() {
 #ifdef USEIMGUI
-	//if (ImGui::TreeNode("Post Process Chain")) {
-	ImGui::Text("Effects Count: %zu", effects_.size());
-	ImGui::Text("Chain Size: %dx%d", width_, height_);
+	ImGui::Text("エフェクト数	: %zu", effects_.size());
+	ImGui::Text("画面サイズ	: %dx%d", width_, height_);
 
 	// 有効なエフェクト数をカウント
 	size_t activeCount = GetActiveEffectCount();
 	size_t depthRequiredCount = GetDepthRequiredEffectCount();
-	ImGui::Text("Active Effects: %zu", activeCount);
-	ImGui::Text("Depth Required Effects: %zu", depthRequiredCount);
-
-	// OffscreenTriangle情報
-	ImGui::Separator();
-	ImGui::Text("Render Method: OffscreenTriangle");
-	ImGui::Text("Triangle Valid: %s", offscreenTriangle_ && offscreenTriangle_->IsValid() ? "YES" : "NO");
-
-
+	ImGui::Text("有効なエフェクト数		: %zu", activeCount);
+	ImGui::Text("有効な深度使用エフェクト数	: %zu", depthRequiredCount);
 
 	ImGui::Separator();
 
@@ -362,8 +354,6 @@ void PostProcessChain::ImGui() {
 		ImGui::PopID();
 		ImGui::Separator();
 	}
-	//	ImGui::TreePop();
-	//}
 #endif
 }
 

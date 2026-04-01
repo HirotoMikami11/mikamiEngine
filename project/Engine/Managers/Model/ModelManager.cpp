@@ -117,18 +117,18 @@ bool ModelManager::HasModel(const std::string& tagName) const {
 void ModelManager::ImGui() {
 #ifdef USEIMGUI
 	// モデルの総数
-	ImGui::Text("Total Models: %zu", models_.size());
+	ImGui::Text("モデル総数: %zu", models_.size());
 
 	ImGui::Separator();
 
 	// モデルが存在しない場合
 	if (models_.empty()) {
-		ImGui::TextDisabled("No models loaded");
+		ImGui::TextDisabled("モデルがロードされていません");
 		return;
 	}
 
 	// モデル一覧の表示
-	if (ImGui::TreeNode("Model List")) {
+	if (ImGui::TreeNode("リスト")) {
 		// タグ名リストをアルファベット順にソート
 		std::vector<std::string> tagList;
 		tagList.reserve(models_.size());

@@ -176,7 +176,9 @@ void SceneManager::DrawScenesUI() {
 #ifdef USEIMGUI
 
 	// 登録されているシーン一覧とボタン
-	ImGui::Text("Available Scenes (%zu):", scenes_.size());
+	ImGui::Separator();
+	MyImGui::CenterText("シーン一覧");
+	ImGui::Separator();
 
 	for (const auto& [sceneName, scene] : scenes_) {
 		ImGui::PushID(sceneName.c_str());
@@ -209,11 +211,10 @@ void SceneManager::DrawScenesUI() {
 	// 現在のシーンのリセットボタン
 	if (currentScene_) {
 		ImGui::Spacing();
-		if (ImGui::Button("現在のシーンをリセットする", ImVec2(200, 0))) {
+		if (ImGui::Button("現在のシーンをリセット", ImVec2(200, 0))) {
 			ResetCurrentScene();
 		}
 	}
-
 	// シーン切り替え要求があるかの表示
 	if (sceneChangeRequested_) {
 		ImGui::Spacing();
@@ -235,6 +236,6 @@ void SceneManager::DrawCurrentSceneUI() {
 		ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1), "現在有効なシーンが存在しません");
 	}
 
-		ImGui::End();
+	ImGui::End();
 #endif
 }

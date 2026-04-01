@@ -27,59 +27,59 @@
 class JsonBinder
 {
 public:
-    /// <summary>
-    /// コンストラクタ
-    /// CreateGroup + LoadFile を自動実行する（ファイルなしなら何もしない）
-    /// </summary>
-    explicit JsonBinder(const std::string& groupName);
+	/// <summary>
+	/// コンストラクタ
+	/// CreateGroup + LoadFile を自動実行する（ファイルなしなら何もしない）
+	/// </summary>
+	explicit JsonBinder(const std::string& groupName);
 
-    //-----------------------------------------------------------------------
-    // 基本型 Bind（個別パラメータ）
-    //-----------------------------------------------------------------------
+	//-----------------------------------------------------------------------
+	// 基本型 Bind（個別パラメータ）
+	//-----------------------------------------------------------------------
 
-    void Bind(const std::string& key, float*   ptr, float   defaultValue, float speed = 0.1f);
-    void Bind(const std::string& key, int32_t* ptr, int32_t defaultValue, float speed = 1.0f);
-    void Bind(const std::string& key, bool*    ptr, bool    defaultValue);
-    void Bind(const std::string& key, Vector2* ptr, const Vector2& defaultValue, float speed = 0.1f);
-    void Bind(const std::string& key, Vector3* ptr, const Vector3& defaultValue, float speed = 0.1f);
-    void Bind(const std::string& key, Vector4* ptr, const Vector4& defaultValue, float speed = 0.1f);
+	void Bind(const std::string& key, float* ptr, float   defaultValue, float speed = 0.1f);
+	void Bind(const std::string& key, int32_t* ptr, int32_t defaultValue, float speed = 1.0f);
+	void Bind(const std::string& key, bool* ptr, bool    defaultValue);
+	void Bind(const std::string& key, Vector2* ptr, const Vector2& defaultValue, float speed = 0.1f);
+	void Bind(const std::string& key, Vector3* ptr, const Vector3& defaultValue, float speed = 0.1f);
+	void Bind(const std::string& key, Vector4* ptr, const Vector4& defaultValue, float speed = 0.1f);
 
-    /// <summary> Vector4 を RGBA カラーとして ColorEdit4 で表示する </summary>
-    void BindColor(const std::string& key, Vector4* ptr, const Vector4& defaultValue);
+	/// <summary> Vector4 を RGBA カラーとして ColorEdit4 で表示する </summary>
+	void BindColor(const std::string& key, Vector4* ptr, const Vector4& defaultValue);
 
-    //-----------------------------------------------------------------------
-    // 複合型 Bind（CollapsingHeader で区分け）
-    //-----------------------------------------------------------------------
+	//-----------------------------------------------------------------------
+	// 複合型 Bind（CollapsingHeader で区分け）
+	//-----------------------------------------------------------------------
 
-    /// <summary>
-    /// Transform3D を Position / Rotation / Scale として CollapsingHeader でバインド
-    /// JsonSettings サブグループ { groupName, sectionName } に保存
-    /// </summary>
-    void BindTransform3D(const std::string& sectionName, Transform3D* transform);
+	/// <summary>
+	/// Transform3D を Position / Rotation / Scale として CollapsingHeader でバインド
+	/// JsonSettings サブグループ { groupName, sectionName } に保存
+	/// </summary>
+	void BindTransform3D(const std::string& sectionName, Transform3D* transform);
 
-    /// <summary>
-    /// Material を Color + LightingMode として CollapsingHeader でバインド
-    /// JsonSettings サブグループ { groupName, sectionName } に保存
-    /// </summary>
-    void BindMaterial(const std::string& sectionName, Material* material);
+	/// <summary>
+	/// Material を Color + LightingMode として CollapsingHeader でバインド
+	/// JsonSettings サブグループ { groupName, sectionName } に保存
+	/// </summary>
+	void BindMaterial(const std::string& sectionName, Material* material);
 
-    //-----------------------------------------------------------------------
-    // 表示・保存
-    //-----------------------------------------------------------------------
+	//-----------------------------------------------------------------------
+	// 表示・保存
+	//-----------------------------------------------------------------------
 
-    /// <summary>
-    /// 登録された全項目を ImGui で表示する
-    /// 変更時は JsonSettings に自動反映される
-    /// 末尾に Save ボタンを表示する
-    /// </summary>
-    void ImGui();
+	/// <summary>
+	/// 登録された全項目を ImGui で表示する
+	/// 変更時は JsonSettings に自動反映される
+	/// 末尾に Save ボタンを表示する
+	/// </summary>
+	void ImGui();
 
-    /// <summary> JsonSettings::SaveFile を呼ぶ </summary>
-    void Save();
+	/// <summary> JsonSettings::SaveFile を呼ぶ </summary>
+	void Save();
 
 private:
-    std::string groupName_;
+	std::string groupName_;
 
-    // 登録順に描画ラムダを保持
-    std::vector<std::function<void()>> drawItems_;
+	// 登録順に描画ラムダを保持
+	std::vector<std::function<void()>> drawItems_;
 };

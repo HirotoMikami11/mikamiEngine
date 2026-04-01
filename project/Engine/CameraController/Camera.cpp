@@ -12,7 +12,10 @@ NormalCamera::NormalCamera()
 	, projectionMatrix_{}
 	, spriteProjectionMatrix_{}
 	, useSpriteViewProjectionMatrix_(true)
-	, cameraForGPUData_(nullptr) {
+	, cameraForGPUData_(nullptr)
+	, initialPosition_{}
+	, initialRotation_{}
+{
 }
 
 NormalCamera::~NormalCamera() {
@@ -121,40 +124,39 @@ void NormalCamera::LookAt(const Vector3& target, const Vector3& up) {
 
 void NormalCamera::ImGui() {
 #ifdef USEIMGUI
-	ImGui::Text("NormalCamera");
-	ImGui::Separator();
+	if (ImGui::CollapsingHeader("ノーマルカメラ")) {
+		ImGui::Separator();
 
-	// カメラの位置と回転を表示・編集
-	if (ImGui::DragFloat3("Position", &cameraTransform_.translate.x, 0.1f, -1000.0f, 1000.0f)) {
-		// 位置変更時は行列を更新
-		UpdateMatrix();
+		if (ImGui::CollapsingHeader("デカルト座標系設定")) {
+			// カメラの位置と回転を表示・編集
+			if (ImGui::DragFloat3("座標", &cameraTransform_.translate.x, 0.1f, -1000.0f, 1000.0f)) {
+				// 位置変更時は行列を更新
+				UpdateMatrix();
+			}
+
+			if (ImGui::DragFloat3("回転", &cameraTransform_.rotate.x, 0.01f, -std::numbers::pi_v<float>, std::numbers::pi_v<float>)) {
+				// 回転変更時は行列を更新
+				UpdateMatrix();
+			}
+		}
+
+		ImGui::Separator();
+
+		if (ImGui::CollapsingHeader("クリップ設定")) {
+			if (ImGui::SliderFloat("FOV", &fov_, 0.1f, 3.0f) ||
+				ImGui::SliderFloat("Near Clip", &nearClip_, 0.01f, 10.0f) ||
+				ImGui::SliderFloat("Far Clip", &farClip_, 10.0f, 1000.0f)) {
+				// パラメータ変更時はプロジェクション行列を再計算
+				projectionMatrix_ = MakePerspectiveFovMatrix(fov_, aspectRatio_, nearClip_, farClip_);
+				UpdateMatrix();
+			}
+		}
+
+		ImGui::Separator();
+		// リセットボタン
+		if (ImGui::Button("初期座標に戻す")) {
+			SetDefaultCamera(initialPosition_, initialRotation_);
+		}
 	}
-
-	if (ImGui::DragFloat3("Rotation", &cameraTransform_.rotate.x, 0.01f, -std::numbers::pi_v<float>, std::numbers::pi_v<float>)) {
-		// 回転変更時は行列を更新
-		UpdateMatrix();
-	}
-
-	ImGui::Separator();
-
-	// カメラパラメータ
-	if (ImGui::SliderFloat("FOV", &fov_, 0.1f, 3.0f) ||
-		ImGui::SliderFloat("Near Clip", &nearClip_, 0.01f, 10.0f) ||
-		ImGui::SliderFloat("Far Clip", &farClip_, 10.0f, 1000.0f)) {
-
-		// パラメータ変更時はプロジェクション行列を再計算
-		projectionMatrix_ = MakePerspectiveFovMatrix(fov_, aspectRatio_, nearClip_, farClip_);
-		UpdateMatrix();
-	}
-
-	ImGui::Separator();
-
-	ImGui::Text("Camera Type: %s", GetCameraType().c_str());
-	ImGui::Separator();
-
-	// リセットボタン
-	if (ImGui::Button("Reset Camera")) {
-		SetDefaultCamera(initialPosition_, initialRotation_);
-	}
-#endif
 }
+#endif

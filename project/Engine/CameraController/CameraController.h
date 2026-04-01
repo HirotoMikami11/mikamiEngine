@@ -177,8 +177,8 @@ private:
 	/// エンジン搭載のカメラは消せない
 	/// </summary>
 	struct CameraInfo {
-		std::unique_ptr<BaseCamera> camera; // カメラインスタンス
-		bool isEngineCamera; // エンジン標準カメラかどうか
+		std::unique_ptr<BaseCamera> camera;	// カメラインスタンス
+		bool isEngineCamera = false;		// エンジン標準カメラかどうか
 	};
 
 	// 登録されたカメラの管理マップ
