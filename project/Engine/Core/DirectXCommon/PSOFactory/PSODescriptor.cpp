@@ -237,8 +237,11 @@ D3D12_BLEND_DESC PSODescriptor::GetBlendDesc() const {
 		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+		// αチャンネルは「描画先の値を維持」する。
+		// 理由:
+		// - デバッグ時のGameViewは FinalPass を ImGui::Image で再合成するため、RTのαが小さいと背景色との合成で黒ずみ（透明にするほど暗く見える）が発生するため
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ZERO;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
 		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 		break;

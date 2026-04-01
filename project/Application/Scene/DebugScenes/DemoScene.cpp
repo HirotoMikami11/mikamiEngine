@@ -169,6 +169,12 @@ void DemoScene::UpdateGameObjects() {
 	// スプライトの更新
 	sprite_->Update(viewProjectionMatrixSprite);
 
+	float a = (sinf(gameTimer.GetGameTime() * 2.0f) + 1.0f) / 2.0f; // 0.0～1.0の範囲で変化するアルファ値
+
+	sprite_->SetColor({ 1.0f, 1.0f, 1.0f, a });
+
+
+
 	//平面の移動
 	Input* input = Input::GetInstance();
 	Vector3 planePosition = plane_->GetPosition();
