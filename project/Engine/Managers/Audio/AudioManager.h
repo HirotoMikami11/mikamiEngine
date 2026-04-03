@@ -12,8 +12,7 @@
 
 
 /// <summary>
-/// 音声を管理する管理クラス（インスタンスベース設計）
-/// unique_ptrによるメモリ管理に変更
+/// 音声を管理する管理クラス
 /// </summary>
 class AudioManager {
 public:

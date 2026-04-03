@@ -11,6 +11,7 @@ enum class ColliderType {
 	SPHERE,	// 球体
 	AABB,	// AABB
 	OBB,	// OBB（未実装）
+	Sprite,	// 2Dスプライト（未実装）
 	Capsule	// カプセル（未実装）
 };
 

@@ -45,14 +45,10 @@ void ResourceLoader::RegisterAllResources() {
 	///*-----------------------------------------------------------------------*///
 	textures_ = {
 		// 汎用テクスチャ
-		{"resources/Texture/uvChecker.png", "uvChecker"},
-		{"resources/Texture/monsterBall.png", "monsterBall"},
-		{"resources/Texture/white2x2.png", "white"},
-		{"resources/Texture/circle.png", "circle"},
-		{"resources/Texture/gaugeLight.png", "gaugeLight"},
-		{"resources/Texture/sousa.png", "sousa"},
-		{"resources/Texture/pause1.png", "pause1"},
-		{"resources/Texture/pause2.png", "pause2"}
+		{"resources/Texture/Engine/uvChecker.png", "uvChecker"},
+		{"resources/Texture/Engine/monsterBall.png", "monsterBall"},
+		{"resources/Texture/Engine/white2x2.png", "white"},
+		{"resources/Texture/Engine/circle.png", "circle"},
 
 		// テクスチャここに追加
 		// {"resources/Texture/example.png", "example"},
@@ -68,31 +64,31 @@ void ResourceLoader::RegisterAllResources() {
 		{"", "", "plane", true, MeshType::PLANE},
 
 		// OBJモデル
-		{"resources/Model/Cube", "Cube.obj", "cube", false},
-		{"resources/Model/MultiMesh", "multiMesh.obj", "model_MultiMesh", false},
-		{"resources/Model/MultiMaterial", "multiMaterial.obj", "model_MultiMaterial", false},
-		{"resources/Model/terrain", "terrain.obj", "model_terrain", false},
-		{"resources/Model/Player", "Player.obj", "model_Player", false},
-		{"resources/Model/PlayerBullet", "playerBullet.obj", "playerBullet", false},
-		{"resources/Model/FontModel", "TitleFont2.obj", "titleFont", false},
-		{"resources/Model/FontModel", "GameOverFont.obj", "overFont", false},
-		{"resources/Model/FontModel", "GameClearFont.obj", "clearFont", false},
-		{"resources/Model/FontModel", "PressA.obj", "pressAFont", false},
-		{"resources/Model/titleWallRock", "titleWallRock.obj", "titleWall", false},
-		{"resources/Model/wallRock", "wallRock.obj", "wall", false},
-		{"resources/Model/fieldRock", "fieldRock.obj", "field", false},
-		{"resources/Model/titleFieldRock", "titleFieldRock.obj", "titleField", false},
-		{"resources/Model/torch", "torch.obj", "torch", false},
-		{"resources/Model/Boss", "Boss_Body.obj", "Boss_Body", false},
-		{"resources/Model/Boss", "Boss_Head.obj", "Boss_Head", false},
-		{"resources/Model/Boss", "Boss_Tail.obj", "Boss_Tail", false},
-		{"resources/Model/treasureBox", "treasureBox.obj", "treasureBox", false},
-		{"resources/Model/plane", "plane.gltf", "glftPlane", false},
-		{"resources/Model/plane", "plane.obj", "objPlane", false},
+		{"resources/Model/Cube", "Cube.obj", "cube"},
+		{"resources/Model/MultiMesh", "multiMesh.obj", "model_MultiMesh"},
+		{"resources/Model/MultiMaterial", "multiMaterial.obj", "model_MultiMaterial"},
+		{"resources/Model/terrain", "terrain.obj", "model_terrain"},
+		{"resources/Model/Player", "Player.obj", "model_Player"},
+		{"resources/Model/PlayerBullet", "playerBullet.obj", "playerBullet"},
+		{"resources/Model/FontModel", "TitleFont2.obj", "titleFont"},
+		{"resources/Model/FontModel", "GameOverFont.obj", "overFont"},
+		{"resources/Model/FontModel", "GameClearFont.obj", "clearFont"},
+		{"resources/Model/FontModel", "PressA.obj", "pressAFont"},
+		{"resources/Model/titleWallRock", "titleWallRock.obj", "titleWall"},
+		{"resources/Model/wallRock", "wallRock.obj", "wall"},
+		{"resources/Model/fieldRock", "fieldRock.obj", "field"},
+		{"resources/Model/titleFieldRock", "titleFieldRock.obj", "titleField"},
+		{"resources/Model/torch", "torch.obj", "torch"},
+		{"resources/Model/Boss", "Boss_Body.obj", "Boss_Body"},
+		{"resources/Model/Boss", "Boss_Head.obj", "Boss_Head"},
+		{"resources/Model/Boss", "Boss_Tail.obj", "Boss_Tail"},
+		{"resources/Model/treasureBox", "treasureBox.obj", "treasureBox"},
+		{"resources/Model/plane", "plane.gltf", "glftPlane"},
+		{"resources/Model/plane", "plane.obj", "objPlane"},
 
 
 		// モデルはここに追加
-		// {"resources/Model/NewModel", "newModel.obj", "model_New", false},
+		// {"resources/Model/NewModel", "newModel.obj", "model_New"},
 	};
 
 	///*-----------------------------------------------------------------------*///

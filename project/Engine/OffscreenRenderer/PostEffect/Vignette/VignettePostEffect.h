@@ -14,21 +14,21 @@ public:
 	/// </summary>
 	struct VignetteParameters {
 		Vector4 vignetteColor = { 0.0f, 0.0f, 0.0f, 1.0f };		// ビネットの色（通常は黒色）
-		float time = 0.0f;								// 時間（アニメーション用）
-		float vignetteStrength = 0.6f;					// ビネットの強度 (0.0f～1.0f)
-		float vignetteRadius = 0.4f;					// ビネットの半径 (0.0f～1.0f)
-		float vignetteSoftness = 0.3f;					// ビネットの柔らかさ (0.0f～1.0f)
+		float time = 0.0f;										// 時間（アニメーション用）
+		float vignetteStrength = 0.6f;							// ビネットの強度 (0.0f～1.0f)
+		float vignetteRadius = 0.4f;							// ビネットの半径 (0.0f～1.0f)
+		float vignetteSoftness = 0.3f;							// ビネットの柔らかさ (0.0f～1.0f)
 	};
 
 	/// <summary>
 	/// エフェクトプリセット
 	/// </summary>
 	enum class EffectPreset {
-		OFF,            // エフェクトなし
-		SUBTLE,         // 軽微なビネット
-		MEDIUM,         // 中程度のビネット
-		INTENSE,        // 強いビネット
-		CINEMATIC,      // 映画的ビネット
+		OFF,				// エフェクトなし
+		SUBTLE,				// 軽微なビネット
+		MEDIUM,				// 中程度のビネット
+		INTENSE,			// 強いビネット
+		CINEMATIC,			// 映画的ビネット
 	};
 
 public:
