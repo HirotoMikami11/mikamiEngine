@@ -1,75 +1,69 @@
 #pragma once
 
-#include "Collider.h"
+#include "Collider/ICollider.h"
+#include "Collider/SphereCollider.h"
+#include "Collider/AABBCollider.h"
 #include <list>
-#include <memory>
-#include "Engine.h"
+#include <set>
+#include <utility>
 
+/// <summary>
+/// 衝突判定マネージャー
+/// Enter / Stay / Exit の3段階コールバックに対応
+/// </summary>
 class CollisionManager {
 public:
-
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
 	CollisionManager();
-
-	/// <summary>
-	/// デストラクタ
-	/// </summary>
 	~CollisionManager();
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
+	/// <summary>初期化（コライダーリストのクリア）</summary>
 	void Initialize();
 
-	/// <summary>
-	/// 更新処理
-	/// リストのクリア、コライダー登録、衝突判定処理を行う
-	/// </summary>
+	/// <summary>更新処理（色リセット → 衝突判定 → Enter/Stay/Exit 通知）</summary>
 	void Update();
 
-	/// <summary>
-	/// コライダーを引数で受け取り、リストに登録する関数
-	/// </summary>
-	/// <param name="collider">登録するコライダー</param>
-	void AddCollider(Collider* collider);
+	/// <summary>コライダーをリストに登録</summary>
+	void AddCollider(ICollider* collider);
 
-	/// <summary>
-	/// コライダーリストをクリアする関数
-	/// </summary>
+	/// <summary>コライダーリストをクリア</summary>
 	void ClearColliderList();
 
-	/// <summary>
-	/// 衝突判定と応答
-	/// </summary>
-	void CheckAllCollision();
-
-	/// <summary>
-	/// 衝突時の色を設定
-	/// </summary>
 	void SetHitColor(const uint32_t& color) { hitColor_ = color; }
-
-	/// <summary>
-	/// 衝突時の色を取得
-	/// </summary>
 	uint32_t GetHitColor() const { return hitColor_; }
 
 private:
-	/// <summary>
-	/// コライダー２つの衝突判定と応答
-	/// </summary>
-	/// <param name="colliderA">コライダーA</param>
-	/// <param name="colliderB">コライダーB</param>
-	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
+	/// <summary>全ペアを総当たりして今フレームの衝突ペア集合を構築</summary>
+	void CheckAllCollision();
 
-	/// <summary>
-	/// 全コライダーの色をデフォルトにリセット
-	/// </summary>
+	/// <summary>2コライダー間の衝突を判定してペア集合に追加</summary>
+	bool CheckCollisionPair(ICollider* a, ICollider* b);
+
+	/// <summary>全コライダーの色をデフォルトにリセット</summary>
 	void ResetAllColliderColors();
 
-	// コライダーのリスト
-	std::list<Collider*> colliders_;
+	/// <summary>起動時に全型ペアのハンドラを登録する</summary>
+	void RegisterCollisionHandlers();
+
+	// --- 型 ---
+	using CollisionFunc = bool(*)(ICollider*, ICollider*);
+	using ColliderPair  = std::pair<ICollider*, ICollider*>;
+
+	/// <summary>ポインタを常に小さい順に並べてペアを作る（正規化）</summary>
+	static ColliderPair MakePair(ICollider* a, ICollider* b) {
+		if (a > b) std::swap(a, b);
+		return { a, b };
+	}
+
+	// コライダーリスト
+	std::list<ICollider*> colliders_;
+
+	// 衝突ペアの集合（Enter/Stay/Exit 判定用）
+	std::set<ColliderPair> currentPairs_;
+	std::set<ColliderPair> prevPairs_;
+
+	// 2次元 dispatch table（行=typeA, 列=typeB、常に typeA<=typeB）
+	static constexpr int kTypeCount = static_cast<int>(ColliderType::Count);
+	CollisionFunc dispatchTable_[kTypeCount][kTypeCount] = {};
 
 	// 衝突時の色（デフォルト: 赤）
 	uint32_t hitColor_ = 0xFF0000FF;

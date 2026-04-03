@@ -1,23 +1,57 @@
 #include "CollisionManager.h"
+#include "Collision.h"
 
-CollisionManager::CollisionManager() {}
+CollisionManager::CollisionManager() {
+	RegisterCollisionHandlers();
+}
 
 CollisionManager::~CollisionManager() {}
 
 void CollisionManager::Initialize() {
-	// 初期化処理
-	colliders_.clear();	//一応リストのクリア
+	colliders_.clear();
+	currentPairs_.clear();
+	prevPairs_.clear();
 }
 
 void CollisionManager::Update() {
-	// まず全コライダーの色をデフォルトにリセット
+	// 1. 前フレームのペアを保存
+	prevPairs_ = currentPairs_;
+	currentPairs_.clear();
+
+	// 2. 色をリセット
 	ResetAllColliderColors();
 
-	// 衝突判定を実行（衝突したものは赤に変更される）
+	// 3. 今フレームの衝突ペアを全検査
 	CheckAllCollision();
+
+	// 4. Enter / Stay / Exit を振り分けてコールバック
+	// --- Enter: 今フレームにある && 前フレームにない ---
+	for (const auto& pair : currentPairs_) {
+		ICollider* a = pair.first;
+		ICollider* b = pair.second;
+
+		a->SetColliderColor(hitColor_);
+		b->SetColliderColor(hitColor_);
+
+		if (prevPairs_.count(pair) == 0) {
+			a->OnCollisionEnter(b);
+			b->OnCollisionEnter(a);
+		} else {
+			a->OnCollisionStay(b);
+			b->OnCollisionStay(a);
+		}
+	}
+
+	// --- Exit: 前フレームにある && 今フレームにない ---
+	for (const auto& pair : prevPairs_) {
+		if (currentPairs_.count(pair) == 0) {
+			pair.first->OnCollisionExit(pair.second);
+			pair.second->OnCollisionExit(pair.first);
+		}
+	}
 }
 
-void CollisionManager::AddCollider(Collider* collider) {
+void CollisionManager::AddCollider(ICollider* collider) {
 	if (collider != nullptr) {
 		colliders_.push_back(collider);
 	}
@@ -28,8 +62,7 @@ void CollisionManager::ClearColliderList() {
 }
 
 void CollisionManager::ResetAllColliderColors() {
-	// 登録されている全コライダーの色をデフォルトにリセット
-	for (Collider* collider : colliders_) {
+	for (ICollider* collider : colliders_) {
 		if (collider) {
 			collider->ResetColliderColor();
 		}
@@ -37,104 +70,67 @@ void CollisionManager::ResetAllColliderColors() {
 }
 
 void CollisionManager::CheckAllCollision() {
-	// リスト内のペアを総当たり
-	std::list<Collider*>::iterator itrA = colliders_.begin();
+	auto itrA = colliders_.begin();
 	for (; itrA != colliders_.end(); ++itrA) {
-		// イテレータAからコライダーAを取得する
-		Collider* colliderA = *itrA;
-		// イテレータBはイテレータAの次の要素から回して重複判定を回避
-		std::list<Collider*>::iterator itrB = itrA;
-		itrB++;
-
+		auto itrB = itrA;
+		++itrB;
 		for (; itrB != colliders_.end(); ++itrB) {
-			// イテレータBからコライダーBを取得する
-			Collider* colliderB = *itrB;
-			// コライダーA,Bの衝突判定と応答
-			CheckCollisionPair(colliderA, colliderB);
+			if (CheckCollisionPair(*itrA, *itrB)) {
+				currentPairs_.insert(MakePair(*itrA, *itrB));
+			}
 		}
 	}
 }
 
-void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
-	// 衝突フィルタリング
-	// コライダーAとコライダーBで衝突属性とマスクを確認
+bool CollisionManager::CheckCollisionPair(ICollider* colliderA, ICollider* colliderB) {
+	// 1. マスクフィルタ（最安、最優先）
 	if ((colliderA->GetCollisionAttribute() & colliderB->GetCollisionMask()) == 0 ||
-		(colliderB->GetCollisionAttribute() & colliderA->GetCollisionMask()) == 0) {
-		// 衝突しない場合は何もしない（色はResetAllColliderColors()でリセット済み）
-		return;
+	    (colliderB->GetCollisionAttribute() & colliderA->GetCollisionMask()) == 0) {
+		return false;
 	}
 
-	// コライダーの種類に応じて衝突判定を行う
-	bool isColliding = false;
-
-	ColliderType typeA = colliderA->GetColliderType();
-	ColliderType typeB = colliderB->GetColliderType();
-
-	// 球体 vs 球体
-	if (typeA == ColliderType::SPHERE && typeB == ColliderType::SPHERE) {
-		Vector3 posA = colliderA->GetWorldPosition();
-		Vector3 posB = colliderB->GetWorldPosition();
-		float length = Length(posA - posB);
-		
-		if (length < colliderA->GetRadius() + colliderB->GetRadius()) {
-			isColliding = true;
-		}
-	}
-	// 球体 vs AABB
-	else if (typeA == ColliderType::SPHERE && typeB == ColliderType::AABB) {
-		SphereMath sphere;
-		sphere.center = colliderA->GetWorldPosition();
-		sphere.radius = colliderA->GetRadius();
-
-		AABB aabb = colliderB->GetAABB();
-		Vector3 posB = colliderB->GetWorldPosition();
-		aabb.min = aabb.min + posB;
-		aabb.max = aabb.max + posB;
-
-		if (IsCollision(aabb, sphere)) {
-			isColliding = true;
-		}
-	}
-	// AABB vs 球体
-	else if (typeA == ColliderType::AABB && typeB == ColliderType::SPHERE) {
-		AABB aabb = colliderA->GetAABB();
-		Vector3 posA = colliderA->GetWorldPosition();
-		aabb.min = aabb.min + posA;
-		aabb.max = aabb.max + posA;
-
-		SphereMath sphere;
-		sphere.center = colliderB->GetWorldPosition();
-		sphere.radius = colliderB->GetRadius();
-
-		if (IsCollision(aabb, sphere)) {
-			isColliding = true;
-		}
-	}
-	// AABB vs AABB
-	else if (typeA == ColliderType::AABB && typeB == ColliderType::AABB) {
-		AABB aabbA = colliderA->GetAABB();
-		Vector3 posA = colliderA->GetWorldPosition();
-		aabbA.min = aabbA.min + posA;
-		aabbA.max = aabbA.max + posA;
-
-		AABB aabbB = colliderB->GetAABB();
-		Vector3 posB = colliderB->GetWorldPosition();
-		aabbB.min = aabbB.min + posB;
-		aabbB.max = aabbB.max + posB;
-
-		if (IsCollision(aabbA, aabbB)) {
-			isColliding = true;
-		}
+	// 2. 型正規化（常に小さいインデックス側を a にする）
+	ICollider* a = colliderA;
+	ICollider* b = colliderB;
+	if (static_cast<int>(a->GetColliderType()) > static_cast<int>(b->GetColliderType())) {
+		std::swap(a, b);
 	}
 
-	// 衝突していた場合の処理
-	if (isColliding) {
-		// コールバック関数を呼び出す（相手のコライダー情報を渡す）
-		colliderA->OnCollision(colliderB);
-		colliderB->OnCollision(colliderA);
+	int typeA = static_cast<int>(a->GetColliderType());
+	int typeB = static_cast<int>(b->GetColliderType());
 
-		// コライダー同士の色を衝突色（赤）に変更
-		colliderA->SetColliderColor(hitColor_);
-		colliderB->SetColliderColor(hitColor_);
-	}
+	// 3. テーブル参照（O(1)）
+	CollisionFunc func = dispatchTable_[typeA][typeB];
+	if (!func) return false; // 未実装ペアはスキップ
+
+	// 4. 数学計算
+	return func(a, b);
+}
+
+void CollisionManager::RegisterCollisionHandlers() {
+	// --- Sphere vs Sphere ---
+	dispatchTable_[static_cast<int>(ColliderType::SPHERE)][static_cast<int>(ColliderType::SPHERE)] =
+	    [](ICollider* a, ICollider* b) -> bool {
+		    auto* sa = static_cast<SphereCollider*>(a);
+		    auto* sb = static_cast<SphereCollider*>(b);
+		    return Collision::IsCollision(sa->GetWorldSphere(), sb->GetWorldSphere());
+	    };
+
+	// --- Sphere vs AABB ---
+	dispatchTable_[static_cast<int>(ColliderType::SPHERE)][static_cast<int>(ColliderType::AABB)] =
+	    [](ICollider* a, ICollider* b) -> bool {
+		    auto* sphere = static_cast<SphereCollider*>(a);
+		    auto* aabb   = static_cast<AABBCollider*>(b);
+		    return Collision::IsCollision(sphere->GetWorldSphere(), aabb->GetWorldAABB());
+	    };
+
+	// --- AABB vs AABB ---
+	dispatchTable_[static_cast<int>(ColliderType::AABB)][static_cast<int>(ColliderType::AABB)] =
+	    [](ICollider* a, ICollider* b) -> bool {
+		    auto* aabbA = static_cast<AABBCollider*>(a);
+		    auto* aabbB = static_cast<AABBCollider*>(b);
+		    return Collision::IsCollision(aabbA->GetWorldAABB(), aabbB->GetWorldAABB());
+	    };
+
+	// OBB, Sprite は実装時に RegisterCollisionHandlers() へ追加する
 }

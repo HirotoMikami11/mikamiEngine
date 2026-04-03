@@ -70,18 +70,18 @@ void DebugSphere::Draw()
 void DebugSphere::ImGui()
 {
 #ifdef USEIMGUI
-	ImGui::Text("=== Sphere System ===");
-	ImGui::Text("Current Sphere Count: %d", (int)spheres_.size());
+	ImGui::Text("デバッグ表示最大数確認");
+	ImGui::Text("現在の球体数: %d", (int)spheres_.size());
 
 	bool regen = false;
 
-	if (ImGui::DragInt("Sphere Count", &sphereCount_, 1, 1, 10000)) regen = true;
-	if (ImGui::DragInt("Per Row", &sphereCountPerRow_, 1, 1, 200)) regen = true;
-	if (ImGui::DragFloat("Spacing", &sphereSpacing_, 0.1f, 0.2f, 50.0f)) regen = true;
+	if (ImGui::DragInt("球体数", &sphereCount_, 1, 1, 10000)) regen = true;
+	if (ImGui::DragInt("列", &sphereCountPerRow_, 1, 1, 200)) regen = true;
+	if (ImGui::DragFloat("空白", &sphereSpacing_, 0.1f, 0.2f, 50.0f)) regen = true;
 
-	ImGui::Checkbox("Auto Rotate", &autoRotate_);
+	ImGui::Checkbox("回転モード", &autoRotate_);
 
-	if (ImGui::Button("Regenerate") || regen) {
+	if (ImGui::Button("再生成") || regen) {
 		Regenerate();
 	}
 #endif

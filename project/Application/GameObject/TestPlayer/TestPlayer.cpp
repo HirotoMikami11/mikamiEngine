@@ -6,22 +6,26 @@
 
 void TestPlayer::Initialize()
 {
-	SetTag(ObjectTag::Player);
+	tag_ = ObjectTag::Player;
 
 	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 
-	// モデル生成（デフォルト値を設定してからバインドする）
+	// モデル生成
 	model_ = std::make_unique<Sphere>();
 	model_->Initialize(dxCommon_, "sphere", "white");
 	model_->SetPosition({ 0.0f, 1.0f, 0.0f });
 	model_->SetLightingMode(LightingMode::PhongSpecular);
 
 	// JsonBinder でパラメータをバインド
-	// コンストラクタ内で CreateGroup + LoadFile が自動実行される
 	binder_ = std::make_unique<JsonBinder>("TestPlayer");
 	binder_->BindTransform3D("Transform", &model_->GetTransform());
 	binder_->BindMaterial("Material", &model_->GetMaterial());
 	binder_->Bind("MoveSpeed", &moveSpeed_, 5.0f);
+	binder_->Bind("ColliderRadius", &radius_, 1.0f);
+
+	// コライダー設定
+	SetCollisionAttribute(kCollisionAttributePlayer);
+	SetCollisionMask(~kCollisionAttributePlayer);
 }
 
 void TestPlayer::Update()
@@ -45,6 +49,7 @@ void TestPlayer::Update()
 void TestPlayer::DrawOffscreen()
 {
 	model_->Draw();
+	DebugLineAdd();
 }
 
 void TestPlayer::ImGui()
@@ -59,4 +64,30 @@ void TestPlayer::ImGui()
 
 void TestPlayer::Finalize()
 {
+}
+
+Vector3 TestPlayer::GetWorldPosition()
+{
+	return model_->GetPosition();
+}
+
+void TestPlayer::OnCollisionEnter(ICollider* other)
+{
+	// 当たった瞬間：SE 再生
+	AudioManager::GetInstance()->Play("PlayerHit");
+}
+
+void TestPlayer::OnCollisionStay(ICollider* other)
+{
+	// 当たっている間：モデル色を赤に
+	model_->GetMaterial().SetColor({ 1.0f, 0.0f, 0.0f, 1.0f });
+
+}
+
+void TestPlayer::OnCollisionExit(ICollider* other)
+{
+	// 当たり終わり：SE 再生、色を元に戻す
+	AudioManager::GetInstance()->Play("Explosion");
+	model_->GetMaterial().SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+
 }

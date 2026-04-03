@@ -140,8 +140,32 @@ void DebugScene::InitializeGameObjects() {
 	///*-----------------------------------------------------------------------*///
 	auto testPlayer = std::make_unique<TestPlayer>();
 	testPlayer->Initialize();
-	testPlayer_ = testPlayer.get();  // 参照保持（所有権は Manager）
+	testPlayer_ = testPlayer.get();
 	gameObjectManager_.AddObject(std::move(testPlayer));
+
+	///*-----------------------------------------------------------------------*///
+	///							TestWall（AABB）								///
+	///*-----------------------------------------------------------------------*///
+	auto testWall = std::make_unique<TestWall>();
+	testWall->Initialize();
+	testWall_ = testWall.get();
+	gameObjectManager_.AddObject(std::move(testWall));
+
+	///*-----------------------------------------------------------------------*///
+	///							TestObject（Sphere）							///
+	///*-----------------------------------------------------------------------*///
+	auto testObject = std::make_unique<TestObject>();
+	testObject->Initialize();
+	testObject_ = testObject.get();
+	gameObjectManager_.AddObject(std::move(testObject));
+
+	///*-----------------------------------------------------------------------*///
+	///						CollisionManager 登録								///
+	///*-----------------------------------------------------------------------*///
+	collisionManager_.Initialize();
+	collisionManager_.AddCollider(testPlayer_);
+	collisionManager_.AddCollider(testWall_);
+	collisionManager_.AddCollider(testObject_);
 }
 
 void DebugScene::Update() {
@@ -166,6 +190,13 @@ void DebugScene::UpdateGameObjects() {
 
 	// GameObjectManager 更新（TestPlayer など）
 	gameObjectManager_.Update();
+
+	// 衝突判定更新（Enter/Stay/Exit コールバックが発火する）
+	collisionManager_.ClearColliderList();
+	if (testPlayer_)  collisionManager_.AddCollider(testPlayer_);
+	if (testWall_)    collisionManager_.AddCollider(testWall_);
+	if (testObject_)  collisionManager_.AddCollider(testObject_);
+	collisionManager_.Update();
 }
 
 void DebugScene::DrawOffscreen() {
@@ -232,6 +263,9 @@ void DebugScene::ImGui() {
 }
 
 void DebugScene::Finalize() {
+	collisionManager_.ClearColliderList();
 	gameObjectManager_.Clear();
 	testPlayer_ = nullptr;
+	testWall_ = nullptr;
+	testObject_ = nullptr;
 }

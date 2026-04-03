@@ -138,91 +138,17 @@ Vector3 ConvertWorldToScreenPosition(const Vector3& worldPosition, const Matrix4
 
 /*-----------------------------------------------------------------------*/
 //
-//								当たり判定
+//						当たり判定の補助関数
 //
 /*-----------------------------------------------------------------------*/
 
-
-/// <summary>
-/// 球と球の衝突判定
-/// </summary>
-/// <param name="SphereMath1"></param>
-/// <param name="SphereMath2"></param>
-/// <returns></returns>
-bool IsCollision(const SphereMath& SphereMath1, const SphereMath& SphereMath2);
-
-/// <summary>
-/// 球と平面の衝突判定
-/// </summary>
-/// <param name="SphereMath"> 球体/param>
-/// <param name="PlaneMath"> 平面</param>
-/// <returns></returns>
-bool IsCollision(const SphereMath& SphereMath, const PlaneMath& PlaneMath);
-
-
-/// <summary>
-/// 線分と平面の衝突判定
-/// </summary>
-/// <param name="segment">線分</param>
-/// <param name="PlaneMath">平面</param>
-/// <returns></returns>
-bool IsCollision(const Segment& segment, const PlaneMath& PlaneMath);
-
-
-
-/// <summary>
-/// 線分と平面の衝突点の座標を求める
-/// </summary>
-/// <param name="segment"></param>
-/// <param name="normal"></param>
-/// <param name="distance"></param>
-/// <returns></returns>
-Vector3 MakeCollisionPoint(const Segment& segment, const PlaneMath& PlaneMath);
-
-/// <summary>
-/// 三角形と線分の衝突判定
-/// </summary>
-/// <param name="TriangleMath"></param>
-/// <param name="segnent"></param>
-/// <returns></returns>
-bool IsCollision(const TriangleMath& TriangleMath, const Segment& segment);
-
-/// <summary>
-/// AABBとAABBの衝突判定
-/// </summary>
-/// <param name="aabb1"></param>
-/// <param name="aabb2"></param>
-/// <returns></returns>
-bool IsCollision(const AABB& aabb1, const AABB& aabb2);
-
-
-/// <summary>
-/// AABBと球の衝突判定
-/// </summary>
-/// <param name="aabb"></param>
-/// <param name="SphereMath"></param>
-/// <returns></returns>
-bool IsCollision(const AABB& aabb, SphereMath& SphereMath);
 
 /// <summary>
 /// 最大最小を正しくする関数
 /// </summary>
 /// <param name="aabb"></param>
 void FixAABBMinMax(AABB& aabb);
-
-
 /// <summary>
-/// AABBと線分の衝突判定
+/// 線分と平面の衝突点の座標を求める
 /// </summary>
-/// <param name="aabb"></param>
-/// <param name="segment"></param>
-/// <returns></returns>
-bool IsCollision(const AABB& aabb, const Segment& segment);
-
-/// <summary>
-/// AABBと点の衝突判定
-/// </summary>
-/// <param name="aabb">AABB</param>
-/// <param name="point">点の座標</param>
-/// <returns>点がAABB内にあればtrue</returns>
-bool IsCollision(const AABB& aabb, const Vector3& point);
+Vector3 MakeCollisionPoint(const Segment& segment, const PlaneMath& PlaneMath);

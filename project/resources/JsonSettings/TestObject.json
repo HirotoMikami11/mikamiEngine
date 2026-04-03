@@ -1,5 +1,5 @@
 {
-    "TestPlayer": {
+    "TestObject": {
         "ColliderRadius": 1.0,
         "Material": {
             "Color": [
@@ -10,12 +10,11 @@
             ],
             "LightingMode": 3
         },
-        "MoveSpeed": 5.0,
         "Transform": {
             "Position": [
-                0.0,
-                1.2999999523162842,
-                1.3332948684692383
+                -5.0,
+                1.0,
+                0.0
             ],
             "Rotation": [
                 0.0,

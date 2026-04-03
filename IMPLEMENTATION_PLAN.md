@@ -21,268 +21,299 @@
 
 ---
 
-## クラス構成（全体）
+---
 
+# Collision システム リファクタリング計画（完了）
+
+> Phase 1〜4 は完了済み。以下フェーズから継続。
+
+---
+
+# Collision システム 拡張計画
+
+## 目標
+
+- `ColliderType` enum に `Count` を追加し `kColliderTypeCount` をハードコードから解放
+- 旧 `Collider.h/.cpp` を削除
+- `CollisionManager` に Enter / Stay / Exit の3段階コールバックを追加
+- `TestPlayer` に SphereCollider を組み込み（音・色の動作確認）
+- `TestWall` と `TestObject` を新規作成（DebugObject フォルダ）
+
+---
+
+## 設計方針
+
+### ColliderType::Count 化
+
+```cpp
+enum class ColliderType {
+    SPHERE  = 0,
+    AABB    = 1,
+    OBB     = 2,
+    SPRITE  = 3,
+    CAPSULE = 4,
+    Count        // ← 追加：配列サイズに使用
+};
+// kColliderTypeCount を削除し static_cast<int>(ColliderType::Count) を直接使う
 ```
-Engine/Utility/
-└── JsonBinder.h / .cpp     ← JsonSettings ラッパー（バインド + ImGui 自動化）
 
-Engine/Core/JsonSettings/
-└── JsonSettings.cpp        ← LoadFile のクラッシュ修正（assert → Logger）
-
-Application/GameObject/
-├── GameObjectTypes.h       ← ObjectTag + kObjectUpdateOrder テーブル
-├── GameObject.h / .cpp     ← 基底クラス
-├── GameObjectManager.h / .cpp
-└── TestPlayer/
-    ├── TestPlayer.h
-    └── TestPlayer.cpp      ← JsonBinder を使うように書き換え
+`CollisionManager.h` の配列定義も変更:
+```cpp
+CollisionFunc dispatchTable_[static_cast<int>(ColliderType::Count)][static_cast<int>(ColliderType::Count)] = {};
 ```
 
 ---
 
-## JsonBinder 設計
+### Enter / Stay / Exit の実装方針
 
-### 役割分担
+`CollisionManager` が `currentPairs_`（今フレーム）と `prevPairs_`（前フレーム）の  
+`std::set<std::pair<ICollider*, ICollider*>>` を保持する。  
+ポインタは常に `min(a, b) → max(a, b)` の順に正規化してペアを作る。
 
-| クラス | 役割 |
-|--------|------|
-| `JsonSettings` | JSON ファイルへの保存・読み込み（保存層） |
-| `JsonBinder` | 変数バインド + ImGui 自動化（バインド層） |
+```
+今フレームにある && 前フレームにない → OnCollisionEnter(other)
+今フレームにある && 前フレームにもある → OnCollisionStay(other)
+今フレームにない && 前フレームにある → OnCollisionExit(other)
+```
 
-### 基本 Bind（個別パラメータ）
-
+`ICollider` に追加する仮想関数:
 ```cpp
-JsonBinder binder("TestPlayer");
-// → CreateGroup + LoadFile を自動実行（ファイルなしなら何もしない）
-
-binder.Bind("MoveSpeed", &moveSpeed_, 5.0f);
-// 1. AddItem でデフォルト値登録（JSON に保存済みならスキップ）
-// 2. 現在値を moveSpeed_ に適用
-// 3. DragFloat の ImGui ラムダを登録
-
-binder.ImGui();  // 登録された全項目を一括表示、変更時に SetValue 自動呼び出し
-binder.Save();   // SaveFile を呼ぶ
+virtual void OnCollisionEnter(ICollider* other) {}
+virtual void OnCollisionStay(ICollider* other) {}
+virtual void OnCollisionExit(ICollider* other) {}
 ```
 
-### 対応型と ImGui コントロール
+既存の `OnCollision()` は**削除**し、3種に置き換える。
 
-| 型 | メソッド | ImGui コントロール |
-|----|----------|-------------------|
-| `float` | `Bind` | `DragFloat` |
-| `int32_t` | `Bind` | `DragInt` |
-| `bool` | `Bind` | `Checkbox` |
-| `Vector2` | `Bind` | `DragFloat2` |
-| `Vector3` | `Bind` | `DragFloat3` |
-| `Vector4` | `Bind` | `DragFloat4` |
-| `Vector4`（色） | `BindColor` | `ColorEdit4` |
+---
 
-### 複合型 Bind（CollapsingHeader で区分け）
+### ファイル配置（最終形）
 
+```
+Application/
+└── CollisionManager/
+    ├── Collision.h/.cpp           ← 移動済み（変更なし）
+    ├── CollisionConfig.h          ← 変更なし
+    ├── CollisionManager.h/.cpp    ← Enter/Stay/Exit 対応
+    ├── Collider.h/.cpp            ← 削除対象（旧クラス）
+    └── Collider/
+        ├── ICollider.h            ← Count 追加・3コールバック追加
+        ├── SphereCollider.h/.cpp
+        ├── AABBCollider.h/.cpp
+        ├── OBBCollider.h          ← スタブ
+        └── SpriteCollider.h       ← スタブ
+
+Application/
+└── GameObject/
+    ├── TestPlayer/
+    │   ├── TestPlayer.h/.cpp      ← SphereCollider 組み込み・音・色
+    └── DebugObject/               ← 新設フォルダ
+        ├── TestWall/
+        │   ├── TestWall.h/.cpp    ← AABBCollider・Json・ImGui
+        └── TestObject/
+            ├── TestObject.h/.cpp  ← SphereCollider・Json・ImGui
+```
+
+---
+
+## Phase A: ICollider の修正（Count 追加・コールバック整理）
+
+- [ ] `ColliderType` に `Count` を追加、`kColliderTypeCount` を削除
+- [ ] `ICollider` の `OnCollision()` を削除、`OnCollisionEnter/Stay/Exit` を追加
+- [ ] `CollisionManager.h` の配列定義を `ColliderType::Count` ベースに変更
+
+## Phase B: CollisionManager に Enter / Stay / Exit ロジック追加
+
+- [ ] `prevPairs_` / `currentPairs_` を `std::set<std::pair<ICollider*,ICollider*>>` で追加
+- [ ] `Update()` でフレーム比較して3種のコールバックを振り分け
+- [ ] 色変更は Stay のときだけ行う（Enter も含めてよい）
+
+## Phase C: 旧 Collider.h/.cpp を削除
+
+- [ ] `Collider.h` / `Collider.cpp` を削除
+
+## Phase D: TestPlayer に SphereCollider 組み込み
+
+- [ ] `SphereCollider` を継承、`GetWorldPosition()` を実装
+- [ ] `OnCollisionEnter` → `PlayerHit` 音再生
+- [ ] `OnCollisionStay` → モデル色を赤に
+- [ ] `OnCollisionExit` → `Explosion` 音再生、色を戻す
+- [ ] `radius` を JsonBinder でバインド
+
+## Phase E: DebugObject フォルダ作成・TestWall / TestObject 実装
+
+**TestWall**
+- `AABBCollider` を継承
+- Object3D（Box）でビジュアル
+- Transform・AABB サイズを JsonBinder で管理
+- ImGui で数値変更可能
+
+**TestObject**
+- `SphereCollider` を継承
+- Object3D（Sphere）でビジュアル
+- Transform・radius を JsonBinder で管理
+- ImGui で数値変更可能
+
+- [ ] `DebugObject/TestWall/TestWall.h/.cpp` 作成
+- [ ] `DebugObject/TestObject/TestObject.h/.cpp` 作成
+
+## Phase F: Scene への登録・動作確認
+
+- [ ] `DebugScene` か `GameScene` で TestPlayer / TestWall / TestObject を登録
+- [ ] CollisionManager に3オブジェクトを AddCollider
+- [ ] 動作確認：TestPlayer が TestWall / TestObject に触れたときに音と色変化
+
+## 目標
+
+- `CollisionManager::CheckCollisionPair()` の型ごとの if-else 分岐を撤廃
+- 衝突判定数学ロジックを `MyFunction` から独立した `Collision` クラスに分離
+- `Collider` を `ICollider` 基底 + 型別派生クラスに分割（OBB・Sprite 追加を見据えて）
+- 型追加時の変更箇所を `RegisterCollisionHandlers()` の1箇所に限定する
+
+## 設計方針
+
+- dispatch table: `CollisionFunc dispatchTable_[TYPE_COUNT][TYPE_COUNT]`（2次元配列 + 関数ポインタ）
+- `ColliderType` enum は連番を維持する（配列インデックスとして使用するため）
+- マスクチェック → 型正規化 → テーブル参照 → 数学計算 の順で処理
+
+## ファイル構成（最終形）
+
+```
+Engine/
+└── Collision/
+    ├── Collision.h      ← 新設: IsCollision 静的メソッド群
+    └── Collision.cpp    ← 新設: MyFunction から IsCollision 系を移植
+
+Application/
+└── CollisionManager/
+    ├── ICollider.h/.cpp        ← Collider.h を改名・共通部のみ残す
+    ├── SphereCollider.h/.cpp   ← 新設: radius_ を持つ
+    ├── AABBCollider.h/.cpp     ← 新設: aabb_ を持つ
+    ├── OBBCollider.h           ← 新設: スタブ（未実装）
+    ├── SpriteCollider.h        ← 新設: スタブ（未実装）
+    ├── CollisionManager.h/.cpp ← dispatch table に書き換え
+    └── CollisionConfig.h       ← 変更なし
+```
+
+## Phase 1: Collision クラスの新設
+
+**対象ファイル**
+- 新規作成: `Engine/Collision/Collision.h`
+- 新規作成: `Engine/Collision/Collision.cpp`
+
+**作業内容**
+- `Collision` クラスを static メソッドのみで構成
+- `MyFunction.h` の `IsCollision` 系・`FixAABBMinMax` の宣言をコピー
+- `MyFunction.cpp` の実装を移植
+
+**Collision クラスのメソッド一覧**
 ```cpp
-binder.BindTransform3D("Transform", &model_->GetTransform());
-binder.BindMaterial("Material", &model_->GetMaterial());
-binder.Bind("MoveSpeed", &moveSpeed_, 5.0f);
-binder.ImGui();
-```
-
-表示イメージ：
-```
-▼ Transform         ← CollapsingHeader
-    Position [x][y][z]
-    Rotation [x][y][z]
-    Scale    [x][y][z]
-▼ Material          ← CollapsingHeader
-    Color    [rgba ColorEdit4]
-    LightingMode [None / Lambert / HalfLambert / PhongSpecular]
-MoveSpeed [DragFloat]
-[Save]
-```
-
-### JSON 保存構造
-
-| バインド | JsonSettings パス | キー |
-|---------|-------------------|------|
-| `Bind("MoveSpeed", ...)` | `{ "TestPlayer" }` | `"MoveSpeed"` |
-| `BindTransform3D("Transform", ...)` | `{ "TestPlayer", "Transform" }` | `"Position"` / `"Rotation"` / `"Scale"` |
-| `BindMaterial("Material", ...)` | `{ "TestPlayer", "Material" }` | `"Color"` / `"LightingMode"` |
-
-→ JsonSettings の subGroups を活用してネスト保存
-
-### 内部構造
-
-```cpp
-class JsonBinder {
-    std::string groupName_;
-    std::vector<std::function<void()>> drawItems_;  // 登録順に描画
+class Collision {
+public:
+    static bool IsCollision(const SphereMath& a, const SphereMath& b);
+    static bool IsCollision(const SphereMath& sphere, const PlaneMath& plane);
+    static bool IsCollision(const SphereMath& sphere, const AABB& aabb);
+    static bool IsCollision(const AABB& a, const AABB& b);
+    static bool IsCollision(const AABB& aabb, const Segment& seg);
+    static bool IsCollision(const AABB& aabb, const Vector3& point);
+    static bool IsCollision(const Segment& seg, const PlaneMath& plane);
+    static bool IsCollision(const TriangleMath& tri, const Segment& seg);
 };
 ```
 
-- `Bind()` / `BindTransform3D()` 等は呼ぶたびに `drawItems_` にラムダを push_back
-- `ImGui()` は `drawItems_` を順番に実行 + 末尾に Save ボタン
-- 通常 Bind → ラムダ 1 個、CollapsingHeader 系 → ラムダ 1 個（内部でヘッダ + 複数項目）
+- [ ] `Collision.h` 作成
+- [ ] `Collision.cpp` 作成（MyFunction から実装を移植）
 
----
+## Phase 2: ICollider + 派生クラスの作成
 
-## Phase 一覧
+**対象ファイル**
+- `Collider.h/.cpp` → `ICollider.h/.cpp` に改名・リファクタリング
+- 新規作成: `SphereCollider.h/.cpp`
+- 新規作成: `AABBCollider.h/.cpp`
+- 新規作成: `OBBCollider.h`（スタブ）
+- 新規作成: `SpriteCollider.h`（スタブ）
 
-| Phase | 内容 | 状態 |
-|-------|------|------|
-| 1 | `GameObjectTypes.h` + `GameObject.h/cpp` | ✅ 完了 |
-| 2 | `GameObjectManager.h/cpp` | ✅ 完了 |
-| 3 | `BaseScene.h` に `GameObjectManager` を追加 | ✅ 完了 |
-| 4 | `TestPlayer.h/cpp`（WASD移動、JsonSettings 直接使用版） | ✅ 完了 |
-| 5 | `DebugScene` に TestPlayer 配置 | ✅ 完了 |
-| 6 | `vcxproj` にファイル・インクルードパスを追加 | ✅ 完了 |
-| 7 | `JsonSettings::LoadFile` クラッシュ修正（assert → Logger） | ✅ 完了 |
-| 8 | `JsonBinder.h/cpp` 作成 | ✅ 完了 |
-| 9 | `TestPlayer` を JsonBinder 使用に書き換え + vcxproj 追加 | ✅ 完了 |
-| 10 | FinalPass バッファ追加 + ImGui Game View 表示（エンジンエディタ化） | 🔲 未着手 |
+**ICollider（基底）が持つもの**
+- `OnCollision()`, `GetWorldPosition()`, `DebugLineAdd()` の仮想メソッド
+- `colliderType_`, `collisionAttribute_`, `collisionMask_`, 色系メンバー
 
----
+**SphereCollider が追加で持つもの**
+- `radius_`
+- `GetRadius()`, `SetRadius()`
+- `DebugLineAdd()` のオーバーライド（DrawSphere）
 
-## Phase 詳細（未着手分）
+**AABBCollider が追加で持つもの**
+- `aabb_`
+- `GetAABB()`, `SetAABB()`, `SetAABBSize()`
+- `DebugLineAdd()` のオーバーライド（DrawAABB）
 
-### Phase 10: FinalPass バッファ追加 + ImGui Game View 表示
+- [ ] `ICollider.h/.cpp` 作成
+- [ ] `SphereCollider.h/.cpp` 作成
+- [ ] `AABBCollider.h/.cpp` 作成
+- [ ] `OBBCollider.h` 作成（スタブ）
+- [ ] `SpriteCollider.h` 作成（スタブ）
+- [ ] 旧 `Collider.h/.cpp` を削除（または `ICollider.h` への転送ヘッダーとして残す）
 
-**目的：** `#ifdef USEIMGUI` 時にゲーム画面（3D + スプライト + ポストエフェクト）を ImGui ウィンドウ内に表示する。
-ドッキング機能により、Game View をウィンドウ内で自由に配置できる。
+## Phase 3: CollisionManager を dispatch table に書き換え
 
-**前提の問題：**
-- 現状の `StartDrawBackBuffer()` はスプライト等をスワップチェーン（バックバッファ）に直接書く
-- オフスクリーンテクスチャの SRV には 3D 描画しか含まれず、スプライトが映らない
+**対象ファイル**
+- `CollisionManager.h`
+- `CollisionManager.cpp`
 
-**解決策：FinalPass バッファ（RTV + SRV 兼用テクスチャ）を追加**
-
-```
-USEIMGUI 時の描画フロー（変更後）:
-
-[StartDrawBackBuffer]
-  FinalPass: SRV→RenderTarget バリア
-  OMSetRenderTargets → FinalPass
-  DrawOffscreenTexture() → FinalPass に 3D 合成
-
-[game->DrawBackBuffer()]
-  スプライト・UI → FinalPass に描画
-
-[EndDrawBackBuffer]
-  FinalPass: RenderTarget→SRV バリア
-  dxCommon_->PreDraw() → スワップチェーン RT
-  ImGui 描画（Game View ウィンドウ内に ImGui::Image）
-  dxCommon_->PostDraw / EndFrame
-
-非 USEIMGUI 時: 変更なし（スワップチェーンへ直接）
-```
-
-**変更ファイル：**
-- `Engine/Core/GraphicsConfig.h` — `kRTVHeapSize` を 5→6（FinalPass RTV 分を追加）
-- `Engine/Engine.h` — FinalPass メンバ追加（`#ifdef USEIMGUI` ガード）
-- `Engine/Engine.cpp` — `CreateFinalPassBuffer()` / `StartDrawBackBuffer()` / `EndDrawBackBuffer()` / `ImGui()` / `Finalize()` 変更
-
-**確認項目：**
-- [ ] `USEIMGUI` 定義時に "Game View" ウィンドウが表示される
-- [ ] Game View に 3D・スプライト・ポストエフェクトがすべて映る
-- [ ] ドッキングでウィンドウを自由に移動・配置できる
-- [ ] `USEIMGUI` なしのリリースパスで動作が変わらない
-- [ ] アスペクト比を保って表示される
-
----
-
-### Phase 7: JsonSettings::LoadFile クラッシュ修正
-
-**変更ファイル：**
-- `Engine/Core/JsonSettings/JsonSettings.cpp`
-
-**変更内容：**
-```
-// 変更前
-MessageBoxW(...);
-assert(false);   ← ファイルなしでクラッシュ
-return;
-
-// 変更後
-Logger::Log("[JsonSettings] ファイルが見つかりません: " + filePath);
-return;          ← 静かに返るだけ（初回起動時の正常ケース）
-```
-
-**確認項目：**
-- [ ] JSON ファイルが存在しない状態で起動してもクラッシュしない
-- [ ] Logger にメッセージが出力される
-
----
-
-### Phase 8: JsonBinder.h/cpp 作成
-
-**作成ファイル：**
-- `Engine/Utility/JsonBinder.h`
-- `Engine/Utility/JsonBinder.cpp`
-
-**公開 API：**
-
+**CollisionManager.h の変更点**
 ```cpp
-// コンストラクタ（CreateGroup + LoadFile を自動実行）
-explicit JsonBinder(const std::string& groupName);
+// 追加
+static constexpr int kColliderTypeCount = 5; // enum の種類数
+using CollisionFunc = bool(*)(ICollider*, ICollider*);
 
-// 基本型
-void Bind(const std::string& key, float*    ptr, float    defaultValue, float speed = 0.1f);
-void Bind(const std::string& key, int32_t*  ptr, int32_t  defaultValue, float speed = 1.0f);
-void Bind(const std::string& key, bool*     ptr, bool     defaultValue);
-void Bind(const std::string& key, Vector2*  ptr, const Vector2& defaultValue, float speed = 0.1f);
-void Bind(const std::string& key, Vector3*  ptr, const Vector3& defaultValue, float speed = 0.1f);
-void Bind(const std::string& key, Vector4*  ptr, const Vector4& defaultValue, float speed = 0.1f);
-void BindColor(const std::string& key, Vector4* ptr, const Vector4& defaultValue);
+// メンバー変更
+std::list<ICollider*> colliders_;
+CollisionFunc dispatchTable_[kColliderTypeCount][kColliderTypeCount] = {};
 
-// 複合型（CollapsingHeader）
-void BindTransform3D(const std::string& sectionName, Transform3D* transform);
-void BindMaterial(const std::string& sectionName, Material* material);
-
-// 表示・保存
-void ImGui();   // 全項目一括表示 + Save ボタン
-void Save();    // JsonSettings::SaveFile を呼ぶ
+// 追加メソッド
+void RegisterCollisionHandlers();
 ```
 
-**確認項目：**
-- [ ] Bind した変数に JSON の値が自動適用される
-- [ ] ImGui() で全項目が表示される
-- [ ] 変更すると JsonSettings に即反映される
-- [ ] Save() で JSON ファイルに書き出される
-- [ ] BindTransform3D が CollapsingHeader で表示される
-- [ ] BindMaterial が CollapsingHeader + LightingMode Combo で表示される
+**CheckCollisionPair() の処理順**
+1. マスクフィルタ（ビット演算、最安）
+2. 型正規化（`typeA > typeB` なら swap）
+3. `dispatchTable_[typeA][typeB]` を参照
+4. `nullptr` なら未実装ペアとしてスキップ
+5. `func(a, b)` で判定 → hit なら `OnCollision()` + 色変更
+
+**RegisterCollisionHandlers() で登録するペア**
+| インデックス | ペア | 関数 |
+|---|---|---|
+| [SPHERE][SPHERE] | Sphere vs Sphere | Collision::IsCollision(sphere, sphere) |
+| [SPHERE][AABB] | Sphere vs AABB | Collision::IsCollision(sphere, aabb) |
+| [AABB][AABB] | AABB vs AABB | Collision::IsCollision(aabb, aabb) |
+
+- [ ] `CollisionManager.h` に型エイリアス・配列を追加
+- [ ] `RegisterCollisionHandlers()` を実装
+- [ ] `CheckCollisionPair()` を dispatch table 方式に書き換え
+- [ ] コンストラクタで `RegisterCollisionHandlers()` を呼ぶ
+
+## Phase 4: MyFunction から IsCollision 系を削除
+
+**対象ファイル**
+- `Engine/MyMath/MyFunction.h`
+- `Engine/MyMath/MyFunction.cpp`
+
+**削除する宣言・実装**
+- `IsCollision(SphereMath, SphereMath)`
+- `IsCollision(SphereMath, PlaneMath)`
+- `IsCollision(Segment, PlaneMath)`
+- `IsCollision(TriangleMath, Segment)`
+- `IsCollision(AABB, AABB)`
+- `IsCollision(AABB, SphereMath)`
+- `IsCollision(AABB, Segment)`
+- `IsCollision(AABB, Vector3)`
+- `FixAABBMinMax()`（Collision.h へ移動）
+- `MakeCollisionPoint()` は数学ユーティリティとして MyFunction に残す
+
+- [ ] `MyFunction.h` から削除
+- [ ] `MyFunction.cpp` から削除
+- [ ] ビルドエラーがないか確認
+
 
 ---
-
-### Phase 9: TestPlayer を JsonBinder 使用に書き換え
-
-**変更ファイル：**
-- `Application/GameObject/TestPlayer/TestPlayer.h`
-- `Application/GameObject/TestPlayer/TestPlayer.cpp`
-- `mikamiEngine.vcxproj`（JsonBinder.cpp の ClCompile エントリ追加）
-
-**書き換えイメージ（before → after）：**
-
-```cpp
-// --- Before（手書き） ---
-// Initialize(): CreateGroup + AddItem × 4 + LoadFromJson + ApplyJsonValues
-// ImGui():      型ごとに手書き ImGui + SetValue × 4 + Save ボタン（計 30 行以上）
-
-// --- After（JsonBinder） ---
-// Initialize():
-binder_ = std::make_unique<JsonBinder>("TestPlayer");
-binder_->BindTransform3D("Transform", &model_->GetTransform());
-binder_->BindMaterial("Material", &model_->GetMaterial());
-binder_->Bind("MoveSpeed", &moveSpeed_, 5.0f);
-
-// ImGui():
-binder_->ImGui();  // ← 1 行だけ
-```
-
-**不要になるもの：**
-- `LoadFromJson()` メソッド（削除）
-- `ApplyJsonValues()` メソッド（削除）
-- ImGui の手書き `DragFloat3` / `ColorEdit4` / `SetValue` / Save ボタン（削除）
-
-**確認項目：**
-- [ ] 動作が書き換え前と変わらない
-- [ ] BindTransform3D で Position/Rotation/Scale が操作できる
-- [ ] BindMaterial で Color と LightingMode が操作できる
-- [ ] 再起動後も値が維持される

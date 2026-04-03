@@ -9,7 +9,7 @@ enum class ObjectTag : int
 	Default = 0,
 	Background,
 	Player,
-	Manager,
+	TestObject,
 	Enemy,
 	Bullet,
 	Effect,
@@ -22,12 +22,12 @@ enum class ObjectTag : int
 /// ObjectTag の宣言順と一致させること
 /// </summary>
 static constexpr int kObjectUpdateOrder[] = {
-	0,   // Default
-	10,  // Background
-	20,  // Player
-	25,  // Manager
-	30,  // Enemy
-	40,  // Bullet
-	50,  // Effect
-	90,  // UI
+	0,		// Default
+	10,		// Background
+	20,		// Player
+	25,		// TestObject
+	30,		// Enemy
+	40,		// Bullet
+	50,		// Effect
+	90,		// UI
 };

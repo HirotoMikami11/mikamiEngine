@@ -1,0 +1,24 @@
+{
+    "TestWall": {
+        "AABBSizeX": 2.0,
+        "AABBSizeY": 2.0,
+        "AABBSizeZ": 2.0,
+        "Transform": {
+            "Position": [
+                5.0,
+                1.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    }
+}

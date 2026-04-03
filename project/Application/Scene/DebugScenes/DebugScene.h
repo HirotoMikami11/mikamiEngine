@@ -2,6 +2,9 @@
 #include <memory>
 #include "BaseScene.h"
 #include "TestPlayer.h"
+#include "DebugObject/TestWall/TestWall.h"
+#include "DebugObject/TestObject/TestObject.h"
+#include "CollisionManager/CollisionManager.h"
 
 
 /// <summary>
@@ -61,8 +64,13 @@ private:
 	SpotLight* spotLight_;
 	RectLight* rectLight_;
 
-	// ゲームオブジェクト（GameObjectManager 管理）
-	TestPlayer* testPlayer_ = nullptr;  // 所有権は gameObjectManager_ が持つ
+	// ゲームオブジェクト（GameObjectManager 管理、所有権は Manager 側）
+	TestPlayer*  testPlayer_  = nullptr;
+	TestWall*    testWall_    = nullptr;
+	TestObject*  testObject_  = nullptr;
+
+	// 衝突判定マネージャー
+	CollisionManager collisionManager_;
 
 	// システム参照
 	DirectXCommon* dxCommon_;

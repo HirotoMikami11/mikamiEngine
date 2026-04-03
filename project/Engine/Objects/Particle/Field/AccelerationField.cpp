@@ -1,5 +1,6 @@
 #include "AccelerationField.h"
 #include "ImGui/ImGuiManager.h"
+#include "Collision.h"
 
 void AccelerationField::Initialize(DirectXCommon* dxCommon)
 {
@@ -30,7 +31,7 @@ bool AccelerationField::IsInField(const Vector3& point) const
 	AABB worldAABB = GetWorldAABB();
 
 	// 点がAABB内にあるかチェック
-	return IsCollision(worldAABB, point);
+	return Collision::IsCollision(worldAABB, point);
 }
 
 void AccelerationField::SetAreaSize(const Vector3& size)
