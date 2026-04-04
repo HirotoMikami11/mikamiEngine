@@ -1,4 +1,6 @@
 #include "GameObjectManager.h"
+#include "CollisionManager/CollisionManager.h"
+#include "CollisionManager/Collider/ICollider.h"
 #include <algorithm>
 
 void GameObjectManager::AddObject(std::unique_ptr<GameObject> obj)
@@ -8,6 +10,19 @@ void GameObjectManager::AddObject(std::unique_ptr<GameObject> obj)
 		pendingObjects_.push_back(std::move(obj));
 	} else {
 		objects_.push_back(std::move(obj));
+	}
+}
+
+void GameObjectManager::InitializeAll()
+{
+	// タグ順（GetUpdateOrder 昇順）でソートしてから Initialize
+	std::stable_sort(objects_.begin(), objects_.end(),
+		[](const std::unique_ptr<GameObject>& a, const std::unique_ptr<GameObject>& b) {
+			return a->GetUpdateOrder() < b->GetUpdateOrder();
+		});
+
+	for (auto& obj : objects_) {
+		obj->Initialize();
 	}
 }
 
@@ -34,6 +49,16 @@ void GameObjectManager::Update()
 	MergePending();
 }
 
+void GameObjectManager::AddAllCollidersToManager(CollisionManager* cm)
+{
+	if (!cm) return;
+	for (auto& obj : objects_) {
+		if (auto* collider = dynamic_cast<ICollider*>(obj.get())) {
+			cm->AddCollider(collider);
+		}
+	}
+}
+
 void GameObjectManager::DrawOffscreen()
 {
 	for (auto& obj : objects_) {
@@ -54,11 +79,19 @@ void GameObjectManager::DrawBackBuffer()
 
 void GameObjectManager::ImGui()
 {
+#ifdef USEIMGUI
+	ImGui::SeparatorText("オブジェクトマネージャー");
+
 	for (auto& obj : objects_) {
 		if (!obj->IsDestroyed()) {
 			obj->ImGui();
 		}
 	}
+	ImGui::SeparatorText("");
+#endif 
+
+
+
 }
 
 void GameObjectManager::Clear()

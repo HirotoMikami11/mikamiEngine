@@ -82,7 +82,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\externals\DirectXTex;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\assimp\include;$(ProjectDir)Engine;$(ProjectDir)Application;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\DirectXCommon;$(ProjectDir)Engine\Core\DirectXCommon\DescriptorHeapManager;$(ProjectDir)Engine\Core\DirectXCommon\PSOFactory;$(ProjectDir)Engine\Core\Logger;$(ProjectDir)Engine\Core\WinApp;$(ProjectDir)Engine\Core\JsonSettings;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Core\Input;$(ProjectDir)Engine\CameraController;$(ProjectDir)Engine\Timers;$(ProjectDir)Engine\Managers;$(ProjectDir)Engine\MyMath;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Objects\Object3D;$(ProjectDir)Engine\Objects\Light;$(ProjectDir)Engine\Objects\Line;$(ProjectDir)Engine\Objects\Sprite;$(ProjectDir)Engine\OffscreenRenderer;$(ProjectDir)Engine\Objects\Particle;$(ProjectDir)Engine\Objects\Particle\Field;$(ProjectDir)Application\Scene;$(ProjectDir)Application\CollisionManager;$(ProjectDir)Application\GameObject;$(ProjectDir)Application\GameObject\TestPlayer;$(ProjectDir)Application\Transition;$(ProjectDir)Application\CollisionManager\Collider;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\externals\DirectXTex;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\assimp\include;$(ProjectDir)Engine;$(ProjectDir)Application;$(ProjectDir)Engine\Core;$(ProjectDir)Engine\Core\DirectXCommon;$(ProjectDir)Engine\Core\DirectXCommon\DescriptorHeapManager;$(ProjectDir)Engine\Core\DirectXCommon\PSOFactory;$(ProjectDir)Engine\Core\Logger;$(ProjectDir)Engine\Core\WinApp;$(ProjectDir)Engine\Core\JsonSettings;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Core\Input;$(ProjectDir)Engine\CameraController;$(ProjectDir)Engine\Timers;$(ProjectDir)Engine\Managers;$(ProjectDir)Engine\MyMath;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Objects\Object3D;$(ProjectDir)Engine\Objects\Light;$(ProjectDir)Engine\Objects\Line;$(ProjectDir)Engine\Objects\Sprite;$(ProjectDir)Engine\OffscreenRenderer;$(ProjectDir)Engine\Objects\Particle;$(ProjectDir)Engine\Objects\Particle\Field;$(ProjectDir)Application\Scene;$(ProjectDir)Application\CollisionManager;$(ProjectDir)Application\GameObject;$(ProjectDir)Application\GameObject\DebugObject;$(ProjectDir)Application\Transition;$(ProjectDir)Application\CollisionManager\Collider;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,10 +161,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\CollisionManager\CollisionManager.cpp" />
     <ClCompile Include="Application\GameObject\DebugObject\TestObject\TestObject.cpp" />
     <ClCompile Include="Application\GameObject\DebugObject\TestWall\TestWall.cpp" />
+    <ClCompile Include="Application\GameObject\DebugObject\TestShooter\TestShooter.cpp" />
+    <ClCompile Include="Application\GameObject\DebugObject\TestShooter\TestBullet.cpp" />
     <ClCompile Include="Engine\Utility\JsonBinder.cpp" />
     <ClCompile Include="Application\GameObject\GameObject.cpp" />
     <ClCompile Include="Application\GameObject\GameObjectManager.cpp" />
-    <ClCompile Include="Application\GameObject\TestPlayer\TestPlayer.cpp" />
+    <ClCompile Include="Application\GameObject\DebugObject\TestPlayer\TestPlayer.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\DemoScene.cpp" />
     <ClCompile Include="Application\Scene\DebugScenes\Dollar1Recognizer.cpp" />
@@ -200,6 +202,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Core\Input\Input.cpp" />
     <ClCompile Include="Engine\Managers\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\Managers\ObjectID\ObjectIDManager.cpp" />
+    <ClCompile Include="Application\Scene\BaseScene.cpp" />
     <ClCompile Include="Application\Scene\SceneManager.cpp" />
     <ClCompile Include="Engine\Managers\Texture\Texture.cpp" />
     <ClCompile Include="Engine\Managers\Texture\TextureManager.cpp" />
@@ -384,10 +387,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\CollisionManager\CollisionManager.h" />
     <ClInclude Include="Application\GameObject\DebugObject\TestObject\TestObject.h" />
     <ClInclude Include="Application\GameObject\DebugObject\TestWall\TestWall.h" />
+    <ClInclude Include="Application\GameObject\DebugObject\TestShooter\TestShooter.h" />
+    <ClInclude Include="Application\GameObject\DebugObject\TestShooter\TestBullet.h" />
     <ClInclude Include="Application\GameObject\GameObject.h" />
     <ClInclude Include="Application\GameObject\GameObjectManager.h" />
     <ClInclude Include="Application\GameObject\GameObjectTypes.h" />
-    <ClInclude Include="Application\GameObject\TestPlayer\TestPlayer.h" />
+    <ClInclude Include="Application\GameObject\DebugObject\TestPlayer\TestPlayer.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DebugSphere.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h" />
     <ClInclude Include="Application\Scene\DebugScenes\Dollar1Recognizer.h" />

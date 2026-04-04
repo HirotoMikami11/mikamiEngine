@@ -4,53 +4,29 @@
 
 
 /// <summary>
-/// デバッグ用シーン
-/// このシーンで様々な機能を試す
+/// ゲームシーン
 /// </summary>
 class GameScene : public BaseScene {
 public:
 	GameScene();
 	~GameScene() override;
 
-	/// <summary>
-	/// シーンに入った時のオフスクリーン設定
-	/// </summary>
 	void ConfigureOffscreenEffects() override;
 
-	/// <summary>
-	/// オブジェクト初期化（シーン切り替え毎に実行）
-	/// </summary>
-	void Initialize() override;
-
-	void Update() override;
-
-	/// <summary>
-	/// 3D描画処理（オフスクリーン内）
-	/// </summary>
-	void DrawOffscreen() override;
-
-	/// <summary>
-	/// UI描画処理（オフスクリーン外）
-	/// </summary>
-	void DrawBackBuffer() override;
-
-	void Finalize() override;
-
-	// ImGui描画
-	void ImGui() override;
+protected:
+	// --- BaseScene virtual フック ---
+	void OnInitialize()     override;
+	void OnUpdate()         override;
+	void OnDrawOffscreen()  override;
+	void OnDrawBackBuffer() override;
+	void OnImGui()          override;
 
 private:
-	void InitializeGameObjects();
-	void UpdateGameObjects();
-
-	// ゲームオブジェクト
-
-
 	// カメラ
-	CameraController* cameraController_;
-	Matrix4x4 viewProjectionMatrix;
+	CameraController* cameraController_ = nullptr;
+	Matrix4x4 viewProjectionMatrix_{};
 
 	// システム参照
-	DirectXCommon* dxCommon_;
-	OffscreenRenderer* offscreenRenderer_;
+	DirectXCommon*     dxCommon_          = nullptr;
+	OffscreenRenderer* offscreenRenderer_ = nullptr;
 };

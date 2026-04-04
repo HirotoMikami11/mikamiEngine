@@ -21,7 +21,7 @@ public:
 	void ImGui();
 	void Finalize();
 
-	// --- ICollider ---
+	//コライダー設定
 	Vector3 GetWorldPosition() override;
 	void OnCollisionEnter(ICollider* other) override;
 	void OnCollisionStay(ICollider* other) override;

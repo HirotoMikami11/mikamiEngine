@@ -10,52 +10,61 @@
 #include "ParticleSystem.h"
 #include "ParticleEditor.h"
 #include "GameObjectManager.h"
+#include "CollisionManager/CollisionManager.h"
 
 
 /// <summary>
 /// シーンの基底クラス
+/// 派生クラスは Onなんとか関数を override して独自処理を描く
+///　オブジェクト生成パターン
+/// 派生クラスのコンストラクタでmake_uniqueしてAddObject()する。
 /// </summary>
 class BaseScene {
 public:
-	BaseScene(const std::string& sceneName) : sceneName_(sceneName) {}
+	explicit BaseScene(const std::string& sceneName);
 	virtual ~BaseScene() = default;
 
-	/// <summary>
-	/// シーンに入った時のオフスクリーン設定
-	/// </summary>
-	virtual void ConfigureOffscreenEffects() {}
+	// SceneManager から呼ばれる public final メソッド
 
 	/// <summary>
 	/// オブジェクト初期化
 	/// </summary>
-	virtual void Initialize() = 0;
+		virtual void Initialize() final;
 
 	/// <summary>
 	/// 更新処理
 	/// </summary>
-	virtual void Update() = 0;
+	virtual void Update() final;
 
 	/// <summary>
 	/// 3D描画処理（オフスクリーン内で描画される）
 	/// グリッド、3Dオブジェクト、ライティングなど
 	/// </summary>
-	virtual void DrawOffscreen() = 0;
+	virtual void DrawOffscreen() final;
 
 	/// <summary>
 	/// UI描画処理（オフスクリーン外で描画される）
 	/// スプライト、テキスト、2D要素など
 	/// </summary>
-	virtual void DrawBackBuffer() {}
+	virtual void DrawBackBuffer() final;
 
-	/// <summary>
+
 	/// 終了処理
 	/// </summary>
-	virtual void Finalize() = 0;
+	virtual void Finalize() final;
 
 	/// <summary>
 	/// ImGui描画
 	/// </summary>
-	virtual void ImGui() {}
+	virtual void ImGui() final;
+
+
+	/// <summary>
+
+	/// <summary>
+	/// シーンに入った時のオフスクリーン設定
+	/// </summary>
+	virtual void ConfigureOffscreenEffects() {}
 
 
 	// オブジェクト初期化状態の管理
@@ -66,15 +75,55 @@ public:
 	const std::string& GetSceneName() const { return sceneName_; }
 
 protected:
-	std::string sceneName_;
+	// 派生クラスが override する関数
 
 	/// <summary>
-	/// ゲームオブジェクト管理
-	/// Initialize() 済みのオブジェクトを AddObject() して使う
+	///カメラ・ライト・Manager外オブジェクト生成など
 	/// </summary>
-	GameObjectManager gameObjectManager_;
+	virtual void OnInitialize() {}
+
+	/// <summary>
+	///カメラ更新・Manager外オブジェクト更新（VP行列確定）
+	/// </summary>
+	virtual void OnUpdate() {}
+
+	/// <summary>
+	///Manager外の3D描画
+	/// </summary>
+	virtual void OnDrawOffscreen() {}
+
+	/// <summary>
+	///Manager外のUI描画
+	/// </summary>
+	virtual void OnDrawBackBuffer() {}
+
+	/// <summary>
+	///Manager外の ImGui
+	/// </summary>
+	virtual void OnImGui() {}
+
+	/// <summary>
+	///rawポインタのnullptr化など（オブジェクトはまだ生存中
+	/// ）</summary>
+	virtual void OnFinalize() {}
+
+	/// <summary>
+	/// Manager外コライダーの追加登録
+	/// SyncColliders 直後・CollisionManager::Update() 直前に呼ばれる
+	/// Boss の複数コライダー等が必要なシーンのみ override する
+	/// </summary>
+	virtual void OnHandleCollisions() {}
+
+	std::string        sceneName_;
+	GameObjectManager  gameObjectManager_;
+	CollisionManager   collisionManager_;
 
 private:
+	/// <summary>
+	/// コライダーリストをクリア → Manager内を登録 → OnHandleCollisions() → 衝突判定
+	/// BaseScene::Update() final から毎フレーム呼ばれる
+	/// </summary>
+	void HandleCollisions();
 
-	bool initialized_ = false;		// オブジェクト初期化済みフラグ（切り替え時リセット）
+	bool initialized_ = false; 	// オブジェクト初期化済みフラグ（切り替え時リセット）
 };

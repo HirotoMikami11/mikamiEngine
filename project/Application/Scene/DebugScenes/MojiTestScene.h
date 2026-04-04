@@ -3,6 +3,9 @@
 #include "Dollar1Recognizer.h"
 #include <vector>
 
+/// <summary>
+/// 文字書きテストシーン
+/// </summary>
 class MojiTestScene : public BaseScene
 {
 public:
@@ -10,12 +13,15 @@ public:
 	~MojiTestScene() override;
 
 	void ConfigureOffscreenEffects() override;
-	void Initialize() override;
-	void Update() override;
-	void DrawOffscreen() override;
-	void DrawBackBuffer() override;
-	void Finalize() override;
-	void ImGui() override;
+
+protected:
+
+	void OnInitialize()		override;
+	void OnUpdate()			override;
+	void OnDrawOffscreen()	override;
+	void OnDrawBackBuffer()	override;
+	void OnFinalize()		override;
+	void OnImGui()			override;
 
 private:
 	void InitializeGameObjects();

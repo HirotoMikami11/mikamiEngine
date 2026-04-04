@@ -3,6 +3,8 @@
 #include <memory>
 #include "GameObject.h"
 
+class CollisionManager;
+
 /// <summary>
 /// ゲームオブジェクトを一括管理するクラス
 /// 処理順ソート・Update中の安全な追加・破棄済み自動削除に対応
@@ -10,49 +12,60 @@
 class GameObjectManager
 {
 public:
-    GameObjectManager() = default;
-    ~GameObjectManager() = default;
+	GameObjectManager() = default;
+	~GameObjectManager() = default;
 
-    /// <summary>
-    /// オブジェクトを追加する
-    /// Initialize() 済みのオブジェクトを渡すこと
-    /// Update 中に呼んだ場合は次フレームに統合される
-    /// </summary>
-    void AddObject(std::unique_ptr<GameObject> obj);
+	/// <summary>
+	/// オブジェクトを追加する
+	/// Update 中に呼んだ場合は次フレームに統合される
+	/// </summary>
+	void AddObject(std::unique_ptr<GameObject> obj);
 
-    /// <summary>
-    /// 全オブジェクトを更新する
-    /// 処理順ソート → Update → 破棄済み削除 → pending 統合 の順で実行
-    /// </summary>
-    void Update();
+	/// <summary>
+	/// タグ順ソート後に全オブジェクトの Initialize() を呼ぶ
+	/// BaseScene::Initialize() final から呼ばれる
+	/// </summary>
+	void InitializeAll();
 
-    /// <summary>
-    /// 全オブジェクトの 3D 描画（DrawOffscreen を呼ぶ）
-    /// </summary>
-    void DrawOffscreen();
+	/// <summary>
+	/// 全オブジェクトを更新する（オブジェクト更新のみ、衝突判定は含まない）
+	/// 処理順ソート → Update → 破棄済み削除 → pending 統合 の順で実行
+	/// </summary>
+	void Update();
 
-    /// <summary>
-    /// 全オブジェクトの UI 描画（DrawBackBuffer を呼ぶ）
-    /// </summary>
-    void DrawBackBuffer();
+	/// <summary>
+	/// ICollider を継承するオブジェクトを CollisionManager に登録する
+	/// BaseScene::HandleCollisions() から毎フレーム呼ばれる
+	/// </summary>
+	void AddAllCollidersToManager(CollisionManager* cm);
 
-    /// <summary>
-    /// 全オブジェクトのデバッグ描画（DrawDebug を呼ぶ）
-    /// </summary>
-    void ImGui();
+	/// <summary>
+	/// 全オブジェクトの 3D 描画（DrawOffscreen を呼ぶ）
+	/// </summary>
+	void DrawOffscreen();
 
-    /// <summary>
-    /// 全オブジェクトを破棄して空にする（シーン終了時に呼ぶ）
-    /// </summary>
-    void Clear();
+	/// <summary>
+	/// 全オブジェクトの UI 描画（DrawBackBuffer を呼ぶ）
+	/// </summary>
+	void DrawBackBuffer();
 
-    size_t GetObjectCount() const { return objects_.size(); }
+	/// <summary>
+	/// 全オブジェクトの ImGui 描画
+	/// </summary>
+	void ImGui();
+
+	/// <summary>
+	/// 全オブジェクトを破棄して空にする
+	/// </summary>
+	void Clear();
+
+	size_t GetObjectCount() const { return objects_.size(); }
 
 private:
-    void MergePending();
-    void RemoveDestroyed();
+	void MergePending();
+	void RemoveDestroyed();
 
-    std::vector<std::unique_ptr<GameObject>> objects_;
-    std::vector<std::unique_ptr<GameObject>> pendingObjects_;  // Update中の追加バッファ
-    bool isUpdating_ = false;
+	std::vector<std::unique_ptr<GameObject>> objects_;
+	std::vector<std::unique_ptr<GameObject>> pendingObjects_;  // Update中の追加バッファ
+	bool isUpdating_ = false;
 };

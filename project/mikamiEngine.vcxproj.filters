@@ -558,7 +558,7 @@
     <ClCompile Include="Application\GameObject\GameObjectManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\GameObject\TestPlayer\TestPlayer.cpp">
+    <ClCompile Include="Application\GameObject\DebugObject\TestPlayer\TestPlayer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Utility\JsonBinder.cpp">
@@ -571,6 +571,18 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Application\CollisionManager\Collider\SphereCollider.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\GameObject\DebugObject\TestObject\TestObject.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\GameObject\DebugObject\TestWall\TestWall.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\GameObject\DebugObject\TestShooter\TestShooter.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\GameObject\DebugObject\TestShooter\TestBullet.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -949,7 +961,7 @@
     <ClInclude Include="Application\Scene\GameScenes\GameScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\GameObject\TestPlayer\TestPlayer.h">
+    <ClInclude Include="Application\GameObject\DebugObject\TestPlayer\TestPlayer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\GameObject\GameObjectTypes.h">
@@ -980,6 +992,18 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\CollisionManager\Collider\SpriteCollider.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\GameObject\DebugObject\TestObject\TestObject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\GameObject\DebugObject\TestWall\TestWall.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\GameObject\DebugObject\TestShooter\TestShooter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\GameObject\DebugObject\TestShooter\TestBullet.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

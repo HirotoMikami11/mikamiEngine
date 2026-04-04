@@ -15,7 +15,7 @@ void MojiTestScene::ConfigureOffscreenEffects() {
 	offscreenRenderer_->DisableAllEffects();
 }
 
-void MojiTestScene::Initialize() {
+void MojiTestScene::OnInitialize() {
 	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
 
@@ -43,7 +43,7 @@ void MojiTestScene::InitializeGameObjects() {
 		.SetColor({ 1.f,1.f,1.f,1.f });
 }
 
-void MojiTestScene::Update() {
+void MojiTestScene::OnUpdate() {
 	cameraController_->Update();
 	UpdateGameObjects();
 }
@@ -54,20 +54,20 @@ void MojiTestScene::UpdateGameObjects() {
 	terrain_->Update(viewProjectionMatrix);
 }
 
-void MojiTestScene::DrawOffscreen() { sphere_->Draw(); terrain_->Draw(); }
-void MojiTestScene::DrawBackBuffer() {}
+void MojiTestScene::OnDrawOffscreen() {
+	sphere_->Draw();
+	terrain_->Draw();
+}
 
-// ================================================================
-// ImGui
-// ================================================================
-void MojiTestScene::ImGui() {
+void MojiTestScene::OnDrawBackBuffer() {}
+
+void MojiTestScene::OnImGui() {
 #ifdef USEIMGUI
 	sphere_->ImGui();
 	terrain_->ImGui();
 
-	// ================================================================
+
 	// ハイライトインデックス計算（ガイドとキャンバス両ウィンドウで共有）
-	// ================================================================
 	int highlight = -1;
 	if (hasResult_ && lastResult_.matched) {
 		if (lastResult_.name == "circle")    highlight = 0;
@@ -80,11 +80,9 @@ void MojiTestScene::ImGui() {
 		else if (lastResult_.name == "omega")     highlight = 7;
 	}
 
-	// ================================================================
+
 	// [ウィンドウ A] 書き順ガイド
-	// ================================================================
 	ImGui::SetNextWindowSize(ImVec2(540.f, 310.f), ImGuiCond_Once);
-	ImGui::SetNextWindowPos(ImVec2(20.f, 80.f), ImGuiCond_Once);
 	ImGui::Begin("書き順ガイド", nullptr,
 		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
@@ -99,14 +97,12 @@ void MojiTestScene::ImGui() {
 	}
 	ImGui::End();
 
-	// ================================================================
+
 	// [ウィンドウ B] 描画キャンバス
-	// ================================================================
 	constexpr float CANVAS_W = 420.f;
 	constexpr float CANVAS_H = 360.f;
 
 	ImGui::SetNextWindowSize(ImVec2(460.f, 620.f), ImGuiCond_Once);
-	ImGui::SetNextWindowPos(ImVec2(570.f, 80.f), ImGuiCond_Once);
 	ImGui::Begin("描画キャンバス", nullptr, ImGuiWindowFlags_NoScrollbar);
 
 	{
@@ -270,9 +266,8 @@ void MojiTestScene::ImGui() {
 		}
 		ImGui::PopStyleColor();
 	}
-	ImGui::End(); // 描画キャンバス
-
+	ImGui::End();
 #endif
 }
 
-void MojiTestScene::Finalize() {}
+void MojiTestScene::OnFinalize() {}

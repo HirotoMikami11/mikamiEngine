@@ -158,5 +158,6 @@ void NormalCamera::ImGui() {
 			SetDefaultCamera(initialPosition_, initialRotation_);
 		}
 	}
-}
 #endif
+}
+
