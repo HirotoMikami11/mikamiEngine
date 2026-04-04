@@ -339,3 +339,5 @@ Dumps/
 *.blend
 *.blend1
 
+# Ignore AIPlan folder and all its contents
+AIPlan/
