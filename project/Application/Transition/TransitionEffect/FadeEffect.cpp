@@ -30,6 +30,7 @@ void FadeEffect::Initialize(DirectXCommon* directXCommon) {
 
 	fadeSprite_ = std::make_unique<Sprite>();
 	fadeSprite_->Initialize(dxCommon_, "white", position, size);
+	fadeSprite_->SetLayerOrder(LayerOrder::Fade);// 最前面に設定
 
 	// 初期状態は完全に透明
 	fadeSprite_->SetColor({ fadeColor_.x, fadeColor_.y, fadeColor_.z, 0.0f });

@@ -12,7 +12,6 @@
 #include "GameObjectManager.h"
 #include "CollisionManager/CollisionManager.h"
 
-
 /// <summary>
 /// シーンの基底クラス
 /// 派生クラスは Onなんとか関数を override して独自処理を描く

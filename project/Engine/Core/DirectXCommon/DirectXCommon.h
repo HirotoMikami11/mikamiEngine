@@ -67,14 +67,6 @@ public:
 	ID3D12GraphicsCommandList* GetCommandList() const { return commandList.Get(); }
 	ID3D12CommandQueue* GetCommandQueue() const { return commandQueue.Get(); }
 	IDXGISwapChain4* GetSwapChain() const { return swapChain.Get(); }
-	ID3D12RootSignature* GetRootSignature() const { return rootSignature.Get(); }
-	ID3D12PipelineState* GetPipelineState() const { return graphicsPipelineState.Get(); }
-	ID3D12RootSignature* GetSpriteRootSignature() const { return spriteRootSignature.Get(); }
-	ID3D12PipelineState* GetSpritePipelineState() const { return spritePipelineState.Get(); }
-	ID3D12RootSignature* GetLineRootSignature() const { return lineRootSignature.Get(); }
-	ID3D12PipelineState* GetLinePipelineState() const { return linePipelineState.Get(); }
-	ID3D12RootSignature* GetParticleRootSignature() const { return particleRootSignature.Get(); }
-	ID3D12PipelineState* GetParticlePipelineState() const { return particlePipelineState.Get(); }
 	///参照で返すゲッター？
 	const ComPtr<ID3D12Device>& GetDeviceComPtr() const { return device; }
 	const ComPtr<ID3D12GraphicsCommandList>& GetCommandListComPtr() const { return commandList; }
@@ -149,27 +141,6 @@ private:
 	void InitializePSOFactory();
 
 	/// <summary>
-	/// PSOを作成する
-	/// </summary>
-	void MakePSO();
-
-	/// <summary>
-	/// 2D用のPSOを作成する
-	/// </summary>
-	void MakeSpritePSO();
-
-	/// <summary>
-	/// 線分描画用のPSOを作成する
-	/// </summary>
-	void MakeLinePSO();
-
-	/// <summary>
-	/// パーティクル描画用のPSOを作成する
-	/// </summary>
-	void MakeParticlePSO();
-
-
-	/// <summary>
 	/// ViewportとScissor
 	/// </summary>
 	void MakeViewport();
@@ -225,21 +196,6 @@ private:
 
 	// PSOFactory
 	std::unique_ptr<PSOFactory> psoFactory_;
-	//3D用PSO
-	ComPtr<ID3D12RootSignature> rootSignature;
-	ComPtr<ID3D12PipelineState> graphicsPipelineState;
-
-	//スプライト用PSO
-	ComPtr<ID3D12RootSignature> spriteRootSignature;
-	ComPtr<ID3D12PipelineState> spritePipelineState;
-
-	//線分用PSO
-	ComPtr<ID3D12RootSignature> lineRootSignature;
-	ComPtr<ID3D12PipelineState> linePipelineState;
-
-	//パーティクル用PSO
-	ComPtr<ID3D12RootSignature> particleRootSignature;
-	ComPtr<ID3D12PipelineState> particlePipelineState;
 
 	//ビューポート
 	D3D12_VIEWPORT viewport{};

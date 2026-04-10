@@ -14,6 +14,14 @@
 #include "ObjectID/ObjectIDManager.h"
 using namespace MyMath;
 
+/// <summary>
+/// レイヤーの数位仮置き(TODO:アプリケーション側にレイヤー管理を用意する)
+/// </summary>
+enum LayerOrder
+{
+	UI = 1000,		// UIレイヤー
+	Fade = 9999,	// フェード用の最前面レイヤー
+};
 
 
 /// <summary>

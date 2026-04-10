@@ -115,23 +115,6 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 
 	///*-----------------------------------------------------------------------*///
 	//																			//
-	///								PSOを生成する									///
-	//																			//
-	///*-----------------------------------------------------------------------*///
-	// 3D用のPSO
-	MakePSO();
-
-	// スプライト用のPSO
-	MakeSpritePSO();
-
-	// 線分用のPSO
-	MakeLinePSO();
-
-	// パーティクル用のPSO
-	MakeParticlePSO();
-
-	///*-----------------------------------------------------------------------*///
-	//																			//
 	///							ViewportとScissor							   ///
 	//																			//
 	///*-----------------------------------------------------------------------*///
@@ -439,112 +422,6 @@ void DirectXCommon::InitializePSOFactory()
 	Logger::Log(Logger::GetStream(), "DirectXCommon: PSOFactory initialized\n");
 }
 
-void DirectXCommon::MakePSO() {
-	// RootSignatureを構築
-	RootSignatureBuilder rsBuilder;
-	rsBuilder.AddCBV(0, D3D12_SHADER_VISIBILITY_PIXEL)		// Material (b0)
-		.AddCBV(0, D3D12_SHADER_VISIBILITY_VERTEX)			// Transform (b0)
-		.AddSRV(0, 1, D3D12_SHADER_VISIBILITY_PIXEL)		// Texture (t0)
-		.AddCBV(1, D3D12_SHADER_VISIBILITY_PIXEL)			// DirectionalLight (b1)
-		.AddCBV(2, D3D12_SHADER_VISIBILITY_PIXEL)			// Camera (b2)
-		.AddStaticSampler(0);								// Sampler (s0)
-
-	// PSO設定を構築（プリセット使用）
-	auto psoDesc = PSODescriptor::Create3D()
-		.SetVertexShader(L"resources/Shader/Object3d/Object3d.VS.hlsl")
-		.SetPixelShader(L"resources/Shader/Object3d/Object3d.PS.hlsl");
-
-	// PSO生成
-	auto psoInfo = psoFactory_->CreatePSO(psoDesc, rsBuilder);
-	if (!psoInfo.IsValid()) {
-		Logger::Log(Logger::GetStream(), "DirectXCommon: Failed to create 3D PSO\n");
-		assert(false);
-	}
-
-	rootSignature = psoInfo.rootSignature;
-	graphicsPipelineState = psoInfo.pipelineState;
-
-	Logger::Log(Logger::GetStream(), "Complete create 3D PSO using PSOFactory!!\n");
-}
-
-void DirectXCommon::MakeSpritePSO() {
-	// RootSignatureを構築
-	RootSignatureBuilder rsBuilder;
-	rsBuilder.AddCBV(0, D3D12_SHADER_VISIBILITY_PIXEL)		// Material (b0)
-		.AddCBV(0, D3D12_SHADER_VISIBILITY_VERTEX)			// Transform (b0)  
-		.AddSRV(0, 1, D3D12_SHADER_VISIBILITY_PIXEL)		// Texture (t0)
-		.AddCBV(1, D3D12_SHADER_VISIBILITY_PIXEL)			// DirectionalLight (b1)
-		.AddStaticSampler(0);								// Sampler (s0)
-
-	// PSO設定を構築（プリセット使用）
-	auto psoDesc = PSODescriptor::CreateSprite()
-		.SetVertexShader(L"resources/Shader/Sprite/Sprite.VS.hlsl")
-		.SetPixelShader(L"resources/Shader/Sprite/Sprite.PS.hlsl");
-
-	// PSO生成
-	auto psoInfo = psoFactory_->CreatePSO(psoDesc, rsBuilder);
-	if (!psoInfo.IsValid()) {
-		Logger::Log(Logger::GetStream(), "DirectXCommon: Failed to create Sprite PSO\n");
-		assert(false);
-	}
-
-	spriteRootSignature = psoInfo.rootSignature;
-	spritePipelineState = psoInfo.pipelineState;
-
-	Logger::Log(Logger::GetStream(), "Complete create Sprite PSO using PSOFactory!!\n");
-}
-
-void DirectXCommon::MakeLinePSO() {
-	// RootSignatureを構築（線分は変換行列のみ）
-	RootSignatureBuilder rsBuilder;
-	rsBuilder.AddCBV(0, D3D12_SHADER_VISIBILITY_VERTEX);// Transform (b0)
-
-	// PSO設定を構築（プリセット使用）
-	auto psoDesc = PSODescriptor::CreateLine()
-		.SetVertexShader(L"resources/Shader/Line/Line.VS.hlsl")
-		.SetPixelShader(L"resources/Shader/Line/Line.PS.hlsl");
-
-	// PSO生成
-	auto psoInfo = psoFactory_->CreatePSO(psoDesc, rsBuilder);
-	if (!psoInfo.IsValid()) {
-		Logger::Log(Logger::GetStream(), "DirectXCommon: Failed to create Line PSO\n");
-		assert(false);
-	}
-
-	lineRootSignature = psoInfo.rootSignature;
-	linePipelineState = psoInfo.pipelineState;
-
-	Logger::Log(Logger::GetStream(), "Complete create Line PSO using PSOFactory!!\n");
-}
-
-void DirectXCommon::MakeParticlePSO()
-{
-	// RootSignatureを構築
-	RootSignatureBuilder rsBuilder;
-	rsBuilder.AddCBV(0, D3D12_SHADER_VISIBILITY_PIXEL)		// Material (b0)PS
-		.AddSRV(0, 1, D3D12_SHADER_VISIBILITY_VERTEX)		// Transform (t0)VS
-		.AddSRV(0, 1, D3D12_SHADER_VISIBILITY_PIXEL)		// Texture (t0)PS
-		.AddStaticSampler(0);								// Sampler (s0)
-
-	// PSO設定を構築（プリセット使用）
-	auto psoDesc = PSODescriptor::CreateParticle()
-		.SetVertexShader(L"resources/Shader/Particle/Particle.VS.hlsl")
-		.SetPixelShader(L"resources/Shader/Particle/Particle.PS.hlsl");
-
-	// PSO生成
-	auto psoInfo = psoFactory_->CreatePSO(psoDesc, rsBuilder);
-	if (!psoInfo.IsValid()) {
-		Logger::Log(Logger::GetStream(), "DirectXCommon: Failed to create 3D PSO\n");
-		assert(false);
-	}
-
-	particleRootSignature = psoInfo.rootSignature;
-	particlePipelineState = psoInfo.pipelineState;
-
-	Logger::Log(Logger::GetStream(), "Complete create Particle PSO using PSOFactory!!\n");
-
-}
-
 DirectXCommon::ComPtr<IDxcBlob>DirectXCommon::CompileShader(
 	const std::wstring& filePath,
 	const wchar_t* profile,
@@ -721,11 +598,8 @@ void DirectXCommon::PreDraw()
 
 	commandList->RSSetViewports(1, &viewport);						//Viewportを設定	
 	commandList->RSSetScissorRects(1, &scissorRect);				//Scissorを設定
-	// RootSignatureを設定。PSOに設定しているけど別途設定（PSOと同じもの）が必要
-	commandList->SetGraphicsRootSignature(rootSignature.Get());
-	commandList->SetPipelineState(graphicsPipelineState.Get());		//PSOを設定
-	// 形状を設定。PSOに設定しているものとはまた別。RootSignatureと同じように同じものを設定すると考えておけばいい
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	
+	// 各Rendererが自身のPSOを設定するためPSO設定は行わない
 
 }
 

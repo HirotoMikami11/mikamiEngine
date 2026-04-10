@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 #include "DirectXCommon.h"
+#include "PSOFactory.h"
+#include "RootSignatureBuilder.h"
 #include "MyFunction.h"
 
 /// <summary>
@@ -79,13 +81,21 @@ public:
 
 private:
 	/// <summary>
+	/// PSOFactory を使って RootSignature と PSO を生成する
+	/// </summary>
+	void InitializePSO();
+
+	/// <summary>
 	/// 頂点バッファを更新
 	/// </summary>
 	void UpdateVertexBuffer();
 
 private:
-	//DirectXCommon参照
+	// DirectXCommon参照
 	DirectXCommon* dxCommon_ = nullptr;
+
+	// 自前で生成した PSO（DirectXCommon の PSO は使用しない）
+	PSOFactory::PSOInfo pso_;
 
 	// 線分データ
 	std::vector<LineData> lineData_;

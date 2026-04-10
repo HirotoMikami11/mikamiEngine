@@ -171,10 +171,6 @@ void OffscreenRenderer::PreDraw() {
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = { dxCommon_->GetDescriptorManager()->GetSRVHeapComPtr() };
 	commandList->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());
 
-	// 通常の描画設定を適用（既存のPSOを使用）
-	commandList->SetGraphicsRootSignature(dxCommon_->GetRootSignature());
-	commandList->SetPipelineState(dxCommon_->GetPipelineState());
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void OffscreenRenderer::PostDraw() {
@@ -261,10 +257,6 @@ void OffscreenRenderer::DrawOffscreenTexture(
 		finalTexture
 	);
 
-	// オフスクリーン用PSOから通常描画用PSOに戻す
-	commandList->SetGraphicsRootSignature(dxCommon_->GetRootSignature());
-	commandList->SetPipelineState(dxCommon_->GetPipelineState());
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void OffscreenRenderer::InitializeOffscreenTriangle() {

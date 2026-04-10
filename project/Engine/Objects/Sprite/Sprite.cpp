@@ -386,6 +386,7 @@ void Sprite::ApplyMetadataToTexSize()
 void Sprite::ImGuiChangeFlipButtonX()
 {
 #ifdef USEIMGUI
+	ImVec2 bottomSize = { 255.0f,0.0f };
 	if (ImGui::Button("isFlipX", bottomSize)) {
 		isFlipX_ = !isFlipX_;
 		SetFlipX(isFlipX_);
@@ -396,6 +397,7 @@ void Sprite::ImGuiChangeFlipButtonX()
 void Sprite::ImGuiChangeFlipButtonY()
 {
 #ifdef USEIMGUI
+	ImVec2 bottomSize = { 255.0f,0.0f };
 	if (ImGui::Button("isFlipY", bottomSize)) {
 		isFlipY_ = !isFlipY_;
 		SetFlipY(isFlipY_);

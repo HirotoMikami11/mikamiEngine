@@ -2,6 +2,7 @@
 #include "ImGui/ImGuiManager.h"
 #include "Logger.h"
 #include <algorithm>
+#include <cassert>
 
 void LineRenderer::Initialize(DirectXCommon* dxCommon) {
 	dxCommon_ = dxCommon;
@@ -10,10 +11,8 @@ void LineRenderer::Initialize(DirectXCommon* dxCommon) {
 	const size_t totalVertexCount = kMaxLineCount * kVertexCountPerLine;
 	const size_t vertexBufferSize = sizeof(LineVertex) * totalVertexCount;
 
-	// 頂点バッファ作成
+	// 頂点バッファ作成（永続 map）
 	vertexBuffer_ = CreateBufferResource(dxCommon_->GetDevice(), vertexBufferSize);
-
-	// 頂点バッファをマップ
 	vertexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 
 	// 頂点バッファビューを設定
@@ -21,15 +20,38 @@ void LineRenderer::Initialize(DirectXCommon* dxCommon) {
 	vertexBufferView_.SizeInBytes = static_cast<UINT>(vertexBufferSize);
 	vertexBufferView_.StrideInBytes = sizeof(LineVertex);
 
-	// トランスフォームバッファ作成
+	// トランスフォームバッファ作成（永続 map）
 	transformBuffer_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(TransformationMatrix));
 	transformBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&transformData_));
 
 	// 線分データの初期化
 	lineData_.reserve(kMaxLineCount);
 
+	// PSO を自前生成
+	InitializePSO();
+
 	isInitialized_ = true;
 	Logger::Log(Logger::GetStream(), "LineRenderer: Initialized with max lines !!\n");
+}
+
+void LineRenderer::InitializePSO() {
+	PSOFactory* psoFactory = dxCommon_->GetPSOFactory();
+	assert(psoFactory != nullptr && "LineRenderer::InitializePSO: PSOFactory is null");
+
+	// --- RootSignature 構築 ---
+	// Line シェーダーのルートパラメータ対応（Line.VS.hlsl / Line.PS.hlsl）:
+	//  [0] b0 VERTEX_SHADER → TransformationMatrix (Transform CBV)
+	RootSignatureBuilder rsBuilder;
+	rsBuilder
+		.AddCBV(0, D3D12_SHADER_VISIBILITY_VERTEX)  // [0] Transform
+		.AddStaticSampler(0);                       // s0 Sampler（テクスチャなしだが必要）
+
+	// --- PSO 設定 ---
+	PSODescriptor psoDesc = PSODescriptor::CreateLine();
+
+	// PSOFactory に RootSignature と PSO を一括生成させる
+	pso_ = psoFactory->CreatePSO(psoDesc, rsBuilder);
+	assert(pso_.IsValid() && "LineRenderer::InitializePSO: PSO creation failed");
 }
 
 void LineRenderer::AddLine(const Vector3& start, const Vector3& end, const Vector4& color) {
@@ -38,20 +60,17 @@ void LineRenderer::AddLine(const Vector3& start, const Vector3& end, const Vecto
 		return;
 	}
 
-	// 最大数チェック
 	if (IsFull()) {
 		Logger::Log(Logger::GetStream(), "LineRenderer: Maximum line reached!\n");
 		return;
 	}
 
-	// 線分データを追加
 	LineData lineData;
 	lineData.start = start;
 	lineData.end = end;
 	lineData.color = color;
 	lineData_.push_back(lineData);
 
-	// 頂点バッファの更新が必要
 	needsVertexUpdate_ = true;
 }
 
@@ -79,9 +98,9 @@ void LineRenderer::Draw(const Matrix4x4& viewProjectionMatrix) {
 
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
-	// 線分用のPSOを設定
-	commandList->SetGraphicsRootSignature(dxCommon_->GetLineRootSignature());
-	commandList->SetPipelineState(dxCommon_->GetLinePipelineState());
+	// 自前の RootSignature と PSO を設定（DirectXCommon の PSO は使わない）
+	commandList->SetGraphicsRootSignature(pso_.rootSignature.Get());
+	commandList->SetPipelineState(pso_.pipelineState.Get());
 
 	// プリミティブトポロジを線分に設定
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
@@ -89,7 +108,7 @@ void LineRenderer::Draw(const Matrix4x4& viewProjectionMatrix) {
 	// 頂点バッファをバインド
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
-	// トランスフォーム設定（RootParameter[0]: VertexShader用）
+	// トランスフォーム設定（RootParameter[0]: b0 VS）
 	commandList->SetGraphicsRootConstantBufferView(0, transformBuffer_->GetGPUVirtualAddress());
 
 	// 一括描画（線分数 * 2頂点）
@@ -102,37 +121,36 @@ void LineRenderer::UpdateVertexBuffer() {
 		return;
 	}
 
-	// 線分データを頂点データに変換
 	for (size_t i = 0; i < lineData_.size(); ++i) {
 		const LineData& line = lineData_[i];
 
-		// 開始点の頂点
 		size_t vertexIndex = i * kVertexCountPerLine;
+
+		// 開始点の頂点
 		vertexData_[vertexIndex].position = { line.start.x, line.start.y, line.start.z, 1.0f };
 		vertexData_[vertexIndex].color = line.color;
-		vertexData_[vertexIndex].texcoord = { 0.0f, 0.0f };  // 未使用
-		vertexData_[vertexIndex].normal = { 0.0f, 1.0f, 0.0f };  // 未使用
+		// 未使用
+		vertexData_[vertexIndex].texcoord = { 0.0f, 0.0f };
+		vertexData_[vertexIndex].normal = { 0.0f, 1.0f, 0.0f };
 
 		// 終了点の頂点
 		vertexData_[vertexIndex + 1].position = { line.end.x, line.end.y, line.end.z, 1.0f };
 		vertexData_[vertexIndex + 1].color = line.color;
-		vertexData_[vertexIndex + 1].texcoord = { 1.0f, 1.0f };  // 未使用
-		vertexData_[vertexIndex + 1].normal = { 0.0f, 1.0f, 0.0f };  // 未使用
+		// 未使用
+		vertexData_[vertexIndex + 1].texcoord = { 1.0f, 1.0f };
+		vertexData_[vertexIndex + 1].normal = { 0.0f, 1.0f, 0.0f };
 	}
 }
 
 void LineRenderer::ImGui() {
 #ifdef USEIMGUI
 	if (ImGui::TreeNodeEx("Line Renderer", ImGuiTreeNodeFlags_DefaultOpen)) {
-		// 基本情報
 		ImGui::Text("Line Count: %d / %d", GetLineCount(), kMaxLineCount);
 
-		// 使用率表示
 		float usage = static_cast<float>(GetLineCount()) / static_cast<float>(kMaxLineCount);
 		ImGui::ProgressBar(usage, ImVec2(0.0f, 0.0f),
 			std::format("{:.1f}%", usage * 100.0f).c_str());
 
-		// 状態表示
 		if (IsEmpty()) {
 			ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Status: Empty");
 		} else if (IsFull()) {
@@ -141,7 +159,6 @@ void LineRenderer::ImGui() {
 			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Status: Normal");
 		}
 
-		// 操作ボタン
 		if (ImGui::Button("Clear All Lines")) {
 			Reset();
 		}

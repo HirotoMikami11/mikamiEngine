@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "ImGui/ImGuiManager.h"
+#include "SceneTransitionHelper.h"
 #include <numbers>
 
 GameScene::GameScene()
@@ -55,6 +56,10 @@ void GameScene::OnDrawBackBuffer()
 void GameScene::OnImGui()
 {
 #ifdef USEIMGUI
-	ImGui::Text("Game Scene");
+	if (ImGui::Button("Change Scene")) {
+		//debugSceneに切り替え
+		SceneTransitionHelper::FadeToScene("DemoScene", 1.0f);
+	}
+
 #endif
 }

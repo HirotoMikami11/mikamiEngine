@@ -321,6 +321,9 @@ void Engine::Finalize() {
 		winApp_.reset();
 	}
 
+	// ParticleCommon の GPU リソース解放（dxCommon_ 解放より先に行う）
+	ParticleCommon::GetInstance()->Finalize();
+
 	// SpriteRenderer の GPU リソース解放（dxCommon_ 解放より先に行う）
 	SpriteRenderer::GetInstance()->Finalize();
 
