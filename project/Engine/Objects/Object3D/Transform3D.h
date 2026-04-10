@@ -1,9 +1,6 @@
 #pragma once
-#include <d3d12.h>
-#include <wrl.h>
 #include <cassert>
 
-#include "DirectXCommon.h"
 #include "MyFunction.h"
 #include "Logger.h"
 
@@ -18,8 +15,7 @@ public:
 	/// <summary>
 	/// トランスフォームの初期化
 	/// </summary>
-	/// <param name="dxCommon">DirectXCommonの初期化</param>
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize();
 
 	/// <summary>
 	/// 行列の更新
@@ -39,12 +35,14 @@ public:
 	Vector3 GetRotation() const { return transform_.rotate; }
 	Vector3 GetScale() const { return transform_.scale; }
 
-	Matrix4x4 GetWorldMatrix() const { return transformData_->World; };
-	Matrix4x4 GetWVPMatrix() const { return transformData_->WVP; };
-	Matrix4x4 GetWorldInverseTranspose() const { return transformData_->WorldInverseTranspose; };
-	ID3D12Resource* GetResource() const { return transformResource_.Get(); }
-	///トランスフォームデータの直接取得（ImGui用）
-	TransformationMatrix* GetTransformDataPtr() const { return transformData_; }
+	Matrix4x4 GetWorldMatrix() const { return cpuData_.World; }
+	Matrix4x4 GetWVPMatrix() const { return cpuData_.WVP; }
+	Matrix4x4 GetWorldInverseTranspose() const { return cpuData_.WorldInverseTranspose; }
+
+	/// <summary>
+	/// Draw() 内で UploadRingBuffer に書き込むための TransformationMatrix を返す
+	/// </summary>
+	TransformationMatrix BuildTransformData() const { return cpuData_; }
 
 	//Setter
 	void SetTransform(const Vector3Transform& newTransform) { transform_ = newTransform; }
@@ -84,10 +82,12 @@ public:
 	void AddScale(const Vector3& Scale);
 
 private:
-	// GPU用トランスフォームリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> transformResource_;
-	// トランスフォームデータへのポインタ（Map済み）
-	TransformationMatrix* transformData_ = nullptr;
+	// CPU 行列（GPU 送信構造体をそのまま保持）
+	TransformationMatrix cpuData_{
+		MakeIdentity4x4(),  // WVP
+		MakeIdentity4x4(),  // World
+		MakeIdentity4x4()   // WorldInverseTranspose
+	};
 
 	// CPU側のトランスフォーム値
 	Vector3Transform transform_{

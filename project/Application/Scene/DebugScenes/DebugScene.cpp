@@ -96,7 +96,7 @@ void DebugScene::OnUpdate()
 	objPlane_->Update(viewProjectionMatrix_);
 }
 
-void DebugScene::OnDrawOffscreen()
+void DebugScene::OnDraw()
 {
 	// Manager外オブジェクトの3D描画
 	terrain_->Draw();

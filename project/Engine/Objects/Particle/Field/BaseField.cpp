@@ -6,7 +6,7 @@ void BaseField::Initialize(DirectXCommon* dxCommon)
 	dxCommon_ = dxCommon;
 
 	// フィールドトランスフォームを初期化
-	fieldTransform_.Initialize(dxCommon);
+	fieldTransform_.Initialize();
 	fieldTransform_.SetDefaultTransform();
 
 	// DebugDrawLineSystemを取得

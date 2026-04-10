@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 #include "Material.h"
-#include "DirectXCommon.h"
 #include "Logger.h"
 
 /// <summary>
@@ -17,9 +16,8 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="dxCommon">DirectXCommonのポインタ</param>
 	/// <param name="materialCount">マテリアル数</param>
-	void Initialize(DirectXCommon* dxCommon, size_t materialCount = 1);
+	void Initialize(size_t materialCount = 1);
 
 	/// <summary>
 	/// マテリアル数を設定（動的にリサイズ?）
@@ -67,5 +65,4 @@ public:
 
 private:
 	std::vector<Material> materials_;
-	DirectXCommon* dxCommon_ = nullptr;
 };

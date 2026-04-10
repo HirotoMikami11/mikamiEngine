@@ -29,99 +29,115 @@
 #include <cassert>
 #include "MyFunction.h"
 
-/// @brief フレームごとにリセットするアップロードリングバッファ
-/// @tparam T バッファに格納するデータ型（TransformationMatrix, MaterialData など）
+/// <summary>
+/// バッファに格納するデータ型（TransformationMatrix, MaterialData など）
+/// </summary>
 template<typename T>
+
+/// <summary>
+/// フレームごとにリセットするアップロードリングバッファ
+/// </summary>
 class UploadRingBuffer {
 public:
-    /// @brief Allocate() の戻り値。CPU書き込み先とGPUアドレスのペア。
-    struct Allocation {
-        T*                        cpuPtr;  ///< CPU側書き込みポインタ（Mapされたアドレス）
-        D3D12_GPU_VIRTUAL_ADDRESS gpuAddr; ///< シェーダーへ渡すGPUアドレス
-    };
 
-    UploadRingBuffer()  = default;
-    ~UploadRingBuffer() = default;
+	/// <summary>
+	/// Allocate() の戻り値。CPU書き込み先とGPUアドレスのペア。
+	/// </summary>
+	struct Allocation {
+		T* cpuPtr;							///< CPU側書き込みポインタ（Mapされたアドレス）
+		D3D12_GPU_VIRTUAL_ADDRESS gpuAddr;	///< シェーダーへ渡すGPUアドレス
+	};
 
-    // コピー・ムーブ禁止（GPUリソースを管理するため）
-    UploadRingBuffer(const UploadRingBuffer&)            = delete;
-    UploadRingBuffer& operator=(const UploadRingBuffer&) = delete;
+	UploadRingBuffer() = default;
+	~UploadRingBuffer() = default;
 
-    /// @brief 初期化。capacity 個分のUPLOADヒープを1回だけ確保する。
-    /// @param device    D3D12デバイス
-    /// @param capacity  1フレームに確保できる最大スロット数
-    /// @note  sizeof(T) が256バイト未満の場合でも、CBV要件に合わせて自動でアライン
-    void Initialize(ID3D12Device* device, uint32_t capacity) {
-        assert(device   != nullptr && "UploadRingBuffer::Initialize: device is null");
-        assert(capacity  > 0       && "UploadRingBuffer::Initialize: capacity must be > 0");
+	// コピー・ムーブ禁止（GPUリソースを管理するため）
+	UploadRingBuffer(const UploadRingBuffer&) = delete;
+	UploadRingBuffer& operator=(const UploadRingBuffer&) = delete;
 
-        capacity_ = capacity;
+	/// <summary>
+	/// 初期化。capacity 個分のUPLOADヒープを1回だけ確保する。
+	/// sizeof(T) が256バイト未満の場合でも、CBV要件に合わせて自動でアライン
+	/// </summary>
+	/// <param name="device">D3D12デバイス</param>
+	/// <param name="capacity">1フレームに確保できる最大スロット数</param>
+	void Initialize(ID3D12Device* device, uint32_t capacity) {
+		assert(device != nullptr && "UploadRingBuffer::Initialize: device is null");
+		assert(capacity > 0 && "UploadRingBuffer::Initialize: capacity must be > 0");
 
-        // D3D12 CBVの要件: GPUアドレスは256バイト境界にアライン
-        // stride_ = sizeof(T) を256バイト単位に切り上げた値
-        stride_ = (static_cast<uint32_t>(sizeof(T)) + 255u) & ~255u;
+		capacity_ = capacity;
 
-        // capacity 個分を一括確保（以降は追加確保しない）
-        const size_t totalBytes = static_cast<size_t>(stride_) * capacity_;
-        buffer_ = CreateBufferResource(device, totalBytes);
-        assert(buffer_ != nullptr && "UploadRingBuffer::Initialize: buffer creation failed");
+		// D3D12 CBVの要件: GPUアドレスは256バイト境界にアライン
+		// stride_ = sizeof(T) を256バイト単位に切り上げた値
+		stride_ = (static_cast<uint32_t>(sizeof(T)) + 255u) & ~255u;
 
-        // 永続マップ（Unmapは不要。Upload ヒープなので常時CPU書き込み可）
-        buffer_->Map(0, nullptr, reinterpret_cast<void**>(&mappedTop_));
-        assert(mappedTop_ != nullptr && "UploadRingBuffer::Initialize: Map failed");
+		// capacity 個分を一括確保（以降は追加確保しない）
+		const size_t totalBytes = static_cast<size_t>(stride_) * capacity_;
+		buffer_ = CreateBufferResource(device, totalBytes);
+		assert(buffer_ != nullptr && "UploadRingBuffer::Initialize: buffer creation failed");
 
-        baseGpuAddr_ = buffer_->GetGPUVirtualAddress();
-    }
+		// 永続マップ（Unmapは不要。Upload ヒープなので常時CPU書き込み可）
+		buffer_->Map(0, nullptr, reinterpret_cast<void**>(&mappedTop_));
+		assert(mappedTop_ != nullptr && "UploadRingBuffer::Initialize: Map failed");
 
-    /// @brief GPU リソースを明示的に解放する。
-    /// @note  Engine::Finalize() の dxCommon_->Finalize() より前に呼ぶこと。
-    ///        シングルトンのデストラクタよりも先に解放しないとリソースリークになる。
-    void Finalize() {
-        if (mappedTop_) {
-            buffer_->Unmap(0, nullptr);
-            mappedTop_ = nullptr;
-        }
-        buffer_.Reset();
-        baseGpuAddr_  = 0;
-        capacity_     = 0;
-        stride_       = 0;
-        currentIndex_ = 0;
-    }
+		baseGpuAddr_ = buffer_->GetGPUVirtualAddress();
+	}
 
-    /// @brief フレーム先頭で呼ぶ。カウンタを0にリセットするだけ（O(1)）。
-    /// @note  Engine::StartDrawOffscreen() で毎フレーム呼ぶこと
-    void BeginFrame() {
-        currentIndex_ = 0;
-    }
+	/// <summary>
+	/// GPU リソースを明示的に解放する。
+	///	シングルトンのデストラクタよりも先に解放しないとリソースリークになる。
+	/// </summary>
+	void Finalize() {
+		if (mappedTop_) {
+			buffer_->Unmap(0, nullptr);
+			mappedTop_ = nullptr;
+		}
+		buffer_.Reset();
+		baseGpuAddr_ = 0;
+		capacity_ = 0;
+		stride_ = 0;
+		currentIndex_ = 0;
+	}
 
-    /// @brief 1スロットを確保して Allocation を返す。
-    /// @return CPU書き込みポインタとGPUアドレスのペア
-    /// @note   capacity を超えるとassertで停止する。その場合は capacity を増やすこと
-    Allocation Allocate() {
-        assert(currentIndex_ < capacity_ &&
-            "UploadRingBuffer::Allocate: capacity exceeded. Increase kMax*** constant.");
+	/// <summary>
+	/// カウンタを0にリセットするだけ（O(1)）
+	/// </summary>
+	void BeginFrame() {
+		currentIndex_ = 0;
+	}
 
-        const uint32_t idx = currentIndex_++;
-        return {
-            reinterpret_cast<T*>(mappedTop_ + static_cast<size_t>(stride_) * idx),
-            baseGpuAddr_ + static_cast<D3D12_GPU_VIRTUAL_ADDRESS>(stride_) * idx
-        };
-    }
+	/// <summary>
+	/// 1スロットを確保して Allocation を返す。
+	/// </summary>
+	/// <returns>CPU書き込みポインタとGPUアドレスのペア</returns>
+	Allocation Allocate() {
 
-    /// @brief 現フレームの使用スロット数を返す（デバッグ・ImGui表示用）
-    uint32_t GetUsedCount() const { return currentIndex_; }
+		// スロットが足りなくなったらcapacity_ を増やす
+		assert(currentIndex_ < capacity_ &&
+			"UploadRingBuffer::Allocate: capacity exceeded. Increase kMax*** constant.");
 
-    /// @brief 最大スロット数を返す
-    uint32_t GetCapacity() const { return capacity_; }
+		const uint32_t idx = currentIndex_++;
+		return {
+			reinterpret_cast<T*>(mappedTop_ + static_cast<size_t>(stride_) * idx),
+			baseGpuAddr_ + static_cast<D3D12_GPU_VIRTUAL_ADDRESS>(stride_) * idx
+		};
+	}
 
-    /// @brief 初期化済みかどうかを返す
-    bool IsInitialized() const { return buffer_ != nullptr; }
+
+	// 現フレームの使用スロット数を返す（デバッグ・ImGui表示用）
+	uint32_t GetUsedCount() const { return currentIndex_; }
+
+	//最大スロット数を返す
+	uint32_t GetCapacity() const { return capacity_; }
+
+	// 初期化済みかどうかを返す
+	bool IsInitialized() const { return buffer_ != nullptr; }
 
 private:
-    Microsoft::WRL::ComPtr<ID3D12Resource> buffer_;       ///< 一括確保したUPLOADバッファ
-    uint8_t*                               mappedTop_    = nullptr; ///< Map済みの先頭CPUアドレス
-    D3D12_GPU_VIRTUAL_ADDRESS              baseGpuAddr_  = 0;       ///< バッファ先頭のGPUアドレス
-    uint32_t                               capacity_     = 0;       ///< 最大スロット数
-    uint32_t                               stride_       = 0;       ///< 1スロットのバイト数（256バイトアライン済み）
-    uint32_t                               currentIndex_ = 0;       ///< 現フレームの次割り当てインデックス
+	Microsoft::WRL::ComPtr<ID3D12Resource> buffer_;					/// 一括確保したUPLOADバッファ
+	uint8_t* mappedTop_ = nullptr;									/// Map済みの先頭CPUアドレス
+	D3D12_GPU_VIRTUAL_ADDRESS baseGpuAddr_ = 0;						/// バッファ先頭のGPUアドレス
+	uint32_t capacity_ = 0;											/// 最大スロット数
+	uint32_t stride_ = 0;											/// 1スロットのバイト数（256バイトアライン済み）
+	uint32_t currentIndex_ = 0;										/// 現フレームの次割り当てインデックス
 };

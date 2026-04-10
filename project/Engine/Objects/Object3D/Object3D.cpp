@@ -3,19 +3,18 @@
 #include "CameraController.h"
 
 void Object3D::Initialize(DirectXCommon* dxCommon, const std::string& modelTag, const std::string& textureName) {
-	dxCommon_ = dxCommon;
 	modelTag_ = modelTag;
 	textureName_ = textureName;
 
 	// 個別のトランスフォームを初期化
-	transform_.Initialize(dxCommon);
+	transform_.Initialize();
 	Vector3Transform defaultTransform{
 		{1.0f, 1.0f, 1.0f},  // scale
 		{0.0f, 0.0f, 0.0f},  // rotate
 		{0.0f, 0.0f, 0.0f}   // translate
 	};
 	transform_.SetTransform(defaultTransform);
-	
+
 	// モデルとマテリアル、テクスチャを設定
 	SetModel(modelTag, textureName);
 }
@@ -38,12 +37,12 @@ void Object3D::Draw() {
 
 	// -----------------------------------------------------------------------
 	// ソート用の深度値を計算
-	// ワールド行列の平行移動成分（行3）からオブジェクトのワールド座標を取得し、
-	// カメラとの距離の2乗を計算する（単調増加なのでソートの大小関係が保持される）
+	// ワールド行列の平行移動成分からオブジェクトのワールド座標を取得し、カメラとの距離計算
 	// -----------------------------------------------------------------------
+
 	const Matrix4x4& worldMat = transform_.GetWorldMatrix();
 	Vector3 worldPos = { worldMat.m[3][0], worldMat.m[3][1], worldMat.m[3][2] };
-	Vector3 camPos   = CameraController::GetInstance()->GetPosition();
+	Vector3 camPos = CameraController::GetInstance()->GetPosition();
 	float dx = worldPos.x - camPos.x;
 	float dy = worldPos.y - camPos.y;
 	float dz = worldPos.z - camPos.z;
@@ -53,7 +52,9 @@ void Object3D::Draw() {
 	// 全メッシュ分の描画リクエストをキューに積む
 	// GPU コマンド発行は Object3DRenderer::Draw3D() が一括で行う
 	// -----------------------------------------------------------------------
+
 	const auto& meshes = sharedModel_->GetMeshes();
+
 	for (size_t i = 0; i < meshes.size(); ++i) {
 		const Mesh& mesh = meshes[i];
 
@@ -65,7 +66,7 @@ void Object3D::Draw() {
 		const Material& mat = materials_.GetMaterial(materialIndex);
 
 		// テクスチャハンドルを取得
-		// カスタムテクスチャ > モデルの埋め込みテクスチャ の優先順位
+		// カスタムテクスチャ < モデルの埋め込みテクスチャ の優先順位
 		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = {};
 		if (!textureName_.empty()) {
 			textureHandle = textureManager_->GetTextureHandle(textureName_);
@@ -75,21 +76,25 @@ void Object3D::Draw() {
 		}
 
 		// マテリアルのアルファ値でレンダーグループを決定
-		// alpha < 1 → AlphaBlend（奥から手前へソート）、それ以外 → Opaque
+		// alphaが1以下 → AlphaBlend（奥から手前へソート）、それ以外 → Opaque
 		RenderGroup group = (mat.GetColor().w < 1.0f)
-			? RenderGroup::AlphaBlend
-			: RenderGroup::Opaque;
+			? RenderGroup::AlphaBlend : RenderGroup::Opaque;
+
+		// UploadRingBuffer からスロットを確保して CPU データを書き込む
+		auto transformAlloc = renderer->AllocateTransform();
+		*transformAlloc.cpuPtr = transform_.BuildTransformData();
+
+		auto materialAlloc = renderer->AllocateMaterial();
+		*materialAlloc.cpuPtr = mat.BuildMaterialData();
 
 		// ModelSubmission を構築して Object3DRenderer のキューに積む
-		// transformGpuAddr / materialGpuAddr は現時点では各オブジェクト固有の
-		// GPU バッファアドレスを使用する（将来的に UploadRingBuffer に移行予定）
 		ModelSubmission submission{};
-		submission.mesh             = &mesh;
-		submission.transformGpuAddr = transform_.GetResource()->GetGPUVirtualAddress();
-		submission.materialGpuAddr  = mat.GetResource()->GetGPUVirtualAddress();
-		submission.textureHandle    = textureHandle;
-		submission.group            = group;
-		submission.sortDepth        = sortDepth;
+		submission.mesh = &mesh;
+		submission.transformGpuAddr = transformAlloc.gpuAddr;
+		submission.materialGpuAddr = materialAlloc.gpuAddr;
+		submission.textureHandle = textureHandle;
+		submission.group = group;
+		submission.sortDepth = sortDepth;
 		renderer->Submit(submission);
 	}
 }
@@ -274,7 +279,7 @@ void Object3D::SetModel(const std::string& modelTag, const std::string& textureN
 	//																			//
 	//				モデルのrootNode.localMatrixをオフセットとして設定				//
 	//																			//
-	
+
 	// glTFモデルの場合: rootNode.localMatrixが存在し、モデル空間での初期姿勢を表す
 	// OBJモデルの場合: rootNode.localMatrixは単位行列なので影響なし
 	const auto& modelDataList = sharedModel_->GetModelData();
@@ -293,7 +298,7 @@ void Object3D::SetModel(const std::string& modelTag, const std::string& textureN
 
 	// 個別マテリアルを初期化（モデルからコピー）
 	size_t materialCount = sharedModel_->GetMaterialCount();
-	materials_.Initialize(dxCommon_, materialCount);
+	materials_.Initialize(materialCount);
 
 	// モデルのマテリアル設定をコピー
 	for (size_t i = 0; i < materialCount; ++i) {

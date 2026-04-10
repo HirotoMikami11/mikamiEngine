@@ -22,7 +22,7 @@ protected:
 
 	void OnInitialize()		override;
 	void OnUpdate()			override;
-	void OnDrawOffscreen()	override;
+	void OnDraw()			override;
 	void OnImGui()			override;
 	void OnFinalize()		override;
 

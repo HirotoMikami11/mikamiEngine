@@ -17,7 +17,7 @@ void GameScene::ConfigureOffscreenEffects()
 void GameScene::OnInitialize()
 {
 	// システム参照の取得
-	dxCommon_          = Engine::GetInstance()->GetDirectXCommon();
+	dxCommon_ = Engine::GetInstance()->GetDirectXCommon();
 	offscreenRenderer_ = Engine::GetInstance()->GetOffscreenRenderer();
 
 	///*-----------------------------------------------------------------------*///
@@ -44,7 +44,7 @@ void GameScene::OnUpdate()
 	viewProjectionMatrix_ = cameraController_->GetViewProjectionMatrix();
 }
 
-void GameScene::OnDrawOffscreen()
+void GameScene::OnDraw()
 {
 }
 

@@ -48,7 +48,7 @@ void Model::Initialize(DirectXCommon* dxCommon, const MeshType meshType, const s
 
 		// MaterialGroupを初期化
 		size_t materialCount = std::max(uniqueMaterials.size(), size_t(1));
-		materialGroup_.Initialize(dxCommon_, materialCount);
+		materialGroup_.Initialize(materialCount);
 
 		textureTagNames_.clear();
 		textureTagNames_.resize(materialCount);
@@ -94,7 +94,7 @@ void Model::Initialize(DirectXCommon* dxCommon, const MeshType meshType, const s
 		objectNames_.push_back("primitive_" + Mesh::MeshTypeToString(meshType));
 
 		// プリミティブ用のシングルマテリアル
-		materialGroup_.Initialize(dxCommon_, 1);
+		materialGroup_.Initialize(1);
 
 		textureTagNames_.clear();
 		textureTagNames_.push_back("");
@@ -147,7 +147,7 @@ bool Model::LoadFromOBJ(const std::string& directoryPath, const std::string& fil
 
 	// MaterialGroupを初期化
 	size_t materialCount = std::max(uniqueMaterials.size(), size_t(1));
-	materialGroup_.Initialize(dxCommon, materialCount);
+	materialGroup_.Initialize(materialCount);
 
 	textureTagNames_.clear();
 	textureTagNames_.resize(materialCount);
@@ -200,7 +200,7 @@ bool Model::LoadFromPrimitive(MeshType meshType, DirectXCommon* dxCommon) {
 	objectNames_.push_back("primitive_" + Mesh::MeshTypeToString(meshType));
 
 	// プリミティブ用のシングルマテリアル
-	materialGroup_.Initialize(dxCommon, 1);
+	materialGroup_.Initialize(1);
 
 	textureTagNames_.clear();
 	textureTagNames_.push_back("");

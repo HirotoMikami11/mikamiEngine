@@ -46,7 +46,7 @@ void TestPlayer::Update()
 	model_->Update(viewProjectionMatrix_);
 }
 
-void TestPlayer::DrawOffscreen()
+void TestPlayer::Draw()
 {
 	model_->Draw();
 	DebugLineAdd();

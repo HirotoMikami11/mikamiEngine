@@ -29,7 +29,7 @@ public:
 	/// <summary>
 	/// オブジェクト初期化
 	/// </summary>
-		virtual void Initialize() final;
+	virtual void Initialize() final;
 
 	/// <summary>
 	/// 更新処理
@@ -88,12 +88,14 @@ protected:
 	virtual void OnUpdate() {}
 
 	/// <summary>
-	///Manager外の3D描画
+	/// Manager外の描画
+	/// 3D・UI問わず Submit する
 	/// </summary>
-	virtual void OnDrawOffscreen() {}
+	virtual void OnDraw() {}
 
 	/// <summary>
-	///Manager外のUI描画
+	/// Manager外のUI描画
+	/// バックバッファ直接描画が必要な場合のみ
 	/// </summary>
 	virtual void OnDrawBackBuffer() {}
 

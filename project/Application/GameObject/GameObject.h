@@ -22,16 +22,10 @@ public:
 	virtual void Update() = 0;
 
 	/// <summary>
-	/// 3D描画（オフスクリーン内）
-	/// 3Dオブジェクトを持つ場合はオーバーライドする
+	/// 描画（Submit のみ。3D/UIどちらもここで行う）
+	/// RenderGroup で描画先が決まるため DrawOffscreen/DrawBackBuffer は不要
 	/// </summary>
-	virtual void DrawOffscreen() {}
-
-	/// <summary>
-	/// UI描画（バックバッファ）
-	/// スプライト等を持つ場合はオーバーライドする
-	/// </summary>
-	virtual void DrawBackBuffer() {}
+	virtual void Draw() {}
 
 	/// <summary>
 	/// デバッグ描画（ImGui等）

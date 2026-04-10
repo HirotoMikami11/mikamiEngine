@@ -40,14 +40,10 @@ public:
 	void AddAllCollidersToManager(CollisionManager* cm);
 
 	/// <summary>
-	/// 全オブジェクトの 3D 描画（DrawOffscreen を呼ぶ）
+	/// 全オブジェクトの描画 Submit
+	/// RenderGroup で描画先が決まる
 	/// </summary>
-	void DrawOffscreen();
-
-	/// <summary>
-	/// 全オブジェクトの UI 描画（DrawBackBuffer を呼ぶ）
-	/// </summary>
-	void DrawBackBuffer();
+	void Draw();
 
 	/// <summary>
 	/// 全オブジェクトの ImGui 描画

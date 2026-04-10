@@ -127,6 +127,10 @@ private:
 	ParticleForGPU* instancingData_ = nullptr;
 	DescriptorHeapManager::DescriptorHandle srvHandle_;
 
+	// マテリアル用アップロードバッファ（即時描画用、Phase6で UploadRingBuffer に移行）
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;
+	MaterialData* materialData_ = nullptr;
+
 	// モデルとマテリアル
 	Model* sharedModel_ = nullptr;
 	MaterialGroup materials_;

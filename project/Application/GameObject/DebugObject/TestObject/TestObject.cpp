@@ -31,7 +31,7 @@ void TestObject::Update()
 	model_->Update(viewProjectionMatrix_);
 }
 
-void TestObject::DrawOffscreen()
+void TestObject::Draw()
 {
 	model_->Draw();
 	DebugLineAdd();

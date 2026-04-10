@@ -32,7 +32,7 @@ public:
 
 	void Initialize()    override {}
 	void Update()        override;
-	void DrawOffscreen() override;
+	void Draw() override;
 	void Finalize()      override;
 
 	//コライダー設定

@@ -1,15 +1,8 @@
 #include "Transform3D.h"
 #include "GameTimer.h"
 
-void Transform3D::Initialize(DirectXCommon* dxCommon)
+void Transform3D::Initialize()
 {
-	// トランスフォーム用のリソースを作成
-	transformResource_ = CreateBufferResource(dxCommon->GetDevice(), sizeof(TransformationMatrix));
-
-	// トランスフォームデータにマップ
-	transformResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformData_));
-
-	// デフォルト設定で初期化
 	SetDefaultTransform();
 }
 
@@ -31,9 +24,9 @@ void Transform3D::UpdateMatrix(const Matrix4x4& viewProjectionMatrix)
 	// 3. 親のワールド行列を適用（階層構造）
 	// 親オブジェクトがある場合、親のワールド行列を掛け算(親子関係反映)
 	if (parent_) {
-		transformData_->World = Matrix4x4Multiply(modelSpaceMatrix, parent_->GetWorldMatrix());
+		cpuData_.World = Matrix4x4Multiply(modelSpaceMatrix, parent_->GetWorldMatrix());
 	} else {
-		transformData_->World = modelSpaceMatrix;
+		cpuData_.World = modelSpaceMatrix;
 	}
 
 	//																			//
@@ -41,10 +34,10 @@ void Transform3D::UpdateMatrix(const Matrix4x4& viewProjectionMatrix)
 	//																			//
 
 	// 4. ビュープロジェクション行列を掛け算してWVP行列を計算
-	transformData_->WVP = Matrix4x4Multiply(transformData_->World, viewProjectionMatrix);
+	cpuData_.WVP = Matrix4x4Multiply(cpuData_.World, viewProjectionMatrix);
 
 	// 5. 法線変換用の逆転置行列を計算(非均等スケールがかかっている場合でも法線が正しく変換される)
-	transformData_->WorldInverseTranspose = Matrix4x4Transpose(Matrix4x4Inverse(transformData_->World));
+	cpuData_.WorldInverseTranspose = Matrix4x4Transpose(Matrix4x4Inverse(cpuData_.World));
 }
 
 void Transform3D::SetDefaultTransform() {
@@ -57,10 +50,10 @@ void Transform3D::SetDefaultTransform() {
 	// モデルオフセットを単位行列に初期化（変換なし）
 	modelOffset_ = MakeIdentity4x4();
 
-	// GPU側のデータも単位行列で初期化
-	transformData_->World = MakeIdentity4x4();
-	transformData_->WVP = MakeIdentity4x4();
-	transformData_->WorldInverseTranspose = MakeIdentity4x4();
+	// CPU 行列を単位行列で初期化
+	cpuData_.World = MakeIdentity4x4();
+	cpuData_.WVP = MakeIdentity4x4();
+	cpuData_.WorldInverseTranspose = MakeIdentity4x4();
 }
 
 void Transform3D::AddPosition(const Vector3& Position)

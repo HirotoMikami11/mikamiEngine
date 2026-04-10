@@ -51,6 +51,10 @@ void ParticleGroup::CreateTransformBuffer() {
 	// トランスフォームデータにマップ
 	transformResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
 
+	// マテリアル用バッファを作成してマップ
+	materialResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(MaterialData));
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+
 	// 初期化
 	for (uint32_t i = 0; i < maxParticles_; ++i) {
 		instancingData_[i].World = MakeIdentity4x4();
@@ -257,9 +261,12 @@ void ParticleGroup::Draw()
 			materialIndex = 0;
 		}
 
-		// マテリアル設定
+		// マテリアル設定（CPU データをアップロードバッファに書き込んでからセット）
+		if (materialData_) {
+			*materialData_ = materials_.GetMaterial(materialIndex).BuildMaterialData();
+		}
 		commandList->SetGraphicsRootConstantBufferView(0,
-			materials_.GetMaterial(materialIndex).GetResource()->GetGPUVirtualAddress());
+			materialResource_->GetGPUVirtualAddress());
 
 		// トランスフォーム（構造化バッファ）
 		commandList->SetGraphicsRootDescriptorTable(1, srvHandle_.gpuHandle);
@@ -402,7 +409,7 @@ void ParticleGroup::SetModel(const std::string& modelTag, const std::string& tex
 
 	// 個別マテリアルを初期化（モデルからコピー）
 	size_t materialCount = sharedModel_->GetMaterialCount();
-	materials_.Initialize(dxCommon_, materialCount);
+	materials_.Initialize(materialCount);
 
 	// モデルのマテリアル設定をコピー
 	for (size_t i = 0; i < materialCount; ++i) {

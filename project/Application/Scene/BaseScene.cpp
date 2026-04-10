@@ -29,19 +29,16 @@ void BaseScene::Update()
 
 void BaseScene::DrawOffscreen()
 {
-	// Manager内オブジェクトの3D描画
-	gameObjectManager_.DrawOffscreen();
+	// Manager内全オブジェクトの描画 Submit（RenderGroup でオフスクリーン/UI を振り分け）
+	gameObjectManager_.Draw();
 
-	// Manager外オブジェクトの3D描画
-	OnDrawOffscreen();
+	// Manager外オブジェクトの描画 Submit
+	OnDraw();
 }
 
 void BaseScene::DrawBackBuffer()
 {
-	// Manager内オブジェクトのUI描画
-	gameObjectManager_.DrawBackBuffer();
-
-	// Manager外オブジェクトのUI描画
+	// Manager外のUI描画（直接バックバッファに描く必要があるもののみ）
 	OnDrawBackBuffer();
 }
 

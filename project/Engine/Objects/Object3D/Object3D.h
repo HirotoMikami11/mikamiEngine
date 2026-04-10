@@ -10,7 +10,8 @@
 #include "ObjectID/ObjectIDManager.h"
 
 /// <summary>
-/// ゲームオブジェクト - 共有モデル（メッシュ）と個別Transform、個別マテリアル
+/// ゲームオブジェクト
+/// 共有モデル（メッシュ）と個別Transform、個別マテリアル
 /// </summary>
 class Object3D
 {
@@ -70,11 +71,10 @@ public:
 	size_t GetMaterialCount() const { return materials_.GetMaterialCount(); }
 	Vector4 GetColor(size_t index = 0) const { return GetMaterial(index).GetColor(); }
 	LightingMode GetLightingMode(size_t index = 0) const { return GetMaterial(index).GetLightingMode(); }
-
-
 	void SetColor(const Vector4& color, size_t index = 0) { materials_.GetMaterial(index).SetColor(color); }
 	void SetColor(const uint32_t& color, size_t index = 0) { materials_.GetMaterial(index).SetColor(Uint32ToColorVector(color)); }
 	void SetLightingMode(LightingMode mode, size_t index = 0) { materials_.GetMaterial(index).SetLightingMode(mode); }
+	
 	// 全マテリアルに同じ設定を適用
 	void SetAllMaterialsColor(const Vector4& color, LightingMode mode = LightingMode::HalfLambert) { materials_.SetAllMaterials(color, mode); }
 
@@ -103,7 +103,6 @@ protected:
 	std::string textureName_ = "";
 
 	// システム参照
-	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager_ = TextureManager::GetInstance();
 	ModelManager* modelManager_ = ModelManager::GetInstance();
 

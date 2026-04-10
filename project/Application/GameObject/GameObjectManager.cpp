@@ -59,20 +59,11 @@ void GameObjectManager::AddAllCollidersToManager(CollisionManager* cm)
 	}
 }
 
-void GameObjectManager::DrawOffscreen()
+void GameObjectManager::Draw()
 {
 	for (auto& obj : objects_) {
 		if (!obj->IsDestroyed()) {
-			obj->DrawOffscreen();
-		}
-	}
-}
-
-void GameObjectManager::DrawBackBuffer()
-{
-	for (auto& obj : objects_) {
-		if (!obj->IsDestroyed()) {
-			obj->DrawBackBuffer();
+			obj->Draw();
 		}
 	}
 }

@@ -48,6 +48,7 @@ struct CameraForGPU final {
 	float padding;			// 隙間
 };
 
+/// </summary>
 /// マテリアル
 /// </summary>
 struct  MaterialData final {

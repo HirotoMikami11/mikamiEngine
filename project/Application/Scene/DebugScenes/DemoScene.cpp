@@ -111,7 +111,7 @@ void DemoScene::OnUpdate()
 
 }
 
-void DemoScene::OnDrawOffscreen()
+void DemoScene::OnDraw()
 {
 	sphere_->Draw();
 	plane_->Draw();

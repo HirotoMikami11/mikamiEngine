@@ -47,7 +47,7 @@ void TestShooter::Update()
 	model_->Update(viewProjectionMatrix_);
 }
 
-void TestShooter::DrawOffscreen()
+void TestShooter::Draw()
 {
 	model_->Draw();
 }

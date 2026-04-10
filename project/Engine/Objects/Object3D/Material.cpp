@@ -1,69 +1,36 @@
 #include "Material.h"
 
-void Material::Initialize(DirectXCommon* dxCommon) {
-	// マテリアル用のリソースを作成
-	materialResource_ = CreateBufferResource(dxCommon->GetDevice(), sizeof(MaterialData));
-	// マテリアルデータにマップ
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	// デフォルト設定で初期化
+void Material::Initialize() {
 	SetLitObjectSettings();
 }
 
 void Material::SetDefaultSettings() {
-	// デフォルト設定
-	// ライティング無効、白色、UV変換は単位行列
-	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	cpuData_.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	cpuData_.enableLighting = 0;
+	cpuData_.lightingMode = 0;
+	cpuData_.shininess = 30.0f;
+	cpuData_.uvTransform = MakeIdentity4x4();
 	lightingMode_ = LightingMode::None;
-	materialData_->enableLighting = false;
-	materialData_->lightingMode = 0;
-	materialData_->shininess = 30.0f;
-	materialData_->padding = 0.0f;
-	materialData_->uvTransform = MakeIdentity4x4();
 }
 
 void Material::SetLitObjectSettings() {
-	// ライト付きオブジェクト用設定
-	// ライティング有効、白色、UV変換は単位行列
-	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	cpuData_.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	cpuData_.shininess = 30.0f;
+	cpuData_.uvTransform = MakeIdentity4x4();
 	SetLightingMode(LightingMode::HalfLambert);
-	materialData_->shininess = 30.0f;
-	materialData_->padding = 0.0f;
-	materialData_->uvTransform = MakeIdentity4x4();
 }
 
 void Material::SetLightingMode(LightingMode mode) {
-	// ライティングモードを設定
 	lightingMode_ = mode;
-	materialData_->lightingMode = static_cast<int32_t>(mode);
-
-	switch (mode) {
-		//ライティングなし
-	case LightingMode::None:
-		materialData_->enableLighting = false;
-		break;
-
-		// ランバート反射
-	case LightingMode::Lambert:
-		materialData_->enableLighting = true;
-		break;
-
-		// ハーフランバート反射
-	case LightingMode::HalfLambert:
-		materialData_->enableLighting = true;
-		break;
-
-		// Phong鏡面反射
-	case LightingMode::PhongSpecular:
-		materialData_->enableLighting = true;
-		break;
-	}
+	cpuData_.lightingMode = static_cast<int32_t>(mode);
+	cpuData_.enableLighting = static_cast<int32_t>(mode != LightingMode::None);
 }
 
 void Material::UpdateUVTransform() {
-	Matrix4x4 uvTransformMatrix = MakeScaleMatrix({ uvScale_.x, uvScale_.y, 0.0f });
-	uvTransformMatrix = Matrix4x4Multiply(uvTransformMatrix, MakeRotateZMatrix(uvRotateZ_));
-	uvTransformMatrix = Matrix4x4Multiply(uvTransformMatrix, MakeTranslateMatrix({ uvTranslate_.x, uvTranslate_.y, 0.0f }));
-	materialData_->uvTransform = uvTransformMatrix;
+	Matrix4x4 m = MakeScaleMatrix({ uvScale_.x, uvScale_.y, 0.0f });
+	m = Matrix4x4Multiply(m, MakeRotateZMatrix(uvRotateZ_));
+	m = Matrix4x4Multiply(m, MakeTranslateMatrix({ uvTranslate_.x, uvTranslate_.y, 0.0f }));
+	cpuData_.uvTransform = m;
 }
 
 void Material::CopyFrom(const Material& source) {

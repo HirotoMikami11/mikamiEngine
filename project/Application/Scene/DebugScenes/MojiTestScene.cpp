@@ -54,7 +54,7 @@ void MojiTestScene::UpdateGameObjects() {
 	terrain_->Update(viewProjectionMatrix);
 }
 
-void MojiTestScene::OnDrawOffscreen() {
+void MojiTestScene::OnDraw() {
 	sphere_->Draw();
 	terrain_->Draw();
 }

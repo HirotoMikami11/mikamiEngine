@@ -50,7 +50,7 @@ void TestBullet::Update()
 	model_->Update(viewProjectionMatrix_);
 }
 
-void TestBullet::DrawOffscreen()
+void TestBullet::Draw()
 {
 	model_->Draw();
 	DebugLineAdd();		// コライダーワイヤーフレーム表示

@@ -16,7 +16,7 @@ public:
 
 	void Initialize();
 	void Update();
-	void DrawOffscreen();
+	void Draw();
 	void ImGui();
 	void Finalize();
 

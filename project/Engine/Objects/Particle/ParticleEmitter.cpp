@@ -8,7 +8,7 @@ void ParticleEmitter::Initialize(DirectXCommon* dxCommon, const std::string& tar
 	targetGroupName_ = targetGroupName;
 
 	// エミッタートランスフォームを初期化
-	emitterTransform_.Initialize(dxCommon);
+	emitterTransform_.Initialize();
 	emitterTransform_.SetDefaultTransform();
 
 	// DebugDrawLineSystemを取得

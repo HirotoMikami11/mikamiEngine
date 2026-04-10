@@ -32,7 +32,7 @@ void TestWall::Update()
 	model_->Update(viewProjectionMatrix_);
 }
 
-void TestWall::DrawOffscreen()
+void TestWall::Draw()
 {
 	model_->Draw();
 	DebugLineAdd();
