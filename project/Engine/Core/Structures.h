@@ -48,6 +48,14 @@ struct CameraForGPU final {
 	float padding;			// 隙間
 };
 
+/// <summary>
+/// スプライト専用マテリアルデータ（GPU送信用）
+/// </summary>
+struct SpriteMaterialData final {
+	Vector4   color;        // 色（RGBA）
+	Matrix4x4 uvTransform;  // UV変換行列
+};
+
 /// </summary>
 /// マテリアル
 /// </summary>

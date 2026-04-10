@@ -8,8 +8,7 @@
 #include "DirectXCommon.h"
 #include "MyFunction.h"
 #include "Structures.h"
-#include "Transform2D.h"  // Transform2D
-#include "SpriteCommon.h" //共通設定
+#include "Transform2D.h"
 
 #include "Texture/TextureManager.h"
 #include "ObjectID/ObjectIDManager.h"
@@ -22,15 +21,6 @@ using namespace MyMath;
 /// </summary>
 class Sprite
 {
-	/// <summary>
-	/// スプライト専用のマテリアル構造体
-	/// </summary>
-	struct SpriteMaterial {
-		Vector4 color;			// 色
-		Matrix4x4 uvTransform;	// UV変換行列
-	};
-
-
 public:
 	Sprite() = default;
 	~Sprite() = default;
@@ -72,7 +62,7 @@ public:
 	void Update(const Matrix4x4& viewProjectionMatrix);
 
 	/// <summary>
-	/// 通常の描画処理（UI用スプライト専用）
+	/// 描画リクエストを SpriteRenderer に Submit する
 	/// </summary>
 	void Draw();
 
@@ -89,7 +79,7 @@ public:
 	const Transform2D& GetTransform() const { return transform_; }
 
 	// Sprite固有のGetter
-	Vector4 GetColor() const { return materialData_->color; }
+	Vector4 GetColor() const { return cpuData_.color; }
 	const std::string& GetName() const { return name_; }
 	const std::string& GetTextureName() const { return textureName_; }
 	Vector2 GetAnchor() const { return anchor_; }
@@ -98,6 +88,11 @@ public:
 
 	Vector2 GetTextureLeftTop() const { return texLeftTop_; }
 	Vector2 GetTextureSize() const { return texSize_; }
+
+	/// <summary>
+	/// Draw() 内で UploadRingBuffer に書き込むための SpriteMaterialData を返す
+	/// </summary>
+	SpriteMaterialData BuildMaterialData() const { return cpuData_; }
 
 	// Transform関連のSetter
 	void SetTransform(const Vector2Transform& newTransform) { transform_.SetTransform(newTransform); }
@@ -122,21 +117,21 @@ public:
 	float GetUVTransformRotateZ() const { return uvRotateZ_; }
 	Vector2 GetUVTransformTranslate() const { return uvTranslate_; }
 
-	//テクスチャの切り出し関連
+	// テクスチャの切り出し関連
 	void SetTextureRect(const Vector2& texLeftTop, const Vector2& texSize);
 
-
-
+	//レイヤー順番の指定
+	void SetLayerOrder(int layerOrder) { layerOrder_ = layerOrder; }
 
 private:
 
 	/// <summary>
-	/// アンカーからプライトメッシュを作成
+	/// アンカーからスプライトメッシュを作成
 	/// </summary>
 	void CreateSpriteMesh();
 
 	/// <summary>
-	/// バッファを作成
+	/// バッファを作成（頂点・インデックスバッファのみ。マテリアルはCPU管理）
 	/// </summary>
 	void CreateBuffers();
 
@@ -145,25 +140,19 @@ private:
 	/// </summary>
 	void UpdateUVTransform();
 
-
 	/// <summary>
 	/// サイズをイメージに合わせる
-	/// 画像の大きさと同じ大きさにscaleを変える
 	/// </summary>
 	void AdjustTextureSize();
 
 	/// <summary>
 	/// texSizeを、メタデータに合わせる
 	/// </summary>
-	/// <returns></returns>
 	void ApplyMetadataToTexSize();
 
 	/// <summary>
 	/// flip関連のimguibuttonを作成する関数
 	/// </summary>
-	/// <param name="isOn"></param>
-	/// <param name="text"></param>
-	/// <param name="size"></param>
 	void ImGuiChangeFlipButtonX();
 	void ImGuiChangeFlipButtonY();
 
@@ -171,8 +160,6 @@ private:
 	// 基本情報
 	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager_ = TextureManager::GetInstance();
-	SpriteCommon* spriteCommon_ = SpriteCommon::GetInstance();
-
 
 	std::string name_ = "Sprite";
 	std::string textureName_ = "";
@@ -183,30 +170,34 @@ private:
 	// Transform2Dクラスを使用
 	Transform2D transform_;
 
-	// SpriteMaterial構造体に対応したマテリアルデータ
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;
-	SpriteMaterial* materialData_ = nullptr;
+	// CPU マテリアルデータ（GPU 送信構造体をそのまま保持）
+	SpriteMaterialData cpuData_{
+		{ 1.0f, 1.0f, 1.0f, 1.0f },	// color（白色）
+		MakeIdentity4x4()			// uvTransform
+	};
 
-	// UV変換用のローカル変数
+	// UV変換用のローカル変数（UpdateUVTransform() で cpuData_.uvTransform を更新）
 	Vector2 uvTranslate_{ 0.0f, 0.0f };
 	Vector2 uvScale_{ 1.0f, 1.0f };
 	float uvRotateZ_ = 0.0f;
 
-	//反転フラグ
-	bool isFlipX_ = false;//左右反転
-	bool isFlipY_ = false;//上下判定
+	// 反転フラグ
+	bool isFlipX_ = false;				// 左右反転
+	bool isFlipY_ = false;				// 上下反転
 
 	// テクスチャ切り出し用のパラメータ
-	Vector2 texLeftTop_{ 0.0f, 0.0f };		// テクスチャ左上座標
-	Vector2 texSize_{ 0.0f, 0.0f };			// テクスチャ切り出しサイズ
+	Vector2 texLeftTop_{ 0.0f, 0.0f };	// テクスチャ左上座標
+	Vector2 texSize_{ 0.0f, 0.0f };		// テクスチャ切り出しサイズ
 
-	// メッシュデータ
+	// レイヤー順番(仮置きで0)
+	// TODO: 現状仮置きだが、レイヤー管理もいずれ実装
+	int layerOrder_ = 0;
+
+	// メッシュデータ（VB/IB は Sprite が所有し続ける）
 	std::vector<VertexData> vertices_;
 	std::vector<uint32_t> indices_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexBuffer_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
-
-
 };

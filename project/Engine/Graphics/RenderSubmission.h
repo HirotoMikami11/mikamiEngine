@@ -26,6 +26,7 @@ enum class RenderGroup {
 	Opaque,		/// 不透明オブジェクト（深度書き込みあり、前から後ろへ描画）
 	AlphaBlend,	/// 半透明（深度書き込みなし、奥から手前へソートして描画）
 	Add,		/// 加算合成（半透明と同様に奥から手前へ）
+	UI,			/// HUD・メニュー等のオフスクリーン外表示（FlushUI()で描画）
 };
 
 /// <summary>
@@ -53,4 +54,5 @@ struct SpriteSubmission {
 	D3D12_GPU_VIRTUAL_ADDRESS materialGpuAddr;		/// SpriteMaterialData の GPUアドレス
 	D3D12_GPU_DESCRIPTOR_HANDLE	textureHandle;		/// テクスチャ SRV の GPUハンドル
 	int layerOrder;									/// 描画順（値が小さいほど先に描画される）
+	RenderGroup group = RenderGroup::UI;			/// 描画グループ（デフォルトは UI）
 };

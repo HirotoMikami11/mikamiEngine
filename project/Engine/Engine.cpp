@@ -69,14 +69,14 @@ void Engine::InitializeManagers() {
 	lightManager_ = LightManager::GetInstance();
 	lightManager_->Initialize(dxCommon_.get());
 
-	// スプライトの共通部分を初期化
-	SpriteCommon::GetInstance()->Initialize(dxCommon_.get());
-
 	// オブジェクト3Dの共通部分を初期化
 	Object3DCommon::GetInstance()->Initialize(dxCommon_.get());
 
 	// Object3DRenderer を初期化（PSO 自己生成 + UploadRingBuffer 確保）
 	Object3DRenderer::GetInstance()->Initialize(dxCommon_.get());
+
+	// SpriteRenderer を初期化（PSO 自己生成 + UploadRingBuffer 確保）
+	SpriteRenderer::GetInstance()->Initialize(dxCommon_.get());
 
 	// パーティクルの共通部分を初期化
 	ParticleCommon::GetInstance()->Initialize(dxCommon_.get());
@@ -144,6 +144,9 @@ void Engine::StartDrawOffscreen() {
 	// Object3DRenderer のフレームリセット（UploadRingBuffer インデックスを0に戻す）
 	Object3DRenderer::GetInstance()->BeginFrame();
 
+	// SpriteRenderer のフレームリセット
+	SpriteRenderer::GetInstance()->BeginFrame();
+
 	/// オフスクリーンの描画準備（3D描画用）
 	offscreenRenderer_->PreDraw();
 
@@ -158,6 +161,9 @@ void Engine::EndDrawOffscreen() {
 	// Submit された 3D オブジェクトを一括 GPU 描画（ソート後に GPU コマンド発行）
 	// PostDraw() より前に呼ぶことでオフスクリーン RT に描画される
 	Object3DRenderer::GetInstance()->Draw3D();
+
+	// Submit された UI 以外のスプライトを一括 GPU 描画
+	SpriteRenderer::GetInstance()->FlushOffscreen();
 
 	/// オフスクリーンの描画終了
 	offscreenRenderer_->PostDraw();
@@ -210,6 +216,9 @@ void Engine::StartDrawBackBuffer() {
 void Engine::EndDrawBackBuffer() {
 
 #ifdef USEIMGUI
+	// UI スプライトを一括 GPU 描画（finalPassTexture_ がまだ RenderTarget 状態のうちに行う）
+	SpriteRenderer::GetInstance()->FlushUI();
+
 	auto* cmdList = dxCommon_->GetCommandList();
 
 	// FinalPass: RenderTarget → SRV（ImGui::Image で参照できる状態に）
@@ -232,6 +241,8 @@ void Engine::EndDrawBackBuffer() {
 
 #else
 	// 通常パス
+	// UI スプライトを一括 GPU 描画（スワップチェーン RT に直接描画）
+	SpriteRenderer::GetInstance()->FlushUI();
 	imguiManager_->Draw(dxCommon_->GetCommandList());
 	dxCommon_->PostDraw();
 	dxCommon_->EndFrame();
@@ -309,6 +320,9 @@ void Engine::Finalize() {
 		winApp_->Finalize();
 		winApp_.reset();
 	}
+
+	// SpriteRenderer の GPU リソース解放（dxCommon_ 解放より先に行う）
+	SpriteRenderer::GetInstance()->Finalize();
 
 	// Object3DRenderer の GPU リソース解放（dxCommon_ 解放より先に行う）
 	Object3DRenderer::GetInstance()->Finalize();
