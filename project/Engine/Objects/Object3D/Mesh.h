@@ -87,14 +87,14 @@ public:
 	/// バッファをコマンドリストにバインド
 	/// </summary>
 	/// <param name="commandList">コマンドリスト</param>
-	void Bind(ID3D12GraphicsCommandList* commandList);
+	void Bind(ID3D12GraphicsCommandList* commandList) const;
 
 	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="commandList">コマンドリスト</param>
 	/// <param name="instanceCount">インスタンス数（デフォルト：1）</param>
-	void Draw(ID3D12GraphicsCommandList* commandList, uint32_t instanceCount = 1);
+	void Draw(ID3D12GraphicsCommandList* commandList, uint32_t instanceCount = 1) const;
 
 	//Getter
 	MeshType GetMeshType() const { return meshType_; }

@@ -27,6 +27,7 @@
 #include "Object3D.h"
 #include "Sprite.h"
 #include "ParticleCommon.h"
+#include "Object3DRenderer.h"
 
 class Engine {
 public:

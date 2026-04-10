@@ -75,6 +75,9 @@ void Engine::InitializeManagers() {
 	// オブジェクト3Dの共通部分を初期化
 	Object3DCommon::GetInstance()->Initialize(dxCommon_.get());
 
+	// Object3DRenderer を初期化（PSO 自己生成 + UploadRingBuffer 確保）
+	Object3DRenderer::GetInstance()->Initialize(dxCommon_.get());
+
 	// パーティクルの共通部分を初期化
 	ParticleCommon::GetInstance()->Initialize(dxCommon_.get());
 
@@ -138,6 +141,9 @@ void Engine::StartDrawOffscreen() {
 		lightManager_->DebugDrawLight();			// ライトの描画
 	}
 
+	// Object3DRenderer のフレームリセット（UploadRingBuffer インデックスを0に戻す）
+	Object3DRenderer::GetInstance()->BeginFrame();
+
 	/// オフスクリーンの描画準備（3D描画用）
 	offscreenRenderer_->PreDraw();
 
@@ -149,6 +155,10 @@ void Engine::EndDrawOffscreen() {
 	if (debugDrawManager_ && cameraController_) {
 		debugDrawManager_->Draw(cameraController_->GetViewProjectionMatrix());
 	}
+	// Submit された 3D オブジェクトを一括 GPU 描画（ソート後に GPU コマンド発行）
+	// PostDraw() より前に呼ぶことでオフスクリーン RT に描画される
+	Object3DRenderer::GetInstance()->Draw3D();
+
 	/// オフスクリーンの描画終了
 	offscreenRenderer_->PostDraw();
 }
@@ -299,6 +309,9 @@ void Engine::Finalize() {
 		winApp_->Finalize();
 		winApp_.reset();
 	}
+
+	// Object3DRenderer の GPU リソース解放（dxCommon_ 解放より先に行う）
+	Object3DRenderer::GetInstance()->Finalize();
 
 	// DirectX終了処理
 	if (dxCommon_) {

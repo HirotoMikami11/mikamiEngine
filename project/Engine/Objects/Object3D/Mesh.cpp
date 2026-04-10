@@ -213,7 +213,7 @@ void Mesh::SetIndices(const std::vector<uint32_t>& indices)
 	CreateIndexBuffer();
 }
 
-void Mesh::Bind(ID3D12GraphicsCommandList* commandList)
+void Mesh::Bind(ID3D12GraphicsCommandList* commandList) const
 {
 	// 頂点バッファをバインド
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
@@ -224,7 +224,7 @@ void Mesh::Bind(ID3D12GraphicsCommandList* commandList)
 	}
 }
 
-void Mesh::Draw(ID3D12GraphicsCommandList* commandList, uint32_t instanceCount)
+void Mesh::Draw(ID3D12GraphicsCommandList* commandList, uint32_t instanceCount) const
 {
 	if (HasIndices()) {
 		// インデックス描画
