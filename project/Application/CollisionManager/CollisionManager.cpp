@@ -1,3 +1,4 @@
+
 #include "CollisionManager.h"
 #include "Collision.h"
 
@@ -42,9 +43,14 @@ void CollisionManager::Update() {
 		}
 	}
 
-	// --- Exit: 前フレームにある && 今フレームにない ---
+	// --- Exit: 前フレームにある && 今フレームにない生存オブジェクトだけを再登録---
 	for (const auto& pair : prevPairs_) {
 		if (currentPairs_.count(pair) == 0) {
+			// 両コライダーが今フレームもまだ生存しているか確認
+			// どちらかが既に解放済みなら Exit コールバックをスキップして dangling 呼び出しを防ぐ
+			bool aAlive = std::find(colliders_.begin(), colliders_.end(), pair.first) != colliders_.end();
+			bool bAlive = std::find(colliders_.begin(), colliders_.end(), pair.second) != colliders_.end();
+			if (!aAlive || !bAlive) { continue; }
 			pair.first->OnCollisionExit(pair.second);
 			pair.second->OnCollisionExit(pair.first);
 		}
@@ -85,7 +91,7 @@ void CollisionManager::CheckAllCollision() {
 bool CollisionManager::CheckCollisionPair(ICollider* colliderA, ICollider* colliderB) {
 	// 1. マスクフィルタ（最安、最優先）
 	if ((colliderA->GetCollisionAttribute() & colliderB->GetCollisionMask()) == 0 ||
-	    (colliderB->GetCollisionAttribute() & colliderA->GetCollisionMask()) == 0) {
+		(colliderB->GetCollisionAttribute() & colliderA->GetCollisionMask()) == 0) {
 		return false;
 	}
 
@@ -110,27 +116,27 @@ bool CollisionManager::CheckCollisionPair(ICollider* colliderA, ICollider* colli
 void CollisionManager::RegisterCollisionHandlers() {
 	// --- Sphere vs Sphere ---
 	dispatchTable_[static_cast<int>(ColliderType::SPHERE)][static_cast<int>(ColliderType::SPHERE)] =
-	    [](ICollider* a, ICollider* b) -> bool {
-		    auto* sa = static_cast<SphereCollider*>(a);
-		    auto* sb = static_cast<SphereCollider*>(b);
-		    return Collision::IsCollision(sa->GetWorldSphere(), sb->GetWorldSphere());
-	    };
+		[](ICollider* a, ICollider* b) -> bool {
+		auto* sa = static_cast<SphereCollider*>(a);
+		auto* sb = static_cast<SphereCollider*>(b);
+		return Collision::IsCollision(sa->GetWorldSphere(), sb->GetWorldSphere());
+		};
 
 	// --- Sphere vs AABB ---
 	dispatchTable_[static_cast<int>(ColliderType::SPHERE)][static_cast<int>(ColliderType::AABB)] =
-	    [](ICollider* a, ICollider* b) -> bool {
-		    auto* sphere = static_cast<SphereCollider*>(a);
-		    auto* aabb   = static_cast<AABBCollider*>(b);
-		    return Collision::IsCollision(sphere->GetWorldSphere(), aabb->GetWorldAABB());
-	    };
+		[](ICollider* a, ICollider* b) -> bool {
+		auto* sphere = static_cast<SphereCollider*>(a);
+		auto* aabb = static_cast<AABBCollider*>(b);
+		return Collision::IsCollision(sphere->GetWorldSphere(), aabb->GetWorldAABB());
+		};
 
 	// --- AABB vs AABB ---
 	dispatchTable_[static_cast<int>(ColliderType::AABB)][static_cast<int>(ColliderType::AABB)] =
-	    [](ICollider* a, ICollider* b) -> bool {
-		    auto* aabbA = static_cast<AABBCollider*>(a);
-		    auto* aabbB = static_cast<AABBCollider*>(b);
-		    return Collision::IsCollision(aabbA->GetWorldAABB(), aabbB->GetWorldAABB());
-	    };
+		[](ICollider* a, ICollider* b) -> bool {
+		auto* aabbA = static_cast<AABBCollider*>(a);
+		auto* aabbB = static_cast<AABBCollider*>(b);
+		return Collision::IsCollision(aabbA->GetWorldAABB(), aabbB->GetWorldAABB());
+		};
 
 	// OBB, Sprite は実装時に RegisterCollisionHandlers() へ追加する
 }

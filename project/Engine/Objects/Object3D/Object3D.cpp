@@ -34,38 +34,63 @@ void Object3D::Draw() {
 		return;
 	}
 
-	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
-	object3DCommon_->setCommonRenderSettings();
+	Object3DRenderer* renderer = Object3DRenderer::GetInstance();
 
-	// トランスフォームを設定（rootNode.localMatrix適用済み）
-	commandList->SetGraphicsRootConstantBufferView(1, transform_.GetResource()->GetGPUVirtualAddress());
+	// -----------------------------------------------------------------------
+	// ソート用の深度値を計算
+	// ワールド行列の平行移動成分（行3）からオブジェクトのワールド座標を取得し、
+	// カメラとの距離の2乗を計算する（単調増加なのでソートの大小関係が保持される）
+	// -----------------------------------------------------------------------
+	const Matrix4x4& worldMat = transform_.GetWorldMatrix();
+	Vector3 worldPos = { worldMat.m[3][0], worldMat.m[3][1], worldMat.m[3][2] };
+	Vector3 camPos   = CameraController::GetInstance()->GetPosition();
+	float dx = worldPos.x - camPos.x;
+	float dy = worldPos.y - camPos.y;
+	float dz = worldPos.z - camPos.z;
+	float sortDepth = dx * dx + dy * dy + dz * dz;
 
-	// 全メッシュを描画
+	// -----------------------------------------------------------------------
+	// 全メッシュ分の描画リクエストをキューに積む
+	// GPU コマンド発行は Object3DRenderer::Draw3D() が一括で行う
+	// -----------------------------------------------------------------------
 	const auto& meshes = sharedModel_->GetMeshes();
 	for (size_t i = 0; i < meshes.size(); ++i) {
 		const Mesh& mesh = meshes[i];
-		size_t materialIndex = sharedModel_->GetMeshMaterialIndex(i);
 
-		// 範囲チェック
+		// メッシュに対応するマテリアルインデックスを取得（範囲外は 0 にクランプ）
+		size_t materialIndex = sharedModel_->GetMeshMaterialIndex(i);
 		if (materialIndex >= materials_.GetMaterialCount()) {
 			materialIndex = 0;
 		}
+		const Material& mat = materials_.GetMaterial(materialIndex);
 
-		// 常に自分のマテリアルを使う
-		commandList->SetGraphicsRootConstantBufferView(0,
-			materials_.GetMaterial(materialIndex).GetResource()->GetGPUVirtualAddress());
-
-		// テクスチャの設定
+		// テクスチャハンドルを取得
+		// カスタムテクスチャ > モデルの埋め込みテクスチャ の優先順位
+		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = {};
 		if (!textureName_.empty()) {
-			commandList->SetGraphicsRootDescriptorTable(2, textureManager_->GetTextureHandle(textureName_));
+			textureHandle = textureManager_->GetTextureHandle(textureName_);
 		} else if (sharedModel_->HasTexture(materialIndex)) {
-			commandList->SetGraphicsRootDescriptorTable(2,
-				textureManager_->GetTextureHandle(sharedModel_->GetTextureTagName(materialIndex)));
+			textureHandle = textureManager_->GetTextureHandle(
+				sharedModel_->GetTextureTagName(materialIndex));
 		}
 
-		// メッシュをバインドして描画
-		const_cast<Mesh&>(mesh).Bind(commandList);
-		const_cast<Mesh&>(mesh).Draw(commandList);
+		// マテリアルのアルファ値でレンダーグループを決定
+		// alpha < 1 → AlphaBlend（奥から手前へソート）、それ以外 → Opaque
+		RenderGroup group = (mat.GetColor().w < 1.0f)
+			? RenderGroup::AlphaBlend
+			: RenderGroup::Opaque;
+
+		// ModelSubmission を構築して Object3DRenderer のキューに積む
+		// transformGpuAddr / materialGpuAddr は現時点では各オブジェクト固有の
+		// GPU バッファアドレスを使用する（将来的に UploadRingBuffer に移行予定）
+		ModelSubmission submission{};
+		submission.mesh             = &mesh;
+		submission.transformGpuAddr = transform_.GetResource()->GetGPUVirtualAddress();
+		submission.materialGpuAddr  = mat.GetResource()->GetGPUVirtualAddress();
+		submission.textureHandle    = textureHandle;
+		submission.group            = group;
+		submission.sortDepth        = sortDepth;
+		renderer->Submit(submission);
 	}
 }
 

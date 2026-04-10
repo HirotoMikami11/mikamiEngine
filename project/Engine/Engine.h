@@ -24,6 +24,7 @@
 
 ///Objects
 #include "CameraController.h"
+#include "Object3DCommon.h"  // Engine::InitializeManagers() で初期化
 #include "Object3D.h"
 #include "Sprite.h"
 #include "ParticleCommon.h"

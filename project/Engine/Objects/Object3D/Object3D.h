@@ -3,7 +3,7 @@
 #include <memory>
 #include "DirectXCommon.h"
 #include "Transform3D.h"
-#include "Object3DCommon.h"
+#include "Object3DRenderer.h"  // Submit 先のレンダラー（Object3DCommon の代替）
 #include "LightManager.h"
 #include "Texture/TextureManager.h"
 #include "Model/ModelManager.h"
@@ -106,7 +106,6 @@ protected:
 	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager_ = TextureManager::GetInstance();
 	ModelManager* modelManager_ = ModelManager::GetInstance();
-	Object3DCommon* object3DCommon_ = Object3DCommon::GetInstance();
 
 private:
 
