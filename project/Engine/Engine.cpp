@@ -69,9 +69,6 @@ void Engine::InitializeManagers() {
 	lightManager_ = LightManager::GetInstance();
 	lightManager_->Initialize(dxCommon_.get());
 
-	// オブジェクト3Dの共通部分を初期化
-	Object3DCommon::GetInstance()->Initialize(dxCommon_.get());
-
 	// Object3DRenderer を初期化（PSO 自己生成 + UploadRingBuffer 確保）
 	Object3DRenderer::GetInstance()->Initialize(dxCommon_.get());
 
@@ -160,7 +157,7 @@ void Engine::EndDrawOffscreen() {
 	}
 	// Submit された 3D オブジェクトを一括 GPU 描画（ソート後に GPU コマンド発行）
 	// PostDraw() より前に呼ぶことでオフスクリーン RT に描画される
-	Object3DRenderer::GetInstance()->Draw3D();
+	Object3DRenderer::GetInstance()->FlushOffscreen();
 
 	// Submit された UI 以外のスプライトを一括 GPU 描画
 	SpriteRenderer::GetInstance()->FlushOffscreen();
@@ -216,6 +213,8 @@ void Engine::StartDrawBackBuffer() {
 void Engine::EndDrawBackBuffer() {
 
 #ifdef USEIMGUI
+	// UI オブジェクトを一括 GPU 描画（finalPassTexture_ がまだ RenderTarget 状態のうちに行う）
+	Object3DRenderer::GetInstance()->FlushUI();
 	// UI スプライトを一括 GPU 描画（finalPassTexture_ がまだ RenderTarget 状態のうちに行う）
 	SpriteRenderer::GetInstance()->FlushUI();
 
@@ -241,7 +240,8 @@ void Engine::EndDrawBackBuffer() {
 
 #else
 	// 通常パス
-	// UI スプライトを一括 GPU 描画（スワップチェーン RT に直接描画）
+	// UI オブジェクト・UI スプライトを一括 GPU 描画（スワップチェーン RT に直接描画）
+	Object3DRenderer::GetInstance()->FlushUI();
 	SpriteRenderer::GetInstance()->FlushUI();
 	imguiManager_->Draw(dxCommon_->GetCommandList());
 	dxCommon_->PostDraw();
@@ -370,6 +370,11 @@ void Engine::ImGui() {
 	/// デバッグ線のImGui
 	debugDrawManager_->ImGui();
 
+	/// Object3DRenderer スロット使用量
+	Object3DRenderer::GetInstance()->ImGui();
+
+	/// SpriteRenderer スロット使用量
+	SpriteRenderer::GetInstance()->ImGui();
 
 	ImGui::End();
 

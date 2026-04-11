@@ -23,6 +23,7 @@ void TestObject::Initialize()
 	// コライダー設定
 	SetCollisionAttribute(kCollisionAttributeObjects);
 	SetCollisionMask(~kCollisionAttributeObjects);
+
 }
 
 void TestObject::Update()

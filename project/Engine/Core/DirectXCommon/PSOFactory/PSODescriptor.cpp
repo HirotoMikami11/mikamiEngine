@@ -174,6 +174,11 @@ PSODescriptor& PSODescriptor::SetCullMode(CullMode mode) {
 	return *this;
 }
 
+PSODescriptor& PSODescriptor::SetFillMode(D3D12_FILL_MODE mode) {
+	fillMode_ = mode;
+	return *this;
+}
+
 PSODescriptor& PSODescriptor::EnableDepth(bool enable, D3D12_COMPARISON_FUNC func) {
 	depthEnable_ = enable;
 	depthFunc_ = func;

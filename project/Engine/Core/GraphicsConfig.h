@@ -30,7 +30,19 @@ public:
 	// DSV[0]Main
 	static const uint32_t kMainDSVIndex = 0;
 
-	static const uint32_t kImGuiSRVIndex = 0;           // ImGui専用SRVインデックス
+	// ImGui専用SRVインデックス
+	static const uint32_t kImGuiSRVIndex = 0;
+
+	///*-----------------------------------------------------------------------*///
+	///							レンダラー最大スロット数							///
+	///*-----------------------------------------------------------------------*///
+	
+	static const uint32_t kMaxObject3DTransforms = 2048;	/// Object3DRenderer Transform スロット数
+	static const uint32_t kMaxObject3DMaterials = 2048;		/// Object3DRenderer Material スロット数
+	static const uint32_t kMaxSprites = 1024;				/// SpriteRenderer スロット数
+	static const uint32_t kMaxLineCount = 32768;			/// LineRenderer 線分数（2^15）
+	// Particle の最大数は ParticleGroup::Initialize(maxParticles) でグループごとに指定する設計のため
+	// ここには定義しない。グループ数上限は ParticleSystem 側で管理
 
 
 private:

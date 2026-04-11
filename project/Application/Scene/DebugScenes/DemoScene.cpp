@@ -22,6 +22,7 @@ void DemoScene::ConfigureOffscreenEffects()
 	if (vignetteEffect) {
 		vignetteEffect->SetEnabled(true);
 	}
+
 }
 
 void DemoScene::OnInitialize()
@@ -57,10 +58,12 @@ void DemoScene::OnInitialize()
 	modelMultiMesh_ = std::make_unique<Model3D>();
 	modelMultiMesh_->Initialize(dxCommon_, "model_MultiMesh");
 	modelMultiMesh_->SetTransform({ {1.0f,1.0f,1.0f}, {0.0f,3.0f,0.0f}, {-5.31f,-0.3f,3.7f} });
+	modelMultiMesh_->SetOverrideRenderGroup(RenderGroup::UI);	//オフスクリーンの外で描画されるようにする
 
 	modelMultiMaterial_ = std::make_unique<Model3D>();
 	modelMultiMaterial_->Initialize(dxCommon_, "model_MultiMaterial");
 	modelMultiMaterial_->SetTransform({ {1.0f,1.0f,1.0f}, {0.0f,3.0f,0.0f}, {2.23f,-0.3f,3.7f} });
+	modelMultiMaterial_->SetPSOVariant(PSOVariant::Wireframe);	//ワイヤーフレーム
 
 	sprite_ = std::make_unique<Sprite>();
 	sprite_->Initialize(dxCommon_, "uvChecker", { 50, 50 }, { 100, 100 });

@@ -7,7 +7,7 @@ class CollisionManager;
 
 /// <summary>
 /// ゲームオブジェクトを一括管理するクラス
-/// 処理順ソート・Update中の安全な追加・破棄済み自動削除に対応
+/// 処理順ソート・Update中の安全な追加・破棄済み自動削除する
 /// </summary>
 class GameObjectManager
 {

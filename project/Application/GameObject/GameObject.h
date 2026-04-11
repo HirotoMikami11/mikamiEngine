@@ -4,7 +4,6 @@
 /// <summary>
 /// ゲームオブジェクト基底クラス
 /// 全てのゲームオブジェクトはこれを継承する
-/// Scene 側で Initialize() を呼んでから GameObjectManager に渡すこと
 /// </summary>
 class GameObject
 {
@@ -60,7 +59,7 @@ protected:
 	void Destroy() { isDestroyed_ = true; }
 
 	/// <summary>
-	/// 種類を設定（コンストラクタや Initialize 内で呼ぶ）
+	/// 種類を設定
 	/// </summary>
 	void SetTag(ObjectTag tag) { tag_ = tag; }
 

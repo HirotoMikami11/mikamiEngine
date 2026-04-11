@@ -75,10 +75,15 @@ void Object3D::Draw() {
 				sharedModel_->GetTextureTagName(materialIndex));
 		}
 
-		// マテリアルのアルファ値でレンダーグループを決定
-		// alphaが1以下 → AlphaBlend（奥から手前へソート）、それ以外 → Opaque
-		RenderGroup group = (mat.GetColor().w < 1.0f)
-			? RenderGroup::AlphaBlend : RenderGroup::Opaque;
+		// レンダーグループを決定
+		// overrideRenderGroup_ が有効な場合はそれを優先し、
+		// 未設定の場合はマテリアルのアルファ値で自動判定（alpha < 1 → AlphaBlend）
+		RenderGroup group;
+		if (overrideRenderGroupEnabled_) {
+			group = overrideRenderGroup_;
+		} else {
+			group = (mat.GetColor().w < 1.0f) ? RenderGroup::AlphaBlend : RenderGroup::Opaque;
+		}
 
 		// UploadRingBuffer からスロットを確保して CPU データを書き込む
 		auto transformAlloc = renderer->AllocateTransform();
@@ -95,6 +100,7 @@ void Object3D::Draw() {
 		submission.textureHandle = textureHandle;
 		submission.group = group;
 		submission.sortDepth = sortDepth;
+		submission.psoVariant = psoVariant_;
 		renderer->Submit(submission);
 	}
 }
@@ -225,6 +231,30 @@ void Object3D::ImGui() {
 
 					ImGui::TreePop();
 				}
+			}
+		}
+
+		// 描画設定（PSO バリアント・描画グループ上書き）
+		if (ImGui::CollapsingHeader("Render Settings")) {
+			// PSO バリアント（Default / Wireframe）
+			const char* psoVariantNames[] = { "Default", "Wireframe" };
+			int currentVariant = static_cast<int>(psoVariant_);
+			if (ImGui::Combo("PSO Variant", &currentVariant, psoVariantNames, IM_ARRAYSIZE(psoVariantNames))) {
+				psoVariant_ = static_cast<PSOVariant>(currentVariant);
+			}
+
+			// 描画グループ上書き
+			ImGui::Checkbox("Override RenderGroup", &overrideRenderGroupEnabled_);
+			if (overrideRenderGroupEnabled_) {
+				const char* groupNames[] = { "Opaque", "AlphaBlend", "Add", "UI" };
+				int currentGroup = static_cast<int>(overrideRenderGroup_);
+				if (ImGui::Combo("RenderGroup", &currentGroup, groupNames, IM_ARRAYSIZE(groupNames))) {
+					overrideRenderGroup_ = static_cast<RenderGroup>(currentGroup);
+				}
+			} else {
+				// 自動判定中の現在のグループを表示（マテリアル[0]のアルファで判定）
+				bool isAlpha = (GetMaterialCount() > 0 && GetMaterial(0).GetColor().w < 1.0f);
+				ImGui::TextDisabled("Auto: %s", isAlpha ? "AlphaBlend" : "Opaque");
 			}
 		}
 

@@ -56,7 +56,7 @@ public:
 
 public:
 
-	///		 ファクトリメソッド（よく使う設定のプリセット）			///
+	///		 ファクトリメソッド（プリセット）			///
 
 	/// <summary>
 	/// 3Dオブジェクト用のデフォルト設定を作成
@@ -119,6 +119,11 @@ public:
 	/// カリングモードを設定
 	/// </summary>
 	PSODescriptor& SetCullMode(CullMode mode);
+
+	/// <summary>
+	/// ポリゴンの塗りつぶしモードを設定（D3D12_FILL_MODE_SOLID / D3D12_FILL_MODE_WIREFRAME）
+	/// </summary>
+	PSODescriptor& SetFillMode(D3D12_FILL_MODE mode);
 
 	/// <summary>
 	/// 深度テストの有効/無効と比較関数を設定

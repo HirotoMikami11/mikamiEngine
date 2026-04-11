@@ -1,20 +1,7 @@
 #pragma once
-/// 3Dオブジェクトの描画リクエストを一括管理するレンダラー
-///
-/// Object3D は Draw() 内で AllocateTransform/AllocateMaterial でスロットを確保し、
-/// CPU データを書き込んでから Submit() で描画リクエストを登録する。
-/// 実際の GPU コマンド発行は Draw3D() に集約されており、
-/// PSO は自身で PSOFactory を通じて生成するため DirectXCommon の PSO に依存しない。
-///
-/// 【フレーム毎の呼び出し順】
-/// Engine::StartDrawOffscreen() → BeginFrame()          // リングバッファリセット
-/// Scene::Draw() → Object3D::Draw()
-///   → AllocateTransform() / AllocateMaterial()         // スロット確保 & CPU書き込み
-///   → Submit(submission)                               // キューに積む
-/// Engine::EndDrawOffscreen() → Draw3D()                // GPU コマンド一括発行
-
 #include <vector>
 #include "DirectXCommon.h"
+#include "GraphicsConfig.h"
 #include "PSOFactory.h"
 #include "RootSignatureBuilder.h"
 #include "RenderSubmission.h"
@@ -27,10 +14,10 @@
 /// </summary>
 class Object3DRenderer {
 public:
-	/// <summary>1フレームに描画できる最大 TransformationMatrix スロット数</summary>
-	static constexpr uint32_t kMaxTransforms = 2048;
-	/// <summary>1フレームに描画できる最大 MaterialData スロット数</summary>
-	static constexpr uint32_t kMaxMaterials = 2048;
+	/// <summary>1フレームに描画できる最大 TransformationMatrix スロット数（GraphicsConfig::kMaxObject3DTransforms に集約）</summary>
+	static constexpr uint32_t kMaxTransforms = GraphicsConfig::kMaxObject3DTransforms;
+	/// <summary>1フレームに描画できる最大 MaterialData スロット数（GraphicsConfig::kMaxObject3DMaterials に集約）</summary>
+	static constexpr uint32_t kMaxMaterials = GraphicsConfig::kMaxObject3DMaterials;
 
 	/// <summary>
 	/// シングルトンインスタンスを取得
@@ -80,10 +67,23 @@ public:
 	void Submit(const ModelSubmission& submission);
 
 	/// <summary>
-	/// 積まれた全リクエストをソートして GPU 描画命令を発行する。
+	/// RenderGroup::UI 以外のオブジェクトを GPU 描画する。
 	/// Engine::EndDrawOffscreen() の offscreenRenderer_->PostDraw() より前に呼ぶこと。
 	/// </summary>
-	void Draw3D();
+	void FlushOffscreen();
+
+	/// <summary>
+	/// RenderGroup::UI のオブジェクトを GPU 描画する。
+	/// Engine::EndDrawBackBuffer() から呼ぶこと。
+	/// </summary>
+	void FlushUI();
+
+#ifdef USEIMGUI
+	/// <summary>
+	/// スロット使用量とグループ別描画数をゲージ表示する。Engine::ImGui() から呼ぶこと。
+	/// </summary>
+	void ImGui();
+#endif
 
 private:
 	Object3DRenderer() = default;
@@ -92,16 +92,30 @@ private:
 	Object3DRenderer& operator=(const Object3DRenderer&) = delete;
 
 	/// <summary>
-	/// PSOFactory を使って RootSignature と PSO を生成する
+	/// PSOFactory を使って RootSignature と 4 種類の PSO を生成する
 	/// </summary>
 	void InitializePSO();
+
+	/// <summary>
+	/// uiOnly フラグに応じてフィルタしながら GPU 描画命令を発行する
+	/// </summary>
+	/// <param name="uiOnly">true → RenderGroup::UI のみ、false → UI 以外のみ</param>
+	void Flush(bool uiOnly);
 
 	// DirectXCommon（コマンドリスト・デバイス・PSOFactory 取得に使用）
 	DirectXCommon* dxCommon_ = nullptr;
 
-	// 自前で生成した PSO（RootSignature + PipelineState）
-	// DirectXCommon の PSO は使用しない
-	PSOFactory::PSOInfo pso_;
+	// Opaque PSO（RootSignature を所有。他の PSO はこれを共有する）
+	PSOFactory::PSOInfo psoOpaque_;
+
+	// AlphaBlend PSO（RootSignature は psoOpaque_ から共有）
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> psoAlphaBlend_;
+
+	// Add PSO（RootSignature は psoOpaque_ から共有）
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> psoAdd_;
+
+	// Wireframe PSO（RootSignature は psoOpaque_ から共有）
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> psoWireframe_;
 
 	// フレームリセット式 Upload リングバッファ（TransformationMatrix 用）
 	UploadRingBuffer<TransformationMatrix> transformRingBuffer_;
@@ -112,3 +126,14 @@ private:
 	// 1フレーム分の描画リクエストリスト（BeginFrame でクリア）
 	std::vector<ModelSubmission> submissions_;
 };
+
+/// Object3D は Draw() 内で AllocateTransform/AllocateMaterial でスロットを確保
+/// CPU データを書き込んでから Submit() で描画リクエストを登録する
+/// 
+/// 【フレーム毎の呼び出し順】
+/// Engine::StartDrawOffscreen() → BeginFrame()			// リングバッファリセット
+/// Scene::Draw() → Object3D::Draw()
+///	→ AllocateTransform() / AllocateMaterial()			// スロット確保 & CPU書き込み
+///	→ Submit(submission)								// キューに積む
+/// Engine::EndDrawOffscreen() → FlushOffscreen()		// UI以外のオブジェクトを GPU 描画
+/// Engine::EndDrawBackBuffer() → FlushUI()				// UIオブジェクトを GPU 描画

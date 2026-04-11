@@ -19,7 +19,7 @@ enum class ObjectTag : int
 
 /// <summary>
 /// 処理順テーブル（小さいほど先に処理される）
-/// ObjectTag の宣言順と一致させること
+/// ObjectTag の宣言順と一致させる必要アリ
 /// </summary>
 static constexpr int kObjectUpdateOrder[] = {
 	0,		// Default

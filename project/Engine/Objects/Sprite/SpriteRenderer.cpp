@@ -1,6 +1,7 @@
 #include "SpriteRenderer.h"
 #include <algorithm>
 #include <cassert>
+#include "ImGui/ImGuiManager.h"
 
 SpriteRenderer* SpriteRenderer::GetInstance() {
 	static SpriteRenderer instance;
@@ -78,6 +79,29 @@ void SpriteRenderer::FlushOffscreen() {
 void SpriteRenderer::FlushUI() {
 	Flush(true);// RenderGroup::UI のみ
 }
+
+#ifdef USEIMGUI
+void SpriteRenderer::ImGui() {
+	if (ImGui::CollapsingHeader("SpriteRenderer")) {
+		uint32_t usedT = transformRingBuffer_.GetUsedCount();
+		uint32_t capT = transformRingBuffer_.GetCapacity();
+		ImGui::Text("Transform : %u / %u", usedT, capT);
+		ImGui::ProgressBar(static_cast<float>(usedT) / static_cast<float>(capT),
+			ImVec2(-1.0f, 0.0f));
+
+		uint32_t usedM = materialRingBuffer_.GetUsedCount();
+		uint32_t capM = materialRingBuffer_.GetCapacity();
+		ImGui::Text("Material  : %u / %u", usedM, capM);
+		ImGui::ProgressBar(static_cast<float>(usedM) / static_cast<float>(capM),
+			ImVec2(-1.0f, 0.0f));
+
+		size_t uiCount = std::count_if(submissions_.begin(), submissions_.end(),
+			[](const SpriteSubmission& s) { return s.group == RenderGroup::UI; });
+		ImGui::Text("UI Sprites    : %zu", uiCount);
+		ImGui::Text("World Sprites : %zu", submissions_.size() - uiCount);
+	}
+}
+#endif
 
 void SpriteRenderer::Flush(bool uiOnly) {
 	// 対象グループに描画すべきものがあるか確認

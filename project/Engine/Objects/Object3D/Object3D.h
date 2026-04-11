@@ -3,7 +3,7 @@
 #include <memory>
 #include "DirectXCommon.h"
 #include "Transform3D.h"
-#include "Object3DRenderer.h"  // Submit 先のレンダラー（Object3DCommon の代替）
+#include "Object3DRenderer.h"
 #include "LightManager.h"
 #include "Texture/TextureManager.h"
 #include "Model/ModelManager.h"
@@ -93,6 +93,16 @@ public:
 	const std::string& GetTextureName() const { return textureName_; }
 	bool HasCustomTexture() const { return !textureName_.empty(); }
 
+	// 描画バリアント（Default / Wireframe）
+	void SetPSOVariant(PSOVariant variant) { psoVariant_ = variant; }
+	PSOVariant GetPSOVariant() const { return psoVariant_; }
+
+	// 描画グループ上書き（未設定時はマテリアルのアルファで自動判定）
+	void SetOverrideRenderGroup(RenderGroup group) { overrideRenderGroupEnabled_ = true; overrideRenderGroup_ = group; }
+	void ClearOverrideRenderGroup() { overrideRenderGroupEnabled_ = false; }
+	bool HasOverrideRenderGroup() const { return overrideRenderGroupEnabled_; }
+	RenderGroup GetOverrideRenderGroup() const { return overrideRenderGroup_; }
+
 protected:
 	Transform3D transform_;					// 個別のトランスフォーム
 	Model* sharedModel_ = nullptr;			// 共有モデル（メッシュとテクスチャ）Materialは別途用意することで同じモデルでMaterial情報が変わらないようにする。
@@ -101,6 +111,13 @@ protected:
 	std::string name_ = "Object3D";
 	std::string modelTag_ = "";
 	std::string textureName_ = "";
+
+	// PSO バリアント（Default: 通常描画 / Wireframe: ワイヤーフレーム）
+	PSOVariant psoVariant_ = PSOVariant::Default;
+
+	// 描画グループ上書き設定
+	bool overrideRenderGroupEnabled_ = false;
+	RenderGroup overrideRenderGroup_ = RenderGroup::Opaque;
 
 	// システム参照
 	TextureManager* textureManager_ = TextureManager::GetInstance();

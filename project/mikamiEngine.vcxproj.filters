@@ -417,12 +417,6 @@
     <ClCompile Include="Application\Scene\DebugScenes\DebugScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Objects\Object3D\Object3DCommon.cpp">
-      <Filter>Engine\Objects\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Objects\Sprite\SpriteCommon.cpp">
-      <Filter>Engine\Objects\Sprite</Filter>
-    </ClCompile>
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>extarnals\imgui</Filter>
     </ClCompile>
@@ -528,7 +522,7 @@
     <ClCompile Include="Engine\Objects\Light\SpotLight.cpp">
       <Filter>Engine\Objects\Light</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\DebugScenes\DebugSphere.cpp">
+    <ClCompile Include="Application\GameObject\DebugObject\DebugSphere.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Framework\Framework.cpp">
@@ -543,10 +537,10 @@
     <ClCompile Include="Application\Scene\DebugScenes\MojiTestScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\DebugScenes\ShapeRecognizer.cpp">
+    <ClCompile Include="Application\System\ShapeRecognizer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\DebugScenes\Dollar1Recognizer.cpp">
+    <ClCompile Include="Application\System\Dollar1Recognizer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Application\Scene\GameScenes\GameScene.cpp">
@@ -586,6 +580,12 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Application\Scene\BaseScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Sprite\SpriteRenderer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Objects\Object3D\Object3DRenderer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -805,12 +805,6 @@
     <ClInclude Include="Engine\Core\Logger\LeakChecker.h">
       <Filter>Engine\BaseSystem\Logger</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\Object3D\Object3DCommon.h">
-      <Filter>Engine\Objects\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Objects\Sprite\SpriteCommon.h">
-      <Filter>Engine\Objects\Sprite</Filter>
-    </ClInclude>
     <ClInclude Include="externals\imgui\imconfig.h">
       <Filter>extarnals\imgui</Filter>
     </ClInclude>
@@ -940,7 +934,7 @@
     <ClInclude Include="Engine\Objects\Light\SpotLight.h">
       <Filter>Engine\Objects\Light</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\DebugScenes\DebugSphere.h">
+    <ClInclude Include="Application\GameObject\DebugObject\DebugSphere.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Framework\Framework.h">
@@ -955,10 +949,10 @@
     <ClInclude Include="Application\Scene\DebugScenes\MojiTestScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\DebugScenes\ShapeRecognizer.h">
+    <ClInclude Include="Application\System\ShapeRecognizer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\DebugScenes\Dollar1Recognizer.h">
+    <ClInclude Include="Application\System\Dollar1Recognizer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\GameScenes\GameScene.h">
@@ -1007,6 +1001,18 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\GameObject\DebugObject\TestShooter\TestBullet.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Sprite\SpriteRenderer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\UploadRingBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\RenderSubmission.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Objects\Object3D\Object3DRenderer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,21 +1,7 @@
 #pragma once
-/// スプライトの描画リクエストを一括管理するレンダラー
-///
-/// Sprite は Draw() 内で AllocateTransform/AllocateMaterial でスロットを確保し、
-/// CPU データを書き込んでから Submit() で描画リクエストを登録する。
-/// 実際の GPU コマンド発行は Flush 系メソッドに集約されており、
-/// PSO は自身で PSOFactory を通じて生成するため DirectXCommon の PSO に依存しない。
-///
-/// 【フレーム毎の呼び出し順】
-/// Engine::StartDrawOffscreen() → BeginFrame()              // リングバッファリセット
-/// Scene::Draw() → Sprite::Draw()
-///   → AllocateTransform() / AllocateMaterial()             // スロット確保 & CPU書き込み
-///   → Submit(submission)                                   // キューに積む
-/// Engine::EndDrawOffscreen() → FlushOffscreen()            // UI以外のスプライトを GPU 描画
-/// Engine::EndDrawBackBuffer() → FlushUI()                  // UI スプライトを GPU 描画
-
 #include <vector>
 #include "DirectXCommon.h"
+#include "GraphicsConfig.h"
 #include "PSOFactory.h"
 #include "RootSignatureBuilder.h"
 #include "RenderSubmission.h"
@@ -28,8 +14,8 @@
 /// </summary>
 class SpriteRenderer {
 public:
-	/// <summary>1フレームに描画できる最大スプライト枚数</summary>
-	static constexpr uint32_t kMaxSprites = 1024;
+	/// <summary>1フレームに描画できる最大スプライト枚数（GraphicsConfig::kMaxSprites に集約）</summary>
+	static constexpr uint32_t kMaxSprites = GraphicsConfig::kMaxSprites;
 
 	/// <summary>
 	/// シングルトンインスタンスを取得
@@ -76,6 +62,13 @@ public:
 	/// <param name="submission">Sprite::Draw() で構築した描画データ</param>
 	void Submit(const SpriteSubmission& submission);
 
+#ifdef USEIMGUI
+	/// <summary>
+	/// スロット使用量をゲージ表示する。Engine::ImGui() から呼ぶこと。
+	/// </summary>
+	void ImGui();
+#endif
+
 	/// <summary>
 	/// RenderGroup::UI 以外のスプライトを GPU 描画する。
 	/// Engine::EndDrawOffscreen() の PostDraw() より前に呼ぶこと。
@@ -120,3 +113,13 @@ private:
 	// 1フレーム分の描画リクエストリスト（BeginFrame でクリア）
 	std::vector<SpriteSubmission> submissions_;
 };
+
+/// Sprite は Draw() 内で AllocateTransform/AllocateMaterial でスロットを確保
+/// CPU データを書き込んでから Submit() で描画リクエストを登録する
+/// 【フレーム毎の呼び出し順】
+/// Engine::StartDrawOffscreen() → BeginFrame()		// リングバッファリセット
+/// Scene::Draw() → Sprite::Draw()
+/// → AllocateTransform() / AllocateMaterial()		// スロット確保 & CPU書き込み
+/// → Submit(submission)							// キューに積む
+/// Engine::EndDrawOffscreen() → FlushOffscreen()	// UI以外のスプライトを GPU 描画
+/// Engine::EndDrawBackBuffer() → FlushUI()			// UI スプライトを GPU 描画

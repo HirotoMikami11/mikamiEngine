@@ -8,9 +8,7 @@ static constexpr float PI_F = 3.14159265358979323846f;
 static constexpr float PHI_F = 0.61803398874989484820f;
 
 #ifdef USEIMGUI
-// ================================================================
 // GetInstance / コンストラクタ
-// ================================================================
 Dollar1Recognizer* Dollar1Recognizer::GetInstance() {
 	static Dollar1Recognizer instance;
 	return &instance;
@@ -27,10 +25,8 @@ Dollar1Recognizer::Dollar1Recognizer() {
 	AddTemplate("omega", MakeOmegaTemplate());
 }
 
-// ================================================================
-// テンプレート生成
-// ================================================================
 
+// テンプレート生成
 // まる: 12時（上）からスタート → 時計回りに一周
 std::vector<ImVec2> Dollar1Recognizer::MakeCircleTemplate() {
 	std::vector<ImVec2> pts;
@@ -230,6 +226,7 @@ void Dollar1Recognizer::AddTemplate(const std::string& name,
 //   完全な円 = 1.0、正方形 ≈ 0.785、三角形 ≈ 0.60
 //   正規化前の生の点列に対して計算する
 // ================================================================
+
 float Dollar1Recognizer::ComputeCircularity(const std::vector<ImVec2>& pts) {
 	if (pts.size() < 3) return 0.f;
 
@@ -301,9 +298,7 @@ DollarResult Dollar1Recognizer::Recognize(const std::vector<ImVec2>& rawPoints) 
 	return result;
 }
 
-// ================================================================
 // Normalize
-// ================================================================
 std::vector<ImVec2> Dollar1Recognizer::Normalize(const std::vector<ImVec2>& pts) {
 	auto r = Resample(pts, NUM_POINTS);
 	r = RotateByIndicativeAngle(r);
@@ -312,9 +307,7 @@ std::vector<ImVec2> Dollar1Recognizer::Normalize(const std::vector<ImVec2>& pts)
 	return r;
 }
 
-// ================================================================
 // Utility
-// ================================================================
 float Dollar1Recognizer::Dist(ImVec2 a, ImVec2 b) {
 	float dx = a.x - b.x, dy = a.y - b.y;
 	return std::sqrt(dx * dx + dy * dy);
@@ -462,6 +455,7 @@ float Dollar1Recognizer::DistanceAtBestAngle(const std::vector<ImVec2>& pts,
 //   - 四角は①左上、②右上、③右下、④左下
 //   - DrawAllGuides: 3種を横並びで一覧表示するまとめ関数を追加
 // ================================================================
+
 namespace StrokeGuide {
 
 	// ---- 共通ヘルパー ------------------------------------------------
@@ -735,6 +729,6 @@ namespace StrokeGuide {
 
 	void DrawArrow(ImDrawList*, ImVec2, ImVec2, ImU32, float) {}
 
-} // namespace StrokeGuide
+}
 
 #endif

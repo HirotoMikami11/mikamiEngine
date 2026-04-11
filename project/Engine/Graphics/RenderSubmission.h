@@ -1,23 +1,17 @@
 #pragma once
-/// @file RenderSubmission.h
-/// @brief Renderer に Submit するデータ構造体の定義
-/// @details
-///   Object3D や Sprite が Draw() 内で Renderer へ渡す描画リクエストの型定義。
-///   GPU命令は含まない。純粋なデータ構造のみ。
-///
-///   【データフロー】
-///   Object3D::Draw(renderer)
-///     → UploadRingBuffer から Allocation を取得してCPUデータを書き込む
-///     → ModelSubmission を構築して renderer->Submit() に渡す
-///     ↓（GPU命令なし）
-///   Object3DRenderer::Draw3D()
-///     → submissions_ を処理してGPU描画命令を発行
-
 #include <d3d12.h>
 #include <cstdint>
-
-// Mesh クラスの前方宣言
+// Mesh前方宣言
 class Mesh;
+
+
+/// <summary>
+/// PSO バリアント。描画パスの種類を指定する。
+/// </summary>
+enum class PSOVariant {
+	Default,    /// 通常描画
+	Wireframe,  /// ワイヤーフレーム
+};
 
 /// <summary>
 /// 描画グループ。ソート順とステート変更の最適化に使用する。
@@ -31,7 +25,7 @@ enum class RenderGroup {
 
 /// <summary>
 /// 3Dオブジェクト 1メッシュ分の Submit データ
-/// transformGpuAddr / materialGpuAddr は UploadRingBuffer::Allocate() で取得したアドレスを設定する。
+/// transformGpuAddr / materialGpuAddr は UploadRingBuffer::Allocate() で取得したアドレスを設定する
 /// </summary>
 struct ModelSubmission {
 	const Mesh* mesh;							/// 描画するメッシュ（ModelManager共有ポインタ）
@@ -40,6 +34,7 @@ struct ModelSubmission {
 	D3D12_GPU_DESCRIPTOR_HANDLE textureHandle;	/// テクスチャ SRV の GPUハンドル
 	RenderGroup group;							/// 描画グループ（ソート・ステート最適化に使用）
 	float sortDepth;							/// カメラ空間Z値（AlphaBlend/Add の奥から手前ソートに使用）
+	PSOVariant psoVariant = PSOVariant::Default;/// PSO バリアント（Default / Wireframe）
 };
 
 /// <summary>
@@ -56,3 +51,14 @@ struct SpriteSubmission {
 	int layerOrder;									/// 描画順（値が小さいほど先に描画される）
 	RenderGroup group = RenderGroup::UI;			/// 描画グループ（デフォルトは UI）
 };
+
+/// Object3D や Sprite が Draw() 内で Renderer へ渡す描画リクエストの型定義。
+/// GPU命令は含まない。純粋なデータ構造のみ。
+///
+/// 【データフロー】
+///	Object3D::Draw(renderer)
+///		→ UploadRingBuffer から Allocation を取得してCPUデータを書き込む
+///		→ ModelSubmission を構築して renderer->Submit() に渡す
+///		↓（GPU命令なし）
+///	Object3DRenderer::FlushOffscreen() / FlushUI()
+///		→ submissions_ を処理してGPU描画命令を発行

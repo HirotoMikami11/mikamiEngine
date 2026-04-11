@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "DirectXCommon.h"
+#include "GraphicsConfig.h"
 #include "PSOFactory.h"
 #include "RootSignatureBuilder.h"
 #include "MyFunction.h"
@@ -12,10 +13,10 @@
 /// 線分用の頂点データ構造体
 /// </summary>
 struct LineVertex {
-	Vector4 position;  // xyz座標 + w
-	Vector4 color;     // RGBA色
-	Vector2 texcoord;  // テクスチャ座標（未使用だが互換性のため）
-	Vector3 normal;    // 法線（未使用だが互換性のため）
+	Vector4 position;	// xyz座標 + w
+	Vector4 color;		// RGBA色
+	Vector2 texcoord;	// テクスチャ座標（未使用だが互換性のため）
+	Vector3 normal;		// 法線（未使用だが互換性のため）
 };
 
 /// <summary>
@@ -32,8 +33,8 @@ struct LineData {
 /// </summary>
 class LineRenderer {
 public:
-	// 線分の最大数(2^15)
-	static const uint32_t kMaxLineCount = 32768;
+	// 線分の最大数
+	static const uint32_t kMaxLineCount = GraphicsConfig::kMaxLineCount;
 	// 線分の頂点数
 	static const uint32_t kVertexCountPerLine = 2;
 

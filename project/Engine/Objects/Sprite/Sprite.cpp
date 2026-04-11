@@ -95,7 +95,7 @@ void Sprite::Draw()
 		submission.textureHandle = textureManager_->GetTextureHandle(textureName_);
 	}
 	submission.layerOrder = layerOrder_;
-	submission.group = RenderGroup::UI;
+	submission.group = renderGroup_;
 
 	renderer->Submit(submission);
 }
@@ -160,6 +160,16 @@ void Sprite::ImGui()
 			if (ImGui::DragFloat("TexSize.y", &texSize_.y, 1.0f, 0, maxTextureSize.y)) {
 				SetTextureRect(texLeftTop_, texSize_);
 			}
+		}
+
+		// 描画設定
+		if (ImGui::CollapsingHeader("Render Settings")) {
+			const char* groupNames[] = { "Opaque", "AlphaBlend", "Add", "UI" };
+			int currentGroup = static_cast<int>(renderGroup_);
+			if (ImGui::Combo("RenderGroup", &currentGroup, groupNames, IM_ARRAYSIZE(groupNames))) {
+				renderGroup_ = static_cast<RenderGroup>(currentGroup);
+			}
+			ImGui::DragInt("LayerOrder", &layerOrder_);
 		}
 
 		// テクスチャ設定

@@ -4,9 +4,7 @@
 #include <algorithm>
 #include <cassert>
 
-// ================================================================
 //  チューニング用定数 — ここを調整して精度を上げる 
-// ================================================================
 namespace Cfg {
 	// Step2: 真円度の閾値
 	constexpr float CIRCLE_CIRCULARITY_HIGH = 0.75f; // これ以上なら円の強い候補
@@ -38,9 +36,7 @@ namespace Cfg {
 }
 
 #ifdef USEIMGUI
-// ================================================================
 // Utility
-// ================================================================
 static constexpr float PI_F = 3.14159265358979323846f;
 
 float ShapeRecognizer::Dist(ImVec2 a, ImVec2 b) {
@@ -55,10 +51,8 @@ float ShapeRecognizer::PathLength(const std::vector<ImVec2>& pts) {
 	return len;
 }
 
-// ================================================================
 // Resample: N点に等間隔リサンプリング
 // 点の密度が速度依存するのを解消する
-// ================================================================
 std::vector<ImVec2> ShapeRecognizer::Resample(const std::vector<ImVec2>& pts, int n) {
 	if (pts.empty()) return {};
 	float I = PathLength(pts) / float(n - 1);
@@ -93,9 +87,7 @@ std::vector<ImVec2> ShapeRecognizer::Resample(const std::vector<ImVec2>& pts, in
 	return result;
 }
 
-// ================================================================
 // CheckClosed: 始点〜終点の距離がストローク全長の ratio 以下か
-// ================================================================
 bool ShapeRecognizer::CheckClosed(const std::vector<ImVec2>& pts, float ratio) {
 	float totalLen = PathLength(pts);
 	if (totalLen < 1e-5f) return false;
@@ -103,10 +95,9 @@ bool ShapeRecognizer::CheckClosed(const std::vector<ImVec2>& pts, float ratio) {
 	return endDist < totalLen * ratio;
 }
 
-// ================================================================
+
 // ComputeCircularity: 4π×Area / Perimeter²
 // 完全な円なら 1.0、ガタつくほど 0 に近づく
-// ================================================================
 float ShapeRecognizer::ComputeCircularity(const std::vector<ImVec2>& pts) {
 	// Shoelace formula で面積
 	float area = 0.f;
@@ -125,11 +116,10 @@ float ShapeRecognizer::ComputeCircularity(const std::vector<ImVec2>& pts) {
 	return (4.f * PI_F * area) / (perimeter * perimeter);
 }
 
-// ================================================================
+
 // ComputeCurvatures: 各点の方向変化角(ラジアン絶対値)
 // 円: 全点で均一な小さな値
 // 四角: 4箇所で大きくなりそれ以外は0に近い
-// ================================================================
 std::vector<float> ShapeRecognizer::ComputeCurvatures(const std::vector<ImVec2>& pts) {
 	int n = (int)pts.size();
 	std::vector<float> curv(n, 0.f);
@@ -155,10 +145,9 @@ float ShapeRecognizer::ComputeVariance(const std::vector<float>& v) {
 	return var / float(v.size());
 }
 
-// ================================================================
+
 // CountSpikes: 閾値以上の曲率ピークをクラスタリングして数える
 // クールダウンで近接する激しい変化を1コーナーとしてまとめる
-// ================================================================
 int ShapeRecognizer::CountSpikes(const std::vector<float>& curv, float threshDeg) {
 	float thresh = threshDeg * PI_F / 180.f;
 	int spikes = 0;
@@ -174,9 +163,7 @@ int ShapeRecognizer::CountSpikes(const std::vector<float>& curv, float threshDeg
 	return spikes;
 }
 
-// ================================================================
 // RDP (Ramer-Douglas-Peucker): 折れ線を最小点数に簡略化
-// ================================================================
 static void RDPHelper(const std::vector<ImVec2>& pts, int s, int e,
 	float eps, std::vector<bool>& keep) {
 	if (e <= s + 1) return;
@@ -218,10 +205,9 @@ std::vector<ImVec2> ShapeRecognizer::RDP(const std::vector<ImVec2>& pts, float e
 	return result;
 }
 
-// ================================================================
+
 // CornerAngle: 頂点 b における内角(度)
 // a→b→c の折れ角を返す
-// ================================================================
 float ShapeRecognizer::CornerAngle(ImVec2 a, ImVec2 b, ImVec2 c) {
 	float ax = a.x - b.x, ay = a.y - b.y;
 	float cx = c.x - b.x, cy = c.y - b.y;
@@ -255,9 +241,7 @@ bool ShapeRecognizer::VerifyAsSquare(const std::vector<ImVec2>& corners) {
 	return true;
 }
 
-// ================================================================
 // Recognize メイン
-// ================================================================
 RecognitionResult ShapeRecognizer::Recognize(const std::vector<ImVec2>& rawPoints) {
 	RecognitionResult result;
 	if ((int)rawPoints.size() < 10) return result; // 点が少なすぎ

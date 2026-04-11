@@ -1,36 +1,12 @@
 #pragma once
-/// @file UploadRingBuffer.h
-/// @brief フレームごとにリセットする定数バッファ用アップロードリングバッファ
-/// @details
-///   D3D12のCBV要件（256バイトアライン）を満たしながら、大量の定数バッファを
-///   効率的に管理するためのテンプレートクラス。
-///
-///   【設計方針】
-///   - 起動時に capacity 個分のUPLOADヒープを1回だけ確保する
-///   - BeginFrame() でカウンタを0にリセットするだけ（O(1)、再確保なし）
-///   - Allocate() でCPUポインタとGPUアドレスのペアを返す
-///   - Free() は不要（フレームリセットで自動解放）
-///
-///   【使用例】
-///   // 初期化（起動時に1回）
-///   UploadRingBuffer<TransformationMatrix> ring;
-///   ring.Initialize(device, 2048);
-///
-///   // フレーム先頭（Engine::StartDrawOffscreen内）
-///   ring.BeginFrame();
-///
-///   // 使用時（Object3D::Draw内など）
-///   auto alloc = ring.Allocate();
-///   alloc.cpuPtr->WVP = wvpMatrix;
-///   commandList->SetGraphicsRootConstantBufferView(1, alloc.gpuAddr);
-
 #include <d3d12.h>
 #include <wrl.h>
 #include <cassert>
 #include "MyFunction.h"
 
 /// <summary>
-/// バッファに格納するデータ型（TransformationMatrix, MaterialData など）
+/// バッファに格納するデータ型
+/// TransformationMatrix, MaterialData など
 /// </summary>
 template<typename T>
 
