@@ -246,7 +246,7 @@ void Object3D::ImGui() {
 			// 描画グループ上書き
 			ImGui::Checkbox("Override RenderGroup", &overrideRenderGroupEnabled_);
 			if (overrideRenderGroupEnabled_) {
-				const char* groupNames[] = { "Opaque", "AlphaBlend", "Add", "UI" };
+				const char* groupNames[] = { "Opaque", "AlphaBlend", "Add", "OutSideOffScreen" };
 				int currentGroup = static_cast<int>(overrideRenderGroup_);
 				if (ImGui::Combo("RenderGroup", &currentGroup, groupNames, IM_ARRAYSIZE(groupNames))) {
 					overrideRenderGroup_ = static_cast<RenderGroup>(currentGroup);

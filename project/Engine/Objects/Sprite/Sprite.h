@@ -132,7 +132,7 @@ public:
 	//レイヤー順番の指定
 	void SetLayerOrder(int layerOrder) { layerOrder_ = layerOrder; }
 
-	// 描画グループの指定（デフォルト UI、世界空間スプライトは Opaque/AlphaBlend 等に変更）
+	// 描画グループの指定（デフォルト UI、スプライトは Opaque/AlphaBlend 等に変更）
 	void SetRenderGroup(RenderGroup group) { renderGroup_ = group; }
 	RenderGroup GetRenderGroup() const { return renderGroup_; }
 
@@ -206,8 +206,8 @@ private:
 	// TODO: 現状仮置きだが、レイヤー管理もいずれ実装
 	int layerOrder_ = 0;
 
-	// 描画グループ（デフォルトは UI）
-	RenderGroup renderGroup_ = RenderGroup::UI;
+	// 描画グループ（デフォルトは OutSideOffScreen）
+	RenderGroup renderGroup_ = RenderGroup::OutSideOffScreen;
 
 	// メッシュデータ（VB/IB は Sprite が所有し続ける）
 	std::vector<VertexData> vertices_;

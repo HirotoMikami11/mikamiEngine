@@ -58,7 +58,7 @@ void DemoScene::OnInitialize()
 	modelMultiMesh_ = std::make_unique<Model3D>();
 	modelMultiMesh_->Initialize(dxCommon_, "model_MultiMesh");
 	modelMultiMesh_->SetTransform({ {1.0f,1.0f,1.0f}, {0.0f,3.0f,0.0f}, {-5.31f,-0.3f,3.7f} });
-	modelMultiMesh_->SetOverrideRenderGroup(RenderGroup::UI);	//オフスクリーンの外で描画されるようにする
+	modelMultiMesh_->SetOverrideRenderGroup(RenderGroup::OutSideOffScreen);	//オフスクリーンの外で描画されるようにする
 
 	modelMultiMaterial_ = std::make_unique<Model3D>();
 	modelMultiMaterial_->Initialize(dxCommon_, "model_MultiMaterial");

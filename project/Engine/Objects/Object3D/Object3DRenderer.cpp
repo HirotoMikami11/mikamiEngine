@@ -36,20 +36,20 @@ void Object3DRenderer::InitializePSO() {
 
 	// --- RootSignature 構築 ---
 	// Object3d シェーダーのルートパラメータ対応（Object3d.VS.hlsl / Object3d.PS.hlsl）:
-	//  [0] b0 PIXEL_SHADER  → MaterialData         (Material CBV)
-	//  [1] b0 VERTEX_SHADER → TransformationMatrix  (Transform CBV)
-	//  [2] t0 PIXEL_SHADER  → Texture2D             (SRV DescriptorTable)
-	//  [3] b1 PIXEL_SHADER  → LightingData          (Lighting CBV)
-	//  [4] b2 PIXEL_SHADER  → CameraForGPU          (Camera CBV)
-	//  s0 PIXEL_SHADER      → SamplerState          (StaticSampler)
+	//  [0] b0 PIXEL_SHADER  → MaterialData			(Material CBV)
+	//  [1] b0 VERTEX_SHADER → TransformationMatrix	(Transform CBV)
+	//  [2] t0 PIXEL_SHADER  → Texture2D			(SRV DescriptorTable)
+	//  [3] b1 PIXEL_SHADER  → LightingData			(Lighting CBV)
+	//  [4] b2 PIXEL_SHADER  → CameraForGPU			(Camera CBV)
+	//  s0 PIXEL_SHADER      → SamplerState			(StaticSampler)
 	RootSignatureBuilder rsBuilder;
 	rsBuilder
-		.AddCBV(0, D3D12_SHADER_VISIBILITY_PIXEL)       // [0] Material
-		.AddCBV(0, D3D12_SHADER_VISIBILITY_VERTEX)      // [1] Transform
-		.AddSRV(0, 1, D3D12_SHADER_VISIBILITY_PIXEL)    // [2] Texture
-		.AddCBV(1, D3D12_SHADER_VISIBILITY_PIXEL)       // [3] Lighting
-		.AddCBV(2, D3D12_SHADER_VISIBILITY_PIXEL)       // [4] Camera
-		.AddStaticSampler(0);                           // s0 Sampler
+		.AddCBV(0, D3D12_SHADER_VISIBILITY_PIXEL)	// [0] Material
+		.AddCBV(0, D3D12_SHADER_VISIBILITY_VERTEX)	// [1] Transform
+		.AddSRV(0, 1, D3D12_SHADER_VISIBILITY_PIXEL)// [2] Texture
+		.AddCBV(1, D3D12_SHADER_VISIBILITY_PIXEL)	// [3] Lighting
+		.AddCBV(2, D3D12_SHADER_VISIBILITY_PIXEL)	// [4] Camera
+		.AddStaticSampler(0);						// s0 Sampler
 
 	// --- Opaque PSO（RootSignature を所有）---
 	// BlendMode::None + 深度書き込み有効（デフォルト設定）
@@ -110,11 +110,11 @@ void Object3DRenderer::Submit(const ModelSubmission& submission) {
 }
 
 void Object3DRenderer::FlushOffscreen() {
-	Flush(false); // RenderGroup != UI
+	Flush(false); // RenderGroup != OutSideOffScreen
 }
 
 void Object3DRenderer::FlushUI() {
-	Flush(true); // RenderGroup::UI のみ
+	Flush(true); // RenderGroup::OutSideOffScreen のみ
 }
 
 #ifdef USEIMGUI
@@ -136,9 +136,9 @@ void Object3DRenderer::ImGui() {
 		for (const auto& s : submissions_) {
 			if (s.psoVariant == PSOVariant::Wireframe) { wireCount++; continue; }
 			switch (s.group) {
-			case RenderGroup::Opaque:     opaqueCount++; break;
-			case RenderGroup::AlphaBlend: alphaCount++;  break;
-			case RenderGroup::Add:        addCount++;    break;
+			case RenderGroup::Opaque:		opaqueCount++; break;
+			case RenderGroup::AlphaBlend:	alphaCount++;  break;
+			case RenderGroup::Add:			addCount++;    break;
 			default: break;
 			}
 		}
@@ -154,7 +154,7 @@ void Object3DRenderer::Flush(bool uiOnly) {
 	// 対象グループに描画すべきものがあるか確認
 	bool hasAny = false;
 	for (const auto& sub : submissions_) {
-		if ((sub.group == RenderGroup::UI) == uiOnly) {
+		if ((sub.group == RenderGroup::OutSideOffScreen) == uiOnly) {
 			hasAny = true;
 			break;
 		}
@@ -202,7 +202,7 @@ void Object3DRenderer::Flush(bool uiOnly) {
 	ID3D12PipelineState* currentPSO = nullptr;
 
 	for (const ModelSubmission& sub : submissions_) {
-		if ((sub.group == RenderGroup::UI) != uiOnly) continue;
+		if ((sub.group == RenderGroup::OutSideOffScreen) != uiOnly) continue;
 
 		// PSOVariant と RenderGroup から使用する PSO を決定する
 		ID3D12PipelineState* targetPSO;
@@ -210,9 +210,9 @@ void Object3DRenderer::Flush(bool uiOnly) {
 			targetPSO = psoWireframe_.Get();
 		} else {
 			switch (sub.group) {
-			case RenderGroup::AlphaBlend: targetPSO = psoAlphaBlend_.Get(); break;
-			case RenderGroup::Add:        targetPSO = psoAdd_.Get();        break;
-			default:                      targetPSO = psoOpaque_.pipelineState.Get(); break;
+			case RenderGroup::AlphaBlend:	targetPSO = psoAlphaBlend_.Get(); break;
+			case RenderGroup::Add:			targetPSO = psoAdd_.Get();        break;
+			default:						targetPSO = psoOpaque_.pipelineState.Get(); break;
 			}
 		}
 

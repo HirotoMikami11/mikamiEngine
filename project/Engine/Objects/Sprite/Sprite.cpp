@@ -164,7 +164,7 @@ void Sprite::ImGui()
 
 		// 描画設定
 		if (ImGui::CollapsingHeader("Render Settings")) {
-			const char* groupNames[] = { "Opaque", "AlphaBlend", "Add", "UI" };
+			const char* groupNames[] = { "Opaque", "AlphaBlend", "Add", "OutSideOffScreen" };
 			int currentGroup = static_cast<int>(renderGroup_);
 			if (ImGui::Combo("RenderGroup", &currentGroup, groupNames, IM_ARRAYSIZE(groupNames))) {
 				renderGroup_ = static_cast<RenderGroup>(currentGroup);
