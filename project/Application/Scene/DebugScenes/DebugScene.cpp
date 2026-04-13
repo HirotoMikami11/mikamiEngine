@@ -36,6 +36,10 @@ void DebugScene::OnInitialize()
 	testPlayer_ = testPlayer.get();
 	gameObjectManager_.AddObject(std::move(testPlayer));
 
+	auto debugSprite = std::make_unique<DebugSprite>();
+	debugSprite_ = debugSprite.get();
+	gameObjectManager_.AddObject(std::move(debugSprite));
+
 	auto testWall = std::make_unique<TestWall>();
 	testWall_ = testWall.get();
 	gameObjectManager_.AddObject(std::move(testWall));
@@ -125,6 +129,7 @@ void DebugScene::OnFinalize()
 {
 	// 生ポインタの nullptr 化
 	testPlayer_ = nullptr;
+	debugSprite_ = nullptr;
 	testWall_ = nullptr;
 	testObject_ = nullptr;
 	testShooter_ = nullptr;

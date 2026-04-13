@@ -36,12 +36,12 @@ void Object3DRenderer::InitializePSO() {
 
 	// --- RootSignature 構築 ---
 	// Object3d シェーダーのルートパラメータ対応（Object3d.VS.hlsl / Object3d.PS.hlsl）:
-	//  [0] b0 PIXEL_SHADER  → MaterialData			(Material CBV)
-	//  [1] b0 VERTEX_SHADER → TransformationMatrix	(Transform CBV)
-	//  [2] t0 PIXEL_SHADER  → Texture2D			(SRV DescriptorTable)
-	//  [3] b1 PIXEL_SHADER  → LightingData			(Lighting CBV)
-	//  [4] b2 PIXEL_SHADER  → CameraForGPU			(Camera CBV)
-	//  s0 PIXEL_SHADER      → SamplerState			(StaticSampler)
+	//  [0] b0 PIXEL_SHADER	→ MaterialData			(Material CBV)
+	//  [1] b0 VERTEX_SHADER→ TransformationMatrix	(Transform CBV)
+	//  [2] t0 PIXEL_SHADER	→ Texture2D				(SRV DescriptorTable)
+	//  [3] b1 PIXEL_SHADER	→ LightingData			(Lighting CBV)
+	//  [4] b2 PIXEL_SHADER	→ CameraForGPU			(Camera CBV)
+	//  s0 PIXEL_SHADER		→ SamplerState			(StaticSampler)
 	RootSignatureBuilder rsBuilder;
 	rsBuilder
 		.AddCBV(0, D3D12_SHADER_VISIBILITY_PIXEL)	// [0] Material

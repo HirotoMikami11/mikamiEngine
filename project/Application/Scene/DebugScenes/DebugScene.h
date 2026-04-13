@@ -2,6 +2,7 @@
 #include <memory>
 #include "BaseScene.h"
 #include "DebugObject/TestPlayer/TestPlayer.h"
+#include "DebugObject/TestSprite/DebugSprite.h"
 #include "DebugObject/TestWall/TestWall.h"
 #include "DebugObject/TestObject/TestObject.h"
 #include "DebugObject/TestShooter/TestShooter.h"
@@ -40,6 +41,7 @@ private:
 
 	// ゲームオブジェクト
 	TestPlayer* testPlayer_ = nullptr;
+	DebugSprite* debugSprite_ = nullptr;
 	TestWall* testWall_ = nullptr;
 	TestObject* testObject_ = nullptr;
 	TestShooter* testShooter_ = nullptr;

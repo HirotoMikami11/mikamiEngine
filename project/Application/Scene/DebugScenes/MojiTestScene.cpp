@@ -68,14 +68,14 @@ void MojiTestScene::OnImGui() {
 	// ハイライトインデックス計算（ガイドとキャンバス両ウィンドウで共有）
 	int highlight = -1;
 	if (hasResult_ && lastResult_.matched) {
-		if (lastResult_.name == "circle")    highlight = 0;
-		else if (lastResult_.name == "triangle")  highlight = 1;
-		else if (lastResult_.name == "square")    highlight = 2;
-		else if (lastResult_.name == "star")      highlight = 3;
-		else if (lastResult_.name == "check")     highlight = 4;
-		else if (lastResult_.name == "lightning") highlight = 5;
-		else if (lastResult_.name == "spiral")    highlight = 6;
-		else if (lastResult_.name == "omega")     highlight = 7;
+		if (lastResult_.name == "circle")			highlight = 0;
+		else if (lastResult_.name == "triangle")	highlight = 1;
+		else if (lastResult_.name == "square")		highlight = 2;
+		else if (lastResult_.name == "star")		highlight = 3;
+		else if (lastResult_.name == "check")		highlight = 4;
+		else if (lastResult_.name == "lightning")	highlight = 5;
+		else if (lastResult_.name == "spiral")		highlight = 6;
+		else if (lastResult_.name == "omega")		highlight = 7;
 	}
 
 
@@ -129,14 +129,14 @@ void MojiTestScene::OnImGui() {
 			borderW = 2.5f;
 		} else if (hasResult_) {
 			if (lastResult_.matched) {
-				if (lastResult_.name == "circle")    borderCol = IM_COL32(255, 200, 60, 200);
-				else if (lastResult_.name == "triangle")  borderCol = IM_COL32(100, 220, 130, 200);
-				else if (lastResult_.name == "square")    borderCol = IM_COL32(100, 160, 255, 200);
-				else if (lastResult_.name == "star")      borderCol = IM_COL32(230, 130, 255, 200);
-				else if (lastResult_.name == "check")     borderCol = IM_COL32(60, 220, 180, 200);
-				else if (lastResult_.name == "lightning") borderCol = IM_COL32(255, 220, 40, 200);
-				else if (lastResult_.name == "spiral")    borderCol = IM_COL32(60, 210, 200, 200);
-				else if (lastResult_.name == "omega")     borderCol = IM_COL32(230, 160, 80, 200);
+				if (lastResult_.name == "circle")			borderCol = IM_COL32(255, 200, 60, 200);
+				else if (lastResult_.name == "triangle")	borderCol = IM_COL32(100, 220, 130, 200);
+				else if (lastResult_.name == "square")		borderCol = IM_COL32(100, 160, 255, 200);
+				else if (lastResult_.name == "star")		borderCol = IM_COL32(230, 130, 255, 200);
+				else if (lastResult_.name == "check")		borderCol = IM_COL32(60, 220, 180, 200);
+				else if (lastResult_.name == "lightning")	borderCol = IM_COL32(255, 220, 40, 200);
+				else if (lastResult_.name == "spiral")		borderCol = IM_COL32(60, 210, 200, 200);
+				else if (lastResult_.name == "omega")		borderCol = IM_COL32(230, 160, 80, 200);
 				borderW = 2.f;
 			} else {
 				borderCol = IM_COL32(200, 70, 70, 200);
@@ -180,14 +180,14 @@ void MojiTestScene::OnImGui() {
 			ImU32 strokeCol = IM_COL32(220, 220, 220, 210);
 			if (hasResult_) {
 				if (lastResult_.matched) {
-					if (lastResult_.name == "circle")    strokeCol = IM_COL32(255, 200, 60, 255);
-					else if (lastResult_.name == "triangle")  strokeCol = IM_COL32(100, 220, 130, 255);
-					else if (lastResult_.name == "square")    strokeCol = IM_COL32(100, 160, 255, 255);
-					else if (lastResult_.name == "star")      strokeCol = IM_COL32(230, 130, 255, 255);
-					else if (lastResult_.name == "check")     strokeCol = IM_COL32(60, 220, 180, 255);
-					else if (lastResult_.name == "lightning") strokeCol = IM_COL32(255, 220, 40, 255);
-					else if (lastResult_.name == "spiral")    strokeCol = IM_COL32(60, 210, 200, 255);
-					else if (lastResult_.name == "omega")     strokeCol = IM_COL32(230, 160, 80, 255);
+					if (lastResult_.name == "circle")			strokeCol = IM_COL32(255, 200, 60, 255);
+					else if (lastResult_.name == "triangle")	strokeCol = IM_COL32(100, 220, 130, 255);
+					else if (lastResult_.name == "square")		strokeCol = IM_COL32(100, 160, 255, 255);
+					else if (lastResult_.name == "star")		strokeCol = IM_COL32(230, 130, 255, 255);
+					else if (lastResult_.name == "check")		strokeCol = IM_COL32(60, 220, 180, 255);
+					else if (lastResult_.name == "lightning")	strokeCol = IM_COL32(255, 220, 40, 255);
+					else if (lastResult_.name == "spiral")		strokeCol = IM_COL32(60, 210, 200, 255);
+					else if (lastResult_.name == "omega")		strokeCol = IM_COL32(230, 160, 80, 255);
 				} else {
 					strokeCol = IM_COL32(210, 65, 65, 255);
 				}

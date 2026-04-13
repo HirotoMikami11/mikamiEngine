@@ -163,6 +163,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObject\DebugObject\TestWall\TestWall.cpp" />
     <ClCompile Include="Application\GameObject\DebugObject\TestShooter\TestShooter.cpp" />
     <ClCompile Include="Application\GameObject\DebugObject\TestShooter\TestBullet.cpp" />
+    <ClCompile Include="Application\GameObject\DebugObject\TestSprite\DebugSprite.cpp" />
     <ClCompile Include="Engine\Utility\JsonBinder.cpp" />
     <ClCompile Include="Application\GameObject\GameObject.cpp" />
     <ClCompile Include="Application\GameObject\GameObjectManager.cpp" />
@@ -396,6 +397,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\GameObject\DebugObject\DebugSphere.h" />
     <ClInclude Include="Application\Scene\DebugScenes\DemoScene.h" />
     <ClInclude Include="Application\System\Dollar1Recognizer.h" />
+    <ClInclude Include="Application\GameObject\DebugObject\TestSprite\DebugSprite.h" />
     <ClInclude Include="Engine\CameraController\CameraFunc\CameraShake.h" />
     <ClInclude Include="Engine\Objects\Light\DirectionalLight.h" />
     <ClInclude Include="Engine\Objects\Light\LightBase.h" />
