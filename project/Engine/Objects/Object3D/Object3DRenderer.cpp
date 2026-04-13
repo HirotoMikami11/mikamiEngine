@@ -162,8 +162,8 @@ void Object3DRenderer::Flush(bool uiOnly) {
 	if (!hasAny) return;
 
 	// --- 描画リクエストをソート ---
-	// Opaque:           sortDepth 昇順（前から後ろ → 早期深度カリングで不要ピクセルを削減）
-	// AlphaBlend / Add: sortDepth 降順（奥から手前 → 正しいアルファブレンド合成順）
+	// Opaque:				sortDepth 昇順（前から後ろ → 早期深度カリングで不要ピクセルを削減）
+	// AlphaBlend / Add:	sortDepth 降順（奥から手前 → 正しいアルファブレンド合成順）
 	std::stable_sort(submissions_.begin(), submissions_.end(),
 		[](const ModelSubmission& a, const ModelSubmission& b) {
 			// まず RenderGroup 順にソート（Opaque < AlphaBlend < Add）
@@ -172,9 +172,9 @@ void Object3DRenderer::Flush(bool uiOnly) {
 			}
 			// 同一グループ内は深度値でソート
 			if (a.group == RenderGroup::Opaque) {
-				return a.sortDepth < b.sortDepth;  // Opaque: 前から後ろ
+				return a.sortDepth < b.sortDepth;	// Opaque: 前から後ろ
 			}
-			return a.sortDepth > b.sortDepth;      // AlphaBlend / Add: 奥から手前
+			return a.sortDepth > b.sortDepth;		// AlphaBlend / Add: 奥から手前
 		});
 
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
@@ -210,9 +210,9 @@ void Object3DRenderer::Flush(bool uiOnly) {
 			targetPSO = psoWireframe_.Get();
 		} else {
 			switch (sub.group) {
-			case RenderGroup::AlphaBlend:	targetPSO = psoAlphaBlend_.Get(); break;
-			case RenderGroup::Add:			targetPSO = psoAdd_.Get();        break;
-			default:						targetPSO = psoOpaque_.pipelineState.Get(); break;
+			case RenderGroup::AlphaBlend:	targetPSO = psoAlphaBlend_.Get();			break;
+			case RenderGroup::Add:			targetPSO = psoAdd_.Get();					break;
+			default:						targetPSO = psoOpaque_.pipelineState.Get();	break;
 			}
 		}
 
