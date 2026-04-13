@@ -206,8 +206,8 @@ private:
 	// TODO: 現状仮置きだが、レイヤー管理もいずれ実装
 	int layerOrder_ = 0;
 
-	// 描画グループ（デフォルトは OutSideOffScreen）
-	RenderGroup renderGroup_ = RenderGroup::OutSideOffScreen;
+	// 描画グループ（デフォルトは オフスクリーン外）
+	RenderGroup renderGroup_ = RenderGroup::OutsideOffscreen;
 
 	// メッシュデータ（VB/IB は Sprite が所有し続ける）
 	std::vector<VertexData> vertices_;

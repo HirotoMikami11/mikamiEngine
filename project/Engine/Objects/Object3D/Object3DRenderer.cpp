@@ -110,11 +110,11 @@ void Object3DRenderer::Submit(const ModelSubmission& submission) {
 }
 
 void Object3DRenderer::FlushOffscreen() {
-	Flush(false); // RenderGroup != OutSideOffScreen
+	Flush(false); // RenderGroup != OutsideOffscreen
 }
 
 void Object3DRenderer::FlushUI() {
-	Flush(true); // RenderGroup::OutSideOffScreen のみ
+	Flush(true); // RenderGroup::OutsideOffscreen のみ
 }
 
 #ifdef USEIMGUI
@@ -154,7 +154,7 @@ void Object3DRenderer::Flush(bool uiOnly) {
 	// 対象グループに描画すべきものがあるか確認
 	bool hasAny = false;
 	for (const auto& sub : submissions_) {
-		if ((sub.group == RenderGroup::OutSideOffScreen) == uiOnly) {
+		if ((sub.group == RenderGroup::OutsideOffscreen) == uiOnly) {
 			hasAny = true;
 			break;
 		}
@@ -202,7 +202,7 @@ void Object3DRenderer::Flush(bool uiOnly) {
 	ID3D12PipelineState* currentPSO = nullptr;
 
 	for (const ModelSubmission& sub : submissions_) {
-		if ((sub.group == RenderGroup::OutSideOffScreen) != uiOnly) continue;
+		if ((sub.group == RenderGroup::OutsideOffscreen) != uiOnly) continue;
 
 		// PSOVariant と RenderGroup から使用する PSO を決定する
 		ID3D12PipelineState* targetPSO;

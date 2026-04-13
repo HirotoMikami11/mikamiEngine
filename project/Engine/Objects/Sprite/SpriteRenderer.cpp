@@ -73,11 +73,11 @@ void SpriteRenderer::Submit(const SpriteSubmission& submission) {
 }
 
 void SpriteRenderer::FlushOffscreen() {
-	Flush(false);// RenderGroup != OutSideOffScreen
+	Flush(false);// RenderGroup != OutsideOffscreen
 }
 
 void SpriteRenderer::FlushUI() {
-	Flush(true);// RenderGroup::OutSideOffScreen のみ
+	Flush(true);// RenderGroup::OutsideOffscreen のみ
 }
 
 #ifdef USEIMGUI
@@ -96,7 +96,7 @@ void SpriteRenderer::ImGui() {
 			ImVec2(-1.0f, 0.0f));
 
 		size_t uiCount = std::count_if(submissions_.begin(), submissions_.end(),
-			[](const SpriteSubmission& s) { return s.group == RenderGroup::OutSideOffScreen; });
+			[](const SpriteSubmission& s) { return s.group == RenderGroup::OutsideOffscreen; });
 		ImGui::Text("オフスクリーン外		: %zu", uiCount);
 		ImGui::Text("オフスクリーン内	: %zu", submissions_.size() - uiCount);
 	}
@@ -107,7 +107,7 @@ void SpriteRenderer::Flush(bool uiOnly) {
 	// 対象グループに描画すべきものがあるか確認
 	bool hasAny = false;
 	for (const auto& sub : submissions_) {
-		if ((sub.group == RenderGroup::OutSideOffScreen) == uiOnly) {
+		if ((sub.group == RenderGroup::OutsideOffscreen) == uiOnly) {
 			hasAny = true;
 			break;
 		}
@@ -133,7 +133,7 @@ void SpriteRenderer::Flush(bool uiOnly) {
 
 	// 対象グループの描画リクエストを処理
 	for (const auto& sub : submissions_) {
-		if ((sub.group == RenderGroup::OutSideOffScreen) != uiOnly) continue;
+		if ((sub.group == RenderGroup::OutsideOffscreen) != uiOnly) continue;
 
 		// Material CBV バインド（ルートパラメータ [0]: b0 PS）
 		commandList->SetGraphicsRootConstantBufferView(0, sub.materialGpuAddr);

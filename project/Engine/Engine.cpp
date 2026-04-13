@@ -243,7 +243,6 @@ void Engine::EndDrawBackBuffer() {
 	// UI オブジェクト・UI スプライトを一括 GPU 描画（スワップチェーン RT に直接描画）
 	Object3DRenderer::GetInstance()->FlushUI();
 	SpriteRenderer::GetInstance()->FlushUI();
-	imguiManager_->Draw(dxCommon_->GetCommandList());
 	dxCommon_->PostDraw();
 	dxCommon_->EndFrame();
 #endif

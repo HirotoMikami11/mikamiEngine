@@ -70,13 +70,13 @@ public:
 #endif
 
 	/// <summary>
-	/// RenderGroup::OutSideOffScreen 以外のスプライトを GPU 描画する。
+	/// RenderGroup::OutsideOffscreen 以外のスプライトを GPU 描画する。
 	/// Engine::EndDrawOffscreen() の PostDraw() より前に呼ぶこと。
 	/// </summary>
 	void FlushOffscreen();
 
 	/// <summary>
-	/// RenderGroup::OutSideOffScreen のスプライトを GPU 描画する。
+	/// RenderGroup::OutsideOffscreen のスプライトを GPU 描画する。
 	/// Engine::EndDrawBackBuffer() の ImGui より前に呼ぶこと。
 	/// </summary>
 	void FlushUI();
@@ -95,7 +95,7 @@ private:
 	/// <summary>
 	/// uiOnly フラグに応じてフィルタしながら GPU 描画命令を発行する
 	/// </summary>
-	/// <param name="uiOnly">true → RenderGroup::OutSideOffScreen のみ、false → OutSideOffScreen 以外のみ</param>
+	/// <param name="uiOnly">true → RenderGroup::OutsideOffscreen のみ、false → OutsideOffscreen 以外のみ</param>
 	void Flush(bool uiOnly);
 
 	// DirectXCommon（コマンドリスト・デバイス・PSOFactory 取得に使用）
@@ -121,5 +121,5 @@ private:
 /// Scene::Draw() → Sprite::Draw()
 /// → AllocateTransform() / AllocateMaterial()		// スロット確保 & CPU書き込み
 /// → Submit(submission)							// キューに積む
-/// Engine::EndDrawOffscreen() → FlushOffscreen()	// UI以外のスプライトを GPU 描画
-/// Engine::EndDrawBackBuffer() → FlushUI()			// UI スプライトを GPU 描画
+/// Engine::EndDrawOffscreen() → FlushOffscreen()	// OutsideOffscreen以外のスプライトを GPU 描画
+/// Engine::EndDrawBackBuffer() → FlushUI()			// OutsideOffscreen スプライトを GPU 描画
