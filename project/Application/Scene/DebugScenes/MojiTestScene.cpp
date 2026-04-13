@@ -59,8 +59,6 @@ void MojiTestScene::OnDraw() {
 	terrain_->Draw();
 }
 
-void MojiTestScene::OnDrawBackBuffer() {}
-
 void MojiTestScene::OnImGui() {
 #ifdef USEIMGUI
 	sphere_->ImGui();

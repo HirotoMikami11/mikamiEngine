@@ -27,19 +27,13 @@ void BaseScene::Update()
 	HandleCollisions();
 }
 
-void BaseScene::DrawOffscreen()
+void BaseScene::Draw()
 {
 	// Manager内全オブジェクトの描画 Submit（RenderGroup でオフスクリーン/UI を振り分け）
 	gameObjectManager_.Draw();
 
 	// Manager外オブジェクトの描画 Submit
 	OnDraw();
-}
-
-void BaseScene::DrawBackBuffer()
-{
-	// Manager外のUI描画（直接バックバッファに描く必要があるもののみ）
-	OnDrawBackBuffer();
 }
 
 void BaseScene::ImGui()

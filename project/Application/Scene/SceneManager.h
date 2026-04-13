@@ -29,14 +29,9 @@ public:
 	void Update();
 
 	/// <summary>
-	/// 3D描画（オフスクリーン内）
+	/// 描画Submit（RenderGroup でオフスクリーン内外を振り分け）
 	/// </summary>
-	void DrawOffscreen();
-
-	/// <summary>
-	/// UI描画（オフスクリーン外）
-	/// </summary>
-	void DrawBackBuffer();
+	void Draw();
 
 	/// <summary>
 	/// 終了処理

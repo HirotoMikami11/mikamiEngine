@@ -124,7 +124,7 @@ void Engine::Update() {
 }
 
 
-void Engine::StartDrawOffscreen() {
+void Engine::BeginFrame() {
 	/// ImGuiの受付終了
 	imguiManager_->End();
 
@@ -143,13 +143,14 @@ void Engine::StartDrawOffscreen() {
 
 	// SpriteRenderer のフレームリセット
 	SpriteRenderer::GetInstance()->BeginFrame();
-
-	/// オフスクリーンの描画準備（3D描画用）
-	offscreenRenderer_->PreDraw();
-
 }
 
-void Engine::EndDrawOffscreen() {
+void Engine::BeginOffscreen() {
+	/// オフスクリーンの描画準備（3D描画用）
+	offscreenRenderer_->PreDraw();
+}
+
+void Engine::EndOffscreen() {
 
 	// デバッグ線の一括描画（カメラコントローラーから行列取得）アプリ―ケーションに持っていく
 	if (debugDrawManager_ && cameraController_) {
@@ -167,7 +168,7 @@ void Engine::EndDrawOffscreen() {
 }
 
 
-void Engine::StartDrawBackBuffer() {
+void Engine::BeginBackBuffer() {
 
 #ifdef USEIMGUI
 	auto* cmdList = dxCommon_->GetCommandList();
@@ -210,7 +211,7 @@ void Engine::StartDrawBackBuffer() {
 }
 
 
-void Engine::EndDrawBackBuffer() {
+void Engine::EndBackBuffer() {
 
 #ifdef USEIMGUI
 	// UI オブジェクトを一括 GPU 描画（finalPassTexture_ がまだ RenderTarget 状態のうちに行う）

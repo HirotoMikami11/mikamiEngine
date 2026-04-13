@@ -24,17 +24,10 @@ void SceneManager::Update() {
 	}
 }
 
-void SceneManager::DrawOffscreen() {
-	// 現在のシーンの3D描画（オフスクリーン内）
+void SceneManager::Draw() {
+	// 現在のシーンの描画Submit
 	if (currentScene_) {
-		currentScene_->DrawOffscreen();
-	}
-}
-
-void SceneManager::DrawBackBuffer() {
-	// 現在のシーンのUI描画（オフスクリーン外）
-	if (currentScene_) {
-		currentScene_->DrawBackBuffer();
+		currentScene_->Draw();
 	}
 }
 

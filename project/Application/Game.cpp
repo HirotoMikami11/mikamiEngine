@@ -46,7 +46,7 @@ void Game::InitializeScenes() {
 	sceneManager_->RegisterScene("GameScene", std::move(gameScene));
 		
 	// デフォルトシーンを設定（最初に表示するシーン）
-	sceneManager_->ChangeScene("DemoScene");
+	sceneManager_->ChangeScene("MojiTestScene");
 }
 
 void Game::RegisterTransitionEffects()
@@ -77,20 +77,13 @@ void Game::Update() {
 	}
 }
 
-void Game::DrawOffscreen() {
-	// シーンマネージャーの3D描画（オフスクリーン内）
+void Game::Draw() {
+	// シーンの描画Submit（RenderGroup でオフスクリーン内外を振り分け）
 	if (sceneManager_) {
-		sceneManager_->DrawOffscreen();
-	}
-}
-
-void Game::DrawBackBuffer() {
-	// シーンマネージャーのUI描画（オフスクリーン外）
-	if (sceneManager_) {
-		sceneManager_->DrawBackBuffer();
+		sceneManager_->Draw();
 	}
 
-	// トランジションエフェクトの描画（最前面）
+	// トランジションエフェクトのSubmit（OutsideOffscreen で最前面に描画）
 	if (transitionManager_) {
 		transitionManager_->Draw();
 	}

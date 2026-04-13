@@ -19,7 +19,6 @@ protected:
 	void OnInitialize()		override;
 	void OnUpdate()			override;
 	void OnDraw()			override;
-	void OnDrawBackBuffer()	override;
 	void OnFinalize()		override;
 	void OnImGui()			override;
 

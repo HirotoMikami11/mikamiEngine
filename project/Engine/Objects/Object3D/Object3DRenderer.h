@@ -38,7 +38,7 @@ public:
 
 	/// <summary>
 	/// フレーム先頭で呼ぶ。リングバッファをリセットし submissions_ をクリアする。
-	/// Engine::StartDrawOffscreen() から呼ぶこと。
+	/// Engine::BeginFrame() から呼ぶこと。
 	/// </summary>
 	void BeginFrame();
 
@@ -68,13 +68,13 @@ public:
 
 	/// <summary>
 	/// RenderGroup::OutsideOffscreen 以外のオブジェクトを GPU 描画する。
-	/// Engine::EndDrawOffscreen() の offscreenRenderer_->PostDraw() より前に呼ぶこと。
+	/// Engine::EndOffscreen() の offscreenRenderer_->PostDraw() より前に呼ぶこと。
 	/// </summary>
 	void FlushOffscreen();
 
 	/// <summary>
 	/// RenderGroup::OutsideOffscreen のオブジェクトを GPU 描画する。
-	/// Engine::EndDrawBackBuffer() から呼ぶこと。
+	/// Engine::EndBackBuffer() から呼ぶこと。
 	/// </summary>
 	void FlushUI();
 
@@ -131,9 +131,9 @@ private:
 /// CPU データを書き込んでから Submit() で描画リクエストを登録する
 /// 
 /// 【フレーム毎の呼び出し順】
-/// Engine::StartDrawOffscreen() → BeginFrame()			// リングバッファリセット
-/// Scene::Draw() → Object3D::Draw()
+/// Engine::BeginFrame() → BeginFrame()					// リングバッファリセット
+/// Game::Draw() → Object3D::Draw()
 ///	→ AllocateTransform() / AllocateMaterial()			// スロット確保 & CPU書き込み
 ///	→ Submit(submission)								// キューに積む
-/// Engine::EndDrawOffscreen() → FlushOffscreen()		// UI以外のオブジェクトを GPU 描画
-/// Engine::EndDrawBackBuffer() → FlushUI()				// UIオブジェクトを GPU 描画
+/// Engine::EndOffscreen() → FlushOffscreen()			// UI以外のオブジェクトを GPU 描画
+/// Engine::EndBackBuffer() → FlushUI()					// UIオブジェクトを GPU 描画

@@ -24,14 +24,9 @@ protected:
 	virtual void Update() = 0;
 
 	/// <summary>
-	/// オフスクリーン内に描画
+	/// 描画Submit（Renderer へのSubmitのみ。GPU命令はEngine側で発行）
 	/// </summary>
-	virtual void DrawOffscreen() = 0;
-
-	/// <summary>
-	/// オフスクリーン外に描画
-	/// </summary>
-	virtual void DrawBackBuffer() = 0;
+	virtual void Draw() = 0;
 
 	/// <summary>
 	/// ImGui表示

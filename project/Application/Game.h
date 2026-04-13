@@ -21,14 +21,9 @@ public:
 	void Update() override;
 
 	/// <summary>
-	/// 3D描画（オフスクリーン内）
+	/// 描画Submit（Renderer へのSubmitのみ）
 	/// </summary>
-	void DrawOffscreen() override;
-
-	/// <summary>
-	/// UI描画（オフスクリーン外）
-	/// </summary>
-	void DrawBackBuffer() override;
+	void Draw() override;
 
 	void ImGui() override;
 

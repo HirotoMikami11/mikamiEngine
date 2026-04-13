@@ -48,24 +48,31 @@ public:
 	void Update();
 
 	/// <summary>
-	/// 3D描画前処理（オフスクリーン描画開始）
+	/// フレーム開始処理（コマンドリストオープン・Rendererリセット）
+	/// Draw() より前に呼ぶ
 	/// </summary>
-	void StartDrawOffscreen();
+	void BeginFrame();
 
 	/// <summary>
-	/// 3D描画後処理（オフスクリーン描画終了)
+	/// オフスクリーン描画開始（RT = オフスクリーンテクスチャ）
+	/// Draw() より後、EndOffscreen() より前に呼ぶ
 	/// </summary>
-	void EndDrawOffscreen();
+	void BeginOffscreen();
 
 	/// <summary>
-	/// UI描画前処理（バックバッファ描画開始）
+	/// オフスクリーン描画終了（FlushOffscreen + ポストエフェクト）
 	/// </summary>
-	void StartDrawBackBuffer();
+	void EndOffscreen();
 
 	/// <summary>
-	/// UI描画後処理（バックバッファ描画終了）
+	/// バックバッファ描画開始（オフスクリーン → バックバッファ合成）
 	/// </summary>
-	void EndDrawBackBuffer();
+	void BeginBackBuffer();
+
+	/// <summary>
+	/// バックバッファ描画終了（FlushUI + ImGui + EndFrame）
+	/// </summary>
+	void EndBackBuffer();
 
 	/// <summary>
 	/// 終了処理

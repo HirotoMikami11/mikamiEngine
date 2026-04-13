@@ -65,12 +65,12 @@ public:
 		particleLifeTimeMin_ = min;
 		particleLifeTimeMax_ = max;
 	}
-	// ⭐ 追加: パーティクル寿命のGetter
+	// パーティクル寿命のGetter
 	float GetParticleLifeTimeMin() const { return particleLifeTimeMin_; }
 	float GetParticleLifeTimeMax() const { return particleLifeTimeMax_; }
 
 	void SetParticleVelocityRange(float range) { velocityRange_ = range; }
-	// ⭐ 追加: 速度範囲のGetter
+	// 速度範囲のGetter
 	float GetParticleVelocityRange() const { return velocityRange_; }
 
 	// 新方式：方向指定発射

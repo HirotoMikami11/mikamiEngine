@@ -34,23 +34,24 @@ void Framework::Run() {
 		///									描画処理								   ///
 		///*-----------------------------------------------------------------------*///
 
-		/// 3D描画前処理（オフスクリーン描画開始）
-		engine_->StartDrawOffscreen();
+		/// フレーム開始（コマンドリストとRendererリセット）
+		engine_->BeginFrame();
 
-		/// 3D描画（オフスクリーン内、ポストプロセス適用対象）
-		DrawOffscreen();
+		/// オフスクリーン開始
+		/// Draw前に呼ぶことでパーティクル等の直接GPU命令が通る
+		/// TODO:パーティクルもSubmit系にして、Draw内で一括描画にしたい
+		engine_->BeginOffscreen();
 
-		/// 3D描画後処理（オフスクリーン終了)
-		engine_->EndDrawOffscreen();
+		/// 全描画
+		/// モデルとspriteのSubmit系を積む、パーティクルは直接コマンドを積むので現状はここで処理
+		Draw();
 
-		/// UI描画前処理(バックバッファ描画開始）
-		engine_->StartDrawBackBuffer();
+		/// オフスクリーン描画終了
+		engine_->EndOffscreen();
 
-		/// UI描画（バックバッファ直接、ポストプロセス適用外）
-		DrawBackBuffer();
-
-		/// UI描画後処理（バックバッファ描画終了）
-		engine_->EndDrawBackBuffer();
+		/// バックバッファ描画（合成 → FlushUI → ImGui → Present）
+		engine_->BeginBackBuffer();
+		engine_->EndBackBuffer();
 	}
 
 	///*-----------------------------------------------------------------------*///

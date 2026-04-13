@@ -49,9 +49,6 @@ void GameScene::OnDraw()
 {
 }
 
-void GameScene::OnDrawBackBuffer()
-{
-}
 
 void GameScene::OnImGui()
 {

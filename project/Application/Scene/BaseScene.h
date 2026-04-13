@@ -36,16 +36,9 @@ public:
 	virtual void Update() final;
 
 	/// <summary>
-	/// 3D描画処理（オフスクリーン内で描画される）
-	/// グリッド、3Dオブジェクト、ライティングなど
+	/// 描画Submit（RenderGroup でオフスクリーン内外を振り分け）
 	/// </summary>
-	virtual void DrawOffscreen() final;
-
-	/// <summary>
-	/// UI描画処理（オフスクリーン外で描画される）
-	/// スプライト、テキスト、2D要素など
-	/// </summary>
-	virtual void DrawBackBuffer() final;
+	virtual void Draw() final;
 
 
 	/// 終了処理
@@ -91,12 +84,6 @@ protected:
 	/// 3D・UI問わず Submit する
 	/// </summary>
 	virtual void OnDraw() {}
-
-	/// <summary>
-	/// Manager外のUI描画
-	/// バックバッファ直接描画が必要な場合のみ
-	/// </summary>
-	virtual void OnDrawBackBuffer() {}
 
 	/// <summary>
 	///Manager外の ImGui

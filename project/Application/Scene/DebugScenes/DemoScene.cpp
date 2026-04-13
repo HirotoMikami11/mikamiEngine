@@ -124,9 +124,6 @@ void DemoScene::OnDraw()
 	sprite_->Draw();
 }
 
-void DemoScene::OnDrawBackBuffer()
-{
-}
 
 void DemoScene::OnImGui()
 {
