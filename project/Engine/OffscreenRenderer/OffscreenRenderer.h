@@ -4,6 +4,8 @@
 #include <dxgi1_6.h>
 #include <wrl.h>
 #include <string>
+#include <typeindex>
+#include <utility>
 
 #include "DirectXCommon.h"
 #include "Logger.h"
@@ -12,20 +14,9 @@
 #include "OffscreenTriangle/OffscreenTriangle.h"				// OffscreenTriangleクラスを使用
 #include "PostProcessChain.h"									// ポストプロセスチェーン
 
-#include "PostEffect/RGBShift/RGBShiftPostEffect.h"				// RGBシフトエフェクト
-#include "PostEffect/LineGlitch/LineGlitchPostEffect.h"			// ラインズラシ
-#include "PostEffect/Grayscale/GrayscalePostEffect.h"			// グレースケールエフェクト
-#include "PostEffect/Vignette/VignettePostEffect.h"				// ビネットエフェクト
-
-#include "PostEffect/DepthOfField/DepthOfFieldPostEffect.h"		// 深度ぼかしエフェクト
-#include "PostEffect/DepthFog/DepthFogPostEffect.h"				// 深度フォグエフェクト
-#include "PostEffect/Outline/OutlinePostEffect.h"				// アウトラインエフェクト
-#include "PostEffect/Binarization/BinarizationPostEffect.h"		// 二値化ティザリングエフェクト
-
 /// <summary>
 /// オフスクリーンレンダリングを管理するクラス
 /// ポストプロセスチェーンで複数エフェクトの重ね掛けできる
-/// OffscreenTriangle使用版（Sprite脱却）
 /// </summary>
 class OffscreenRenderer {
 public:
@@ -92,6 +83,19 @@ public:
 	/// <param name="enabled">true=有効, false=無効</param>
 	void SetAllEffectsEnabled(bool enabled);
 
+	/// <summary>
+	/// ID指定でエフェクト有効/無効を設定
+	/// </summary>
+	bool SetEffectEnabled(PostEffectId id, bool enabled);
+
+	template<class TParams, class Fn>
+	bool EditEffectParams(PostEffectId id, Fn&& fn) {
+		if (!postProcessChain_) {
+			return false;
+		}
+		return postProcessChain_->EditEffectParams<TParams>(id, std::forward<Fn>(fn));
+	}
+
 
 	/// <summary>
 	/// オフスクリーンテクスチャのハンドルを取得
@@ -116,59 +120,6 @@ public:
 	/// </summary>
 	void ImGui();
 
-	/// <summary>
-	/// RGBShiftを取得
-	/// </summary>
-	/// <returns>RGBシフトポストエフェクトのポインタ</returns>
-	RGBShiftPostEffect* GetRGBShiftEffect() { return RGBShiftEffect_; }
-
-	/// <summary>
-	/// ラインずらしを取得
-	/// </summary>
-	/// <returns>ラインずらしのポインタ</returns>
-	LineGlitchPostEffect* GetLineGlitchEffect() { return lineGlitchEffect_; }
-
-	/// <summary>
-	/// グレースケールエフェクトを取得
-	/// </summary>
-	/// <returns>グレースケールポストエフェクトのポインタ</returns>
-	GrayscalePostEffect* GetGrayscaleEffect() { return grayscaleEffect_; }
-
-	/// <summary>
-	/// ビネットエフェクトを取得
-	/// </summary>
-	/// <returns>ビネットポストエフェクトのポインタ</returns>
-	VignettePostEffect* GetVignetteEffect() { return vignetteEffect_; }
-
-	/// <summary>
-	/// ダメージエフェクトを取得
-	/// </summary>
-	/// <returns>ビネットポストエフェクトのポインタ</returns>
-	VignettePostEffect* GetDamageEffect() { return damageEffect_; }
-
-	/// <summary>
-	/// 深度ぼかしエフェクトを取得
-	/// </summary>
-	/// <returns>深度ぼかしポストエフェクトのポインタ</returns>
-	DepthOfFieldPostEffect* GetDepthOfFieldEffect() { return depthOfFieldEffect_; }
-
-	/// <summary>
-	/// 深度フォグエフェクトを取得
-	/// </summary>
-	/// <returns>深度フォグポストエフェクトのポインタ</returns>
-	DepthFogPostEffect* GetDepthFogEffect() { return depthFogEffect_; }
-
-	/// <summary>
-	/// 深度アウトラインエフェクトを取得
-	/// </summary>
-	/// <returns></returns>
-	OutlinePostEffect* GetOutlineEffect() { return outlineEffect_; }
-
-	/// <summary>
-	/// 二値化ポストエフェクトを取得します。
-	/// </summary>
-	/// <returns>二値化ポストエフェクトへのポインタ</returns>
-	BinarizationPostEffect* GetBinarizationEffect() { return binarizationEffect_; }
 
 	/// <summary>
 	/// ポストプロセスチェーンを取得
@@ -241,15 +192,4 @@ private:
 	// ポストプロセスチェーン
 	std::unique_ptr<PostProcessChain> postProcessChain_;
 
-	// 個別エフェクトへの参照（設定用）
-	RGBShiftPostEffect* RGBShiftEffect_ = nullptr;
-	LineGlitchPostEffect* lineGlitchEffect_ = nullptr;
-	GrayscalePostEffect* grayscaleEffect_ = nullptr;
-	VignettePostEffect* vignetteEffect_ = nullptr;
-	VignettePostEffect* damageEffect_ = nullptr;
-
-	DepthFogPostEffect* depthFogEffect_ = nullptr;
-	DepthOfFieldPostEffect* depthOfFieldEffect_ = nullptr;
-	OutlinePostEffect* outlineEffect_ = nullptr;
-	BinarizationPostEffect* binarizationEffect_ = nullptr;
 };

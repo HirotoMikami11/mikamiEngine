@@ -49,22 +49,23 @@ private:
 	/// ビネットパラメータを設定
 	/// </summary>
 	void SetupVignetteParameters();
+	void SetDamageEffectEnabled(bool enabled);
+	void SetDamageStrength(float strength);
 
 private:
-	// VignettePostEffectの参照
-	VignettePostEffect* vignetteEffect_ = nullptr;
-
 	// エフェクト状態
 	bool isPlaying_ = false;
+	bool isEffectEnabled_ = false;
+	float currentStrength_ = 0.0f;
 	float currentTime_ = 0.0f;
-	float duration_ = 1.0f;         // エフェクト全体の時間
-	float easingSpeed_ = 2.0f;      // イージング速度
+	float duration_ = 1.0f;			// エフェクト全体の時間
+	float easingSpeed_ = 2.0f;		// イージング速度
 
 	// ビネットパラメータ
 	struct DamageVignetteParams {
 		Vector4 damageColor = { 0.255f, 0.0f, 0.0f, 1.0f };  // 赤色
-		float targetStrength = 1.0f;    // 最大強度
-		float radius = 0.486f;          // 半径
-		float softness = 0.220f;        // 柔らかさ
+		float targetStrength = 1.0f;	// 最大強度
+		float radius = 0.486f;			// 半径
+		float softness = 0.220f;		// 柔らかさ
 	} params_;
 };

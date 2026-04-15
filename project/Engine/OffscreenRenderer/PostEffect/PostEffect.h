@@ -2,13 +2,14 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include <string>
+#include <typeindex>
 #include "DirectXCommon.h"
 #include "OffscreenTriangle/OffscreenTriangle.h"
+#include "PostEffectId.h"
 
 /// <summary>
 /// ポストエフェクトの基底クラス
 /// 自動深度テクスチャ判定機能付き
-/// OffscreenTriangle使用版
 /// </summary>
 class PostEffect {
 public:
@@ -81,6 +82,26 @@ public:
 	/// エフェクト名を取得
 	/// </summary>
 	virtual const std::string& GetName() const = 0;
+
+	/// <summary>
+	/// エフェクト識別子を取得
+	/// </summary>
+	virtual PostEffectId GetId() const = 0;
+
+	/// <summary>
+	/// パラメータ構造体の型情報を取得
+	/// </summary>
+	virtual std::type_index GetParameterType() const = 0;
+
+	/// <summary>
+	/// パラメータの可変生ポインタを取得
+	/// </summary>
+	virtual void* GetMutableParametersRaw() = 0;
+
+	/// <summary>
+	/// パラメータの不変生ポインタを取得
+	/// </summary>
+	virtual const void* GetParametersRaw() const = 0;
 
 protected:
 	DirectXCommon* dxCommon_ = nullptr;

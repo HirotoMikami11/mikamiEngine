@@ -5,6 +5,7 @@
 #include "GravityField.h"
 #include "AccelerationField.h"
 #include "ParticleEditor.h"
+#include "OffscreenRenderer/PostEffect/Vignette/VignettePostEffect.h"
 
 
 DemoScene::DemoScene()
@@ -17,11 +18,17 @@ DemoScene::~DemoScene() = default;
 void DemoScene::ConfigureOffscreenEffects()
 {
 	offscreenRenderer_->DisableAllEffects();
+	offscreenRenderer_->SetEffectEnabled(PostEffectId::Vignette, true);
 
-	auto* vignetteEffect = offscreenRenderer_->GetVignetteEffect();
-	if (vignetteEffect) {
-		vignetteEffect->SetEnabled(true);
-	}
+	offscreenRenderer_->EditEffectParams<VignettePostEffect::VignetteParameters>(
+		PostEffectId::Vignette,
+		[](auto& p) {
+			p.vignetteColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+			p.vignetteStrength = 0.5f;
+			p.vignetteRadius = 0.4f;
+			p.vignetteSoftness = 0.3f;
+		}
+	);
 
 }
 

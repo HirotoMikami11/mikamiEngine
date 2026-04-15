@@ -403,6 +403,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\OffscreenRenderer\EffectFunc\DamageVignette.h" />
     <ClInclude Include="Engine\Core\JsonSettings\JsonSettings.h" />
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Binarization\BinarizationPostEffect.h" />
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\PostEffectId.h" />
     <ClInclude Include="Engine\Utility\CSVUtility.h" />
     <ClInclude Include="Engine\Objects\Line\DebugDrawLineSystem.h" />
     <ClInclude Include="Engine\Core\DirectXCommon\DescriptorHeapManager\DescriptorViewFactory.h" />

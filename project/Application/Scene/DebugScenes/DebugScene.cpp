@@ -1,6 +1,7 @@
 #include "DebugScene.h"
 #include "ImGui/ImGuiManager.h"
 #include <numbers>
+#include "PostEffect/Vignette/VignettePostEffect.h"
 
 DebugScene::DebugScene()
 	: BaseScene("DebugScene")
@@ -12,6 +13,17 @@ DebugScene::~DebugScene() = default;
 void DebugScene::ConfigureOffscreenEffects()
 {
 	offscreenRenderer_->DisableAllEffects();
+	offscreenRenderer_->SetEffectEnabled(PostEffectId::Vignette, true);
+	offscreenRenderer_->SetEffectEnabled(PostEffectId::DamageVignette, true);
+
+	// ビネットの色と強度を設定
+	offscreenRenderer_->EditEffectParams<VignettePostEffect::VignetteParameters>(
+		PostEffectId::Vignette,
+		[](auto& p) {
+			p.vignetteColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+			p.vignetteStrength = 0.5f;
+		}
+	);
 }
 
 void DebugScene::OnInitialize()

@@ -41,24 +41,23 @@ void OffscreenRenderer::Initialize(DirectXCommon* dxCommon, uint32_t width, uint
 	///
 
 	// 深度フォグエフェクトを追加
-	depthFogEffect_ = postProcessChain_->AddEffect<DepthFogPostEffect>();
+	postProcessChain_->AddEffect(PostEffectId::DepthFog);
 	// 深度ぼかしエフェクトを追加
-	depthOfFieldEffect_ = postProcessChain_->AddEffect<DepthOfFieldPostEffect>();
+	postProcessChain_->AddEffect(PostEffectId::DepthOfField);
 	// アウトラインエフェクトを追加
-	outlineEffect_ = postProcessChain_->AddEffect<OutlinePostEffect>();
-
+	postProcessChain_->AddEffect(PostEffectId::Outline);
 	// グリッチエフェクトを追加
-	RGBShiftEffect_ = postProcessChain_->AddEffect<RGBShiftPostEffect>();
+	postProcessChain_->AddEffect(PostEffectId::RGBShift);
 	// ライングリッチエフェクトを追加
-	lineGlitchEffect_ = postProcessChain_->AddEffect<LineGlitchPostEffect>();
+	postProcessChain_->AddEffect(PostEffectId::LineGlitch);
 	// グレースケールエフェクトを追加
-	grayscaleEffect_ = postProcessChain_->AddEffect<GrayscalePostEffect>();
+	postProcessChain_->AddEffect(PostEffectId::Grayscale);
 	// ビネットエフェクトを追加
-	vignetteEffect_ = postProcessChain_->AddEffect<VignettePostEffect>();
+	postProcessChain_->AddEffect(PostEffectId::Vignette);
 	// ダメージエフェクトを追加
-	damageEffect_ = postProcessChain_->AddEffect<VignettePostEffect>();
-	//二値化エフェクトを追加
-	binarizationEffect_ = postProcessChain_->AddEffect<BinarizationPostEffect>();
+	postProcessChain_->AddEffect(PostEffectId::DamageVignette);
+	// 二値化エフェクトを追加
+	postProcessChain_->AddEffect(PostEffectId::Binarization);
 
 
 
@@ -73,23 +72,6 @@ void OffscreenRenderer::Finalize() {
 		postProcessChain_.reset();
 	}
 
-	///
-	///ここで追加したエフェクトをnullptrにしておく
-	///
-
-
-
-	grayscaleEffect_ = nullptr;
-	depthFogEffect_ = nullptr;
-	RGBShiftEffect_ = nullptr;
-	vignetteEffect_ = nullptr;
-	damageEffect_ = nullptr;
-	lineGlitchEffect_ = nullptr;
-	depthOfFieldEffect_ = nullptr;
-	outlineEffect_ = nullptr;
-	binarizationEffect_ = nullptr;
-
-	// オフスクリーンOffscreenTriangle削除（Sprite置き換え）
 	if (offscreenTriangle_) {
 		offscreenTriangle_->Finalize();
 		offscreenTriangle_.reset();
@@ -212,6 +194,14 @@ void OffscreenRenderer::EnableAllEffects() {
 void OffscreenRenderer::SetAllEffectsEnabled(bool enabled) {
 	//ポストプロセスチェーンのエフェクトをまとめて有効/無効にする
 	postProcessChain_->SetAllEffectsEnabled(enabled);
+}
+
+bool OffscreenRenderer::SetEffectEnabled(PostEffectId id, bool enabled) {
+	if (!postProcessChain_) {
+		return false;
+	}
+
+	return postProcessChain_->SetEffectEnabled(id, enabled);
 }
 
 

@@ -53,6 +53,10 @@ public:
 	void SetEnabled(bool enabled) override { isEnabled_ = enabled; }
 	void ImGui() override;
 	const std::string& GetName() const override { return name_; }
+	PostEffectId GetId() const override { return PostEffectId::DepthFog; }
+	std::type_index GetParameterType() const override { return typeid(DepthFogParameters); }
+	void* GetMutableParametersRaw() override { return &parameters_; }
+	const void* GetParametersRaw() const override { return &parameters_; }
 	// 深度が必要なのでtrueでオーバーライド
 	bool RequiresDepthTexture() const override { return true; }
 

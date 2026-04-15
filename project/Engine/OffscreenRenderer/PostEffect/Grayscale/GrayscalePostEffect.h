@@ -45,6 +45,10 @@ public:
 	void SetEnabled(bool enabled) override { isEnabled_ = enabled; }
 	void ImGui() override;
 	const std::string& GetName() const override { return name_; }
+	PostEffectId GetId() const override { return PostEffectId::Grayscale; }
+	std::type_index GetParameterType() const override { return typeid(GrayscaleParameters); }
+	void* GetMutableParametersRaw() override { return &parameters_; }
+	const void* GetParametersRaw() const override { return &parameters_; }
 
 	// 固有メソッド
 	void ApplyPreset(EffectPreset preset);

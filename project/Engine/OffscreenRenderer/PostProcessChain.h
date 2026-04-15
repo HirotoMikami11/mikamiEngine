@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <typeindex>
 #include <d3d12.h>
 #include <wrl.h>
 
@@ -12,7 +13,6 @@
 /// ポストプロセスエフェクトチェーン管理クラス
 /// 複数のエフェクトを順番に適用する
 /// 自動深度テクスチャ判定機能付き
-/// OffscreenTriangle使用版
 /// </summary>
 class PostProcessChain {
 public:
@@ -65,17 +65,37 @@ public:
 	/// <summary>
 	/// エフェクトを追加（自動初期化付き）
 	/// </summary>
-	template<typename T>
-	T* AddEffect() {
-		auto effect = std::make_unique<T>();
-		T* ptr = effect.get();
+	bool AddEffect(PostEffectId id);
 
-		if (dxCommon_) {
-			effect->Initialize(dxCommon_);
+	/// <summary>
+	/// エフェクトを取得
+	/// </summary>
+	PostEffect* GetEffect(PostEffectId id);
+	const PostEffect* GetEffect(PostEffectId id) const;
+
+	/// <summary>
+	/// エフェクトの有効/無効を設定
+	/// </summary>
+	bool SetEffectEnabled(PostEffectId id, bool enabled);
+
+	template<class TParams, class Fn>
+	bool EditEffectParams(PostEffectId id, Fn&& fn) {
+		PostEffect* effect = GetEffect(id);
+		if (!effect) {
+			return false;
 		}
 
-		effects_.push_back(std::move(effect));
-		return ptr;
+		if (effect->GetParameterType() != std::type_index(typeid(TParams))) {
+			return false;
+		}
+
+		auto* params = static_cast<TParams*>(effect->GetMutableParametersRaw());
+		if (!params) {
+			return false;
+		}
+
+		fn(*params);
+		return true;
 	}
 
 	/// <summary>
@@ -106,7 +126,11 @@ public:
 	/// エフェクトリストを取得（読み取り専用）
 	/// </summary>
 	/// <returns>エフェクトリストの参照</returns>
-	const std::vector<std::unique_ptr<PostEffect>>& GetEffects() const { return effects_; }
+	struct EffectEntry {
+		PostEffectId id;
+		std::unique_ptr<PostEffect> effect;
+	};
+	const std::vector<EffectEntry>& GetEffects() const { return effects_; }
 
 private:
 	/// <summary>
@@ -133,7 +157,7 @@ private:
 	uint32_t height_ = 0;
 
 	// エフェクトリスト
-	std::vector<std::unique_ptr<PostEffect>> effects_;
+	std::vector<EffectEntry> effects_;
 
 	// 中間バッファ（2つのバッファを交互に使用してピンポン処理）
 	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateBuffers_[2];

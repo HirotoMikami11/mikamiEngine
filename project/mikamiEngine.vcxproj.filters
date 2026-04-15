@@ -1015,6 +1015,9 @@
     <ClInclude Include="Engine\Objects\Object3D\Object3DRenderer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\PostEffectId.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli">

@@ -1,6 +1,17 @@
 #include "PostProcessChain.h"
 #include "ImGui/ImGuiManager.h"
 
+// エフェクト
+#include "PostEffect/DepthFog/DepthFogPostEffect.h"
+#include "PostEffect/DepthOfField/DepthOfFieldPostEffect.h"
+#include "PostEffect/Outline/OutlinePostEffect.h"
+#include "PostEffect/RGBShift/RGBShiftPostEffect.h"
+#include "PostEffect/LineGlitch/LineGlitchPostEffect.h"
+#include "PostEffect/Grayscale/GrayscalePostEffect.h"
+#include "PostEffect/Vignette/VignettePostEffect.h"
+#include "PostEffect/Binarization/BinarizationPostEffect.h"
+
+
 void PostProcessChain::Initialize(DirectXCommon* dxCommon, uint32_t width, uint32_t height) {
 	dxCommon_ = dxCommon;
 	width_ = width;
@@ -11,7 +22,7 @@ void PostProcessChain::Initialize(DirectXCommon* dxCommon, uint32_t width, uint3
 	CreateIntermediateSRVs();
 	CreateIntermediateRTVs();
 
-	// エフェクト描画用OffscreenTriangle初期化（Sprite置き換え）
+	// エフェクト描画用OffscreenTriangle初期化
 	offscreenTriangle_ = std::make_unique<OffscreenTriangle>();
 	offscreenTriangle_->Initialize(dxCommon_);
 
@@ -21,14 +32,14 @@ void PostProcessChain::Initialize(DirectXCommon* dxCommon, uint32_t width, uint3
 
 void PostProcessChain::Finalize() {
 	// エフェクトの終了処理
-	for (auto& effect : effects_) {
-		if (effect) {
-			effect->Finalize();
+	for (auto& entry : effects_) {
+		if (entry.effect) {
+			entry.effect->Finalize();
 		}
 	}
 	effects_.clear();
 
-	// OffscreenTriangleの削除（Sprite置き換え）
+	// OffscreenTriangleの削除
 	if (offscreenTriangle_) {
 		offscreenTriangle_->Finalize();
 		offscreenTriangle_.reset();
@@ -57,13 +68,11 @@ void PostProcessChain::Update(float deltaTime) {
 	}
 
 	// 各エフェクトの更新
-	for (auto& effect : effects_) {
-		if (effect && effect->IsEnabled()) {
-			effect->Update(deltaTime);
+	for (auto& entry : effects_) {
+		if (entry.effect && entry.effect->IsEnabled()) {
+			entry.effect->Update(deltaTime);
 		}
 	}
-
-	// OffscreenTriangleの更新は特に不要（状態を持たないため）
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE PostProcessChain::ApplyEffects(D3D12_GPU_DESCRIPTOR_HANDLE inputSRV) {
@@ -73,8 +82,8 @@ D3D12_GPU_DESCRIPTOR_HANDLE PostProcessChain::ApplyEffects(D3D12_GPU_DESCRIPTOR_
 
 	// 有効なエフェクトがない場合は入力をそのまま返す
 	bool hasActiveEffect = false;
-	for (const auto& effect : effects_) {
-		if (effect && effect->IsEnabled()) {
+	for (const auto& entry : effects_) {
+		if (entry.effect && entry.effect->IsEnabled()) {
 			hasActiveEffect = true;
 			break;
 		}
@@ -89,7 +98,8 @@ D3D12_GPU_DESCRIPTOR_HANDLE PostProcessChain::ApplyEffects(D3D12_GPU_DESCRIPTOR_
 	int bufferIndex = 0;
 
 	// 各エフェクトを順番に適用
-	for (const auto& effect : effects_) {
+	for (const auto& entry : effects_) {
+		const auto& effect = entry.effect;
 		if (!effect || !effect->IsEnabled()) {
 			continue;
 		}
@@ -136,8 +146,8 @@ D3D12_GPU_DESCRIPTOR_HANDLE PostProcessChain::ApplyEffectsWithDepth(D3D12_GPU_DE
 
 	// 有効なエフェクトがない場合は入力をそのまま返す
 	bool hasActiveEffect = false;
-	for (const auto& effect : effects_) {
-		if (effect && effect->IsEnabled()) {
+	for (const auto& entry : effects_) {
+		if (entry.effect && entry.effect->IsEnabled()) {
 			hasActiveEffect = true;
 			break;
 		}
@@ -152,7 +162,8 @@ D3D12_GPU_DESCRIPTOR_HANDLE PostProcessChain::ApplyEffectsWithDepth(D3D12_GPU_DE
 	int bufferIndex = 0;
 
 	// 各エフェクトを順番に適用
-	for (const auto& effect : effects_) {
+	for (const auto& entry : effects_) {
+		const auto& effect = entry.effect;
 		if (!effect || !effect->IsEnabled()) {
 			continue;
 		}
@@ -195,8 +206,82 @@ D3D12_GPU_DESCRIPTOR_HANDLE PostProcessChain::ApplyEffectsWithDepth(D3D12_GPU_DE
 
 void PostProcessChain::SetAllEffectsEnabled(bool enabled) {
 	for (size_t i = 0; i < effects_.size(); ++i) {
-		effects_[i]->SetEnabled(enabled);
+		effects_[i].effect->SetEnabled(enabled);
 	}
+}
+
+bool PostProcessChain::AddEffect(PostEffectId id) {
+	for (const auto& entry : effects_) {
+		if (entry.id == id) {
+			return false;
+		}
+	}
+
+	std::unique_ptr<PostEffect> effect;
+	switch (id) {
+	case PostEffectId::DepthFog:
+		effect = std::make_unique<DepthFogPostEffect>();
+		break;
+	case PostEffectId::DepthOfField:
+		effect = std::make_unique<DepthOfFieldPostEffect>();
+		break;
+	case PostEffectId::Outline:
+		effect = std::make_unique<OutlinePostEffect>();
+		break;
+	case PostEffectId::RGBShift:
+		effect = std::make_unique<RGBShiftPostEffect>();
+		break;
+	case PostEffectId::LineGlitch:
+		effect = std::make_unique<LineGlitchPostEffect>();
+		break;
+	case PostEffectId::Grayscale:
+		effect = std::make_unique<GrayscalePostEffect>();
+		break;
+	case PostEffectId::Vignette:
+	case PostEffectId::DamageVignette:
+		effect = std::make_unique<VignettePostEffect>();
+		break;
+	case PostEffectId::Binarization:
+		effect = std::make_unique<BinarizationPostEffect>();
+		break;
+	default:
+		return false;
+	}
+
+	if (dxCommon_) {
+		effect->Initialize(dxCommon_);
+	}
+
+	effects_.push_back({ id, std::move(effect) });
+	return true;
+}
+
+PostEffect* PostProcessChain::GetEffect(PostEffectId id) {
+	for (auto& entry : effects_) {
+		if (entry.id == id) {
+			return entry.effect.get();
+		}
+	}
+	return nullptr;
+}
+
+const PostEffect* PostProcessChain::GetEffect(PostEffectId id) const {
+	for (const auto& entry : effects_) {
+		if (entry.id == id) {
+			return entry.effect.get();
+		}
+	}
+	return nullptr;
+}
+
+bool PostProcessChain::SetEffectEnabled(PostEffectId id, bool enabled) {
+	PostEffect* effect = GetEffect(id);
+	if (!effect) {
+		return false;
+	}
+
+	effect->SetEnabled(enabled);
+	return true;
 }
 
 
@@ -285,8 +370,8 @@ void PostProcessChain::CreateIntermediateRTVs() {
 
 size_t PostProcessChain::GetActiveEffectCount() const {
 	size_t count = 0;
-	for (const auto& effect : effects_) {
-		if (effect && effect->IsEnabled()) {
+	for (const auto& entry : effects_) {
+		if (entry.effect && entry.effect->IsEnabled()) {
 			count++;
 		}
 	}
@@ -295,8 +380,8 @@ size_t PostProcessChain::GetActiveEffectCount() const {
 
 size_t PostProcessChain::GetDepthRequiredEffectCount() const {
 	size_t count = 0;
-	for (const auto& effect : effects_) {
-		if (effect && effect->IsEnabled() && effect->RequiresDepthTexture()) {
+	for (const auto& entry : effects_) {
+		if (entry.effect && entry.effect->IsEnabled() && entry.effect->RequiresDepthTexture()) {
 			count++;
 		}
 	}
@@ -319,19 +404,24 @@ void PostProcessChain::ImGui() {
 	// 各エフェクトのImGui
 	for (size_t i = 0; i < effects_.size(); ++i) {
 		ImGui::PushID(static_cast<int>(i));
+		auto* effect = effects_[i].effect.get();
+		if (!effect) {
+			ImGui::PopID();
+			continue;
+		}
 
 		// エフェクト名とインデックス、深度要求の表示
-		std::string effectInfo = std::format("[{}] {}", i, effects_[i]->GetName());
-		if (effects_[i]->RequiresDepthTexture()) {
+		std::string effectInfo = std::format("[{}] {}", i, effect->GetName());
+		if (effect->RequiresDepthTexture()) {
 			effectInfo += " [DEPTH]";
 		}
 		ImGui::Text("%s", effectInfo.c_str());
 		ImGui::SameLine();
 
 		// 有効/無効チェックボックス
-		bool enabled = effects_[i]->IsEnabled();
+		bool enabled = effect->IsEnabled();
 		if (ImGui::Checkbox("##enabled", &enabled)) {
-			effects_[i]->SetEnabled(enabled);
+			effect->SetEnabled(enabled);
 		}
 
 		// 順序変更ボタン
@@ -349,7 +439,7 @@ void PostProcessChain::ImGui() {
 		}
 
 		// エフェクト固有のImGui
-		effects_[i]->ImGui();
+		effect->ImGui();
 
 		ImGui::PopID();
 		ImGui::Separator();

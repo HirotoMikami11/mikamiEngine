@@ -41,12 +41,17 @@ public:
 	void SetEnabled(bool enabled) override { isEnabled_ = enabled; }
 	void ImGui() override;
 	const std::string& GetName() const override { return name_; }
+	PostEffectId GetId() const override { return PostEffectId::RGBShift; }
+	std::type_index GetParameterType() const override { return typeid(RGBShiftParameters); }
+	void* GetMutableParametersRaw() override { return &parameters_; }
+	const void* GetParametersRaw() const override { return &parameters_; }
 
 	// 固有メソッド
 	void ApplyPreset(EffectPreset preset);
 	void SetRGBShiftStrength(float strength);
 	float GetRGBShiftStrength() const { return parameters_.rgbShiftStrength; }
 	void SetAnimationSpeed(float speed) { animationSpeed_ = speed; }
+
 private:
 	void CreatePSO();
 	void CreateParameterBuffer();

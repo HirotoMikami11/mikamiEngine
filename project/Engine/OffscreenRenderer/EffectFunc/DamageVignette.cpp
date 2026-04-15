@@ -1,9 +1,15 @@
 #include "DamageVignette.h"
+#include "PostEffect/Vignette/VignettePostEffect.h"
 #include "ImGui/ImGuiManager.h"
 #include <algorithm>
 
 void DamageVignette::Initialize() {
-	vignetteEffect_ = Engine::GetInstance()->GetOffscreenRenderer()->GetDamageEffect();
+	auto* offscreenRenderer = Engine::GetInstance()->GetOffscreenRenderer();
+	if (offscreenRenderer) {
+		offscreenRenderer->SetEffectEnabled(PostEffectId::DamageVignette, false);
+	}
+	isEffectEnabled_ = false;
+	currentStrength_ = 0.0f;
 
 	// 初期パラメータを設定
 	SetupVignetteParameters();
@@ -12,7 +18,7 @@ void DamageVignette::Initialize() {
 }
 
 void DamageVignette::Update(float deltaTime) {
-	if (!isPlaying_ || !vignetteEffect_) {
+	if (!isPlaying_) {
 		return;
 	}
 
@@ -24,9 +30,10 @@ void DamageVignette::Update(float deltaTime) {
 
 	if (normalizedTime >= 1.0f) {
 		// エフェクト終了
-		vignetteEffect_->SetVignetteStrength(0.0f);
-		vignetteEffect_->SetEnabled(false);
+		SetDamageStrength(0.0f);
+		SetDamageEffectEnabled(false);
 		isPlaying_ = false;
+		currentStrength_ = 0.0f;
 		currentTime_ = 0.0f;
 		return;
 	}
@@ -45,11 +52,13 @@ void DamageVignette::Update(float deltaTime) {
 
 	// 強度を設定（0.0f～targetStrength）
 	float currentStrength = easedValue * params_.targetStrength;
-	vignetteEffect_->SetVignetteStrength(currentStrength);
+	SetDamageStrength(currentStrength);
+	currentStrength_ = currentStrength;
 }
 
 void DamageVignette::TriggerDamageEffect() {
-	if (!vignetteEffect_) {
+	auto* offscreenRenderer = Engine::GetInstance()->GetOffscreenRenderer();
+	if (!offscreenRenderer) {
 		return;
 	}
 
@@ -61,21 +70,52 @@ void DamageVignette::TriggerDamageEffect() {
 	SetupVignetteParameters();
 
 	// エフェクトを有効化
-	vignetteEffect_->SetEnabled(true);
+	SetDamageEffectEnabled(true);
 
 	// 初期強度を0に設定
-	vignetteEffect_->SetVignetteStrength(0.0f);
+	SetDamageStrength(0.0f);
+	currentStrength_ = 0.0f;
 }
 
 void DamageVignette::SetupVignetteParameters() {
-	if (!vignetteEffect_) {
+	auto* offscreenRenderer = Engine::GetInstance()->GetOffscreenRenderer();
+	if (!offscreenRenderer) {
 		return;
 	}
 
 	// ダメージエフェクト用のパラメータを設定
-	vignetteEffect_->SetVignetteColor(params_.damageColor);
-	vignetteEffect_->SetVignetteRadius(params_.radius);
-	vignetteEffect_->SetVignetteSoftness(params_.softness);
+	offscreenRenderer->EditEffectParams<VignettePostEffect::VignetteParameters>(
+		PostEffectId::DamageVignette,
+		[this](auto& p) {
+			p.vignetteColor = params_.damageColor;
+			p.vignetteRadius = params_.radius;
+			p.vignetteSoftness = params_.softness;
+		}
+	);
+}
+
+void DamageVignette::SetDamageEffectEnabled(bool enabled) {
+	auto* offscreenRenderer = Engine::GetInstance()->GetOffscreenRenderer();
+	if (!offscreenRenderer) {
+		return;
+	}
+
+	offscreenRenderer->SetEffectEnabled(PostEffectId::DamageVignette, enabled);
+	isEffectEnabled_ = enabled;
+}
+
+void DamageVignette::SetDamageStrength(float strength) {
+	auto* offscreenRenderer = Engine::GetInstance()->GetOffscreenRenderer();
+	if (!offscreenRenderer) {
+		return;
+	}
+
+	offscreenRenderer->EditEffectParams<VignettePostEffect::VignetteParameters>(
+		PostEffectId::DamageVignette,
+		[strength](auto& p) {
+			p.vignetteStrength = strength;
+		}
+	);
 }
 
 void DamageVignette::ImGui() {
@@ -111,11 +151,9 @@ void DamageVignette::ImGui() {
 		}
 
 		// 現在の強度表示
-		if (vignetteEffect_) {
-			ImGui::Separator();
-			ImGui::Text("Current Strength: %.3f", vignetteEffect_->GetVignetteStrength());
-			ImGui::Text("Vignette Enabled: %s", vignetteEffect_->IsEnabled() ? "YES" : "NO");
-		}
+		ImGui::Separator();
+		ImGui::Text("Current Strength: %.3f", currentStrength_);
+		ImGui::Text("Vignette Enabled: %s", isEffectEnabled_ ? "YES" : "NO");
 
 		ImGui::TreePop();
 	}
