@@ -265,6 +265,9 @@
     <Filter Include="Engine\Managers\Loader">
       <UniqueIdentifier>{4588df2d-af16-45d6-a2e3-59ea5e048de6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="リソース ファイル\Shader\BoxFilter">
+      <UniqueIdentifier>{b2373d61-f071-4a39-bb43-8c33abb4ff71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -588,6 +591,9 @@
     <ClCompile Include="Engine\Objects\Object3D\Object3DRenderer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\BoxFilter\BoxFilterPostEffect.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -637,6 +643,9 @@
     </FxCompile>
     <FxCompile Include="resources\Shader\Binarization\Binarization.PS.hlsl">
       <Filter>リソース ファイル\Shader\Binarization</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\BoxFilter\BoxFilter.PS.hlsl">
+      <Filter>リソース ファイル\Shader\BoxFilter</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1018,6 +1027,9 @@
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\PostEffectId.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\BoxFilter\BoxFilterPostEffect.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli">
@@ -1055,6 +1067,9 @@
     </None>
     <None Include="resources\Shader\Binarization\Binarization.hlsli">
       <Filter>リソース ファイル\Shader\Binarization</Filter>
+    </None>
+    <None Include="resources\Shader\BoxFilter\BoxFilter.hlsli">
+      <Filter>リソース ファイル\Shader\BoxFilter</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
