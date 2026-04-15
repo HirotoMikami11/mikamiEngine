@@ -54,6 +54,8 @@ void OffscreenRenderer::Initialize(DirectXCommon* dxCommon, uint32_t width, uint
 	postProcessChain_->AddEffect(PostEffectId::Grayscale);
 	// BoxFilterエフェクトを追加
 	postProcessChain_->AddEffect(PostEffectId::BoxFilter);
+	// GaussianFilterエフェクトを追加
+	postProcessChain_->AddEffect(PostEffectId::GaussianFilter);
 	// ビネットエフェクトを追加
 	postProcessChain_->AddEffect(PostEffectId::Vignette);
 	// ダメージエフェクトを追加

@@ -268,6 +268,9 @@
     <Filter Include="リソース ファイル\Shader\BoxFilter">
       <UniqueIdentifier>{b2373d61-f071-4a39-bb43-8c33abb4ff71}</UniqueIdentifier>
     </Filter>
+    <Filter Include="リソース ファイル\Shader\GaussianFilter">
+      <UniqueIdentifier>{94ebbeb6-c854-4711-91aa-4e2b75b617c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -594,6 +597,9 @@
     <ClCompile Include="Engine\OffscreenRenderer\PostEffect\BoxFilter\BoxFilterPostEffect.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\GaussianFilter\GaussianFilterPostEffect.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -646,6 +652,9 @@
     </FxCompile>
     <FxCompile Include="resources\Shader\BoxFilter\BoxFilter.PS.hlsl">
       <Filter>リソース ファイル\Shader\BoxFilter</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\GaussianFilter\GaussianFilter.PS.hlsl">
+      <Filter>リソース ファイル\Shader\GaussianFilter</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1030,6 +1039,9 @@
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\BoxFilter\BoxFilterPostEffect.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\GaussianFilter\GaussianFilterPostEffect.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli">
@@ -1070,6 +1082,9 @@
     </None>
     <None Include="resources\Shader\BoxFilter\BoxFilter.hlsli">
       <Filter>リソース ファイル\Shader\BoxFilter</Filter>
+    </None>
+    <None Include="resources\Shader\GaussianFilter\GaussianFilter.hlsli">
+      <Filter>リソース ファイル\Shader\GaussianFilter</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

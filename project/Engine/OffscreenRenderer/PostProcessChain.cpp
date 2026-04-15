@@ -9,6 +9,7 @@
 #include "PostEffect/LineGlitch/LineGlitchPostEffect.h"
 #include "PostEffect/Grayscale/GrayscalePostEffect.h"
 #include "PostEffect/BoxFilter/BoxFilterPostEffect.h"
+#include "PostEffect/GaussianFilter/GaussianFilterPostEffect.h"
 #include "PostEffect/Vignette/VignettePostEffect.h"
 #include "PostEffect/Binarization/BinarizationPostEffect.h"
 
@@ -240,6 +241,9 @@ bool PostProcessChain::AddEffect(PostEffectId id) {
 		break;
 	case PostEffectId::BoxFilter:
 		effect = std::make_unique<BoxFilterPostEffect>();
+		break;
+	case PostEffectId::GaussianFilter:
+		effect = std::make_unique<GaussianFilterPostEffect>();
 		break;
 	case PostEffectId::Vignette:
 	case PostEffectId::DamageVignette:

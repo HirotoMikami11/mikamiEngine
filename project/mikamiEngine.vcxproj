@@ -163,6 +163,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\GameObject\DebugObject\TestWall\TestWall.cpp" />
     <ClCompile Include="Application\GameObject\DebugObject\TestShooter\TestShooter.cpp" />
     <ClCompile Include="Application\GameObject\DebugObject\TestShooter\TestBullet.cpp" />
+    <ClCompile Include="Engine\OffscreenRenderer\PostEffect\GaussianFilter\GaussianFilterPostEffect.cpp" />
     <ClCompile Include="Engine\Utility\JsonBinder.cpp" />
     <ClCompile Include="Application\GameObject\GameObject.cpp" />
     <ClCompile Include="Application\GameObject\GameObjectManager.cpp" />
@@ -315,6 +316,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="resources\Shader\GaussianFilter\GaussianFilter.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -409,6 +415,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\OffscreenRenderer\EffectFunc\DamageVignette.h" />
     <ClInclude Include="Engine\Core\JsonSettings\JsonSettings.h" />
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\Binarization\BinarizationPostEffect.h" />
+    <ClInclude Include="Engine\OffscreenRenderer\PostEffect\GaussianFilter\GaussianFilterPostEffect.h" />
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\PostEffectId.h" />
     <ClInclude Include="Engine\Utility\CSVUtility.h" />
     <ClInclude Include="Engine\Objects\Line\DebugDrawLineSystem.h" />
@@ -563,6 +570,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="resources\Shader\BoxFilter\BoxFilter.hlsli" />
     <None Include="resources\Shader\DepthFog\DepthFog.hlsli" />
     <None Include="resources\Shader\DepthOfField\DepthOfField.hlsli" />
+    <None Include="resources\Shader\GaussianFilter\GaussianFilter.hlsli" />
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli" />
     <None Include="resources\Shader\LineGlitch\LineGlitch.hlsli" />
     <None Include="resources\Shader\Line\Line.hlsli" />
@@ -584,6 +592,3 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>
-
-
-

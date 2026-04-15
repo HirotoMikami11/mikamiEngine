@@ -13,6 +13,7 @@ enum class PostEffectId : uint8_t {
 	LineGlitch,
 	Grayscale,
 	BoxFilter,
+	GaussianFilter,
 	Vignette,
 	DamageVignette,
 	Binarization
