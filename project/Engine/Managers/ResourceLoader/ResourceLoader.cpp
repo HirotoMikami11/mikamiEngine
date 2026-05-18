@@ -52,6 +52,9 @@ void ResourceLoader::RegisterAllResources() {
 
 		// テクスチャここに追加
 		// {"resources/Texture/example.png", "example"},
+
+		// キューブマップ用（TextureManagerがTextureCube SRVを自動生成）
+		{"resources/Texture/Engine/rostock_laage_airport_4k.dds", "skybox_airport"},
 	};
 
 	///*-----------------------------------------------------------------------*///
@@ -172,7 +175,7 @@ bool ResourceLoader::LoadResources() {
 			success = modelManager_->LoadPrimitive(modelInfo.meshType, modelInfo.tag);
 		} else {
 			if (modelInfo.tag == "wall") {
-				int a =1;
+				int a = 1;
 			}
 
 			success = modelManager_->LoadModel(

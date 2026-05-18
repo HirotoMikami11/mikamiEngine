@@ -49,6 +49,7 @@ public:
 	Matrix4x4 GetCameraMatrix() const override { return cameraMatrix_; }
 	Matrix4x4 GetViewProjectionMatrix() const override { return viewProjectionMatrix_; }
 	Matrix4x4 GetSpriteViewProjectionMatrix() const override;
+	Matrix4x4 GetProjectionMatrix() const override { return projectionMatrix_; }
 	Vector3 GetPosition() const override { return cameraTransform_.translate; }
 	Vector3 GetRotation() const override { return cameraTransform_.rotate; }
 	const Vector3Transform& GetTransform() const { return cameraTransform_; }

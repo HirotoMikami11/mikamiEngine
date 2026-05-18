@@ -29,6 +29,8 @@
 #include "ParticleCommon.h"
 #include "Object3DRenderer.h"
 #include "SpriteRenderer.h"
+#include "SkyboxRenderer.h"
+#include "Skybox.h"
 
 class Engine {
 public:

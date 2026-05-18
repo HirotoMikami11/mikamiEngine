@@ -29,6 +29,8 @@ private:
 	std::unique_ptr<Model3D> modelMultiMaterial_;
 	std::unique_ptr<Sprite> sprite_;
 
+	std::unique_ptr<Skybox> skybox_;
+
 	// パーティクルシステム
 	ParticleSystem* particleSystem_ = nullptr;
 	ParticleEditor* particleEditor_ = nullptr;

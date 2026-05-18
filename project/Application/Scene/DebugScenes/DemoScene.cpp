@@ -7,7 +7,6 @@
 #include "ParticleEditor.h"
 #include "OffscreenRenderer/PostEffect/Vignette/VignettePostEffect.h"
 
-
 DemoScene::DemoScene()
 	: BaseScene("DemoScene")
 {
@@ -75,6 +74,9 @@ void DemoScene::OnInitialize()
 	sprite_ = std::make_unique<Sprite>();
 	sprite_->Initialize(dxCommon_, "uvChecker", { 50, 50 }, { 100, 100 });
 
+	skybox_ = std::make_unique<Skybox>();
+	skybox_->SetCubemap("skybox_airport");
+
 	///								パーティクル								///
 	particleEditor_->CreateInstance("CenterEffect", "Center");
 	particleEditor_->CreateInstance("LeftEffect", "Left");
@@ -123,6 +125,7 @@ void DemoScene::OnUpdate()
 
 void DemoScene::OnDraw()
 {
+	skybox_->Draw();
 	sphere_->Draw();
 	plane_->Draw();
 	modelMultiMesh_->Draw();

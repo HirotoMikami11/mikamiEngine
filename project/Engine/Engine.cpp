@@ -72,6 +72,9 @@ void Engine::InitializeManagers() {
 	// Object3DRenderer を初期化（PSO 自己生成 + UploadRingBuffer 確保）
 	Object3DRenderer::GetInstance()->Initialize(dxCommon_.get());
 
+	// SkyboxRenderer を初期化（PSO・ボックスメッシュ・定数バッファ生成）
+	SkyboxRenderer::GetInstance()->Initialize(dxCommon_.get());
+
 	// SpriteRenderer を初期化（PSO 自己生成 + UploadRingBuffer 確保）
 	SpriteRenderer::GetInstance()->Initialize(dxCommon_.get());
 
@@ -140,6 +143,9 @@ void Engine::BeginFrame() {
 
 	// Object3DRenderer のフレームリセット（UploadRingBuffer インデックスを0に戻す）
 	Object3DRenderer::GetInstance()->BeginFrame();
+
+	// SkyboxRenderer のフレームリセット
+	SkyboxRenderer::GetInstance()->BeginFrame();
 
 	// SpriteRenderer のフレームリセット
 	SpriteRenderer::GetInstance()->BeginFrame();
@@ -326,6 +332,9 @@ void Engine::Finalize() {
 
 	// SpriteRenderer の GPU リソース解放（dxCommon_ 解放より先に行う）
 	SpriteRenderer::GetInstance()->Finalize();
+
+	// SkyboxRenderer の GPU リソース解放（dxCommon_ 解放より先に行う）
+	SkyboxRenderer::GetInstance()->Finalize();
 
 	// Object3DRenderer の GPU リソース解放（dxCommon_ 解放より先に行う）
 	Object3DRenderer::GetInstance()->Finalize();

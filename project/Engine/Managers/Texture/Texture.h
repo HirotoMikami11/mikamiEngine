@@ -70,6 +70,11 @@ public:
 	const DirectX::TexMetadata& GetMetadata() const { return metadata_; }
 
 	/// <summary>
+	/// キューブマップかどうか
+	/// </summary>
+	bool IsCubemap() const { return metadata_.IsCubemap(); }
+
+	/// <summary>
 	/// テクスチャが有効かどうか
 	/// </summary>
 	bool IsValid() const { return textureResource_ != nullptr; }

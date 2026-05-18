@@ -600,6 +600,9 @@
     <ClCompile Include="Engine\OffscreenRenderer\PostEffect\GaussianFilter\GaussianFilterPostEffect.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Objects\Skybox\SkyboxRenderer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shader\Grayscale\Grayscale.PS.hlsl">
@@ -1042,6 +1045,9 @@
     <ClInclude Include="Engine\OffscreenRenderer\PostEffect\GaussianFilter\GaussianFilterPostEffect.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Objects\Skybox\SkyboxRenderer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Shader\Grayscale\Grayscale.hlsli">
@@ -1086,6 +1092,7 @@
     <None Include="resources\Shader\GaussianFilter\GaussianFilter.hlsli">
       <Filter>リソース ファイル\Shader\GaussianFilter</Filter>
     </None>
+    <None Include="resources\Shader\Skybox\Skybox.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

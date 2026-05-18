@@ -40,6 +40,7 @@ public:
 	// ビュープロジェクション行列を取得
 	virtual Matrix4x4 GetViewProjectionMatrix() const = 0;
 	virtual Matrix4x4 GetSpriteViewProjectionMatrix() const = 0;
+	virtual Matrix4x4 GetProjectionMatrix() const = 0;
 
 	virtual Vector3 GetPosition() const = 0;
 	virtual Vector3 GetRotation() const = 0;

@@ -101,13 +101,22 @@ bool Texture::LoadTextureWithHandle(
 		return false;
 	}
 
-	// 既に割り当て済みのハンドルでSRVを作成
-	descriptorManager->CreateSRVForTexture2DWithHandle(
-		descriptorHandle,
-		textureResource_.Get(),
-		metadata_.format,
-		static_cast<uint32_t>(metadata_.mipLevels)
-	);
+	// Cubemapか通常Texture2Dかで SRV 作成を分岐
+	if (metadata_.IsCubemap()) {
+		descriptorManager->CreateSRVForTextureCubeWithHandle(
+			descriptorHandle,
+			textureResource_.Get(),
+			metadata_.format,
+			static_cast<uint32_t>(metadata_.mipLevels)
+		);
+	} else {
+		descriptorManager->CreateSRVForTexture2DWithHandle(
+			descriptorHandle,
+			textureResource_.Get(),
+			metadata_.format,
+			static_cast<uint32_t>(metadata_.mipLevels)
+		);
+	}
 
 	// ハンドルを保存
 	descriptorHandle_ = descriptorHandle;
@@ -152,14 +161,29 @@ void Texture::Unload(DirectXCommon* dxCommon) {
 DirectX::ScratchImage Texture::LoadTextureFile(const std::string& filePath) {
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = StringUtility::ConvertString(filePath);
-	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+
+	// 拡張子でDDSとWICを分岐
+	HRESULT hr;
+	std::string ext = filePath.substr(filePath.find_last_of('.'));
+	for (auto& c : ext) { c = static_cast<char>(std::tolower(static_cast<unsigned char>(c))); }
+
+	if (ext == ".dds") {
+		hr = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
+	} else {
+		hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	}
 
 	if (FAILED(hr)) {
 		Logger::Log(Logger::GetStream(), std::format("Failed to load texture: {}\n", filePath));
 		return DirectX::ScratchImage{};
 	}
 
-	// ミップマップ生成
+	// 圧縮フォーマット(BC1/BC3/BC7等)はDDS内にミップが含まれているため生成しない
+	if (DirectX::IsCompressed(image.GetMetadata().format)) {
+		return image;
+	}
+
+	// 非圧縮フォーマットはミップマップを生成
 	DirectX::ScratchImage mipImages{};
 	hr = DirectX::GenerateMipMaps(
 		image.GetImages(),

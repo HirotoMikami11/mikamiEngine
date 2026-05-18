@@ -190,6 +190,26 @@ Matrix4x4 CameraController::GetViewProjectionMatrixSprite() const {
 	return activeCamera->GetSpriteViewProjectionMatrix();
 }
 
+Matrix4x4 CameraController::GetSkyboxViewProjectionMatrix() const {
+	BaseCamera* activeCamera = GetActiveCamera();
+	if (!activeCamera) {
+		return MakeIdentity4x4();
+	}
+
+	// カメラのワールド行列（位置+回転）から平行移動を除去して回転のみにする
+	// Matrix4x4は行優先(row-major)：平行移動はm[3][0-2]に格納されている
+	Matrix4x4 camMatrix = activeCamera->GetCameraMatrix();
+	camMatrix.m[3][0] = 0.0f;
+	camMatrix.m[3][1] = 0.0f;
+	camMatrix.m[3][2] = 0.0f;
+
+	// 逆行列でビュー行列（回転のみ）を得る
+	Matrix4x4 rotOnlyView = Matrix4x4Inverse(camMatrix);
+
+	// プロジェクション行列はそのまま使う
+	return Matrix4x4Multiply(rotOnlyView, activeCamera->GetProjectionMatrix());
+}
+
 Vector3 CameraController::GetPosition() const {
 	BaseCamera* activeCamera = GetActiveCamera();
 	Vector3 basePosition = activeCamera ? activeCamera->GetPosition() : Vector3{ 0.0f, 0.0f, 0.0f };

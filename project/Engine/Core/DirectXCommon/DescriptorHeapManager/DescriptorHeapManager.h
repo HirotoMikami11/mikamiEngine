@@ -191,6 +191,15 @@ public:
 		uint32_t mipLevels = 1);
 
 	/// <summary>
+	/// 既に割り当て済みのハンドルに対してTextureCube用のSRVを作成
+	/// </summary>
+	void CreateSRVForTextureCubeWithHandle(
+		const DescriptorHandle& handle,
+		ID3D12Resource* resource,
+		DXGI_FORMAT format,
+		uint32_t mipLevels = 1);
+
+	/// <summary>
 	/// 既に割り当て済みのハンドルに対してStructuredBuffer用のSRVを作成
 	/// </summary>
 	void CreateSRVForStructuredBufferWithHandle(

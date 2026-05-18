@@ -508,6 +508,21 @@ void DescriptorHeapManager::CreateSRVForTexture2DWithHandle(
 		std::format("Created Texture2D SRV with existing handle at index: {}\n", handle.index));
 }
 
+void DescriptorHeapManager::CreateSRVForTextureCubeWithHandle(
+	const DescriptorHandle& handle,
+	ID3D12Resource* resource,
+	DXGI_FORMAT format,
+	uint32_t mipLevels) {
+
+	assert(isInitialized_ && viewFactory_);
+	assert(handle.isValid);
+
+	viewFactory_->CreateSRVForTextureCube(resource, handle.cpuHandle, format, mipLevels);
+
+	Logger::Log(Logger::GetStream(),
+		std::format("Created TextureCube SRV with existing handle at index: {}\n", handle.index));
+}
+
 void DescriptorHeapManager::CreateSRVForStructuredBufferWithHandle(
 	const DescriptorHandle& handle,
 	ID3D12Resource* resource,

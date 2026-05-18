@@ -138,6 +138,11 @@ public:
 	Matrix4x4 GetViewProjectionMatrixSprite() const;
 
 	/// <summary>
+	/// Skybox用ビュープロジェクション行列を取得（平行移動なし・回転のみ）
+	/// </summary>
+	Matrix4x4 GetSkyboxViewProjectionMatrix() const;
+
+	/// <summary>
 	/// アクティブカメラの位置を取得（シェイク適用）
 	/// </summary>
 	/// <returns>カメラの位置</returns>
